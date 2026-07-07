@@ -1,0 +1,89 @@
+"use client";
+
+import { useActionState } from "react";
+import Link from "next/link";
+import { signUp, signInWithGoogle } from "@/app/auth/actions";
+
+export default function SignupPage() {
+  const [state, action, pending] = useActionState(signUp, undefined);
+
+  return (
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+        <h1 className="text-lg font-semibold text-zinc-100 mb-1">
+          Créer un compte
+        </h1>
+        <p className="text-sm text-zinc-500 mb-5">
+          Commence à suivre tes bankrolls.
+        </p>
+
+        <form action={action} className="space-y-3">
+          <div>
+            <label className="block text-xs uppercase tracking-wide text-zinc-500 mb-1.5 font-medium">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              required
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            />
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-wide text-zinc-500 mb-1.5 font-medium">
+              Mot de passe
+            </label>
+            <input
+              type="password"
+              name="password"
+              required
+              minLength={8}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            />
+            <p className="mt-1 text-xs text-zinc-600">8 caractères minimum.</p>
+          </div>
+
+          {state?.error && (
+            <p className="text-xs text-rose-400">{state.error}</p>
+          )}
+          {state?.message && (
+            <p className="text-xs text-emerald-400">{state.message}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-semibold text-sm py-2.5 rounded-lg transition-colors"
+          >
+            {pending ? "Création..." : "Créer mon compte"}
+          </button>
+        </form>
+
+        <div className="flex items-center gap-3 my-4">
+          <div className="h-px bg-zinc-800 flex-1" />
+          <span className="text-xs text-zinc-600">ou</span>
+          <div className="h-px bg-zinc-800 flex-1" />
+        </div>
+
+        <form action={signInWithGoogle}>
+          <button
+            type="submit"
+            className="w-full bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium text-sm py-2.5 rounded-lg transition-colors"
+          >
+            Continuer avec Google
+          </button>
+        </form>
+
+        <p className="text-sm text-zinc-500 mt-5 text-center">
+          Déjà un compte ?{" "}
+          <Link
+            href="/login"
+            className="text-emerald-400 hover:text-emerald-300 font-medium"
+          >
+            Se connecter
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}

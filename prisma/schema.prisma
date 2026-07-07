@@ -1,0 +1,121 @@
+// ============================================================
+// schema.prisma — modèle de données pour le vrai projet
+// Reprend fidèlement la structure de l'artifact (bankrolls, paris,
+// objectifs, insights) pour une migration directe.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // URL de connexion Supabase (avec pooling, port 6543)
+  directUrl = env("DIRECT_URL") // connexion directe (port 5432), utilisée par les migrations
+}
+
+// ------------------------------------------------------------
+// Utilisateur
+// ------------------------------------------------------------
+// L'id correspond à l'id renvoyé par Supabase Auth (uuid) — pas de
+// mot de passe stocké ici, l'auth reste gérée par Supabase.
+model User {
+  id        String   @id // = auth.users.id de Supabase
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  // Objectifs (équivalent du champ "goals" persisté dans l'artifact)
+  monthlyProfitGoal Float @default(0)
+  monthlyLossLimit  Float @default(0)
+
+  bankrolls Bankroll[]
+  insight   Insight?
+
+  @@map("users")
+}
+
+// ------------------------------------------------------------
+// Bankroll
+// ------------------------------------------------------------
+model Bankroll {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name      String
+  bookmaker String
+  initial   Float    @default(0) // capital de départ
+  createdAt DateTime @default(now())
+
+  bets      Bet[]
+
+  @@index([userId])
+  @@map("bankrolls")
+}
+
+// ------------------------------------------------------------
+// Résultat d'un pari
+// ------------------------------------------------------------
+enum BetResult {
+  EN_ATTENTE
+  GAGNE
+  PERDU
+  REMBOURSE
+  CASHE
+}
+
+// ------------------------------------------------------------
+// Pari
+// ------------------------------------------------------------
+// sport et betType restent des String libres (pas des enums) —
+// exactement comme dans l'artifact : la taxonomie (SPORTS, types de
+// paris) vit côté application (constante JS/TS) et peut évoluer sans
+// migration de base de données. Le résultat, lui, est un enum fixe
+// car il conditionne des calculs (computeProfit) qui ne doivent pas
+// dériver silencieusement si quelqu'un tape une valeur inattendue.
+model Bet {
+  id         String    @id @default(uuid())
+  bankrollId String
+  bankroll   Bankroll  @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+
+  ticketRef  String?   // référence du ticket bookmaker, pour la dédup
+  date       DateTime
+  sport      String
+  betType    String
+  description String?
+
+  stake      Float
+  odds       Float
+
+  boosted      Boolean @default(false)
+  originalOdds Float?  // cote avant boost, si boosted=true
+
+  freebet    Boolean   @default(false)
+  live       Boolean   @default(false)
+
+  result        BetResult @default(EN_ATTENTE)
+  cashOutAmount Float?    // montant encaissé si result = CASHE
+
+  createdAt  DateTime  @default(now())
+
+  @@index([bankrollId])
+  @@index([ticketRef])
+  @@map("bets")
+}
+
+// ------------------------------------------------------------
+// Insight IA (analyse générée, mise en cache — cf. le cooldown de
+// 12h dans l'artifact pour maîtriser le coût des appels API)
+// ------------------------------------------------------------
+model Insight {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  data                  Json     // { appreciation, points_forts, points_amelioration, recommandations }
+  generatedAt           DateTime
+  betsCountAtGeneration  Int
+
+  @@map("insights")
+}
