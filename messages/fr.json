@@ -75,6 +75,12 @@
   "dashboard": {
     "welcomeTitle": "Bienvenue sur BetTrack",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
+    "quota": {
+      "title": "Scans IA ce mois",
+      "remaining": "{used}/{limit} utilisés",
+      "premiumBadge": "Premium",
+      "upgradeCta": "Débloquer plus de scans"
+    },
     "hero": {
       "ariaLabel": "Solde total",
       "label": "Solde total",
@@ -191,6 +197,7 @@
     "imageTooLarge": "Image trop volumineuse (max 8 Mo).",
     "analysisFailed": "L'analyse du ticket a échoué. Réessaie ou vérifie la capture.",
     "tooManyScans": "Trop de scans effectués. Réessaie plus tard.",
+    "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Passe à Premium pour scanner davantage, ou reviens le mois prochain.",
     "forbiddenOrigin": "Origine non autorisée."
   },
 
@@ -311,6 +318,16 @@
       "exportJson": "Exporter tout (JSON)",
       "exportCsv": "Exporter les paris (CSV)"
     },
+    "plan": {
+      "title": "Abonnement",
+      "freeDescription": "Plan gratuit : 2 bankrolls max, 5 scans IA/mois.",
+      "premiumActive": "Premium actif — renouvellement le {date}.",
+      "premiumActiveNoDate": "Premium actif.",
+      "upgrade": "Passer à Premium (9,99€/an)",
+      "manage": "Gérer mon abonnement",
+      "stripeNotConfigured": "Le paiement n'est pas encore configuré. Réessaie plus tard.",
+      "noSubscription": "Aucun abonnement actif à gérer."
+    },
     "security": {
       "title": "Sécurité et compte"
     },
@@ -383,6 +400,7 @@
 
   "errors": {
     "bankrollNotFound": "Bankroll introuvable.",
+    "bankrollLimitReached": "Limite de 2 bankrolls atteinte en gratuit. Passe à Premium pour des bankrolls illimitées.",
     "bookmakerRequired": "Le bookmaker est requis.",
     "initialCapitalPositive": "Le capital de départ doit être un nombre positif.",
     "stakePositive": "La mise doit être un nombre positif.",

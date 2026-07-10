@@ -40,6 +40,22 @@ model User {
   // ce champ ne fait que changer le symbole/code affiché côté UI.
   currency Currency @default(EUR)
 
+  // Abonnement Stripe — plan FREE par défaut ; les champs stripe* restent
+  // null tant que l'utilisateur n'a jamais entamé de checkout. Le webhook
+  // (/api/stripe/webhook) est la seule source de vérité qui les met à jour,
+  // jamais l'UI directement.
+  plan                          Plan      @default(FREE)
+  stripeCustomerId              String?   @unique
+  stripeSubscriptionId          String?   @unique
+  subscriptionStatus            String?
+  subscriptionCurrentPeriodEnd  DateTime?
+
+  // Quota mensuel de scans IA lié au plan (5 gratuit / 100 Premium) —
+  // fenêtre glissante indépendante du rate-limit horaire anti-abus
+  // (scanCount/scanWindowStart ci-dessus, qui reste inchangé).
+  monthlyScanCount       Int      @default(0)
+  monthlyScanWindowStart DateTime @default(now())
+
   bankrolls Bankroll[]
   insight   Insight?
 
@@ -50,6 +66,11 @@ enum Currency {
   EUR
   USD
   GBP
+}
+
+enum Plan {
+  FREE
+  PREMIUM
 }
 
 // ------------------------------------------------------------

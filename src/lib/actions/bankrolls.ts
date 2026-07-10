@@ -7,6 +7,8 @@ import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 
+const FREE_BANKROLL_LIMIT = 2;
+
 export async function createBankroll(
   name: string,
   bookmaker: string,
@@ -15,6 +17,17 @@ export async function createBankroll(
   const user = await requireUser();
   const locale = await getServerLocale();
   const t = await getTranslations({ locale, namespace: "errors" });
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { plan: true },
+  });
+  if (dbUser?.plan !== "PREMIUM") {
+    const count = await prisma.bankroll.count({ where: { userId: user.id } });
+    if (count >= FREE_BANKROLL_LIMIT) {
+      throw new Error(t("bankrollLimitReached"));
+    }
+  }
 
   if (!bookmaker.trim()) {
     throw new Error(t("bookmakerRequired"));

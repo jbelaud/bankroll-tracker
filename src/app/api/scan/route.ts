@@ -7,6 +7,7 @@ import { labelToBetResult } from "@/lib/bet-result";
 import { buildExtractionPrompt } from "@/lib/scan/extraction-prompt";
 import { looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
+import { checkMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import type { ParsedBet } from "@/lib/scan/types";
 
@@ -77,6 +78,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: t("tooManyScans") },
       { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
+  }
+
+  // 2bis. Quota mensuel lié au plan (5 gratuit / 100 Premium) — distinct du
+  // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
+  // du plan.
+  const dbUser = await prisma.user.findUniqueOrThrow({
+    where: { id: user.id },
+    select: { plan: true },
+  });
+  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan);
+  if (!monthlyQuota.allowed) {
+    return NextResponse.json(
+      { error: t("monthlyQuotaExceeded") },
+      { status: 429, headers: { "Retry-After": String(monthlyQuota.retryAfterSeconds) } }
     );
   }
 

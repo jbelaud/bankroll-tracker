@@ -75,6 +75,12 @@
   "dashboard": {
     "welcomeTitle": "Welcome to BetTrack",
     "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
+    "quota": {
+      "title": "AI scans this month",
+      "remaining": "{used}/{limit} used",
+      "premiumBadge": "Premium",
+      "upgradeCta": "Unlock more scans"
+    },
     "hero": {
       "ariaLabel": "Total balance",
       "label": "Total balance",
@@ -191,6 +197,7 @@
     "imageTooLarge": "Image too large (max 8 MB).",
     "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
     "tooManyScans": "Too many scans. Try again later.",
+    "monthlyQuotaExceeded": "Monthly scan quota reached. Upgrade to Premium to scan more, or come back next month.",
     "forbiddenOrigin": "Origin not allowed."
   },
 
@@ -311,6 +318,16 @@
       "exportJson": "Export everything (JSON)",
       "exportCsv": "Export bets (CSV)"
     },
+    "plan": {
+      "title": "Subscription",
+      "freeDescription": "Free plan: 2 bankrolls max, 5 AI scans/month.",
+      "premiumActive": "Premium active — renews on {date}.",
+      "premiumActiveNoDate": "Premium active.",
+      "upgrade": "Upgrade to Premium (€9.99/year)",
+      "manage": "Manage subscription",
+      "stripeNotConfigured": "Payments aren't set up yet. Try again later.",
+      "noSubscription": "No active subscription to manage."
+    },
     "security": {
       "title": "Security and account"
     },
@@ -383,6 +400,7 @@
 
   "errors": {
     "bankrollNotFound": "Bankroll not found.",
+    "bankrollLimitReached": "Free plan limit of 2 bankrolls reached. Upgrade to Premium for unlimited bankrolls.",
     "bookmakerRequired": "Bookmaker is required.",
     "initialCapitalPositive": "Starting capital must be a positive number.",
     "stakePositive": "Stake must be a positive number.",

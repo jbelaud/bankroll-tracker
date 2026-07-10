@@ -7,7 +7,9 @@ import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
 import { computeProfit, realStake } from "@/lib/profit";
 import { summarizeBankrolls } from "@/lib/summaries";
+import { getMonthlyQuotaStatus } from "@/lib/scan/monthly-quota";
 import { HeroBalance } from "@/components/dashboard/hero-balance";
+import { QuotaCard } from "@/components/dashboard/quota-card";
 import { KpiRow } from "@/components/dashboard/kpi-row";
 import { Sparkline } from "@/components/dashboard/sparkline";
 import { GoalsCard } from "@/components/dashboard/goals-card";
@@ -39,6 +41,8 @@ export default async function DashboardPage() {
     listAllBets(),
     prisma.user.findUnique({ where: { id: user.id } }),
   ]);
+  const plan = dbUser?.plan ?? "FREE";
+  const quota = await getMonthlyQuotaStatus(user.id, plan);
 
   // Même sémantique que le Dashboard de l'artifact : seuls les paris
   // réglés comptent dans le solde et les stats.
@@ -118,6 +122,10 @@ export default async function DashboardPage() {
       </Reveal>
 
       <Reveal index={1}>
+        <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} />
+      </Reveal>
+
+      <Reveal index={2}>
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -128,14 +136,14 @@ export default async function DashboardPage() {
       </Reveal>
 
       {curve.length >= 2 && (
-        <Reveal index={2}>
+        <Reveal index={3}>
           <div className="glass-card rounded-xl p-4">
             <Sparkline points={curve} />
           </div>
         </Reveal>
       )}
 
-      <Reveal index={3}>
+      <Reveal index={4}>
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -143,11 +151,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={4}>
+      <Reveal index={5}>
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={5}>
+      <Reveal index={6}>
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>

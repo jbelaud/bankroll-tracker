@@ -11,6 +11,7 @@ import { ExportDataButton } from "@/components/account/export-data-button";
 import { SignOutButton } from "@/components/account/sign-out-button";
 import { LanguageSwitcher } from "@/components/account/language-switcher";
 import { CurrencySwitcher } from "@/components/account/currency-switcher";
+import { PlanCard } from "@/components/account/plan-card";
 
 export default async function AccountPage({
   params,
@@ -57,6 +58,8 @@ export default async function AccountPage({
         initialLossLimit={dbUser?.monthlyLossLimit ?? 0}
         currency={dbUser?.currency ?? "EUR"}
       />
+
+      <PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} />
 
       <LanguageSwitcher />
       <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />
