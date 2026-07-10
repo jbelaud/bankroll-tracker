@@ -4,45 +4,74 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { DownloadSimple, CircleNotch } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { exportUserData } from "@/lib/export/export-user-data";
+import { exportUserData } from "@/lib/actions/export";
+import { betsToCsv } from "@/lib/export/bets-to-csv";
+
+function downloadBlob(content: string, mimeType: string, filename: string) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 export function ExportDataButton() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<"json" | "csv" | null>(null);
   const t = useTranslations("account.data");
+  const today = new Date().toISOString().slice(0, 10);
 
-  const handleExport = async () => {
-    setLoading(true);
+  const handleExportJson = async () => {
+    setLoading("json");
     try {
       const data = await exportUserData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `bettrack-export-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      downloadBlob(JSON.stringify(data, null, 2), "application/json", `bettrack-export-${today}.json`);
     } finally {
-      setLoading(false);
+      setLoading(null);
+    }
+  };
+
+  const handleExportCsv = async () => {
+    setLoading("csv");
+    try {
+      const data = await exportUserData();
+      downloadBlob(betsToCsv(data.bets), "text/csv", `bettrack-bets-${today}.csv`);
+    } finally {
+      setLoading(null);
     }
   };
 
   return (
-    <Button
-      onClick={handleExport}
-      disabled={loading}
-      variant="outline"
-      className="min-h-touch w-full rounded-lg text-sm"
-    >
-      {loading ? (
-        <CircleNotch size={16} className="animate-spin" aria-hidden />
-      ) : (
-        <DownloadSimple size={16} aria-hidden />
-      )}
-      {t("export")}
-    </Button>
+    <div className="flex flex-col gap-2">
+      <Button
+        onClick={handleExportJson}
+        disabled={loading !== null}
+        variant="outline"
+        className="min-h-touch w-full rounded-lg text-sm"
+      >
+        {loading === "json" ? (
+          <CircleNotch size={16} className="animate-spin" aria-hidden />
+        ) : (
+          <DownloadSimple size={16} aria-hidden />
+        )}
+        {t("exportJson")}
+      </Button>
+      <Button
+        onClick={handleExportCsv}
+        disabled={loading !== null}
+        variant="outline"
+        className="min-h-touch w-full rounded-lg text-sm"
+      >
+        {loading === "csv" ? (
+          <CircleNotch size={16} className="animate-spin" aria-hidden />
+        ) : (
+          <DownloadSimple size={16} aria-hidden />
+        )}
+        {t("exportCsv")}
+      </Button>
+    </div>
   );
 }

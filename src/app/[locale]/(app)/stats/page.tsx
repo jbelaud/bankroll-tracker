@@ -2,9 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { Lightning, Gift, Radio } from "@phosphor-icons/react/dist/ssr";
 import { listAllBets } from "@/lib/actions/bets";
 import { listBankrolls } from "@/lib/actions/bankrolls";
-import { computeProfit, realStake } from "@/lib/profit";
 import { currencySymbol } from "@/lib/format";
 import { getServerCurrency } from "@/lib/get-server-currency";
+import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/auth";
+import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
 import {
   computeGlobalStats,
   groupStats,
@@ -26,16 +28,15 @@ import { CondensedStatRow } from "@/components/stats/condensed-stat-row";
 const ALL_SPORTS = "__all__";
 
 export default async function StatsPage() {
-  const [bets, bankrolls] = await Promise.all([listAllBets(), listBankrolls()]);
+  const user = await requireUser();
+  const [bets, bankrolls, existingInsight] = await Promise.all([
+    listAllBets(),
+    listBankrolls(),
+    prisma.insight.findUnique({ where: { userId: user.id } }),
+  ]);
   const stats = computeGlobalStats(bets);
 
-  const settled = bets.filter((b) => b.result !== "EN_ATTENTE");
-  const settledCount = settled.length;
-  const totalProfit = settled.reduce((s, b) => s + computeProfit(b), 0);
-  const totalStaked = settled.reduce((s, b) => s + realStake(b), 0);
-  const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
-  const wonCount = settled.filter((b) => b.result === "GAGNE").length;
-  const winRate = settledCount > 0 ? (wonCount / settledCount) * 100 : 0;
+  const settledCount = bets.filter((b) => b.result !== "EN_ATTENTE").length;
 
   const currency = await getServerCurrency();
   const symbol = currencySymbol(currency);
@@ -68,19 +69,19 @@ export default async function StatsPage() {
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
 
+  const cooldownUntil = existingInsight
+    ? existingInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS
+    : null;
+  const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
 
       <InsightsCard
-        input={{
-          totalBets: stats.totalBets,
-          settledCount,
-          roi,
-          winRate,
-          bestWinStreak: stats.bestWinStreak,
-          worstLossStreak: stats.worstLossStreak,
-        }}
+        settledCount={settledCount}
+        initialInsight={onCooldown ? (existingInsight!.data as unknown as InsightResult) : null}
+        initialCooldownUntil={onCooldown ? cooldownUntil : null}
       />
 
       <OverviewGrid stats={stats} currency={currency} />

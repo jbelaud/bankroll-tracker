@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
   Sparkle,
   CheckCircle,
@@ -10,27 +10,35 @@ import {
   CircleNotch,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { generateInsights, type InsightsInput } from "@/lib/insights/insights-stub";
+import { generateInsightsAction } from "@/lib/actions/insights";
 import type { InsightResult } from "@/lib/insights/types";
 
 const COOLDOWN_HOURS = 12;
 
-export function InsightsCard({ input }: { input: InsightsInput }) {
-  const [insight, setInsight] = useState<InsightResult | null>(null);
+export function InsightsCard({
+  settledCount,
+  initialInsight,
+  initialCooldownUntil,
+}: {
+  settledCount: number;
+  // Pré-chargés côté serveur (table Insight) — le cooldown et la dernière
+  // analyse survivent donc à un rechargement de page, contrairement à un
+  // état purement client.
+  initialInsight: InsightResult | null;
+  initialCooldownUntil: number | null;
+}) {
+  const [insight, setInsight] = useState<InsightResult | null>(initialInsight);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // Cooldown simulé côté client uniquement (pas encore de table Insight
-  // persistée — la vraie route API gérera ça avec de vraies dates).
-  const [cooldownUntil, setCooldownUntil] = useState<number | null>(null);
+  const [cooldownUntil, setCooldownUntil] = useState<number | null>(initialCooldownUntil);
   const t = useTranslations("stats.insights");
-  const locale = useLocale();
 
   const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
   const hoursLeft = onCooldown
     ? Math.ceil((cooldownUntil! - Date.now()) / (60 * 60 * 1000))
     : 0;
 
-  if (input.settledCount < 3) {
+  if (settledCount < 3) {
     return (
       <section aria-label={t("ariaLabel")} className="glass-card flex items-center gap-2 rounded-xl p-4">
         <Sparkle size={16} className="shrink-0 text-muted-foreground" aria-hidden />
@@ -44,9 +52,13 @@ export function InsightsCard({ input }: { input: InsightsInput }) {
     setLoading(true);
     setError("");
     try {
-      const result = await generateInsights(input, locale);
-      setInsight(result);
-      setCooldownUntil(Date.now() + COOLDOWN_HOURS * 60 * 60 * 1000);
+      const result = await generateInsightsAction();
+      if ("error" in result) {
+        setError(result.error);
+      } else {
+        setInsight(result.insight);
+        setCooldownUntil(result.cooldownUntil);
+      }
     } catch {
       setError(t("errorGeneric"));
     } finally {

@@ -169,6 +169,17 @@
     },
     "error": {
       "analysisFailed": "Analysis failed."
+    },
+    "manual": {
+      "bankrollLabel": "Bankroll",
+      "sportLabel": "Sport",
+      "betTypeLabel": "Bet type",
+      "boostedLabel": "Boosted odds",
+      "originalOddsLabel": "Odds before boost",
+      "freebetLabel": "Freebet",
+      "liveLabel": "Live",
+      "submit": "Add bet",
+      "submitting": "Adding…"
     }
   },
 
@@ -297,7 +308,8 @@
     },
     "data": {
       "title": "My data",
-      "export": "Export my data"
+      "exportJson": "Export everything (JSON)",
+      "exportCsv": "Export bets (CSV)"
     },
     "security": {
       "title": "Security and account"

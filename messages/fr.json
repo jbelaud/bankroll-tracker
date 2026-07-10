@@ -169,6 +169,17 @@
     },
     "error": {
       "analysisFailed": "L'analyse a échoué."
+    },
+    "manual": {
+      "bankrollLabel": "Bankroll",
+      "sportLabel": "Sport",
+      "betTypeLabel": "Type de pari",
+      "boostedLabel": "Cote boostée",
+      "originalOddsLabel": "Cote avant boost",
+      "freebetLabel": "Freebet",
+      "liveLabel": "En direct",
+      "submit": "Ajouter le pari",
+      "submitting": "Ajout en cours…"
     }
   },
 
@@ -297,7 +308,8 @@
     },
     "data": {
       "title": "Mes données",
-      "export": "Exporter mes données"
+      "exportJson": "Exporter tout (JSON)",
+      "exportCsv": "Exporter les paris (CSV)"
     },
     "security": {
       "title": "Sécurité et compte"
