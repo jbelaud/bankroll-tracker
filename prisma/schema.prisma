@@ -29,10 +29,27 @@ model User {
   monthlyProfitGoal Float @default(0)
   monthlyLossLimit  Float @default(0)
 
+  // Rate limiting du scan IA (fenêtre glissante, cf. checkScanRateLimit) —
+  // chaque appel coûte réellement de l'argent (API Claude), à limiter par
+  // utilisateur indépendamment des instances serverless.
+  scanCount       Int      @default(0)
+  scanWindowStart DateTime @default(now())
+
+  // Devise d'affichage — cosmétique uniquement, aucune conversion réelle.
+  // Les montants restent stockés tels quels (implicitement en euros) ;
+  // ce champ ne fait que changer le symbole/code affiché côté UI.
+  currency Currency @default(EUR)
+
   bankrolls Bankroll[]
   insight   Insight?
 
   @@map("users")
+}
+
+enum Currency {
+  EUR
+  USD
+  GBP
 }
 
 // ------------------------------------------------------------

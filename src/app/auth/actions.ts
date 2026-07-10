@@ -1,7 +1,9 @@
 "use server";
 
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
+import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthFormState =
@@ -22,6 +24,7 @@ export async function signIn(
 ): Promise<AuthFormState> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const locale = await getLocale();
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -33,7 +36,7 @@ export async function signIn(
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  redirect({ href: "/dashboard", locale });
 }
 
 export async function signUp(
@@ -42,9 +45,11 @@ export async function signUp(
 ): Promise<AuthFormState> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "auth.signup" });
 
   if (password.length < 8) {
-    return { error: "Le mot de passe doit contenir au moins 8 caractères." };
+    return { error: t("passwordError") };
   }
 
   const supabase = await createClient();
@@ -60,33 +65,36 @@ export async function signUp(
   }
 
   if (!data.session) {
-    return {
-      message:
-        "Compte créé. Vérifie tes emails pour confirmer ton adresse avant de te connecter.",
-    };
+    return { message: t("confirmEmailMessage") };
   }
 
-  redirect("/dashboard");
+  redirect({ href: "/dashboard", locale });
 }
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
   const origin = await getOrigin();
+  const locale = await getLocale();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: `${origin}/auth/callback` },
   });
 
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+  const url = data?.url;
+  if (error || !url) {
+    redirect({
+      href: { pathname: "/login", query: { error: error?.message ?? "" } },
+      locale,
+    });
+    return;
   }
 
-  redirect(data.url);
+  redirect({ href: url, locale });
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect({ href: "/login", locale: await getLocale() });
 }

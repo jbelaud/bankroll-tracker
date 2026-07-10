@@ -1,0 +1,41 @@
+// Taxonomie des sports et types de paris — COPIE VERBATIM de l'artifact de
+// référence (bankroll-tracker.jsx, lignes 15-25). Cette taxonomie vit côté
+// application (pas d'enum en base) et peut évoluer sans migration. Réutilisée
+// par le prompt d'extraction IA et (à venir) la saisie manuelle.
+
+export const SPORTS: Record<string, string[]> = {
+  Football: [
+    "Résultat du match",
+    "Victoire finale du tournoi",
+    "Vainqueur de groupe",
+    "Double chance",
+    "Buteur",
+    "Double buteur",
+    "Passeur décisif",
+    "Double passeur décisif",
+    "Buteur ou passeur",
+    "Top buteur du tournoi",
+    "But sur penalty",
+    "Minute du but",
+    "Type de but",
+    "Les 2 équipes marquent",
+    "Nombre de tirs cadrés",
+    "Écart de buts",
+    "Mi-temps/Fin de match",
+    "Première équipe à marquer",
+    "Over/Under buts",
+    "Qualification",
+    "Handicap",
+    "Score exact",
+    "Mymatch",
+    "Combiné",
+    "Autre",
+  ],
+  Cyclisme: ["Top 1", "Top 3", "Top 10", "Vainqueur d'étape", "Classement général", "Autre"],
+  Tennis: ["Vainqueur du match", "Total de jeux", "Score exact (sets)", "Vainqueur du set", "Autre"],
+  Basketball: ["Vainqueur", "Total points", "Handicap", "Autre"],
+  Rugby: ["Vainqueur", "Total points", "Handicap", "Autre"],
+  "Autre sport": ["Autre"],
+};
+
+export const SPORT_LIST = Object.keys(SPORTS);

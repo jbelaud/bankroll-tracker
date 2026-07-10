@@ -4,12 +4,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================
+   BetTrack — Design tokens
+   App dark-only : la palette vit dans :root (et .dark reprend
+   les mêmes valeurs pour rester compatible avec les composants
+   shadcn qui ciblent la classe dark).
+   Règle d'accessibilité : profit/loss ne sont JAMAIS utilisés
+   seuls — toujours accompagnés d'une icône ▲/▼ dans le JSX.
+   ============================================================ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-mono);
-  --font-heading: var(--font-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+  --font-heading: var(--font-inter);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,85 +55,243 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* --- Tokens spécifiques BetTrack --- */
+  --color-profit: var(--profit);
+  --color-profit-muted: var(--profit-muted);
+  --color-loss: var(--loss);
+  --color-loss-muted: var(--loss-muted);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+
+  /* Touch target minimal (44px) — à utiliser via min-h-touch / min-w-touch */
+  --spacing-touch: 2.75rem;
+
+  /* --- Animations réutilisables --- */
+  --animate-pulse-glow: pulse-glow 2.6s ease-in-out infinite;
+  --animate-fade-in-up: fade-in-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-scan-laser: scan-laser 1.8s ease-in-out infinite;
+
+  /* Halo du bouton Scan (nav centrale) */
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 0 0 oklch(0.72 0.14 250 / 45%),
+        0 0 18px 2px oklch(0.72 0.14 250 / 35%);
+    }
+    50% {
+      box-shadow:
+        0 0 0 7px oklch(0.72 0.14 250 / 0%),
+        0 0 26px 6px oklch(0.72 0.14 250 / 55%);
+    }
+  }
+
+  /* Entrée en cascade des cartes */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Skeletons de chargement */
+  @keyframes shimmer {
+    from {
+      background-position: -200% 0;
+    }
+    to {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Balayage laser IA — utilisé par l'écran Scan (étape future) */
+  @keyframes scan-laser {
+    0% {
+      top: 0%;
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      top: 100%;
+      opacity: 0;
+    }
+  }
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Fond obsidienne (≈ #0B0D12) et surfaces */
+  --background: oklch(0.16 0.015 262);
+  --foreground: oklch(0.96 0.005 260);
+  --card: oklch(0.21 0.022 264);
+  --card-foreground: oklch(0.96 0.005 260);
+  --popover: oklch(0.21 0.022 264);
+  --popover-foreground: oklch(0.96 0.005 260);
+
+  /* Bleu électrique — tout ce qui est interactif */
+  --primary: oklch(0.72 0.14 250);
+  --primary-foreground: oklch(0.14 0.02 262);
+
+  --secondary: oklch(0.26 0.025 264);
+  --secondary-foreground: oklch(0.96 0.005 260);
+  --muted: oklch(0.24 0.02 264);
+  --muted-foreground: oklch(0.74 0.02 260);
+  --accent: oklch(0.26 0.025 264);
+  --accent-foreground: oklch(0.96 0.005 260);
+  --destructive: oklch(0.68 0.19 15);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: oklch(0.72 0.14 250 / 60%);
+
+  --chart-1: oklch(0.72 0.14 250);
+  --chart-2: oklch(0.82 0.17 165);
+  --chart-3: oklch(0.68 0.19 15);
+  --chart-4: oklch(0.78 0.12 85);
+  --chart-5: oklch(0.65 0.15 300);
+
+  --radius: 1rem;
+
+  /* Hauteur du bandeau jeu responsable global (hors safe-area) — source de
+     vérité partagée entre ResponsibleGamblingFooter et AppNav. */
+  --rg-footer-h: 1.75rem;
+
+  --sidebar: oklch(0.19 0.02 264);
+  --sidebar-foreground: oklch(0.96 0.005 260);
+  --sidebar-primary: oklch(0.72 0.14 250);
+  --sidebar-primary-foreground: oklch(0.14 0.02 262);
+  --sidebar-accent: oklch(0.26 0.025 264);
+  --sidebar-accent-foreground: oklch(0.96 0.005 260);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.72 0.14 250 / 60%);
+
+  /* --- BetTrack --- */
+  /* Vert néon profit (≈ #2EE8A5) — AA sur fond obsidienne */
+  --profit: oklch(0.82 0.17 165);
+  --profit-muted: oklch(0.82 0.17 165 / 12%);
+  /* Rouge vif perte (≈ #FF5C7A) — AA sur fond obsidienne */
+  --loss: oklch(0.68 0.19 15);
+  --loss-muted: oklch(0.68 0.19 15 / 12%);
+  /* Glassmorphism : voile blanc léger + bordure, à combiner avec backdrop-blur */
+  --glass: oklch(1 0 0 / 4.5%);
+  --glass-border: oklch(1 0 0 / 8%);
+  /* Orange avertissement (doublons potentiels) — AA sur fond obsidienne,
+     toujours accompagné d'une icône */
+  --warning: oklch(0.75 0.15 60);
+  --warning-muted: oklch(0.75 0.15 60 / 12%);
 }
 
+/* App dark-only : .dark reprend :root pour compat shadcn */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: oklch(0.16 0.015 262);
+  --foreground: oklch(0.96 0.005 260);
+  --card: oklch(0.21 0.022 264);
+  --card-foreground: oklch(0.96 0.005 260);
+  --popover: oklch(0.21 0.022 264);
+  --popover-foreground: oklch(0.96 0.005 260);
+  --primary: oklch(0.72 0.14 250);
+  --primary-foreground: oklch(0.14 0.02 262);
+  --secondary: oklch(0.26 0.025 264);
+  --secondary-foreground: oklch(0.96 0.005 260);
+  --muted: oklch(0.24 0.02 264);
+  --muted-foreground: oklch(0.74 0.02 260);
+  --accent: oklch(0.26 0.025 264);
+  --accent-foreground: oklch(0.96 0.005 260);
+  --destructive: oklch(0.68 0.19 15);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: oklch(0.72 0.14 250 / 60%);
+  --chart-1: oklch(0.72 0.14 250);
+  --chart-2: oklch(0.82 0.17 165);
+  --chart-3: oklch(0.68 0.19 15);
+  --chart-4: oklch(0.78 0.12 85);
+  --chart-5: oklch(0.65 0.15 300);
+  --sidebar: oklch(0.19 0.02 264);
+  --sidebar-foreground: oklch(0.96 0.005 260);
+  --sidebar-primary: oklch(0.72 0.14 250);
+  --sidebar-primary-foreground: oklch(0.14 0.02 262);
+  --sidebar-accent: oklch(0.26 0.025 264);
+  --sidebar-accent-foreground: oklch(0.96 0.005 260);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.72 0.14 250 / 60%);
+  --profit: oklch(0.82 0.17 165);
+  --profit-muted: oklch(0.82 0.17 165 / 12%);
+  --loss: oklch(0.68 0.19 15);
+  --loss-muted: oklch(0.68 0.19 15 / 12%);
+  --glass: oklch(1 0 0 / 4.5%);
+  --glass-border: oklch(1 0 0 / 8%);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply font-sans;
+    /* Fond étendu derrière les safe-areas iOS */
+    background-color: var(--background);
+  }
   body {
     @apply bg-background text-foreground;
   }
-  html {
-    @apply font-mono;
+}
+
+@layer utilities {
+  /* Tous les nombres (montants, cotes, ROI…) : mono + chiffres tabulaires,
+     l'alignement parfait des colonnes est non négociable. */
+  .num {
+    font-family: var(--font-jetbrains), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Carte glassmorphism standard */
+  .glass-card {
+    background-color: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  /* Skeleton shimmer (fond dégradé animé) */
+  .shimmer-bg {
+    background: linear-gradient(
+      100deg,
+      oklch(1 0 0 / 3%) 40%,
+      oklch(1 0 0 / 9%) 50%,
+      oklch(1 0 0 / 3%) 60%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Défilement horizontal (tableaux, carrousels) sans la barre de scroll
+     native — le contenu tronqué en bord de zone suffit à signaler qu'on
+     peut glisser/scroller, la molette/le doigt restent fonctionnels. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Respect de prefers-reduced-motion : on coupe les animations décoratives */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-fade-in-up,
+  .animate-shimmer,
+  .animate-scan-laser {
+    animation: none !important;
   }
 }

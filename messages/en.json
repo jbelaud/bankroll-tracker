@@ -1,0 +1,394 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "edit": "Edit",
+    "seeAll": "See all",
+    "createBankrollCta": "Create a bankroll",
+    "noBetsYet": "No bets yet — scan your first ticket!",
+    "comingSoon": "Coming soon.",
+    "unexpectedError": "Unexpected error.",
+    "manualEntryTitle": "Manual entry",
+    "trendUp": "trending up",
+    "trendDown": "trending down",
+    "balanceEvolutionRising": "Balance evolution, upward trend",
+    "balanceEvolutionFalling": "Balance evolution, downward trend",
+    "gainSr": "win",
+    "lossSr": "loss",
+    "goals": {
+      "title": "Monthly goals",
+      "profitLabel": "Profit: ",
+      "goalPrefix": "goal {amount}",
+      "lossLabel": "Losses this month",
+      "lossBreachedLabel": "Loss limit reached",
+      "limitPrefix": "limit −{amount}",
+      "breachedMessage": "You've reached your loss limit this month — a break might be a good idea.",
+      "profitAriaLabel": "Progress toward profit goal",
+      "lossAriaLabel": "Progress toward loss limit"
+    }
+  },
+
+  "nav": {
+    "ariaLabel": "Main navigation",
+    "home": "Home",
+    "bankrolls": "Bankrolls",
+    "scanner": "Scan",
+    "stats": "Stats",
+    "account": "Account"
+  },
+
+  "footer": {
+    "label": "Responsible gambling:"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your bankroll tracker.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "or": "or",
+      "google": "Continue with Google",
+      "noAccount": "Don't have an account yet?",
+      "signupLink": "Create an account"
+    },
+    "signup": {
+      "title": "Create an account",
+      "subtitle": "Start tracking your bankrolls.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "passwordHint": "8 characters minimum.",
+      "passwordError": "Password must be at least 8 characters long.",
+      "confirmEmailMessage": "Account created. Check your email to confirm your address before signing in.",
+      "submit": "Create my account",
+      "submitting": "Creating...",
+      "or": "or",
+      "google": "Continue with Google",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    }
+  },
+
+  "dashboard": {
+    "welcomeTitle": "Welcome to BetTrack",
+    "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
+    "hero": {
+      "ariaLabel": "Total balance",
+      "label": "Total balance",
+      "pendingBet": "{count, plural, one {# bet pending} other {# bets pending}}"
+    },
+    "kpi": {
+      "ariaLabel": "Key indicators",
+      "profit": "Profit",
+      "roi": "ROI",
+      "settled": "{count} settled",
+      "winRate": "Win rate",
+      "won": "{count} won"
+    },
+    "bankrollCards": {
+      "ariaLabel": "My bankrolls",
+      "title": "My bankrolls"
+    },
+    "recentBets": {
+      "ariaLabel": "Recent bets",
+      "title": "Recent bets"
+    }
+  },
+
+  "bankrolls": {
+    "title": "Bankrolls",
+    "newBankroll": "New bankroll",
+    "emptyState": "No bankrolls yet. Create one linked to a bookmaker to start tracking your bets.",
+    "editAriaLabel": "Edit {name}",
+    "drawer": {
+      "newTitle": "New bankroll",
+      "editTitle": "Edit bankroll",
+      "newDescription": "One bankroll per bookmaker to track your bets.",
+      "editDescription": "Update this bankroll's information.",
+      "bookmakerLabel": "Bookmaker",
+      "bookmakerPlaceholder": "Winamax, Betclic, Unibet…",
+      "nameLabel": "Bankroll name (optional)",
+      "namePlaceholder": "E.g. Main bankroll",
+      "initialLabel": "Starting capital ({currency})",
+      "initialHint": "Changing the starting capital automatically recalculates this bankroll's current balance.",
+      "submitCreate": "Create bankroll",
+      "submitEdit": "Save changes",
+      "submitting": "Saving…"
+    }
+  },
+
+  "bankrollDetail": {
+    "ariaLabel": "Bankroll detail",
+    "historyTitle": "Bet history",
+    "deleteConfirmTitle": "Delete this bankroll?",
+    "deleteConfirmWithBets": "This will also permanently delete {count, plural, one {# bet} other {# bets}} associated with this bankroll. This action is irreversible.",
+    "deleteConfirmNoBets": "This action is irreversible."
+  },
+
+  "scan": {
+    "title": "Scan a ticket",
+    "noBankroll": {
+      "title": "No bankroll yet",
+      "description": "Scanning imports your bets into a bankroll: create one first."
+    },
+    "upload": {
+      "importInto": "Import into",
+      "scanButton": "Scan a ticket",
+      "hint": "Take a photo of your ticket, the AI extracts the bets automatically.",
+      "gallery": "From gallery (multi-select)",
+      "manualEntry": "Enter a bet manually"
+    },
+    "scanning": {
+      "progress": "Analyzing {current}/{total}…",
+      "hint": "The AI is reading the ticket's bets, a few seconds per image.",
+      "altText": "Ticket being analyzed ({current} of {total})"
+    },
+    "review": {
+      "title": "Bets detected ({count})",
+      "restart": "Start over",
+      "duplicateWarning": "Bets outlined in orange: no reference on the ticket, but date/stake/odds/description match a bet you already have — check it isn't a duplicate before confirming.",
+      "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
+      "import": "{count, plural, one {Import # bet} other {Import # bets}}",
+      "importing": "Importing…",
+      "noneToImport": "No bets to import",
+      "card": {
+        "excludeAriaLabel": "Exclude bet {index}",
+        "reintegrate": "Restore",
+        "duplicateBadge": "Possible duplicate — check before importing",
+        "suggestedBadge": "Bet type not recognized — suggestion in the description",
+        "descriptionLabel": "Description",
+        "dateLabel": "Date",
+        "stakeLabel": "Stake ({currency})",
+        "oddsLabel": "Odds",
+        "resultLabel": "Result",
+        "cashoutLabel": "Cashed out amount ({currency})"
+      }
+    },
+    "error": {
+      "analysisFailed": "Analysis failed."
+    }
+  },
+
+  "scanApi": {
+    "notAuthenticated": "Not authenticated",
+    "apiKeyMissing": "Scan unavailable: API key not configured on the server.",
+    "missingImage": "Missing image.",
+    "emptyImage": "Empty image.",
+    "imageTooLarge": "Image too large (max 8 MB).",
+    "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
+    "tooManyScans": "Too many scans. Try again later.",
+    "forbiddenOrigin": "Origin not allowed."
+  },
+
+  "stats": {
+    "title": "Stats",
+    "chartsAriaLabel": "Charts",
+    "tablesAriaLabel": "Detailed tables",
+    "condensedAriaLabel": "Boosted odds, freebets and live",
+    "insights": {
+      "ariaLabel": "AI Insights",
+      "title": "AI Insights",
+      "locked": "Add at least a few settled bets to unlock AI analysis of your performance.",
+      "generate": "Generate analysis",
+      "regenerate": "Regenerate",
+      "generating": "Analyzing…",
+      "cooldownTooltip": "Available again in about {hours}h (limit to keep AI costs under control)",
+      "cooldownMessage": "Next analysis available in ~{hours}h ({cooldownHours}h limit between two generations, to keep costs under control).",
+      "errorGeneric": "Couldn't generate the analysis right now.",
+      "emptyPrompt": "Generate a personalized analysis of your performance by sport, bet type, bookmaker and odds range.",
+      "strengths": "Strengths",
+      "improvements": "Areas to improve",
+      "recommendations": "Recommendations"
+    },
+    "overview": {
+      "ariaLabel": "Overview",
+      "totalBets": "Total bets",
+      "avgOdds": "Avg. odds",
+      "avgOddsWeighted": "weighted {value}",
+      "avgStake": "Avg. stake",
+      "biggestWin": "Biggest win",
+      "biggestLoss": "Biggest loss",
+      "currentStreak": "Current streak",
+      "bestStreak": "Best streak",
+      "bestStreakSub": "wins",
+      "worstStreak": "Worst streak",
+      "worstStreakSub": "losses"
+    },
+    "tabs": {
+      "odds": "Odds",
+      "stake": "Stakes",
+      "monthly": "Monthly",
+      "results": "Results",
+      "sport": "Sport",
+      "noResults": "No bets yet."
+    },
+    "tableTabs": {
+      "sport": "Sport",
+      "type": "Bet type",
+      "bookmaker": "Bookmaker"
+    },
+    "table": {
+      "name": "Name",
+      "bets": "Bets",
+      "winRate": "Win rate",
+      "avgOdds": "Avg. odds",
+      "staked": "Staked",
+      "profit": "Profit",
+      "noData": "No data.",
+      "allSports": "All sports",
+      "sportFilterAriaLabel": "Filter bet types by sport"
+    },
+    "condensed": {
+      "boosted": "Boosted odds",
+      "freebets": "Freebets",
+      "live": "Live bets",
+      "summary": "{count, plural, one {# bet} other {# bets}} · win rate {rate}"
+    }
+  },
+
+  "history": {
+    "title": "History",
+    "filters": {
+      "allSports": "All sports",
+      "allBankrolls": "All bankrolls"
+    },
+    "emptyNoMatch": "No bets match these filters.",
+    "selection": {
+      "count": "{count, plural, one {# selected} other {# selected}}",
+      "cancelAriaLabel": "Cancel selection"
+    },
+    "item": {
+      "deleteAriaLabel": "Delete the {sport} {betType} bet",
+      "deleteLabel": "Delete",
+      "cashedOut": "cashed out {amount}",
+      "stakeAtOdds": "{stake} @ {odds}"
+    },
+    "deleteDrawer": {
+      "titleSingle": "Delete this bet?",
+      "titlePlural": "Delete {count} bets?",
+      "description": "This action is final and cannot be undone.",
+      "confirmSingle": "Delete",
+      "confirmPlural": "Delete ({count})",
+      "deleting": "Deleting…"
+    },
+    "editResult": {
+      "title": "Edit result",
+      "resultLabel": "Result",
+      "cashoutLabel": "Cashed out amount ({currency})",
+      "saving": "Saving…"
+    }
+  },
+
+  "account": {
+    "title": "Account",
+    "profileAriaLabel": "Profile",
+    "connectedAs": "Signed in as",
+    "goals": {
+      "editAriaLabel": "Edit goals",
+      "cancelAriaLabel": "Cancel",
+      "profitGoalLabel": "Monthly profit goal ({currency})",
+      "lossLimitLabel": "Monthly loss limit ({currency})",
+      "saving": "Saving…",
+      "noneSet": "No goal set for this month.",
+      "defineLink": "Set a goal"
+    },
+    "data": {
+      "title": "My data",
+      "export": "Export my data"
+    },
+    "security": {
+      "title": "Security and account"
+    },
+    "signOut": {
+      "button": "Sign out",
+      "confirmTitle": "Sign out?",
+      "confirmDescription": "You'll need to sign in again to access your bankroll tracker.",
+      "confirm": "Sign out"
+    },
+    "language": {
+      "title": "Language",
+      "fr": "Français",
+      "en": "English"
+    },
+    "currency": {
+      "title": "Currency",
+      "EUR": "Euro",
+      "USD": "US Dollar",
+      "GBP": "British Pound"
+    }
+  },
+
+  "sports": {
+    "Football": "Football",
+    "Cyclisme": "Cycling",
+    "Tennis": "Tennis",
+    "Basketball": "Basketball",
+    "Rugby": "Rugby",
+    "Autre sport": "Other sport"
+  },
+
+  "betTypes": {
+    "Résultat du match": "Match Result",
+    "Victoire finale du tournoi": "Outright Winner",
+    "Vainqueur de groupe": "Group Winner",
+    "Double chance": "Double Chance",
+    "Buteur": "Anytime Goalscorer",
+    "Double buteur": "To Score 2+ Goals",
+    "Passeur décisif": "Anytime Assist",
+    "Double passeur décisif": "To Provide 2+ Assists",
+    "Buteur ou passeur": "Goal or Assist",
+    "Top buteur du tournoi": "Top Goalscorer",
+    "But sur penalty": "Penalty Goal",
+    "Minute du but": "Time of Goal",
+    "Type de but": "Goal Type",
+    "Les 2 équipes marquent": "Both Teams To Score",
+    "Nombre de tirs cadrés": "Shots on Target",
+    "Écart de buts": "Winning Margin",
+    "Mi-temps/Fin de match": "Half-Time/Full-Time",
+    "Première équipe à marquer": "First Team To Score",
+    "Over/Under buts": "Over/Under Goals",
+    "Qualification": "To Qualify",
+    "Handicap": "Handicap",
+    "Score exact": "Correct Score",
+    "Mymatch": "Mymatch",
+    "Combiné": "Accumulator",
+    "Top 1": "Top 1",
+    "Top 3": "Top 3",
+    "Top 10": "Top 10",
+    "Vainqueur d'étape": "Stage Winner",
+    "Classement général": "General Classification",
+    "Vainqueur du match": "Match Winner",
+    "Total de jeux": "Total Games",
+    "Score exact (sets)": "Correct Score (Sets)",
+    "Vainqueur du set": "Set Winner",
+    "Vainqueur": "Winner",
+    "Total points": "Total Points",
+    "Autre": "Other"
+  },
+
+  "errors": {
+    "bankrollNotFound": "Bankroll not found.",
+    "bookmakerRequired": "Bookmaker is required.",
+    "initialCapitalPositive": "Starting capital must be a positive number.",
+    "stakePositive": "Stake must be a positive number.",
+    "oddsPositive": "Odds must be a positive number.",
+    "invalidResult": "Invalid result.",
+    "betNotFound": "Bet not found.",
+    "cashoutAmountPositive": "Cashed out amount must be a positive number.",
+    "profitGoalPositive": "Profit goal must be a positive number.",
+    "lossLimitPositive": "Loss limit must be a positive number.",
+    "noBetsToImport": "No bets to import.",
+    "invalidCurrency": "Invalid currency."
+  },
+
+  "results": {
+    "EN_ATTENTE": "Pending",
+    "GAGNE": "Won",
+    "PERDU": "Lost",
+    "REMBOURSE": "Void",
+    "CASHE": "Cashed Out"
+  }
+}

@@ -1,26 +1,26 @@
 "use client";
 
 import { useActionState } from "react";
-import Link from "next/link";
-import { signIn, signInWithGoogle } from "@/app/auth/actions";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { signUp, signInWithGoogle } from "@/app/auth/actions";
 
-export default function LoginPage() {
-  const [state, action, pending] = useActionState(signIn, undefined);
+export default function SignupPage() {
+  const [state, action, pending] = useActionState(signUp, undefined);
+  const t = useTranslations("auth.signup");
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-xl p-6">
         <h1 className="text-lg font-semibold text-zinc-100 mb-1">
-          Connexion
+          {t("title")}
         </h1>
-        <p className="text-sm text-zinc-500 mb-5">
-          Accède à ton bankroll tracker.
-        </p>
+        <p className="text-sm text-zinc-500 mb-5">{t("subtitle")}</p>
 
         <form action={action} className="space-y-3">
           <div>
             <label className="block text-xs uppercase tracking-wide text-zinc-500 mb-1.5 font-medium">
-              Email
+              {t("emailLabel")}
             </label>
             <input
               type="email"
@@ -31,18 +31,23 @@ export default function LoginPage() {
           </div>
           <div>
             <label className="block text-xs uppercase tracking-wide text-zinc-500 mb-1.5 font-medium">
-              Mot de passe
+              {t("passwordLabel")}
             </label>
             <input
               type="password"
               name="password"
               required
+              minLength={8}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
             />
+            <p className="mt-1 text-xs text-zinc-600">{t("passwordHint")}</p>
           </div>
 
           {state?.error && (
             <p className="text-xs text-rose-400">{state.error}</p>
+          )}
+          {state?.message && (
+            <p className="text-xs text-emerald-400">{state.message}</p>
           )}
 
           <button
@@ -50,13 +55,13 @@ export default function LoginPage() {
             disabled={pending}
             className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
-            {pending ? "Connexion..." : "Se connecter"}
+            {pending ? t("submitting") : t("submit")}
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-4">
           <div className="h-px bg-zinc-800 flex-1" />
-          <span className="text-xs text-zinc-600">ou</span>
+          <span className="text-xs text-zinc-600">{t("or")}</span>
           <div className="h-px bg-zinc-800 flex-1" />
         </div>
 
@@ -65,17 +70,17 @@ export default function LoginPage() {
             type="submit"
             className="w-full bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium text-sm py-2.5 rounded-lg transition-colors"
           >
-            Continuer avec Google
+            {t("google")}
           </button>
         </form>
 
         <p className="text-sm text-zinc-500 mt-5 text-center">
-          Pas encore de compte ?{" "}
+          {t("hasAccount")}{" "}
           <Link
-            href="/signup"
+            href="/login"
             className="text-emerald-400 hover:text-emerald-300 font-medium"
           >
-            Créer un compte
+            {t("loginLink")}
           </Link>
         </p>
       </div>
