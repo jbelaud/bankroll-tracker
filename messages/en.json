@@ -200,7 +200,7 @@
     "emptyImage": "Empty image.",
     "imageTooLarge": "Image too large (max 8 MB).",
     "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
-    "tooManyScans": "Too many scans. Try again later.",
+    "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Upgrade to Premium to scan more, or come back next month.",
     "forbiddenOrigin": "Origin not allowed."
   },

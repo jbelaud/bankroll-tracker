@@ -200,7 +200,7 @@
     "emptyImage": "Image vide.",
     "imageTooLarge": "Image trop volumineuse (max 8 Mo).",
     "analysisFailed": "L'analyse du ticket a échoué. Réessaie ou vérifie la capture.",
-    "tooManyScans": "Trop de scans effectués. Réessaie plus tard.",
+    "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
     "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Passe à Premium pour scanner davantage, ou reviens le mois prochain.",
     "forbiddenOrigin": "Origine non autorisée."
   },

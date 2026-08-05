@@ -1,3 +1,4 @@
+import type { Plan } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 // Fenêtre glissante par utilisateur, stockée en base (fiable en serverless,
@@ -5,10 +6,16 @@ import { prisma } from "@/lib/prisma";
 // Chaque appel /api/scan déclenche un appel payant à Claude — ce garde-fou
 // protège contre l'abus/le spam, pas contre un usage normal.
 const WINDOW_MS = 60 * 60 * 1000; // 1h
-const MAX_SCANS_PER_WINDOW = 15;
+export const HOURLY_SCAN_LIMITS: Record<Plan, number> = {
+  FREE: 15,
+  // Un import d'historique représente facilement plusieurs centaines d'images.
+  // À ~3 paris/image, 120 analyses permettent à un Premium d'importer ~360 paris/h.
+  PREMIUM: 120,
+};
 
 export async function checkScanRateLimit(
-  userId: string
+  userId: string,
+  plan: Plan
 ): Promise<{ allowed: true } | { allowed: false; retryAfterSeconds: number }> {
   return prisma.$transaction(async (tx) => {
     const user = await tx.user.findUniqueOrThrow({
@@ -27,7 +34,7 @@ export async function checkScanRateLimit(
       return { allowed: true };
     }
 
-    if (user.scanCount >= MAX_SCANS_PER_WINDOW) {
+    if (user.scanCount >= HOURLY_SCAN_LIMITS[plan]) {
       return {
         allowed: false,
         retryAfterSeconds: Math.ceil((WINDOW_MS - elapsed) / 1000),

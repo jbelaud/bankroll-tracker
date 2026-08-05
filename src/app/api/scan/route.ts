@@ -99,18 +99,22 @@ export async function POST(request: NextRequest) {
   }
   const base64 = Buffer.from(bytes).toString("base64");
 
-  const rateLimit = await checkScanRateLimit(user.id);
-  if (!rateLimit.allowed) {
-    return NextResponse.json(
-      { error: t("tooManyScans") },
-      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
-    );
-  }
-
   const dbUser = await prisma.user.findUniqueOrThrow({
     where: { id: user.id },
     select: { plan: true },
   });
+
+  const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      {
+        error: t("tooManyScans", {
+          minutes: Math.max(1, Math.ceil(rateLimit.retryAfterSeconds / 60)),
+        }),
+      },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+    );
+  }
   const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan);
   if (!monthlyQuota.allowed) {
     return NextResponse.json(

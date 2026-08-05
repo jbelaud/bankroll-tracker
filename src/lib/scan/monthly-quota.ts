@@ -9,7 +9,9 @@ const WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
 export const MONTHLY_LIMITS: Record<Plan, number> = {
   FREE: 5,
-  PREMIUM: 100,
+  // ~1 500 paris à raison de 3 paris par capture : compatible avec un
+  // import d'historique complet dès l'abonnement, sans être illimité.
+  PREMIUM: 500,
 };
 
 export async function checkMonthlyQuota(
