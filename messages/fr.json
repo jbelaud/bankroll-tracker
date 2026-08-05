@@ -190,6 +190,8 @@
   },
 
   "scanApi": {
+    "noBetsFound": "Aucun ticket de pari n'a été détecté dans cette image. Ton quota n'a pas été consommé.",
+    "unsupportedImage": "Format d'image non pris en charge. Envoie une image PNG, JPEG, GIF ou WebP.",
     "notAuthenticated": "Non authentifié",
     "apiKeyMissing": "Scan indisponible : clé API non configurée côté serveur.",
     "missingImage": "Image manquante.",

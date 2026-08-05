@@ -49,6 +49,13 @@ export async function checkMonthlyQuota(
   });
 }
 
+export async function releaseMonthlyQuota(userId: string): Promise<void> {
+  await prisma.user.updateMany({
+    where: { id: userId, monthlyScanCount: { gt: 0 } },
+    data: { monthlyScanCount: { decrement: 1 } },
+  });
+}
+
 // Lecture seule (aucune mutation) — pour affichage uniquement (ex. carte de
 // quota du Dashboard). Une fenêtre expirée compte comme "0 utilisé" ici sans
 // réinitialiser la base : seule checkMonthlyQuota (appelée au moment d'un

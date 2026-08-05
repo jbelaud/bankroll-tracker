@@ -190,6 +190,8 @@
   },
 
   "scanApi": {
+    "noBetsFound": "No betting ticket was detected in this image. Your quota was not used.",
+    "unsupportedImage": "Unsupported image format. Send a PNG, JPEG, GIF, or WebP image.",
     "notAuthenticated": "Not authenticated",
     "apiKeyMissing": "Scan unavailable: API key not configured on the server.",
     "missingImage": "Missing image.",

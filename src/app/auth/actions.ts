@@ -2,7 +2,8 @@
 
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { redirect } from "@/i18n/navigation";
+import { redirect as redirectToLocalized } from "@/i18n/navigation";
+import { redirect } from "next/navigation";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,6 +17,12 @@ async function getOrigin() {
   const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("host");
   return `${proto}://${host}`;
+}
+
+function getAuthCallbackUrl(origin: string, locale: string) {
+  const callbackUrl = new URL("/auth/callback", origin);
+  callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
+  return callbackUrl.toString();
 }
 
 export async function signIn(
@@ -36,7 +43,7 @@ export async function signIn(
     return { error: error.message };
   }
 
-  redirect({ href: "/dashboard", locale });
+  redirectToLocalized({ href: "/dashboard", locale });
 }
 
 export async function signUp(
@@ -57,7 +64,7 @@ export async function signUp(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
+    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale) },
   });
 
   if (error) {
@@ -68,7 +75,7 @@ export async function signUp(
     return { message: t("confirmEmailMessage") };
   }
 
-  redirect({ href: "/dashboard", locale });
+  redirectToLocalized({ href: "/dashboard", locale });
 }
 
 export async function signInWithGoogle() {
@@ -78,23 +85,24 @@ export async function signInWithGoogle() {
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${origin}/auth/callback` },
+    options: { redirectTo: getAuthCallbackUrl(origin, locale) },
   });
 
   const url = data?.url;
   if (error || !url) {
-    redirect({
+    redirectToLocalized({
       href: { pathname: "/login", query: { error: error?.message ?? "" } },
       locale,
     });
     return;
   }
 
-  redirect({ href: url, locale });
+  // URL fournie par Supabase/Google : elle est externe au routeur next-intl.
+  redirect(url);
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect({ href: "/login", locale: await getLocale() });
+  redirectToLocalized({ href: "/login", locale: await getLocale() });
 }

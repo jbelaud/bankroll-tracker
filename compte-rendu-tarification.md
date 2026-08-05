@@ -2,6 +2,8 @@
 
 *Document de synthèse — juillet 2026*
 
+> **État de l'implémentation (août 2026).** Le MVP applique actuellement 5 scans/mois pour le plan gratuit et 100 scans/mois pour Premium, avec un seul prix Stripe configuré. Les paliers 10/200 et l'évolution de prix décrits plus bas sont une cible commerciale à confirmer avant d'être exposée aux utilisateurs.
+
 ---
 
 ## 1. Résumé
@@ -69,7 +71,7 @@ Le seuil de franchise en base de TVA pour une SASU de prestations de services es
 
 **Note** : avec le plafond de 200 screenshots/mois retenu (année 2+), le scénario "extrême" à 15 000 screenshots/an ci-dessus n'est en réalité plus atteignable en un an sur l'offre payante (max théorique 2 400/an) — il faudrait plus de 6 ans d'utilisation au plafond maximum pour l'atteindre. Le tableau reste utile pour comprendre l'ordre de grandeur, mais le plafond rend ce cas impossible à réaliser d'un coup.
 
-### Coût de l'Insights IA (Sonnet 4.6, séparé du scan)
+### Coût de l'Insights IA (Claude Haiku 4.5, séparé du scan)
 - ~0,019 €/génération (résumé statistique + réponse structurée).
 - Protégé par un **cooldown de 12h entre deux générations** par utilisateur, et le résultat est mis en cache/persisté plutôt que régénéré à chaque visite — ce qui borne le coût même en cas d'usage intensif de cette fonctionnalité.
 
@@ -155,5 +157,5 @@ La marge par abonné est confortable, mais elle ne dit rien du **nombre d'abonn�
 - Authentification (email + Google OAuth) : fonctionnelle et vérifiée.
 - CRUD basique (bankrolls, paris) : en cours.
 - UI/UX mobile-first : en cours (écrans Dashboard, Bankrolls, Scan, Stats, Compte, Historique en cours de génération).
-- Route API sécurisée pour l'extraction IA (clé Anthropic côté serveur) : à faire — prochaine étape sensible.
+- Route API sécurisée pour l'extraction IA (clé Anthropic côté serveur) : réalisée, avec contrôle d'origine, limites de taille/type, quotas et rate limiting.
 - Stripe : pas encore commencé, volontairement repoussé après validation utilisateur.

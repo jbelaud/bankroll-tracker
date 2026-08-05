@@ -7,7 +7,7 @@ import { labelToBetResult } from "@/lib/bet-result";
 import { buildExtractionPrompt } from "@/lib/scan/extraction-prompt";
 import { looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
-import { checkMonthlyQuota } from "@/lib/scan/monthly-quota";
+import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import type { ParsedBet } from "@/lib/scan/types";
 
@@ -73,6 +73,32 @@ export async function POST(request: NextRequest) {
   }
 
   // 2. Rate limit : chaque appel coûte réellement de l'argent (API Claude).
+  // 2bis. Quota mensuel lié au plan (5 gratuit / 100 Premium) — distinct du
+  // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
+  // du plan.
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: t("apiKeyMissing") }, { status: 503 });
+  }
+
+  // 3. Récupération de l'image (une par requête — le client boucle pour la progression).
+  const formData = await request.formData();
+  const image = formData.get("image");
+  if (!(image instanceof File)) {
+    return NextResponse.json({ error: t("missingImage") }, { status: 400 });
+  }
+  if (!ALLOWED_MEDIA.includes(image.type as Media)) {
+    return NextResponse.json({ error: t("unsupportedImage") }, { status: 415 });
+  }
+  const mediaType = image.type as Media;
+  const bytes = await image.arrayBuffer();
+  if (bytes.byteLength === 0) {
+    return NextResponse.json({ error: t("emptyImage") }, { status: 400 });
+  }
+  if (bytes.byteLength > MAX_IMAGE_BYTES) {
+    return NextResponse.json({ error: t("imageTooLarge") }, { status: 413 });
+  }
+  const base64 = Buffer.from(bytes).toString("base64");
+
   const rateLimit = await checkScanRateLimit(user.id);
   if (!rateLimit.allowed) {
     return NextResponse.json(
@@ -81,9 +107,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 2bis. Quota mensuel lié au plan (5 gratuit / 100 Premium) — distinct du
-  // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
-  // du plan.
   const dbUser = await prisma.user.findUniqueOrThrow({
     where: { id: user.id },
     select: { plan: true },
@@ -95,28 +118,12 @@ export async function POST(request: NextRequest) {
       { status: 429, headers: { "Retry-After": String(monthlyQuota.retryAfterSeconds) } }
     );
   }
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ error: t("apiKeyMissing") }, { status: 503 });
-  }
-
-  // 3. Récupération de l'image (une par requête — le client boucle pour la progression).
-  const formData = await request.formData();
-  const image = formData.get("image");
-  if (!(image instanceof File)) {
-    return NextResponse.json({ error: t("missingImage") }, { status: 400 });
-  }
-  const mediaType: Media = ALLOWED_MEDIA.includes(image.type as Media)
-    ? (image.type as Media)
-    : "image/png";
-  const bytes = await image.arrayBuffer();
-  if (bytes.byteLength === 0) {
-    return NextResponse.json({ error: t("emptyImage") }, { status: 400 });
-  }
-  if (bytes.byteLength > MAX_IMAGE_BYTES) {
-    return NextResponse.json({ error: t("imageTooLarge") }, { status: 413 });
-  }
-  const base64 = Buffer.from(bytes).toString("base64");
+  let quotaReserved = true;
+  const releaseQuota = async () => {
+    if (!quotaReserved) return;
+    quotaReserved = false;
+    await releaseMonthlyQuota(user.id);
+  };
 
   // 4. Appel Claude Vision (SDK officiel, clé serveur uniquement).
   const anthropic = new Anthropic();
@@ -142,8 +149,14 @@ export async function POST(request: NextRequest) {
       .join("\n");
     rawBets = parseBetsArray(text);
   } catch (e) {
+    await releaseQuota();
     console.error("[scan] extraction échouée", e);
     return NextResponse.json({ error: t("analysisFailed") }, { status: 502 });
+  }
+
+  if (rawBets.length === 0) {
+    await releaseQuota();
+    return NextResponse.json({ error: t("noBetsFound") }, { status: 422 });
   }
 
   // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
@@ -185,5 +198,6 @@ export async function POST(request: NextRequest) {
     return bet;
   });
 
+  quotaReserved = false;
   return NextResponse.json({ bets });
 }

@@ -2,11 +2,17 @@
   "name": "bankroll-tracker",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.18.0 <23"
+  },
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
@@ -38,7 +44,8 @@
     "eslint-config-next": "16.2.10",
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

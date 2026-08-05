@@ -10,8 +10,11 @@
 // littéral connu à la compilation — next-intl type `t()` sur l'union stricte
 // des clés du namespace, incompatible par nature avec une recherche dynamique.
 export function translateTaxonomy(
-  t: { (key: string): string; has(key: string): boolean } | any,
+  t: unknown,
   raw: string
 ): string {
-  return t.has(raw) ? t(raw) : raw;
+  // next-intl restreint volontairement la clé au namespace connu, alors que
+  // cette valeur vient de la base ou de l'IA. L'assertion reste confinée ici.
+  const translator = t as { (key: string): string; has(key: string): boolean };
+  return translator.has(raw) ? translator(raw) : raw;
 }
