@@ -208,10 +208,10 @@ export function HistoryBetItem({
             )}
           </div>
           {bet.description && (
-            <span className="truncate text-xs text-muted-foreground">{bet.description}</span>
+            <span className="break-words text-xs text-muted-foreground">{bet.description}</span>
           )}
           {bet.eventResult && (
-            <span className="truncate text-xs text-muted-foreground">{bet.eventResult}</span>
+            <span className="break-words text-xs text-muted-foreground">{bet.eventResult}</span>
           )}
           <span className="text-xs text-muted-foreground">
             {fmtDateWithYear(bet.date, locale)}
