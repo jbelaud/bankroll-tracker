@@ -36,11 +36,34 @@ function Reveal({
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [bankrolls, bets, dbUser] = await Promise.all([
-    listBankrolls(),
-    listAllBets(),
-    prisma.user.findUnique({ where: { id: user.id } }),
-  ]);
+  let bankrolls;
+  let bets;
+  let dbUser;
+  try {
+    [bankrolls, bets, dbUser] = await Promise.all([
+      listBankrolls(),
+      listAllBets(),
+      prisma.user.findUnique({ where: { id: user.id } }),
+    ]);
+  } catch (error) {
+    const databaseUrl = process.env.DATABASE_URL;
+    const databaseHost = databaseUrl
+      ? (() => {
+          try {
+            const url = new URL(databaseUrl);
+            return `${url.hostname}:${url.port || "5432"}`;
+          } catch {
+            return "invalid";
+          }
+        })()
+      : "missing";
+    console.error("[dashboard] database load failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message : String(error),
+      databaseHost,
+    });
+    throw error;
+  }
   const plan = dbUser?.plan ?? "FREE";
   const quota = await getMonthlyQuotaStatus(user.id, plan);
 
