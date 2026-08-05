@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 
@@ -27,11 +27,34 @@ function detectLocale(pathname: string): string {
 }
 
 export async function proxy(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const isDev = process.env.NODE_ENV !== "production";
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://*.supabase.co",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    isDev ? "" : "upgrade-insecure-requests",
+  ]
+    .filter(Boolean)
+    .join("; ");
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+  request = new NextRequest(request, { headers: requestHeaders });
+
   // next-intl d'abord : résout/ajoute le préfixe de locale. Une redirection
   // ici (préfixe manquant ou à corriger) est renvoyée telle quelle — l'auth
   // sera vérifiée au prochain passage, une fois l'URL correctement préfixée.
   const response = handleI18nRouting(request);
   if (response.headers.get("location")) {
+    response.headers.set("Content-Security-Policy", csp);
     return response;
   }
 
@@ -71,13 +94,18 @@ export async function proxy(request: NextRequest) {
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
   if (isProtectedRoute && !user) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    const redirectResponse = NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    redirectResponse.headers.set("Content-Security-Policy", csp);
+    return redirectResponse;
   }
 
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    const redirectResponse = NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    redirectResponse.headers.set("Content-Security-Policy", csp);
+    return redirectResponse;
   }
 
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 
