@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
@@ -12,6 +13,7 @@ import { SignOutButton } from "@/components/account/sign-out-button";
 import { LanguageSwitcher } from "@/components/account/language-switcher";
 import { CurrencySwitcher } from "@/components/account/currency-switcher";
 import { PlanCard } from "@/components/account/plan-card";
+import { isAdminEmail } from "@/lib/admin";
 
 export default async function AccountPage({
   params,
@@ -63,6 +65,15 @@ export default async function AccountPage({
 
       <LanguageSwitcher />
       <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />
+
+      {isAdminEmail(user.email) && (
+        <Link
+          href="/admin"
+          className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary"
+        >
+          {t("adminLink")}
+        </Link>
+      )}
 
       <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
         <h2 className="text-sm font-semibold">{t("data.title")}</h2>

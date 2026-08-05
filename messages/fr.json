@@ -402,6 +402,22 @@
     "Autre": "Autre"
   },
 
+  "admin": {
+    "title": "Administration",
+    "description": "Suivi des utilisateurs et du coût réel des analyses IA.",
+    "users": "Utilisateurs",
+    "premiumUsers": "{count} Premium",
+    "totalScans": "Analyses IA",
+    "last30Days": "{count} sur 30 jours",
+    "totalCost": "Coût API total",
+    "last30Cost": "{amount} sur 30 jours",
+    "tokens": "Tokens consommés",
+    "tokensDetail": "{input} entrée · {output} sortie",
+    "recentScans": "Dernières analyses",
+    "noData": "Aucune analyse mesurée pour le moment.",
+    "tokensShort": "tokens"
+  },
+
   "errors": {
     "bankrollNotFound": "Bankroll introuvable.",
     "bankrollLimitReached": "Limite de 2 bankrolls atteinte en gratuit. Passe à Premium pour des bankrolls illimitées.",

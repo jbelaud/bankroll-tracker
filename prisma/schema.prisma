@@ -58,6 +58,7 @@ model User {
 
   bankrolls Bankroll[]
   insight   Insight?
+  scanUsages ScanUsage[]
 
   @@map("users")
 }
@@ -141,6 +142,27 @@ model Bet {
   @@index([bankrollId])
   @@index([ticketRef])
   @@map("bets")
+}
+
+// ------------------------------------------------------------
+// Consommation Anthropic par analyse d'image
+// ------------------------------------------------------------
+// Les coûts sont figés au moment de l'appel : le tableau de bord admin reste
+// donc exact même si le tarif de Haiku change plus tard.
+model ScanUsage {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  model        String
+  inputTokens  Int
+  outputTokens Int
+  costUsd      Float
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@map("scan_usages")
 }
 
 // ------------------------------------------------------------

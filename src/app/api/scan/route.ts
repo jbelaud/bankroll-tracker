@@ -9,6 +9,7 @@ import { looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
+import { calculateScanCostUsd, SCAN_MODEL } from "@/lib/scan/cost";
 import type { ParsedBet } from "@/lib/scan/types";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
   try {
     const response = await anthropic.messages.create({
       // Haiku 4.5 ne supporte ni le thinking adaptatif ni le paramètre effort.
-      model: "claude-haiku-4-5",
+      model: SCAN_MODEL,
       max_tokens: 8192,
       messages: [
         {
@@ -152,6 +153,25 @@ export async function POST(request: NextRequest) {
       .map((b) => b.text)
       .join("\n");
     rawBets = parseBetsArray(text);
+
+    // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
+    // L'échec de la télémétrie ne doit jamais empêcher l'utilisateur de scanner.
+    try {
+      await prisma.scanUsage.create({
+        data: {
+          userId: user.id,
+          model: SCAN_MODEL,
+          inputTokens: response.usage.input_tokens,
+          outputTokens: response.usage.output_tokens,
+          costUsd: calculateScanCostUsd(
+            response.usage.input_tokens,
+            response.usage.output_tokens
+          ),
+        },
+      });
+    } catch (usageError) {
+      console.error("[scan] impossible d'enregistrer la consommation", usageError);
+    }
   } catch (e) {
     await releaseQuota();
     console.error("[scan] extraction échouée", e);

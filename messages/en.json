@@ -402,6 +402,22 @@
     "Autre": "Other"
   },
 
+  "admin": {
+    "title": "Administration",
+    "description": "Track users and the real cost of AI scans.",
+    "users": "Users",
+    "premiumUsers": "{count} Premium",
+    "totalScans": "AI scans",
+    "last30Days": "{count} in the last 30 days",
+    "totalCost": "Total API cost",
+    "last30Cost": "{amount} in the last 30 days",
+    "tokens": "Tokens used",
+    "tokensDetail": "{input} input · {output} output",
+    "recentScans": "Recent scans",
+    "noData": "No scan usage recorded yet.",
+    "tokensShort": "tokens"
+  },
+
   "errors": {
     "bankrollNotFound": "Bankroll not found.",
     "bankrollLimitReached": "Free plan limit of 2 bankrolls reached. Upgrade to Premium for unlimited bankrolls.",
