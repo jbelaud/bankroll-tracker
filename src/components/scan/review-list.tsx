@@ -98,8 +98,8 @@ export function ReviewList({
         </p>
       )}
 
-      {/* La nav centrale dépasse au-dessus de sa barre : on réserve aussi cet espace. */}
-      <div className="fixed inset-x-0 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4">
+      {/* Zone nav + bouton Scan saillant : la confirmation doit rester entièrement au-dessus. */}
+      <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4">
         <Button
           onClick={() => onConfirm(kept)}
           disabled={kept.length === 0 || importing}
