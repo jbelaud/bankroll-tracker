@@ -182,6 +182,7 @@ export async function POST(request: NextRequest) {
       sport: String(r.sport ?? "Autre sport"),
       betType: String(r.betType ?? "Autre"),
       description: String(r.description ?? ""),
+      eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
       stake: num(r.stake),
       odds: num(r.odds),
       boosted,

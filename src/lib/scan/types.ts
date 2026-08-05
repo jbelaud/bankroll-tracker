@@ -13,6 +13,7 @@ export type ParsedBet = {
   sport: string;
   betType: string;
   description: string;
+  eventResult: string | null;
   stake: number;
   odds: number;
   boosted: boolean;

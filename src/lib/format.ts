@@ -45,6 +45,14 @@ export function fmtDate(d: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit" }).format(d);
 }
 
+export function fmtDateWithYear(d: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(d);
+}
+
 // Cote (nombre décimal simple, pas une devise) — même logique de ponctuation.
 export function fmtOdds(n: number, locale: string): string {
   return new Intl.NumberFormat(locale, {

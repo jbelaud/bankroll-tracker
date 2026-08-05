@@ -55,7 +55,8 @@ export async function createBet(
   result: BetResult,
   cashOutAmount: number | null,
   ticketRef: string | null,
-  date: Date
+  date: Date,
+  eventResult: string | null = null
 ) {
   const user = await requireUser();
   await getOwnedBankroll(bankrollId, user.id);
@@ -76,6 +77,7 @@ export async function createBet(
       sport,
       betType,
       description: description.trim() || null,
+      eventResult: eventResult?.trim() || null,
       stake,
       odds,
       boosted,

@@ -14,7 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
-import { fmtDate, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
+import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import type { HistoryBetItemData } from "./history-list";
 
@@ -210,8 +210,11 @@ export function HistoryBetItem({
           {bet.description && (
             <span className="truncate text-xs text-muted-foreground">{bet.description}</span>
           )}
+          {bet.eventResult && (
+            <span className="truncate text-xs text-muted-foreground">{bet.eventResult}</span>
+          )}
           <span className="text-xs text-muted-foreground">
-            {fmtDate(bet.date, locale)}
+            {fmtDateWithYear(bet.date, locale)}
             {showBankrollName && ` · ${bet.bankrollName}`}
           </span>
         </div>

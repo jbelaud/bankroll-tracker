@@ -18,6 +18,7 @@ export default async function HistoryPage() {
     sport: b.sport,
     betType: b.betType,
     description: b.description,
+    eventResult: b.eventResult,
     stake: b.stake,
     odds: b.odds,
     result: b.result,

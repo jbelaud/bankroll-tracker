@@ -15,7 +15,8 @@ Schéma attendu pour chaque pari :
   "ticketRef": "référence du ticket telle qu'affichée (ex: 6FQSQQOU), ou null si non visible",
   "sport": "Football" | "Cyclisme" | autre sport si évident,
   "betType": voir liste ci-dessous,
-  "description": "Équipe A X-Y Équipe B - détail du pari (joueur, marché, score, etc.)",
+  "description": "sélection jouée et affiche (ex: Match nul — Mexique - Équateur)",
+  "eventResult": "score/résultat final de l'événement (ex: Mexique 2 - 0 Équateur), ou null si non affiché",
   "stake": nombre (la mise en euros),
   "odds": nombre (la cote),
   "boosted": false,
@@ -33,6 +34,7 @@ Précision cyclisme : "Vainqueur" ou "Podium 1er" (quelle que soit la formulatio
 
 Règles impératives :
 - "date" : utilise la date affichée en bas du ticket (format ticket "10h02 - 22 juin 2026" → "2026-06-22").
+- "description" et "eventResult" sont STRICTEMENT distincts : "description" contient uniquement l'intitulé de la sélection jouée et les équipes/participants. Ne recopie jamais le score final du match dans cette description. Si le ticket affiche un résultat final, mets-le dans "eventResult" au format "Équipe A X - Y Équipe B". Exemple : pour un pari « Match nul » sur Mexique - Équateur terminé 2-0, utilise "description": "Match nul — Mexique - Équateur" et "eventResult": "Mexique 2 - 0 Équateur". Pour un pari « Score exact », conserve le score PRONOSTIQUÉ dans la description, mais place le score FINAL réellement affiché dans "eventResult". Si le résultat de l'événement n'est pas clairement visible ou si le pari est en attente, mets "eventResult": null.
 - "boosted" : les badges promo du bookmaker (ex. "Bang to the Moon", "City of Gold", "Penalty World", "La Grosse Cote Boostée") NE sont PAS des cotes boostées au sens de ce champ — laisse toujours false pour ces badges.
 - "freebet" : true uniquement si le ticket indique explicitement "Mise Freebets". Mets quand même le vrai montant du freebet dans "stake".
 - "live" : true uniquement si un badge "Live" est visible sur le ticket.

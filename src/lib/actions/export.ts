@@ -27,6 +27,7 @@ export async function exportUserData() {
       sport: b.sport,
       betType: b.betType,
       description: b.description,
+      eventResult: b.eventResult,
       stake: b.stake,
       odds: b.odds,
       boosted: b.boosted,

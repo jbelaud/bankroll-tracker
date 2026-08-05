@@ -126,6 +126,19 @@ export function ReviewBetCard({
         />
       </div>
 
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={uid("event-result")} className="text-xs">
+          {t("eventResultLabel")}
+        </Label>
+        <Input
+          id={uid("event-result")}
+          value={bet.eventResult ?? ""}
+          placeholder={t("eventResultPlaceholder")}
+          onChange={(e) => onPatch({ eventResult: e.target.value.trim() || null })}
+          className="min-h-touch rounded-lg px-3 text-sm"
+        />
+      </div>
+
       <div className="grid grid-cols-3 gap-2">
         <div className="col-span-3 flex flex-col gap-1">
           <Label htmlFor={uid("date")} className="text-xs">

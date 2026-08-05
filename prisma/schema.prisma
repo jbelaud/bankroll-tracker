@@ -122,6 +122,7 @@ model Bet {
   sport      String
   betType    String
   description String?
+  eventResult String? // score/résultat de l'événement, distinct de la sélection jouée
 
   stake      Float
   odds       Float

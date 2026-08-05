@@ -166,6 +166,8 @@
         "duplicateBadge": "Possible duplicate — check before importing",
         "suggestedBadge": "Bet type not recognized — suggestion in the description",
         "descriptionLabel": "Description",
+        "eventResultLabel": "Match result",
+        "eventResultPlaceholder": "E.g. Mexico 2 - 0 Ecuador",
         "dateLabel": "Date",
         "stakeLabel": "Stake ({currency})",
         "oddsLabel": "Odds",

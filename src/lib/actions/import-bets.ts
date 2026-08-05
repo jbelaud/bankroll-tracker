@@ -40,7 +40,8 @@ export async function importBets(
         bet.result,
         bet.cashOutAmount,
         bet.ticketRef,
-        new Date(bet.date)
+        new Date(bet.date),
+        bet.eventResult
       );
     }
   } catch (e) {

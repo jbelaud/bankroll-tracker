@@ -21,6 +21,7 @@ export type HistoryBetItemData = {
   sport: string;
   betType: string;
   description: string | null;
+  eventResult: string | null;
   stake: number;
   odds: number;
   result: BetResult;

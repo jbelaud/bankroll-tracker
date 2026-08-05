@@ -42,6 +42,7 @@ export default async function BankrollDetailPage({
     sport: b.sport,
     betType: b.betType,
     description: b.description,
+    eventResult: b.eventResult,
     stake: b.stake,
     odds: b.odds,
     result: b.result,

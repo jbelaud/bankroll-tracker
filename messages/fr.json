@@ -166,6 +166,8 @@
         "duplicateBadge": "Doublon potentiel — vérifie avant d'importer",
         "suggestedBadge": "Type de pari non reconnu — suggestion dans la description",
         "descriptionLabel": "Description",
+        "eventResultLabel": "Résultat du match",
+        "eventResultPlaceholder": "Ex. Mexique 2 - 0 Équateur",
         "dateLabel": "Date",
         "stakeLabel": "Mise ({currency})",
         "oddsLabel": "Cote",
