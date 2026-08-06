@@ -1,15 +1,18 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { labelToBetResult } from "@/lib/bet-result";
-import { buildExtractionPrompt } from "@/lib/scan/extraction-prompt";
 import { looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
-import { calculateScanCostUsd, SCAN_MODEL } from "@/lib/scan/cost";
+import { calculateScanCostUsd } from "@/lib/scan/cost";
+import {
+  analyzeTicketImage,
+  hasConfiguredScanProvider,
+  type ScanMediaType,
+} from "@/lib/scan/ai-provider";
 import type { ParsedBet } from "@/lib/scan/types";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
@@ -77,7 +80,7 @@ export async function POST(request: NextRequest) {
   // 2bis. Quota mensuel lié au plan — distinct du
   // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
   // du plan.
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!hasConfiguredScanProvider()) {
     return NextResponse.json({ error: t("apiKeyMissing") }, { status: 503 });
   }
 
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
   if (!ALLOWED_MEDIA.includes(image.type as Media)) {
     return NextResponse.json({ error: t("unsupportedImage") }, { status: 415 });
   }
-  const mediaType = image.type as Media;
+  const mediaType = image.type as ScanMediaType;
   const bytes = await image.arrayBuffer();
   if (bytes.byteLength === 0) {
     return NextResponse.json({ error: t("emptyImage") }, { status: 400 });
@@ -130,29 +133,11 @@ export async function POST(request: NextRequest) {
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
-  // 4. Appel Claude Vision (SDK officiel, clé serveur uniquement).
-  const anthropic = new Anthropic();
+  // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
   let rawBets: unknown[];
   try {
-    const response = await anthropic.messages.create({
-      // Haiku 4.5 ne supporte ni le thinking adaptatif ni le paramètre effort.
-      model: SCAN_MODEL,
-      max_tokens: 8192,
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: buildExtractionPrompt() },
-          ],
-        },
-      ],
-    });
-    const text = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("\n");
-    rawBets = parseBetsArray(text);
+    const response = await analyzeTicketImage({ base64, mediaType });
+    rawBets = parseBetsArray(response.text);
 
     // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
     // L'échec de la télémétrie ne doit jamais empêcher l'utilisateur de scanner.
@@ -160,12 +145,13 @@ export async function POST(request: NextRequest) {
       await prisma.scanUsage.create({
         data: {
           userId: user.id,
-          model: SCAN_MODEL,
-          inputTokens: response.usage.input_tokens,
-          outputTokens: response.usage.output_tokens,
+          model: response.model,
+          inputTokens: response.inputTokens,
+          outputTokens: response.outputTokens,
           costUsd: calculateScanCostUsd(
-            response.usage.input_tokens,
-            response.usage.output_tokens
+            response.model,
+            response.inputTokens,
+            response.outputTokens
           ),
         },
       });

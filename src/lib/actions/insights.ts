@@ -1,6 +1,5 @@
 "use server";
 
-import Anthropic from "@anthropic-ai/sdk";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
@@ -9,6 +8,10 @@ import { computeProfit, realStake } from "@/lib/profit";
 import { computeGlobalStats, groupStats, bucketStats, ODDS_BUCKETS, oddsBucket } from "@/lib/stats";
 import { buildInsightsPrompt, parseInsightResult } from "@/lib/insights/insights-prompt";
 import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
+import {
+  generateTextWithConfiguredProvider,
+  hasConfiguredScanProvider,
+} from "@/lib/scan/ai-provider";
 
 export type GenerateInsightsResult =
   | { insight: InsightResult; cooldownUntil: number }
@@ -26,7 +29,7 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
     return { error: t("errorGeneric") };
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!hasConfiguredScanProvider()) {
     return { error: t("errorGeneric") };
   }
 
@@ -67,19 +70,9 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
     oddsData,
   });
 
-  const anthropic = new Anthropic();
   let insight: InsightResult;
   try {
-    const response = await anthropic.messages.create({
-      // Analyse textuelle simple, même SKU que le scan (coût maîtrisé).
-      model: "claude-haiku-4-5",
-      max_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
-    });
-    const text = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("\n");
+    const text = await generateTextWithConfiguredProvider(prompt);
     insight = parseInsightResult(text);
   } catch (e) {
     console.error("[insights] génération échouée", e);
