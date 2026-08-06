@@ -20,9 +20,11 @@ function fmtRenewalDate(d: Date, locale: string): string {
 export function PlanCard({
   plan,
   currentPeriodEnd,
+  betaOfferEligible,
 }: {
   plan: Plan;
   currentPeriodEnd: Date | null;
+  betaOfferEligible: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -87,7 +89,7 @@ export function PlanCard({
           disabled={loading}
           className="min-h-touch w-full rounded-lg text-sm font-semibold"
         >
-          {t("upgrade")}
+          {betaOfferEligible ? t("upgradeBeta") : t("upgradeStandard")}
         </Button>
       )}
     </section>

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
+import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 
 // Checkout/Portail Stripe entièrement côté serveur : pas de Stripe.js côté
 // navigateur, le client se contente d'appeler l'action et de laisser la
@@ -25,8 +26,20 @@ export async function createCheckoutSessionAction(): Promise<BillingActionResult
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { stripeCustomerId: true },
+    select: { stripeCustomerId: true, betaOfferUsedAt: true },
   });
+
+  const betaOfferApplies = canUseBetaOffer({
+    email: user.email,
+    betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
+  });
+  const betaCouponId = process.env.STRIPE_BETA_COUPON_ID;
+
+  // Ne jamais laisser un bêta-testeur payer le tarif standard par erreur si
+  // l'environnement n'est pas entièrement configuré.
+  if (betaOfferApplies && !betaCouponId) {
+    return { error: t("stripeNotConfigured") };
+  }
 
   let customerId = dbUser?.stripeCustomerId ?? null;
   if (!customerId) {
@@ -47,6 +60,17 @@ export async function createCheckoutSessionAction(): Promise<BillingActionResult
     customer: customerId,
     client_reference_id: user.id,
     line_items: [{ price: process.env.STRIPE_PRICE_ID_PREMIUM, quantity: 1 }],
+    discounts: betaOfferApplies && betaCouponId ? [{ coupon: betaCouponId }] : undefined,
+    metadata: {
+      userId: user.id,
+      betaOfferApplied: String(betaOfferApplies),
+    },
+    subscription_data: {
+      metadata: {
+        userId: user.id,
+        betaOfferApplied: String(betaOfferApplies),
+      },
+    },
     success_url: `${appUrl}/${locale}/account?checkout=success`,
     cancel_url: `${appUrl}/${locale}/account?checkout=cancel`,
   });

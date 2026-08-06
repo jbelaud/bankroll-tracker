@@ -54,8 +54,8 @@ export default async function AdminPage({
     { label: t("users"), value: String(users), detail: t("premiumUsers", { count: premiumUsers }) },
     {
       label: t("totalScans"),
-      value: formatTokens(totalUsage._count, locale),
-      detail: t("last30Days", { count: recentUsage._count }),
+      value: formatTokens(totalUsage._count._all, locale),
+      detail: t("last30Days", { count: recentUsage._count._all }),
     },
     { label: t("totalCost"), value: formatUsd(totalCost, locale), detail: t("last30Cost", { amount: formatUsd(recentCost, locale) }) },
     {

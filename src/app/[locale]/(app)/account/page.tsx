@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "@/components/account/language-switcher";
 import { CurrencySwitcher } from "@/components/account/currency-switcher";
 import { PlanCard } from "@/components/account/plan-card";
 import { isAdminEmail } from "@/lib/admin";
+import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 
 export default async function AccountPage({
   params,
@@ -61,7 +62,14 @@ export default async function AccountPage({
         currency={dbUser?.currency ?? "EUR"}
       />
 
-      <PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} />
+      <PlanCard
+        plan={dbUser?.plan ?? "FREE"}
+        currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
+        betaOfferEligible={canUseBetaOffer({
+          email: user.email,
+          betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
+        })}
+      />
 
       <LanguageSwitcher />
       <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />

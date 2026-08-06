@@ -306,6 +306,7 @@
 
   "account": {
     "title": "Compte",
+    "adminLink": "Administration",
     "profileAriaLabel": "Profil",
     "connectedAs": "Connecté en tant que",
     "goals": {
@@ -327,7 +328,8 @@
       "freeDescription": "Plan gratuit : 2 bankrolls max, 5 scans IA/mois.",
       "premiumActive": "Premium actif — renouvellement le {date}.",
       "premiumActiveNoDate": "Premium actif.",
-      "upgrade": "Passer à Premium (9,99€/an)",
+      "upgradeStandard": "Passer à Premium (19,99 €/an)",
+      "upgradeBeta": "Passer à Premium (9,99 € la 1re année, puis 19,99 €/an)",
       "manage": "Gérer mon abonnement",
       "stripeNotConfigured": "Le paiement n'est pas encore configuré. Réessaie plus tard.",
       "noSubscription": "Aucun abonnement actif à gérer."

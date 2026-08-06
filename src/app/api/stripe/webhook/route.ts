@@ -38,6 +38,10 @@ async function syncSubscription(subscription: Stripe.Subscription) {
   });
 }
 
+function isSubscriptionActive(subscription: Stripe.Subscription): boolean {
+  return subscription.status === "active" || subscription.status === "trialing";
+}
+
 export async function POST(request: NextRequest) {
   if (!stripe || !process.env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
@@ -76,13 +80,23 @@ export async function POST(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: "PREMIUM",
+            plan: isSubscriptionActive(subscription) ? "PREMIUM" : "FREE",
             stripeCustomerId: customerId ?? undefined,
             stripeSubscriptionId: subscription.id,
             subscriptionStatus: subscription.status,
             subscriptionCurrentPeriodEnd: periodEndOf(subscription),
           },
         });
+
+        // Cette valeur vient de métadonnées écrites côté serveur au moment de
+        // créer Checkout. Elle empêche de reprendre la remise après
+        // résiliation, même si le client tente de relancer un achat.
+        if (session.metadata?.betaOfferApplied === "true" && isSubscriptionActive(subscription)) {
+          await prisma.user.updateMany({
+            where: { id: userId, betaOfferUsedAt: null },
+            data: { betaOfferUsedAt: new Date() },
+          });
+        }
       }
       break;
     }
@@ -108,6 +122,24 @@ export async function POST(request: NextRequest) {
             subscriptionCurrentPeriodEnd: null,
           },
         });
+      }
+      break;
+    }
+
+    // Les factures des abonnements sont créées et encaissées par Stripe
+    // Billing. Ces événements rendent la synchronisation résiliente si
+    // l'ordre de livraison diffère de celui des événements subscription.*.
+    case "invoice.paid":
+    case "invoice.payment_failed": {
+      const invoice = event.data.object as Stripe.Invoice;
+      const invoiceSubscription = invoice.parent?.subscription_details?.subscription;
+      if (invoiceSubscription) {
+        const subscriptionId =
+          typeof invoiceSubscription === "string"
+            ? invoiceSubscription
+            : invoiceSubscription.id;
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        await syncSubscription(subscription);
       }
       break;
     }

@@ -306,6 +306,7 @@
 
   "account": {
     "title": "Account",
+    "adminLink": "Administration",
     "profileAriaLabel": "Profile",
     "connectedAs": "Signed in as",
     "goals": {
@@ -327,7 +328,8 @@
       "freeDescription": "Free plan: 2 bankrolls max, 5 AI scans/month.",
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
-      "upgrade": "Upgrade to Premium (€9.99/year)",
+      "upgradeStandard": "Upgrade to Premium (€19.99/year)",
+      "upgradeBeta": "Upgrade to Premium (€9.99 for year one, then €19.99/year)",
       "manage": "Manage subscription",
       "stripeNotConfigured": "Payments aren't set up yet. Try again later.",
       "noSubscription": "No active subscription to manage."

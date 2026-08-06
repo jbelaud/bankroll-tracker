@@ -49,6 +49,9 @@ model User {
   stripeSubscriptionId          String?   @unique
   subscriptionStatus            String?
   subscriptionCurrentPeriodEnd  DateTime?
+  // La remise bêta Stripe ne doit être utilisée qu'une seule fois par
+  // utilisateur, même après une résiliation suivie d'une nouvelle souscription.
+  betaOfferUsedAt               DateTime?
 
   // Quota mensuel de scans IA lié au plan (5 gratuit / 100 Premium) —
   // fenêtre glissante indépendante du rate-limit horaire anti-abus
