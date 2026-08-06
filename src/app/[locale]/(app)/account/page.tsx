@@ -69,6 +69,8 @@ export default async function AccountPage({
           email: user.email,
           betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
         })}
+        initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0}
+        initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null}
       />
 
       <LanguageSwitcher />

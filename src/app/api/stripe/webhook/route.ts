@@ -2,6 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import {
+  INITIAL_SCAN_CREDIT,
+  INITIAL_SCAN_CREDIT_DURATION_DAYS,
+} from "@/lib/scan/monthly-quota";
 
 // Le SDK Stripe a besoin du module crypto Node pour vérifier la signature —
 // jamais edge (même raison que /api/scan pour la clé Anthropic).
@@ -21,16 +25,21 @@ function periodEndOf(subscription: Stripe.Subscription): Date | null {
   return unix ? new Date(unix * 1000) : null;
 }
 
+function planForSubscription(subscription: Stripe.Subscription) {
+  if (!isSubscriptionActive(subscription)) return "FREE" as const;
+  return subscription.metadata.betaOfferApplied === "true"
+    ? ("BETA_PREMIUM" as const)
+    : ("PREMIUM" as const);
+}
+
 async function syncSubscription(subscription: Stripe.Subscription) {
   const customerId = customerIdOf(subscription.customer);
   if (!customerId) return;
 
-  const isActive = subscription.status === "active" || subscription.status === "trialing";
-
   await prisma.user.updateMany({
     where: { stripeCustomerId: customerId },
     data: {
-      plan: isActive ? "PREMIUM" : "FREE",
+      plan: planForSubscription(subscription),
       stripeSubscriptionId: subscription.id,
       subscriptionStatus: subscription.status,
       subscriptionCurrentPeriodEnd: periodEndOf(subscription),
@@ -77,10 +86,17 @@ export async function POST(request: NextRequest) {
           typeof session.subscription === "string" ? session.subscription : session.subscription.id;
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
+        const isActive = isSubscriptionActive(subscription);
+        const betaOfferApplied = session.metadata?.betaOfferApplied === "true";
+
         await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: isSubscriptionActive(subscription) ? "PREMIUM" : "FREE",
+            plan: isActive
+              ? betaOfferApplied
+                ? "BETA_PREMIUM"
+                : "PREMIUM"
+              : "FREE",
             stripeCustomerId: customerId ?? undefined,
             stripeSubscriptionId: subscription.id,
             subscriptionStatus: subscription.status,
@@ -88,10 +104,28 @@ export async function POST(request: NextRequest) {
           },
         });
 
+        // Crédit accordé une seule fois pour permettre l'import de l'historique.
+        // updateMany conditionnel garde le webhook idempotent : Stripe peut livrer
+        // plusieurs fois checkout.session.completed sans recréer les 300 crédits.
+        if (isActive) {
+          const grantedAt = new Date();
+          const expiresAt = new Date(
+            grantedAt.getTime() + INITIAL_SCAN_CREDIT_DURATION_DAYS * 24 * 60 * 60 * 1000
+          );
+          await prisma.user.updateMany({
+            where: { id: userId, initialScanCreditGrantedAt: null },
+            data: {
+              initialScanCreditRemaining: INITIAL_SCAN_CREDIT,
+              initialScanCreditGrantedAt: grantedAt,
+              initialScanCreditExpiresAt: expiresAt,
+            },
+          });
+        }
+
         // Cette valeur vient de métadonnées écrites côté serveur au moment de
         // créer Checkout. Elle empêche de reprendre la remise après
         // résiliation, même si le client tente de relancer un achat.
-        if (session.metadata?.betaOfferApplied === "true" && isSubscriptionActive(subscription)) {
+        if (betaOfferApplied && isActive) {
           await prisma.user.updateMany({
             where: { id: userId, betaOfferUsedAt: null },
             data: { betaOfferUsedAt: new Date() },

@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 2. Rate limit : chaque appel coûte réellement de l'argent (API Claude).
-  // 2bis. Quota mensuel lié au plan (5 gratuit / 100 Premium) — distinct du
+  // 2bis. Quota mensuel lié au plan — distinct du
   // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
   // du plan.
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
   const releaseQuota = async () => {
     if (!quotaReserved) return;
     quotaReserved = false;
-    await releaseMonthlyQuota(user.id);
+    await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
   // 4. Appel Claude Vision (SDK officiel, clé serveur uniquement).

@@ -53,7 +53,14 @@ model User {
   // utilisateur, même après une résiliation suivie d'une nouvelle souscription.
   betaOfferUsedAt               DateTime?
 
-  // Quota mensuel de scans IA lié au plan (5 gratuit / 100 Premium) —
+  // Crédits ponctuels accordés à l'abonnement pour l'import d'historique.
+  // Ils sont consommés avant le quota mensuel et expirent 30 jours après
+  // l'abonnement, sans jamais être recréés par les webhooks du cycle de vie.
+  initialScanCreditRemaining Int      @default(0)
+  initialScanCreditExpiresAt DateTime?
+  initialScanCreditGrantedAt DateTime?
+
+  // Quota mensuel de scans IA lié au plan —
   // fenêtre glissante indépendante du rate-limit horaire anti-abus
   // (scanCount/scanWindowStart ci-dessus, qui reste inchangé).
   monthlyScanCount       Int      @default(0)
@@ -74,6 +81,7 @@ enum Currency {
 
 enum Plan {
   FREE
+  BETA_PREMIUM
   PREMIUM
 }
 

@@ -79,6 +79,7 @@
       "title": "Scans IA ce mois",
       "remaining": "{used}/{limit} utilisés",
       "premiumBadge": "Premium",
+      "initialCredits": "Crédit d'import : {count} scans restants jusqu'au {date}.",
       "upgradeCta": "Débloquer plus de scans"
     },
     "hero": {
@@ -325,12 +326,15 @@
     },
     "plan": {
       "title": "Abonnement",
-      "freeDescription": "Plan gratuit : 2 bankrolls max, 5 scans IA/mois.",
+      "freeDescription": "Bêta gratuite : 2 bankrolls max, 10 scans IA/mois.",
       "premiumActive": "Premium actif — renouvellement le {date}.",
       "premiumActiveNoDate": "Premium actif.",
+      "betaPremiumActive": "Premium bêta actif — renouvellement le {date}.",
+      "betaPremiumActiveNoDate": "Premium bêta actif.",
       "upgradeStandard": "Passer à Premium (19,99 €/an)",
       "upgradeBeta": "Passer à Premium — 9,99 €",
       "betaOfferDetails": "Offre bêta : 9,99 € la première année, puis 19,99 €/an.",
+      "initialCredits": "Crédit d'import : {count} scans restants jusqu'au {date}.",
       "manage": "Gérer mon abonnement",
       "stripeNotConfigured": "Le paiement n'est pas encore configuré. Réessaie plus tard.",
       "checkoutFailed": "Impossible d'ouvrir le paiement pour le moment. Réessaie dans quelques instants.",

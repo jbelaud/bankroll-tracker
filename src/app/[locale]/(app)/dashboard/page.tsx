@@ -145,7 +145,13 @@ export default async function DashboardPage() {
       </Reveal>
 
       <Reveal index={1}>
-        <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} />
+        <QuotaCard
+          plan={plan}
+          scansUsed={quota.used}
+          scansLimit={quota.limit}
+          initialCreditsRemaining={quota.initialCreditsRemaining}
+          initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
+        />
       </Reveal>
 
       <Reveal index={2}>

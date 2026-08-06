@@ -21,10 +21,14 @@ export function PlanCard({
   plan,
   currentPeriodEnd,
   betaOfferEligible,
+  initialCreditsRemaining,
+  initialCreditsExpiresAt,
 }: {
   plan: Plan;
   currentPeriodEnd: Date | null;
   betaOfferEligible: boolean;
+  initialCreditsRemaining: number;
+  initialCreditsExpiresAt: Date | null;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -61,10 +65,12 @@ export function PlanCard({
       </h2>
 
       <p className="text-sm text-muted-foreground">
-        {plan === "PREMIUM"
+        {plan !== "FREE"
           ? currentPeriodEnd
-            ? t("premiumActive", { date: fmtRenewalDate(currentPeriodEnd, locale) })
-            : t("premiumActiveNoDate")
+            ? t(plan === "BETA_PREMIUM" ? "betaPremiumActive" : "premiumActive", {
+                date: fmtRenewalDate(currentPeriodEnd, locale),
+              })
+            : t(plan === "BETA_PREMIUM" ? "betaPremiumActiveNoDate" : "premiumActiveNoDate")
           : t("freeDescription")}
       </p>
 
@@ -74,13 +80,22 @@ export function PlanCard({
         </p>
       )}
 
+      {plan !== "FREE" && initialCreditsRemaining > 0 && initialCreditsExpiresAt && (
+        <p className="text-xs leading-relaxed text-primary">
+          {t("initialCredits", {
+            count: initialCreditsRemaining,
+            date: fmtRenewalDate(initialCreditsExpiresAt, locale),
+          })}
+        </p>
+      )}
+
       {error && (
         <p role="alert" className="text-xs text-loss">
           {error}
         </p>
       )}
 
-      {plan === "PREMIUM" ? (
+      {plan !== "FREE" ? (
         <Button
           onClick={handleManage}
           disabled={loading}

@@ -1,30 +1,55 @@
 import type { Plan } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
-// Quota mensuel lié au plan d'abonnement (5 scans gratuit / 100 Premium) —
-// indépendant du rate-limit horaire anti-abus de rate-limit.ts (15/heure,
-// inchangé). Même patron de fenêtre glissante stockée en base que
-// checkScanRateLimit, mais borné par le plan plutôt qu'une constante fixe.
-const WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
+const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+export const INITIAL_SCAN_CREDIT = 300;
+export const INITIAL_SCAN_CREDIT_DURATION_DAYS = 30;
 
 export const MONTHLY_LIMITS: Record<Plan, number> = {
-  FREE: 5,
-  // ~1 500 paris à raison de 3 paris par capture : compatible avec un
-  // import d'historique complet dès l'abonnement, sans être illimité.
-  PREMIUM: 500,
+  FREE: 10,
+  BETA_PREMIUM: 100,
+  PREMIUM: 200,
 };
 
-export async function checkMonthlyQuota(
-  userId: string,
-  plan: Plan
-): Promise<{ allowed: true } | { allowed: false; retryAfterSeconds: number }> {
+export type ScanQuotaReservation = "initial" | "monthly";
+
+type QuotaCheckResult =
+  | { allowed: true; reservation: ScanQuotaReservation }
+  | { allowed: false; retryAfterSeconds: number };
+
+export async function checkMonthlyQuota(userId: string, plan: Plan): Promise<QuotaCheckResult> {
   return prisma.$transaction(async (tx) => {
     const user = await tx.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { monthlyScanCount: true, monthlyScanWindowStart: true },
+      select: {
+        monthlyScanCount: true,
+        monthlyScanWindowStart: true,
+        initialScanCreditRemaining: true,
+        initialScanCreditExpiresAt: true,
+      },
     });
 
     const now = new Date();
+    const hasInitialCredit =
+      plan !== "FREE" &&
+      user.initialScanCreditRemaining > 0 &&
+      user.initialScanCreditExpiresAt !== null &&
+      user.initialScanCreditExpiresAt > now;
+
+    if (hasInitialCredit) {
+      const reservedCredit = await tx.user.updateMany({
+        where: {
+          id: userId,
+          initialScanCreditRemaining: { gt: 0 },
+          initialScanCreditExpiresAt: { gt: now },
+        },
+        data: { initialScanCreditRemaining: { decrement: 1 } },
+      });
+      if (reservedCredit.count === 1) {
+        return { allowed: true, reservation: "initial" };
+      }
+    }
+
     const elapsed = now.getTime() - user.monthlyScanWindowStart.getTime();
     const limit = MONTHLY_LIMITS[plan];
 
@@ -33,7 +58,7 @@ export async function checkMonthlyQuota(
         where: { id: userId },
         data: { monthlyScanCount: 1, monthlyScanWindowStart: now },
       });
-      return { allowed: true };
+      return { allowed: true, reservation: "monthly" };
     }
 
     if (user.monthlyScanCount >= limit) {
@@ -47,11 +72,22 @@ export async function checkMonthlyQuota(
       where: { id: userId },
       data: { monthlyScanCount: { increment: 1 } },
     });
-    return { allowed: true };
+    return { allowed: true, reservation: "monthly" };
   });
 }
 
-export async function releaseMonthlyQuota(userId: string): Promise<void> {
+export async function releaseMonthlyQuota(
+  userId: string,
+  reservation: ScanQuotaReservation
+): Promise<void> {
+  if (reservation === "initial") {
+    await prisma.user.updateMany({
+      where: { id: userId, initialScanCreditRemaining: { gte: 0 } },
+      data: { initialScanCreditRemaining: { increment: 1 } },
+    });
+    return;
+  }
+
   await prisma.user.updateMany({
     where: { id: userId, monthlyScanCount: { gt: 0 } },
     data: { monthlyScanCount: { decrement: 1 } },
@@ -65,14 +101,35 @@ export async function releaseMonthlyQuota(userId: string): Promise<void> {
 export async function getMonthlyQuotaStatus(
   userId: string,
   plan: Plan
-): Promise<{ used: number; limit: number }> {
+): Promise<{
+  used: number;
+  limit: number;
+  initialCreditsRemaining: number;
+  initialCreditsExpiresAt: Date | null;
+}> {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
-    select: { monthlyScanCount: true, monthlyScanWindowStart: true },
+    select: {
+      monthlyScanCount: true,
+      monthlyScanWindowStart: true,
+      initialScanCreditRemaining: true,
+      initialScanCreditExpiresAt: true,
+    },
   });
 
   const elapsed = Date.now() - user.monthlyScanWindowStart.getTime();
   const used = elapsed > WINDOW_MS ? 0 : user.monthlyScanCount;
 
-  return { used, limit: MONTHLY_LIMITS[plan] };
+  const hasInitialCredit =
+    plan !== "FREE" &&
+    user.initialScanCreditRemaining > 0 &&
+    user.initialScanCreditExpiresAt !== null &&
+    user.initialScanCreditExpiresAt > new Date();
+
+  return {
+    used,
+    limit: MONTHLY_LIMITS[plan],
+    initialCreditsRemaining: hasInitialCredit ? user.initialScanCreditRemaining : 0,
+    initialCreditsExpiresAt: hasInitialCredit ? user.initialScanCreditExpiresAt : null,
+  };
 }

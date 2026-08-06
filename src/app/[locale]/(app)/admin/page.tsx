@@ -28,7 +28,7 @@ export default async function AdminPage({
 
   const [users, premiumUsers, totalUsage, recentUsage, scans] = await Promise.all([
     prisma.user.count(),
-    prisma.user.count({ where: { plan: "PREMIUM" } }),
+    prisma.user.count({ where: { plan: { in: ["BETA_PREMIUM", "PREMIUM"] } } }),
     prisma.scanUsage.aggregate({
       _count: { _all: true },
       _sum: { inputTokens: true, outputTokens: true, costUsd: true },

@@ -79,6 +79,7 @@
       "title": "AI scans this month",
       "remaining": "{used}/{limit} used",
       "premiumBadge": "Premium",
+      "initialCredits": "Import credit: {count} scans remaining until {date}.",
       "upgradeCta": "Unlock more scans"
     },
     "hero": {
@@ -325,12 +326,15 @@
     },
     "plan": {
       "title": "Subscription",
-      "freeDescription": "Free plan: 2 bankrolls max, 5 AI scans/month.",
+      "freeDescription": "Free beta: 2 bankrolls max, 10 AI scans/month.",
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
+      "betaPremiumActive": "Beta Premium active — renews on {date}.",
+      "betaPremiumActiveNoDate": "Beta Premium active.",
       "upgradeStandard": "Upgrade to Premium (€19.99/year)",
       "upgradeBeta": "Upgrade to Premium — €9.99",
       "betaOfferDetails": "Beta offer: €9.99 for the first year, then €19.99/year.",
+      "initialCredits": "Import credit: {count} scans remaining until {date}.",
       "manage": "Manage subscription",
       "stripeNotConfigured": "Payments aren't set up yet. Try again later.",
       "checkoutFailed": "Unable to open checkout right now. Please try again in a moment.",
