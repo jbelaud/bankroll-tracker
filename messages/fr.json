@@ -329,9 +329,11 @@
       "premiumActive": "Premium actif — renouvellement le {date}.",
       "premiumActiveNoDate": "Premium actif.",
       "upgradeStandard": "Passer à Premium (19,99 €/an)",
-      "upgradeBeta": "Passer à Premium (9,99 € la 1re année, puis 19,99 €/an)",
+      "upgradeBeta": "Passer à Premium — 9,99 €",
+      "betaOfferDetails": "Offre bêta : 9,99 € la première année, puis 19,99 €/an.",
       "manage": "Gérer mon abonnement",
       "stripeNotConfigured": "Le paiement n'est pas encore configuré. Réessaie plus tard.",
+      "checkoutFailed": "Impossible d'ouvrir le paiement pour le moment. Réessaie dans quelques instants.",
       "noSubscription": "Aucun abonnement actif à gérer."
     },
     "security": {

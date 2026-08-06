@@ -329,9 +329,11 @@
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
       "upgradeStandard": "Upgrade to Premium (€19.99/year)",
-      "upgradeBeta": "Upgrade to Premium (€9.99 for year one, then €19.99/year)",
+      "upgradeBeta": "Upgrade to Premium — €9.99",
+      "betaOfferDetails": "Beta offer: €9.99 for the first year, then €19.99/year.",
       "manage": "Manage subscription",
       "stripeNotConfigured": "Payments aren't set up yet. Try again later.",
+      "checkoutFailed": "Unable to open checkout right now. Please try again in a moment.",
       "noSubscription": "No active subscription to manage."
     },
     "security": {

@@ -1,5 +1,6 @@
 "use server";
 
+import Stripe from "stripe";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
@@ -15,12 +16,54 @@ import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 
 export type BillingActionResult = { error: string } | undefined;
 
+function isMissingStripeCustomer(error: unknown): boolean {
+  return (
+    error instanceof Stripe.errors.StripeInvalidRequestError &&
+    error.code === "resource_missing" &&
+    error.param === "customer"
+  );
+}
+
+async function getOrCreateStripeCustomer({
+  stripeClient,
+  userId,
+  email,
+  existingCustomerId,
+}: {
+  stripeClient: Stripe;
+  userId: string;
+  email: string | undefined;
+  existingCustomerId: string | null;
+}): Promise<string> {
+  if (existingCustomerId) {
+    try {
+      const customer = await stripeClient.customers.retrieve(existingCustomerId);
+      if (!customer.deleted) return customer.id;
+    } catch (error) {
+      if (!isMissingStripeCustomer(error)) throw error;
+    }
+  }
+
+  const customer = await stripeClient.customers.create({
+    email,
+    metadata: { userId },
+  });
+  await prisma.user.update({
+    where: { id: userId },
+    data: { stripeCustomerId: customer.id },
+  });
+
+  return customer.id;
+}
+
 export async function createCheckoutSessionAction(): Promise<BillingActionResult> {
   const user = await requireUser();
   const locale = await getServerLocale();
   const t = await getTranslations({ locale, namespace: "account.plan" });
+  const priceId = process.env.STRIPE_PRICE_ID_PREMIUM;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
-  if (!stripe || !process.env.STRIPE_PRICE_ID_PREMIUM || !process.env.NEXT_PUBLIC_APP_URL) {
+  if (!stripe || !priceId || !appUrl) {
     return { error: t("stripeNotConfigured") };
   }
 
@@ -41,39 +84,42 @@ export async function createCheckoutSessionAction(): Promise<BillingActionResult
     return { error: t("stripeNotConfigured") };
   }
 
-  let customerId = dbUser?.stripeCustomerId ?? null;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      email: user.email,
-      metadata: { userId: user.id },
-    });
-    customerId = customer.id;
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { stripeCustomerId: customerId },
-    });
-  }
+  let session: Stripe.Checkout.Session;
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer: customerId,
-    client_reference_id: user.id,
-    line_items: [{ price: process.env.STRIPE_PRICE_ID_PREMIUM, quantity: 1 }],
-    discounts: betaOfferApplies && betaCouponId ? [{ coupon: betaCouponId }] : undefined,
-    metadata: {
+  try {
+    const customerId = await getOrCreateStripeCustomer({
+      stripeClient: stripe,
       userId: user.id,
-      betaOfferApplied: String(betaOfferApplies),
-    },
-    subscription_data: {
+      email: user.email,
+      existingCustomerId: dbUser?.stripeCustomerId ?? null,
+    });
+
+    session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      customer: customerId,
+      client_reference_id: user.id,
+      line_items: [{ price: priceId, quantity: 1 }],
+      discounts: betaOfferApplies && betaCouponId ? [{ coupon: betaCouponId }] : undefined,
       metadata: {
         userId: user.id,
         betaOfferApplied: String(betaOfferApplies),
       },
-    },
-    success_url: `${appUrl}/${locale}/account?checkout=success`,
-    cancel_url: `${appUrl}/${locale}/account?checkout=cancel`,
-  });
+      subscription_data: {
+        metadata: {
+          userId: user.id,
+          betaOfferApplied: String(betaOfferApplies),
+        },
+      },
+      success_url: `${appUrl}/${locale}/account?checkout=success`,
+      cancel_url: `${appUrl}/${locale}/account?checkout=cancel`,
+    });
+  } catch (error) {
+    console.error("[billing] checkout session creation failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return { error: t("checkoutFailed") };
+  }
 
   if (!session.url) {
     return { error: t("stripeNotConfigured") };
@@ -99,10 +145,19 @@ export async function createBillingPortalSessionAction(): Promise<BillingActionR
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  const session = await stripe.billingPortal.sessions.create({
-    customer: dbUser.stripeCustomerId,
-    return_url: `${appUrl}/${locale}/account`,
-  });
+  let session: Stripe.BillingPortal.Session;
+  try {
+    session = await stripe.billingPortal.sessions.create({
+      customer: dbUser.stripeCustomerId,
+      return_url: `${appUrl}/${locale}/account`,
+    });
+  } catch (error) {
+    console.error("[billing] portal session creation failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return { error: t("checkoutFailed") };
+  }
 
   redirect(session.url);
 }

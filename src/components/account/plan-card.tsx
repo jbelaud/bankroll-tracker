@@ -68,6 +68,12 @@ export function PlanCard({
           : t("freeDescription")}
       </p>
 
+      {plan === "FREE" && betaOfferEligible && (
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          {t("betaOfferDetails")}
+        </p>
+      )}
+
       {error && (
         <p role="alert" className="text-xs text-loss">
           {error}
@@ -87,7 +93,7 @@ export function PlanCard({
         <Button
           onClick={handleUpgrade}
           disabled={loading}
-          className="min-h-touch w-full rounded-lg text-sm font-semibold"
+          className="min-h-touch w-full whitespace-normal rounded-lg text-sm font-semibold"
         >
           {betaOfferEligible ? t("upgradeBeta") : t("upgradeStandard")}
         </Button>
