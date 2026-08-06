@@ -17,11 +17,19 @@ import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 export type BillingActionResult = { error: string } | undefined;
 
 function isMissingStripeCustomer(error: unknown): boolean {
-  return (
-    error instanceof Stripe.errors.StripeInvalidRequestError &&
-    error.code === "resource_missing" &&
-    error.param === "customer"
-  );
+  if (!error || typeof error !== "object") return false;
+
+  // Selon le runtime, le SDK peut sérialiser l'erreur Stripe en Error
+  // générique tout en conservant les détails dans `raw`.
+  const stripeError = error as {
+    code?: unknown;
+    param?: unknown;
+    raw?: { code?: unknown; param?: unknown };
+  };
+  const code = stripeError.code ?? stripeError.raw?.code;
+  const param = stripeError.param ?? stripeError.raw?.param;
+
+  return code === "resource_missing" && param === "customer";
 }
 
 async function getOrCreateStripeCustomer({
