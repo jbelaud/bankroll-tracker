@@ -4,6 +4,7 @@ import { listAllBets } from "@/lib/actions/bets";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { currencySymbol } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
+import { getBetTypesForSport } from "@/lib/sports";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
@@ -50,12 +51,7 @@ export default async function StatsPage({
   const number = (key: string) => { const n = Number(value(key)); return Number.isFinite(n) && value(key) !== "" ? n : null; };
   const minStake = number("minStake"); const maxStake = number("maxStake"); const minOdds = number("minOdds"); const maxOdds = number("maxOdds");
   const typesBySport = Object.fromEntries(
-    Array.from(new Set(allBets.map((bet) => bet.sport))).map((sport) => [
-      sport,
-      Array.from(
-        new Set(allBets.filter((bet) => bet.sport === sport).map((bet) => bet.betType))
-      ).sort(),
-    ])
+    Array.from(new Set(allBets.map((bet) => bet.sport))).map((sport) => [sport, getBetTypesForSport(sport)])
   ) as Record<string, string[]>;
   const typeFilter = sportFilter && typesBySport[sportFilter]?.includes(requestedTypeFilter)
     ? requestedTypeFilter
