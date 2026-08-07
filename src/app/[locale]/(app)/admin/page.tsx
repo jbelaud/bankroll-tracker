@@ -1,71 +1,155 @@
+import type Stripe from "stripe";
 import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { stripe } from "@/lib/stripe";
 
-function formatUsd(amount: number, locale: string): string {
+const PERIODS = ["day", "month", "year", "all"] as const;
+type Period = (typeof PERIODS)[number];
+
+type DateRange = { start?: Date; end?: Date };
+
+function parsePeriod(value: string | string[] | undefined): Period {
+  return typeof value === "string" && PERIODS.includes(value as Period) ? (value as Period) : "month";
+}
+
+function rangeFor(period: Period): DateRange {
+  const now = new Date();
+  if (period === "all") return {};
+
+  const start = new Date(now);
+  if (period === "day") start.setHours(0, 0, 0, 0);
+  if (period === "month") {
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+  }
+  if (period === "year") {
+    start.setMonth(0, 1);
+    start.setHours(0, 0, 0, 0);
+  }
+  return { start, end: now };
+}
+
+function formatMoney(amount: number, locale: string, currency: string): string {
   return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "USD",
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 4,
   }).format(amount);
 }
 
-function formatTokens(value: number, locale: string): string {
+function formatNumber(value: number, locale: string): string {
   return new Intl.NumberFormat(locale).format(value);
+}
+
+async function listStripeTransactions(range: DateRange): Promise<Stripe.BalanceTransaction[]> {
+  if (!stripe) return [];
+
+  const transactions: Stripe.BalanceTransaction[] = [];
+  let startingAfter: string | undefined;
+  let hasMore = true;
+
+  // Une pagination bornée empêche la page d'admin de devenir lente à très grande échelle.
+  // Lorsque BetTrack atteindra ce volume, ces données devront être synchronisées dans Postgres.
+  while (hasMore && transactions.length < 1_000) {
+    const page = await stripe.balanceTransactions.list({
+      limit: 100,
+      starting_after: startingAfter,
+      ...(range.start
+        ? { created: { gte: Math.floor(range.start.getTime() / 1_000), lte: Math.floor(range.end!.getTime() / 1_000) } }
+        : {}),
+    });
+    transactions.push(...page.data);
+    hasMore = page.has_more && page.data.length > 0;
+    startingAfter = page.data.at(-1)?.id;
+  }
+
+  return transactions;
 }
 
 export default async function AdminPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ period?: string | string[] }>;
 }) {
   await requireAdmin();
   const { locale } = await params;
   const t = await getTranslations("admin");
-  const since = new Date();
-  since.setDate(since.getDate() - 30);
+  const period = parsePeriod((await searchParams).period);
+  const range = rangeFor(period);
+  const createdAt = range.start ? { gte: range.start, lte: range.end } : undefined;
 
-  const [users, premiumUsers, totalUsage, recentUsage, scans] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { plan: { in: ["BETA_PREMIUM", "PREMIUM"] } } }),
-    prisma.scanUsage.aggregate({
-      _count: { _all: true },
-      _sum: { inputTokens: true, outputTokens: true, costUsd: true },
-    }),
-    prisma.scanUsage.aggregate({
-      where: { createdAt: { gte: since } },
-      _count: { _all: true },
-      _sum: { costUsd: true },
-    }),
-    prisma.scanUsage.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 25,
-      include: { user: { select: { email: true, plan: true } } },
-    }),
-  ]);
-
-  const totalInputTokens = totalUsage._sum.inputTokens ?? 0;
-  const totalOutputTokens = totalUsage._sum.outputTokens ?? 0;
-  const totalCost = totalUsage._sum.costUsd ?? 0;
-  const recentCost = recentUsage._sum.costUsd ?? 0;
-
-  const cards = [
-    { label: t("users"), value: String(users), detail: t("premiumUsers", { count: premiumUsers }) },
-    {
-      label: t("totalScans"),
-      value: formatTokens(totalUsage._count._all, locale),
-      detail: t("last30Days", { count: recentUsage._count._all }),
-    },
-    { label: t("totalCost"), value: formatUsd(totalCost, locale), detail: t("last30Cost", { amount: formatUsd(recentCost, locale) }) },
-    {
-      label: t("tokens"),
-      value: formatTokens(totalInputTokens + totalOutputTokens, locale),
-      detail: t("tokensDetail", {
-        input: formatTokens(totalInputTokens, locale),
-        output: formatTokens(totalOutputTokens, locale),
+  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions] =
+    await Promise.all([
+      prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
+      prisma.user.count({ where: { createdAt } }),
+      prisma.user.count({ where: { bankrolls: { some: {} } } }),
+      prisma.user.count({
+        where: {
+          OR: [
+            { scanUsages: { some: { createdAt } } },
+            { bankrolls: { some: { bets: { some: { createdAt } } } } },
+          ],
+        },
       }),
-    },
+      prisma.bankroll.count({ where: { createdAt } }),
+      prisma.bet.count({ where: { createdAt } }),
+      prisma.bet.count({ where: { createdAt, result: { not: "EN_ATTENTE" } } }),
+      prisma.scanUsage.aggregate({
+        where: { createdAt },
+        _count: { _all: true },
+        _sum: { inputTokens: true, outputTokens: true, costUsd: true },
+      }),
+      prisma.scanUsage.groupBy({ by: ["userId"], where: { createdAt } }),
+      prisma.scanUsage.findMany({
+        where: { createdAt },
+        orderBy: { createdAt: "desc" },
+        take: 25,
+        include: { user: { select: { email: true, plan: true } } },
+      }),
+      listStripeTransactions(range),
+    ]);
+
+  const plans = new Map(planCounts.map((item) => [item.plan, item._count._all]));
+  const freeUsers = plans.get("FREE") ?? 0;
+  const betaPremiumUsers = plans.get("BETA_PREMIUM") ?? 0;
+  const premiumUsers = plans.get("PREMIUM") ?? 0;
+  const totalUsers = freeUsers + betaPremiumUsers + premiumUsers;
+  const paidUsers = betaPremiumUsers + premiumUsers;
+  const conversion = totalUsers === 0 ? 0 : (paidUsers / totalUsers) * 100;
+
+  const revenueTransactions = transactions.filter((transaction) =>
+    ["charge", "payment", "refund", "payment_refund", "payment_failure_refund"].includes(transaction.type)
+  );
+  const stripeCurrency = revenueTransactions[0]?.currency?.toUpperCase() ?? "EUR";
+  const grossRevenue = revenueTransactions.reduce((sum, transaction) => sum + transaction.amount, 0) / 100;
+  const stripeFees = revenueTransactions.reduce((sum, transaction) => sum + transaction.fee, 0) / 100;
+  const stripeNetRevenue = revenueTransactions.reduce((sum, transaction) => sum + transaction.net, 0) / 100;
+  const refundedPayments = revenueTransactions.filter((transaction) => transaction.amount < 0).length;
+  const successfulPayments = revenueTransactions.filter((transaction) => transaction.amount > 0).length;
+
+  const totalScans = scanUsage._count._all;
+  const totalInputTokens = scanUsage._sum.inputTokens ?? 0;
+  const totalOutputTokens = scanUsage._sum.outputTokens ?? 0;
+  const estimatedAiCost = scanUsage._sum.costUsd ?? 0;
+
+  const periodLabel = t(`periods.${period}`);
+  const cards = [
+    { label: t("signups"), value: formatNumber(signups, locale), detail: t("duringPeriod", { period: periodLabel }) },
+    { label: t("activeUsers"), value: formatNumber(activeUsers, locale), detail: t("activeUsersDetail") },
+    { label: t("freeUsers"), value: formatNumber(freeUsers, locale), detail: t("currentPlan") },
+    { label: t("betaUsers"), value: formatNumber(betaPremiumUsers, locale), detail: t("currentPlan") },
+    { label: t("premiumUsers"), value: formatNumber(premiumUsers, locale), detail: t("currentPlan") },
+    { label: t("conversion"), value: `${conversion.toFixed(1)}%`, detail: t("conversionDetail", { paid: paidUsers, total: totalUsers }) },
+    { label: t("bankrollUsers"), value: formatNumber(bankrollUsers, locale), detail: t("bankrollUsersDetail") },
+    { label: t("bankrollsCreated"), value: formatNumber(bankrollsCreated, locale), detail: t("duringPeriod", { period: periodLabel }) },
+    { label: t("betsCreated"), value: formatNumber(betsCreated, locale), detail: t("settledBets", { count: settledBets }) },
+    { label: t("totalScans"), value: formatNumber(totalScans, locale), detail: t("scanningUsers", { count: scanUsers.length }) },
+    { label: t("totalCost"), value: formatMoney(estimatedAiCost, locale, "USD"), detail: t("estimatedCost") },
+    { label: t("tokens"), value: formatNumber(totalInputTokens + totalOutputTokens, locale), detail: t("tokensDetail", { input: formatNumber(totalInputTokens, locale), output: formatNumber(totalOutputTokens, locale) }) },
   ];
 
   return (
@@ -75,15 +159,46 @@ export default async function AdminPage({
         <p className="mt-1 text-sm text-muted-foreground">{t("description")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {cards.map((card) => (
-          <section key={card.label} className="glass-card flex flex-col gap-1 rounded-xl p-3">
-            <span className="text-xs text-muted-foreground">{card.label}</span>
-            <strong className="num text-lg">{card.value}</strong>
-            <span className="text-[0.65rem] text-muted-foreground">{card.detail}</span>
-          </section>
+      <nav aria-label={t("periodFilter")} className="grid grid-cols-4 gap-2">
+        {PERIODS.map((item) => (
+          <a
+            key={item}
+            href={`?period=${item}`}
+            className={`min-h-touch rounded-lg px-2 py-2 text-center text-xs font-semibold ${
+              item === period ? "bg-primary text-primary-foreground" : "glass-card text-muted-foreground"
+            }`}
+          >
+            {t(`periods.${item}`)}
+          </a>
         ))}
-      </div>
+      </nav>
+
+      <section aria-label={t("usersSection")} className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold">{t("usersSection")}</h2>
+        <div className="grid grid-cols-2 gap-3">{cards.slice(0, 8).map((card) => <MetricCard key={card.label} {...card} />)}</div>
+      </section>
+
+      <section aria-label={t("revenueSection")} className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-sm font-semibold">{t("revenueSection")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("revenueDescription")}</p>
+        </div>
+        {!stripe ? (
+          <p className="glass-card rounded-xl p-4 text-sm text-muted-foreground">{t("stripeUnavailable")}</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <MetricCard label={t("grossRevenue")} value={formatMoney(grossRevenue, locale, stripeCurrency)} detail={t("payments", { count: successfulPayments })} />
+            <MetricCard label={t("stripeFees")} value={formatMoney(stripeFees, locale, stripeCurrency)} detail={t("stripeFeesDetail")} />
+            <MetricCard label={t("netRevenue")} value={formatMoney(stripeNetRevenue, locale, stripeCurrency)} detail={t("netRevenueDetail")} />
+            <MetricCard label={t("refunds")} value={formatNumber(refundedPayments, locale)} detail={t("refundsDetail")} />
+          </div>
+        )}
+      </section>
+
+      <section aria-label={t("usageSection")} className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold">{t("usageSection")}</h2>
+        <div className="grid grid-cols-2 gap-3">{cards.slice(8).map((card) => <MetricCard key={card.label} {...card} />)}</div>
+      </section>
 
       <section className="glass-card overflow-hidden rounded-xl">
         <div className="border-b border-border p-3">
@@ -98,21 +213,13 @@ export default async function AdminPage({
                 <div className="min-w-0">
                   <p className="truncate font-medium">{scan.user.email}</p>
                   <p className="text-muted-foreground">
-                    {new Intl.DateTimeFormat(locale, {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }).format(scan.createdAt)}
-                    {` · ${scan.user.plan}`}
+                    {new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(scan.createdAt)}
+                    {` · ${scan.model}`}
                   </p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="num font-medium">{formatUsd(scan.costUsd, locale)}</p>
-                  <p className="num text-muted-foreground">
-                    {formatTokens(scan.inputTokens + scan.outputTokens, locale)} {t("tokensShort")}
-                  </p>
+                  <p className="num font-medium">{formatMoney(scan.costUsd, locale, "USD")}</p>
+                  <p className="num text-muted-foreground">{formatNumber(scan.inputTokens + scan.outputTokens, locale)} {t("tokensShort")}</p>
                 </div>
               </li>
             ))}
@@ -120,5 +227,15 @@ export default async function AdminPage({
         )}
       </section>
     </div>
+  );
+}
+
+function MetricCard({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <section className="glass-card flex min-h-28 flex-col gap-1 rounded-xl p-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <strong className="num text-lg">{value}</strong>
+      <span className="mt-auto text-[0.65rem] text-muted-foreground">{detail}</span>
+    </section>
   );
 }
