@@ -89,11 +89,21 @@
     },
     "kpi": {
       "ariaLabel": "Indicateurs clés",
+      "bets": "Paris",
       "profit": "Bénéfice",
       "roi": "ROI",
       "settled": "{count} réglés",
       "winRate": "Réussite",
       "won": "{count} gagnés"
+    },
+    "performance": {
+      "ariaLabel": "Évolution globale du capital",
+      "eyebrow": "Capital global",
+      "filtersAriaLabel": "Ouvrir les filtres avancés",
+      "notEnoughData": "Ajoute au moins deux paris réglés pour afficher l'évolution.",
+      "periods": { "7d": "7j", "30d": "30j", "90d": "3m", "1y": "1a", "all": "Tout" },
+      "statsCta": "Statistiques",
+      "historyCta": "Historique"
     },
     "bankrollCards": {
       "ariaLabel": "Mes bankrolls",

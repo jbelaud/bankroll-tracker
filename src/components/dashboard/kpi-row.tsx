@@ -1,5 +1,4 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { fmtMoneySigned, fmtPct } from "@/lib/format";
 import { getServerCurrency } from "@/lib/get-server-currency";
@@ -15,20 +14,17 @@ function KpiTile({
   trend?: number; // si défini, colore + ajoute ▲/▼
   sub?: string;
 }) {
-  const Icon = trend !== undefined && trend < 0 ? TrendDown : TrendUp;
-
   return (
-    <div className="glass-card flex flex-col gap-1 rounded-xl p-3">
-      <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="glass-card flex min-h-28 flex-col items-center justify-center gap-1 rounded-2xl p-3 text-center">
+      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
       <span
         className={cn(
-          "num flex items-center gap-1 text-sm font-semibold whitespace-nowrap",
+          "num text-2xl font-bold tracking-tight whitespace-nowrap",
           trend !== undefined && (trend >= 0 ? "text-profit" : "text-loss")
         )}
       >
-        {trend !== undefined && <Icon size={14} weight="bold" aria-hidden />}
         {value}
       </span>
       {sub && <span className="text-[0.65rem] text-muted-foreground">{sub}</span>}
@@ -54,7 +50,8 @@ export async function KpiRow({
   const t = await getTranslations("dashboard.kpi");
 
   return (
-    <section aria-label={t("ariaLabel")} className="grid grid-cols-3 gap-2">
+    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-3">
+      <KpiTile label={t("bets")} value={String(settledCount)} sub={t("settled", { count: settledCount })} />
       <KpiTile label={t("profit")} value={fmtMoneySigned(profit, locale, currency)} trend={profit} />
       <KpiTile
         label={t("roi")}

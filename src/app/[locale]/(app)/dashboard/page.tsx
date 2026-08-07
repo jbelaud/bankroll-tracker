@@ -6,15 +6,15 @@ import { requireUser } from "@/lib/auth";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
 import { computeProfit, realStake } from "@/lib/profit";
+import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { getMonthlyQuotaStatus } from "@/lib/scan/monthly-quota";
-import { HeroBalance } from "@/components/dashboard/hero-balance";
 import { QuotaCard } from "@/components/dashboard/quota-card";
 import { KpiRow } from "@/components/dashboard/kpi-row";
-import { Sparkline } from "@/components/dashboard/sparkline";
 import { GoalsCard } from "@/components/dashboard/goals-card";
 import { BankrollCards } from "@/components/dashboard/bankroll-cards";
 import { RecentBets } from "@/components/dashboard/recent-bets";
+import { PerformancePanel } from "@/components/dashboard/performance-panel";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
@@ -65,6 +65,7 @@ export default async function DashboardPage() {
     throw error;
   }
   const plan = dbUser?.plan ?? "FREE";
+  const currency = await getServerCurrency();
   const quota = await getMonthlyQuotaStatus(user.id, plan);
 
   // Même sémantique que le Dashboard de l'artifact : seuls les paris
@@ -80,8 +81,6 @@ export default async function DashboardPage() {
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const wonCount = settled.filter((b) => b.result === "GAGNE").length;
   const winRate = settled.length > 0 ? (wonCount / settled.length) * 100 : 0;
-  const pendingCount = bets.length - settled.length;
-
   const now = new Date();
   const monthProfit = settled
     .filter(
@@ -91,9 +90,18 @@ export default async function DashboardPage() {
     )
     .reduce((s, b) => s + computeProfit(b), 0);
 
-  // Courbe du solde : capital initial puis cumul pari par pari
-  let running = totalInitial;
-  const curve = [totalInitial, ...settled.map((b) => (running += computeProfit(b)))];
+  // Courbe globale du capital : tous les paris réglés de l'utilisateur, toutes
+  // bankrolls confondues. Les filtres de période sont appliqués côté interface.
+  const performancePoints = settled.reduce<Array<{ date: string; balance: number }>>(
+    (points, bet) => {
+      points.push({
+        date: bet.date.toISOString().slice(0, 10),
+        balance: (points.at(-1)?.balance ?? totalInitial) + computeProfit(bet),
+      });
+      return points;
+    },
+    []
+  );
 
   const bankrollSummaries = summarizeBankrolls(bankrolls, bets);
 
@@ -137,24 +145,14 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <Reveal index={0}>
-        <HeroBalance
+        <PerformancePanel
+          points={performancePoints}
           balance={totalBalance}
-          totalProfit={totalProfit}
-          pendingCount={pendingCount}
+          currency={currency}
         />
       </Reveal>
 
       <Reveal index={1}>
-        <QuotaCard
-          plan={plan}
-          scansUsed={quota.used}
-          scansLimit={quota.limit}
-          initialCreditsRemaining={quota.initialCreditsRemaining}
-          initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
-        />
-      </Reveal>
-
-      <Reveal index={2}>
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -164,15 +162,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      {curve.length >= 2 && (
-        <Reveal index={3}>
-          <div className="glass-card rounded-xl p-4">
-            <Sparkline points={curve} />
-          </div>
-        </Reveal>
-      )}
-
-      <Reveal index={4}>
+      <Reveal index={2}>
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -180,11 +170,21 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={5}>
+      <Reveal index={3}>
+        <QuotaCard
+          plan={plan}
+          scansUsed={quota.used}
+          scansLimit={quota.limit}
+          initialCreditsRemaining={quota.initialCreditsRemaining}
+          initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
+        />
+      </Reveal>
+
+      <Reveal index={4}>
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={6}>
+      <Reveal index={5}>
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>
