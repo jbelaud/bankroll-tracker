@@ -6,7 +6,6 @@ import { Link } from "@/i18n/navigation";
 import { Plus, PencilSimple, Wallet } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { TrendBadge } from "@/components/dashboard/trend-badge";
 import { fmtMoney, fmtMoneySigned } from "@/lib/format";
 import {
   BankrollFormDrawer,
@@ -31,7 +30,6 @@ export function BankrollList({
   const [editing, setEditing] = useState<BankrollFormTarget | undefined>();
   const locale = useLocale();
   const t = useTranslations("bankrolls");
-  const tCommon = useTranslations("common");
 
   const openCreate = () => {
     setEditing(undefined);
@@ -85,20 +83,22 @@ export function BankrollList({
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
-                  <div>
+                  <div className="min-w-0">
                     <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("profit")}</span>
-                    <TrendBadge value={br.profit} label={fmtMoneySigned(br.profit, locale, currency)} upLabel={tCommon("trendUp")} downLabel={tCommon("trendDown")} />
+                    <strong className={br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
+                      {fmtMoneySigned(br.profit, locale, currency)}
+                    </strong>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span>
-                    <strong className={br.profit >= 0 ? "num text-xs text-profit" : "num text-xs text-loss"}>
+                    <strong className={br.profit >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
                       {br.initial > 0 ? `${br.profit >= 0 ? "+" : ""}${((br.profit / br.initial) * 100).toFixed(1)}%` : "—"}
                     </strong>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("bets")}</span>
-                    <strong className="num text-xs">{br.betCount}</strong>
-                    {br.pendingCount > 0 && <span className="ml-1 text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span>}
+                    <strong className="num mt-1 block text-xs">{br.betCount}</strong>
+                    {br.pendingCount > 0 && <span className="mt-0.5 block truncate text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span>}
                   </div>
                 </div>
               </Link>
