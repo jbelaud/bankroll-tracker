@@ -222,6 +222,25 @@
 
   "stats": {
     "title": "Stats",
+    "workspace": {
+      "title": "Statistiques",
+      "subtitle": "Comprends tes performances et identifie tes tendances.",
+      "filters": "Filtres",
+      "filtersActive": "Filtres actifs",
+      "calendar": "Calendrier",
+      "close": "Fermer",
+      "filtered": "Les statistiques affichent une sélection filtrée.",
+      "clearFilters": "Réinitialiser"
+    },
+    "sections": {
+      "overview": "Vue d'ensemble",
+      "overviewDescription": "{count, plural, one {# pari dans cette sélection} other {# paris dans cette sélection}}",
+      "analysis": "Analyse des résultats",
+      "analysisDescription": "Compare tes performances selon les cotes, mises, résultats et sports.",
+      "breakdown": "Détail des performances",
+      "breakdownDescription": "Repère les sports, types de paris et bookmakers qui fonctionnent le mieux.",
+      "formats": "Formats de paris"
+    },
     "filters": {
       "title": "Filtres avancés",
       "startDate": "Date de début",

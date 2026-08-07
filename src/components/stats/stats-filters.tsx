@@ -24,13 +24,11 @@ export function StatsFilters({
   bankrolls,
   sportOptions,
   typesBySport,
-  open,
 }: {
   values: FilterValues;
   bankrolls: { id: string; name: string }[];
   sportOptions: string[];
   typesBySport: Record<string, string[]>;
-  open: boolean;
 }) {
   const t = useTranslations("stats.filters");
   const [sport, setSport] = useState(values.sport);
@@ -38,9 +36,7 @@ export function StatsFilters({
   const availableTypes = sport ? typesBySport[sport] ?? [] : [];
 
   return (
-    <details className="glass-card rounded-xl p-3" open={open}>
-      <summary className="cursor-pointer text-sm font-semibold">{t("title")}</summary>
-      <form method="get" className="mt-3 grid grid-cols-2 gap-2">
+      <form method="get" className="grid grid-cols-2 gap-2">
         <input name="from" type="date" defaultValue={values.from} aria-label={t("startDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="to" type="date" defaultValue={values.to} aria-label={t("endDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="q" defaultValue={values.q} placeholder={t("search")} className="col-span-2 h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
@@ -56,6 +52,5 @@ export function StatsFilters({
         <select name="freebet" defaultValue={values.freebet} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("allFreebets")}</option><option value="true">{t("freebetOnly")}</option><option value="false">{t("nonFreebet")}</option></select>
         <button type="submit" className="col-span-2 h-10 rounded-lg bg-primary text-xs font-semibold text-primary-foreground">{t("apply")}</button>
       </form>
-    </details>
   );
 }

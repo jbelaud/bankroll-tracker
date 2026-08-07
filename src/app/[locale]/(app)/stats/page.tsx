@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Lightning, Gift, Radio } from "@phosphor-icons/react/dist/ssr";
 import { listAllBets } from "@/lib/actions/bets";
 import { listBankrolls } from "@/lib/actions/bankrolls";
@@ -26,9 +26,9 @@ import { StatsTable } from "@/components/stats/stats-table";
 import { StatsTableTabs } from "@/components/stats/stats-table-tabs";
 import { TypeStatsFilter } from "@/components/stats/type-stats-filter";
 import { CondensedStatRow } from "@/components/stats/condensed-stat-row";
-import { ProfitCurve } from "@/components/stats/profit-curve";
 import { ProfitCalendar } from "@/components/stats/profit-calendar";
 import { StatsFilters } from "@/components/stats/stats-filters";
+import { StatsWorkspace } from "@/components/stats/stats-workspace";
 
 const ALL_SPORTS = "__all__";
 
@@ -66,7 +66,6 @@ export default async function StatsPage({
   const settledCount = bets.filter((b) => b.result !== "EN_ATTENTE").length;
 
   const currency = await getServerCurrency();
-  const locale = await getLocale();
   const symbol = currencySymbol(currency);
 
   const oddsData = bucketStats(bets, oddsBucket, ODDS_BUCKETS);
@@ -105,17 +104,6 @@ export default async function StatsPage({
         return map;
       }, {})
   ).sort((a, b) => a.date.localeCompare(b.date));
-  const curve = daily.reduce<Array<{ date: string; cumulative: number }>>((points, day) => {
-    points.push({
-      date: new Date(`${day.date}T12:00:00`).toLocaleDateString(locale, {
-        day: "2-digit",
-        month: "short",
-      }),
-      cumulative: (points.at(-1)?.cumulative ?? 0) + day.profit,
-    });
-    return points;
-  }, []);
-
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
 
@@ -124,88 +112,85 @@ export default async function StatsPage({
     : null;
   const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
 
+  const hasActiveFilters = Boolean(
+    from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet ||
+    minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null
+  );
+
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
-
-      <StatsFilters
-        values={{ from, to, q, bankroll, sport: sportFilter, type: typeFilter, result: resultFilter, live, freebet, minStake, maxStake, minOdds, maxOdds }}
-        bankrolls={bankrolls.map(({ id, name }) => ({ id, name }))}
-        sportOptions={Object.keys(typesBySport).sort()}
-        typesBySport={typesBySport}
-        open={Boolean(from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet || minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null)}
-      />
-
-      <section className="glass-card rounded-xl p-3">
-        <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-semibold">{t("curve.title")}</h2><span className="text-xs text-muted-foreground">{t("curve.bets", { count: bets.length })}</span></div>
-        <ProfitCurve data={curve} currency={currency} />
+    <StatsWorkspace
+      hasActiveFilters={hasActiveFilters}
+      filters={
+        <StatsFilters
+          values={{ from, to, q, bankroll, sport: sportFilter, type: typeFilter, result: resultFilter, live, freebet, minStake, maxStake, minOdds, maxOdds }}
+          bankrolls={bankrolls.map(({ id, name }) => ({ id, name }))}
+          sportOptions={Object.keys(typesBySport).sort()}
+          typesBySport={typesBySport}
+        />
+      }
+      calendar={<ProfitCalendar entries={daily} currency={currency} />}
+    >
+      <section aria-label={t("overview.ariaLabel")} className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("sections.overviewDescription", { count: bets.length })}</p>
+        </div>
+        <OverviewGrid stats={stats} currency={currency} />
       </section>
 
-      <ProfitCalendar entries={daily} currency={currency} />
+      <section aria-label={t("chartsAriaLabel")} className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-sm font-semibold">{t("sections.analysis")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("sections.analysisDescription")}</p>
+        </div>
+        <div className="glass-card rounded-xl p-3">
+          <StatsTabs
+            oddsData={oddsData}
+            stakeData={stakeData}
+            monthlyData={stats.monthly}
+            distributionData={stats.distribution}
+            sportData={bySport}
+            currency={currency}
+          />
+        </div>
+      </section>
+
+      <section aria-label={t("tablesAriaLabel")} className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-sm font-semibold">{t("sections.breakdown")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("sections.breakdownDescription")}</p>
+        </div>
+        <div className="glass-card rounded-xl p-3">
+          <StatsTableTabs
+            sportTable={<StatsTable rows={bySport} kind="sport" currency={currency} />}
+            typeTable={
+              <TypeStatsFilter
+                sportOptions={sportOptions}
+                tables={Object.fromEntries(
+                  Object.entries(byTypePerSport).map(([key, rows]) => [
+                    key,
+                    <StatsTable key={key} rows={rows} kind="type" currency={currency} />,
+                  ])
+                )}
+              />
+            }
+            bookmakerTable={<StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />}
+          />
+        </div>
+      </section>
+
+      <section aria-label={t("condensedAriaLabel")} className="flex flex-col gap-2">
+        <h2 className="text-sm font-semibold">{t("sections.formats")}</h2>
+        <CondensedStatRow icon={Lightning} label={tCondensed("boosted")} count={stats.boostedCount} winRate={stats.boostedWinRate} profit={stats.boostedProfit} currency={currency} />
+        <CondensedStatRow icon={Gift} label={tCondensed("freebets")} count={stats.freebetCount} winRate={stats.freebetWinRate} profit={stats.freebetProfit} currency={currency} />
+        <CondensedStatRow icon={Radio} label={tCondensed("live")} count={stats.liveCount} winRate={stats.liveWinRate} profit={stats.liveProfit} currency={currency} />
+      </section>
 
       <InsightsCard
         settledCount={settledCount}
         initialInsight={onCooldown ? (existingInsight!.data as unknown as InsightResult) : null}
         initialCooldownUntil={onCooldown ? cooldownUntil : null}
       />
-
-      <OverviewGrid stats={stats} currency={currency} />
-
-      <section aria-label={t("chartsAriaLabel")} className="glass-card rounded-xl p-3">
-        <StatsTabs
-          oddsData={oddsData}
-          stakeData={stakeData}
-          monthlyData={stats.monthly}
-          distributionData={stats.distribution}
-          sportData={bySport}
-          currency={currency}
-        />
-      </section>
-
-      <section aria-label={t("tablesAriaLabel")} className="glass-card rounded-xl p-3">
-        <StatsTableTabs
-          sportTable={<StatsTable rows={bySport} kind="sport" currency={currency} />}
-          typeTable={
-            <TypeStatsFilter
-              sportOptions={sportOptions}
-              tables={Object.fromEntries(
-                Object.entries(byTypePerSport).map(([key, rows]) => [
-                  key,
-                  <StatsTable key={key} rows={rows} kind="type" currency={currency} />,
-                ])
-              )}
-            />
-          }
-          bookmakerTable={<StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />}
-        />
-      </section>
-
-      <section aria-label={t("condensedAriaLabel")} className="flex flex-col gap-2">
-        <CondensedStatRow
-          icon={Lightning}
-          label={tCondensed("boosted")}
-          count={stats.boostedCount}
-          winRate={stats.boostedWinRate}
-          profit={stats.boostedProfit}
-          currency={currency}
-        />
-        <CondensedStatRow
-          icon={Gift}
-          label={tCondensed("freebets")}
-          count={stats.freebetCount}
-          winRate={stats.freebetWinRate}
-          profit={stats.freebetProfit}
-          currency={currency}
-        />
-        <CondensedStatRow
-          icon={Radio}
-          label={tCondensed("live")}
-          count={stats.liveCount}
-          winRate={stats.liveWinRate}
-          profit={stats.liveProfit}
-          currency={currency}
-        />
-      </section>
-    </div>
+    </StatsWorkspace>
   );
 }

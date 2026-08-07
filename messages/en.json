@@ -222,6 +222,25 @@
 
   "stats": {
     "title": "Stats",
+    "workspace": {
+      "title": "Statistics",
+      "subtitle": "Understand your performance and identify your trends.",
+      "filters": "Filters",
+      "filtersActive": "Active filters",
+      "calendar": "Calendar",
+      "close": "Close",
+      "filtered": "These statistics use a filtered selection.",
+      "clearFilters": "Reset"
+    },
+    "sections": {
+      "overview": "Overview",
+      "overviewDescription": "{count, plural, one {# bet in this selection} other {# bets in this selection}}",
+      "analysis": "Results analysis",
+      "analysisDescription": "Compare your performance across odds, stakes, results and sports.",
+      "breakdown": "Performance breakdown",
+      "breakdownDescription": "Find the sports, bet types and bookmakers that work best.",
+      "formats": "Bet formats"
+    },
     "filters": {
       "title": "Advanced filters",
       "startDate": "Start date",
