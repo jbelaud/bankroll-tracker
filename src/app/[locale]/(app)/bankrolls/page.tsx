@@ -21,6 +21,8 @@ export default async function BankrollsPage() {
       initial: br.initial,
       balance: summary.balance,
       profit: summary.profit,
+      betCount: bets.filter((bet) => bet.bankrollId === br.id).length,
+      pendingCount: bets.filter((bet) => bet.bankrollId === br.id && bet.result === "EN_ATTENTE").length,
     };
   });
 
@@ -29,7 +31,10 @@ export default async function BankrollsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <header>
+        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <p className="mt-1 text-xs text-muted-foreground">{t("subtitle", { count: bankrolls.length })}</p>
+      </header>
       <BankrollList bankrolls={items} currency={currency} />
     </div>
   );

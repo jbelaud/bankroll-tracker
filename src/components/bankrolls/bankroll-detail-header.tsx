@@ -9,6 +9,8 @@ export async function BankrollDetailHeader({
   balance,
   profit,
   initial,
+  betCount,
+  pendingCount,
   currency,
 }: {
   name: string;
@@ -16,6 +18,8 @@ export async function BankrollDetailHeader({
   balance: number;
   profit: number;
   initial: number;
+  betCount: number;
+  pendingCount: number;
   currency: Currency;
 }) {
   const locale = await getLocale();
@@ -43,6 +47,20 @@ export async function BankrollDetailHeader({
           upLabel={tCommon("trendUp")}
           downLabel={tCommon("trendDown")}
         />
+      </div>
+      <div className="grid grid-cols-3 gap-2 pt-1">
+        <div className="rounded-xl border border-border bg-muted/30 p-2.5">
+          <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("initial")}</span>
+          <strong className="num mt-1 block text-xs">{fmtMoney(initial, locale, currency)}</strong>
+        </div>
+        <div className="rounded-xl border border-border bg-muted/30 p-2.5">
+          <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("bets")}</span>
+          <strong className="num mt-1 block text-xs">{betCount}</strong>
+        </div>
+        <div className="rounded-xl border border-border bg-muted/30 p-2.5">
+          <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("pending")}</span>
+          <strong className="num mt-1 block text-xs">{pendingCount}</strong>
+        </div>
       </div>
     </section>
   );

@@ -31,8 +31,10 @@ export default async function BankrollDetailPage({
   const profit = settled.reduce((s, b) => s + computeProfit(b), 0);
   const balance = bankroll.initial + profit;
 
-  let running = bankroll.initial;
-  const curve = [bankroll.initial, ...settled.map((b) => (running += computeProfit(b)))];
+  const curve = settled.reduce<number[]>(
+    (points, bet) => [...points, (points.at(-1) ?? bankroll.initial) + computeProfit(bet)],
+    [bankroll.initial]
+  );
 
   const items: HistoryBetItemData[] = bets.map((b) => ({
     id: b.id,
@@ -66,6 +68,8 @@ export default async function BankrollDetailPage({
         balance={balance}
         profit={profit}
         initial={bankroll.initial}
+        betCount={bets.length}
+        pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
         currency={currency}
       />
 
