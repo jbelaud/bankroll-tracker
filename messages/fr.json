@@ -438,6 +438,7 @@
     "settledBets": "{count} déjà réglés",
     "revenueSection": "Revenus Stripe",
     "revenueDescription": "Transactions réellement enregistrées par Stripe sur la période sélectionnée.",
+    "stripeTestMode": "Mode test Stripe : ces montants ne sont pas du chiffre d’affaires réel.",
     "grossRevenue": "CA brut",
     "payments": "{count} paiement(s) encaissé(s)",
     "stripeFees": "Frais Stripe",

@@ -135,6 +135,7 @@ export default async function AdminPage({
   const totalInputTokens = scanUsage._sum.inputTokens ?? 0;
   const totalOutputTokens = scanUsage._sum.outputTokens ?? 0;
   const estimatedAiCost = scanUsage._sum.costUsd ?? 0;
+  const stripeIsTestMode = process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_");
 
   const periodLabel = t(`periods.${period}`);
   const cards = [
@@ -182,6 +183,7 @@ export default async function AdminPage({
         <div>
           <h2 className="text-sm font-semibold">{t("revenueSection")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("revenueDescription")}</p>
+          {stripeIsTestMode && <p className="mt-1 text-xs font-medium text-warning">{t("stripeTestMode")}</p>}
         </div>
         {!stripe ? (
           <p className="glass-card rounded-xl p-4 text-sm text-muted-foreground">{t("stripeUnavailable")}</p>

@@ -438,6 +438,7 @@
     "settledBets": "{count} settled",
     "revenueSection": "Stripe revenue",
     "revenueDescription": "Transactions actually recorded by Stripe for the selected period.",
+    "stripeTestMode": "Stripe test mode: these amounts are not real revenue.",
     "grossRevenue": "Gross revenue",
     "payments": "{count} payment(s) collected",
     "stripeFees": "Stripe fees",
