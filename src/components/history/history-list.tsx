@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { BetResult, Currency } from "@prisma/client";
 import { CalendarX, X } from "@phosphor-icons/react";
 import { deleteBet, deleteBets } from "@/lib/actions/bets";
+import { currencySymbol } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import { Button } from "@/components/ui/button";
 import { HistoryFilters } from "./history-filters";
@@ -47,6 +48,7 @@ export function HistoryList({
   currency: Currency;
 }) {
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations("history");
   const tCommon = useTranslations("common");
   const [bets, setBets] = useState(initialBets);
@@ -73,6 +75,48 @@ export function HistoryList({
       ),
     [bets, sport, bankroll]
   );
+
+  const groupedBets = useMemo(() => {
+    const byMonth = new Map<
+      string,
+      {
+        label: string;
+        days: Map<string, { label: string; profit: number; bets: HistoryBetItemData[] }>;
+      }
+    >();
+
+    for (const bet of filteredBets) {
+      const monthKey = `${bet.date.getFullYear()}-${String(bet.date.getMonth() + 1).padStart(2, "0")}`;
+      const dayKey = bet.date.toISOString().slice(0, 10);
+      const month = byMonth.get(monthKey) ?? {
+        label: new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(bet.date),
+        days: new Map(),
+      };
+      const day = month.days.get(dayKey) ?? {
+        label: new Intl.DateTimeFormat(locale, {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        }).format(bet.date),
+        profit: 0,
+        bets: [],
+      };
+
+      day.profit += bet.profit;
+      day.bets.push(bet);
+      month.days.set(dayKey, day);
+      byMonth.set(monthKey, month);
+    }
+
+    return Array.from(byMonth.entries()).map(([key, month]) => ({
+      key,
+      label: month.label,
+      days: Array.from(month.days.entries()).map(([dayKey, day]) => ({
+        key: dayKey,
+        ...day,
+      })),
+    }));
+  }, [filteredBets, locale]);
 
   const exitSelectionMode = () => {
     setSelectionMode(false);
@@ -174,24 +218,45 @@ export function HistoryList({
           </p>
         </div>
       ) : (
-        <ul className="glass-card divide-y divide-border overflow-hidden rounded-xl">
-          {filteredBets.map((bet) => (
-            <HistoryBetItem
-              key={bet.id}
-              bet={bet}
-              selectionMode={selectionMode}
-              selected={selectedIds.has(bet.id)}
-              isOpen={openItemId === bet.id}
-              showBankrollName={!scopedToBankroll}
-              onOpenChange={setOpenItemId}
-              onToggleSelect={handleToggleSelect}
-              onEnterSelection={handleEnterSelection}
-              onRequestDelete={(id) => setDeleteTargetIds([id])}
-              onRequestEdit={handleRequestEdit}
-              currency={currency}
-            />
+        <div className="flex flex-col gap-4">
+          {groupedBets.map((month) => (
+            <section key={month.key} className="overflow-hidden rounded-xl border border-border">
+              <h2 className="bg-muted/40 px-3 py-2 text-sm font-semibold capitalize">
+                {month.label}
+              </h2>
+              <div className="flex flex-col gap-3 p-2">
+                {month.days.map((day) => (
+                  <div key={day.key}>
+                    <div className="flex items-center justify-between px-1 pb-1.5 text-xs">
+                      <h3 className="font-medium capitalize text-muted-foreground">{day.label}</h3>
+                      <span className={day.profit >= 0 ? "num font-semibold text-profit" : "num font-semibold text-loss"}>
+                        {day.profit >= 0 ? "+" : ""}{day.profit.toFixed(2)}{currencySymbol(currency)}
+                      </span>
+                    </div>
+                    <ul className="glass-card divide-y divide-border overflow-hidden rounded-lg">
+                      {day.bets.map((bet) => (
+                        <HistoryBetItem
+                          key={bet.id}
+                          bet={bet}
+                          selectionMode={selectionMode}
+                          selected={selectedIds.has(bet.id)}
+                          isOpen={openItemId === bet.id}
+                          showBankrollName={!scopedToBankroll}
+                          onOpenChange={setOpenItemId}
+                          onToggleSelect={handleToggleSelect}
+                          onEnterSelection={handleEnterSelection}
+                          onRequestDelete={(id) => setDeleteTargetIds([id])}
+                          onRequestEdit={handleRequestEdit}
+                          currency={currency}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
           ))}
-        </ul>
+        </div>
       )}
 
       <DeleteBetsDrawer

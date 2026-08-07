@@ -208,6 +208,45 @@
 
   "stats": {
     "title": "Stats",
+    "filters": {
+      "title": "Filtres avancés",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "search": "Rechercher un pari",
+      "allBankrolls": "Toutes les bankrolls",
+      "allSports": "Tous les sports",
+      "allTypes": "Tous les types",
+      "allResults": "Tous les résultats",
+      "won": "Gagné",
+      "lost": "Perdu",
+      "refunded": "Remboursé",
+      "cashedOut": "Cashé",
+      "pending": "En attente",
+      "minStake": "Mise min.",
+      "maxStake": "Mise max.",
+      "minOdds": "Cote min.",
+      "maxOdds": "Cote max.",
+      "allLive": "Tous les paris live",
+      "liveOnly": "Live uniquement",
+      "nonLive": "Hors live",
+      "allFreebets": "Tous les freebets",
+      "freebetOnly": "Freebet uniquement",
+      "nonFreebet": "Hors freebet",
+      "apply": "Appliquer les filtres"
+    },
+    "curve": {
+      "title": "Évolution du bénéfice",
+      "bets": "{count, plural, one {# pari} other {# paris}}",
+      "empty": "Aucun pari réglé pour cette sélection."
+    },
+    "calendar": {
+      "title": "Calendrier des bénéfices",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "monthProfit": "Bénéfice du mois",
+      "monthBets": "Paris du mois",
+      "dayTooltip": "{profit} · {count, plural, one {# pari} other {# paris}}"
+    },
     "chartsAriaLabel": "Graphiques",
     "tablesAriaLabel": "Tableaux détaillés",
     "condensedAriaLabel": "Cotes boostées, freebets et live",

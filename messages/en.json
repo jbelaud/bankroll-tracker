@@ -208,6 +208,45 @@
 
   "stats": {
     "title": "Stats",
+    "filters": {
+      "title": "Advanced filters",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "search": "Search a bet",
+      "allBankrolls": "All bankrolls",
+      "allSports": "All sports",
+      "allTypes": "All bet types",
+      "allResults": "All results",
+      "won": "Won",
+      "lost": "Lost",
+      "refunded": "Refunded",
+      "cashedOut": "Cashed out",
+      "pending": "Pending",
+      "minStake": "Min. stake",
+      "maxStake": "Max. stake",
+      "minOdds": "Min. odds",
+      "maxOdds": "Max. odds",
+      "allLive": "All live bets",
+      "liveOnly": "Live only",
+      "nonLive": "Non-live",
+      "allFreebets": "All freebets",
+      "freebetOnly": "Freebet only",
+      "nonFreebet": "Non-freebet",
+      "apply": "Apply filters"
+    },
+    "curve": {
+      "title": "Profit evolution",
+      "bets": "{count, plural, one {# bet} other {# bets}}",
+      "empty": "No settled bets for this selection."
+    },
+    "calendar": {
+      "title": "Profit calendar",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "monthProfit": "Monthly profit",
+      "monthBets": "Bets this month",
+      "dayTooltip": "{profit} · {count, plural, one {# bet} other {# bets}}"
+    },
     "chartsAriaLabel": "Charts",
     "tablesAriaLabel": "Detailed tables",
     "condensedAriaLabel": "Boosted odds, freebets and live",
