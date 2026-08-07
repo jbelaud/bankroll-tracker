@@ -39,7 +39,10 @@
   },
 
   "footer": {
-    "label": "Responsible gambling:"
+    "label": "Responsible gambling:",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "responsible": "Help"
   },
 
   "auth": {
@@ -414,6 +417,11 @@
   "account": {
     "title": "Account",
     "adminLink": "Administration",
+    "feedback": {
+      "sectionTitle": "Beta feedback",
+      "sectionDescription": "A bug, an idea, or a screen to improve? Your feedback goes straight to the administration area.",
+      "open": "Send beta feedback"
+    },
     "profileAriaLabel": "Profile",
     "connectedAs": "Signed in as",
     "goals": {
@@ -563,7 +571,36 @@
     "tokensDetail": "{input} input · {output} output",
     "recentScans": "Recent scans",
     "noData": "No scan usage recorded yet.",
-    "tokensShort": "tokens"
+    "tokensShort": "tokens",
+    "feedbackCount": "Beta feedback",
+    "recentFeedback": "Latest beta feedback",
+    "noFeedback": "No beta feedback in this period.",
+    "feedbackCategories": {
+      "BUG": "Bug",
+      "IDEA": "Idea",
+      "OTHER": "Other"
+    }
+  },
+
+  "feedback": {
+    "title": "Your feedback matters",
+    "description": "Describe the issue or idea. The page you are on is added automatically.",
+    "category": "Feedback type",
+    "message": "Message",
+    "placeholder": "E.g. the button does not respond after importing three screenshots…",
+    "open": "Send beta feedback",
+    "send": "Send feedback",
+    "sending": "Sending…",
+    "success": "Thank you, your feedback has been sent.",
+    "close": "Close",
+    "errorTooShort": "Please describe the issue a little more (8 characters minimum).",
+    "errorTooLong": "The message is too long (2,000 characters maximum).",
+    "errorCategory": "Invalid feedback type.",
+    "categories": {
+      "bug": "Report a bug",
+      "idea": "Suggest an idea",
+      "other": "Other feedback"
+    }
   },
 
   "errors": {

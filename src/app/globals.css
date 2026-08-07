@@ -165,7 +165,7 @@
 
   /* Hauteur du bandeau jeu responsable global (hors safe-area) — source de
      vérité partagée entre ResponsibleGamblingFooter et AppNav. */
-  --rg-footer-h: 1.75rem;
+  --rg-footer-h: 2.9rem;
 
   --sidebar: oklch(0.19 0.02 264);
   --sidebar-foreground: oklch(0.96 0.005 260);

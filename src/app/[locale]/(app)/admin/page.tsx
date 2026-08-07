@@ -82,7 +82,7 @@ export default async function AdminPage({
   const range = rangeFor(period);
   const createdAt = range.start ? { gte: range.start, lte: range.end } : undefined;
 
-  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions] =
+  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions, feedbackCount, recentFeedback] =
     await Promise.all([
       prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
       prisma.user.count({ where: { createdAt } }),
@@ -111,6 +111,13 @@ export default async function AdminPage({
         include: { user: { select: { email: true, plan: true } } },
       }),
       listStripeTransactions(range),
+      prisma.feedback.count({ where: { createdAt } }),
+      prisma.feedback.findMany({
+        where: { createdAt },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+        include: { user: { select: { email: true } } },
+      }),
     ]);
 
   const plans = new Map(planCounts.map((item) => [item.plan, item._count._all]));
@@ -151,6 +158,7 @@ export default async function AdminPage({
     { label: t("totalScans"), value: formatNumber(totalScans, locale), detail: t("scanningUsers", { count: scanUsers.length }) },
     { label: t("totalCost"), value: formatMoney(estimatedAiCost, locale, "USD"), detail: t("estimatedCost") },
     { label: t("tokens"), value: formatNumber(totalInputTokens + totalOutputTokens, locale), detail: t("tokensDetail", { input: formatNumber(totalInputTokens, locale), output: formatNumber(totalOutputTokens, locale) }) },
+    { label: t("feedbackCount"), value: formatNumber(feedbackCount, locale), detail: t("duringPeriod", { period: periodLabel }) },
   ];
 
   return (
@@ -223,6 +231,33 @@ export default async function AdminPage({
                   <p className="num font-medium">{formatMoney(scan.costUsd, locale, "USD")}</p>
                   <p className="num text-muted-foreground">{formatNumber(scan.inputTokens + scan.outputTokens, locale)} {t("tokensShort")}</p>
                 </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="glass-card overflow-hidden rounded-xl">
+        <div className="border-b border-border p-3">
+          <h2 className="text-sm font-semibold">{t("recentFeedback")}</h2>
+        </div>
+        {recentFeedback.length === 0 ? (
+          <p className="p-4 text-sm text-muted-foreground">{t("noFeedback")}</p>
+        ) : (
+          <ul className="divide-y divide-border">
+            {recentFeedback.map((feedback) => (
+              <li key={feedback.id} className="flex flex-col gap-1 p-3 text-xs">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="truncate font-medium">{feedback.user.email}</p>
+                  <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground">
+                    {t(`feedbackCategories.${feedback.category}`)}
+                  </span>
+                </div>
+                <p className="whitespace-pre-wrap text-foreground">{feedback.message}</p>
+                <p className="text-muted-foreground">
+                  {new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(feedback.createdAt)}
+                  {feedback.page ? ` · ${feedback.page}` : ""}
+                </p>
               </li>
             ))}
           </ul>

@@ -69,6 +69,7 @@ model User {
   bankrolls Bankroll[]
   insight   Insight?
   scanUsages ScanUsage[]
+  feedbacks Feedback[]
 
   @@map("users")
 }
@@ -174,6 +175,39 @@ model ScanUsage {
   @@index([userId, createdAt])
   @@index([createdAt])
   @@map("scan_usages")
+}
+
+// ------------------------------------------------------------
+// Retours bêta envoyés depuis l'application
+// ------------------------------------------------------------
+// La table n'est jamais lue ou écrite depuis le navigateur : les actions
+// serveur authentifiées gardent le contrôle d'accès, tandis que la RLS
+// bloque tout accès accidentel via la Data API Supabase.
+model Feedback {
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  FeedbackCategory @default(BUG)
+  message   String
+  page      String?
+  status    FeedbackStatus @default(OPEN)
+  createdAt DateTime       @default(now())
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@map("feedbacks")
+}
+
+enum FeedbackCategory {
+  BUG
+  IDEA
+  OTHER
+}
+
+enum FeedbackStatus {
+  OPEN
+  REVIEWED
+  CLOSED
 }
 
 // ------------------------------------------------------------

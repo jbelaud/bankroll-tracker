@@ -13,6 +13,7 @@ import { SignOutButton } from "@/components/account/sign-out-button";
 import { LanguageSwitcher } from "@/components/account/language-switcher";
 import { CurrencySwitcher } from "@/components/account/currency-switcher";
 import { PlanCard } from "@/components/account/plan-card";
+import { FeedbackButton } from "@/components/account/feedback-button";
 import { isAdminEmail } from "@/lib/admin";
 import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 
@@ -75,6 +76,14 @@ export default async function AccountPage({
 
       <LanguageSwitcher />
       <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />
+
+      <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+        <div>
+          <h2 className="text-sm font-semibold">{t("feedback.sectionTitle")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("feedback.sectionDescription")}</p>
+        </div>
+        <FeedbackButton />
+      </section>
 
       {isAdminEmail(user.email) && (
         <Link

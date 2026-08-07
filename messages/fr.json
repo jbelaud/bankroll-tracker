@@ -39,7 +39,10 @@
   },
 
   "footer": {
-    "label": "Jeu responsable :"
+    "label": "Jeu responsable :",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "responsible": "Aide"
   },
 
   "auth": {
@@ -414,6 +417,11 @@
   "account": {
     "title": "Compte",
     "adminLink": "Administration",
+    "feedback": {
+      "sectionTitle": "Retour bêta",
+      "sectionDescription": "Un bug, une idée ou un écran à améliorer ? Ton retour arrive directement dans l’administration.",
+      "open": "Envoyer un retour bêta"
+    },
     "profileAriaLabel": "Profil",
     "connectedAs": "Connecté en tant que",
     "goals": {
@@ -563,7 +571,36 @@
     "tokensDetail": "{input} entrée · {output} sortie",
     "recentScans": "Dernières analyses",
     "noData": "Aucune analyse mesurée pour le moment.",
-    "tokensShort": "tokens"
+    "tokensShort": "tokens",
+    "feedbackCount": "Retours bêta",
+    "recentFeedback": "Derniers retours bêta",
+    "noFeedback": "Aucun retour bêta sur cette période.",
+    "feedbackCategories": {
+      "BUG": "Bug",
+      "IDEA": "Idée",
+      "OTHER": "Autre"
+    }
+  },
+
+  "feedback": {
+    "title": "Ton retour compte",
+    "description": "Décris le problème ou l’idée. La page depuis laquelle tu écris est ajoutée automatiquement.",
+    "category": "Type de retour",
+    "message": "Message",
+    "placeholder": "Ex. le bouton ne répond pas après avoir importé trois captures…",
+    "open": "Envoyer un retour bêta",
+    "send": "Envoyer le retour",
+    "sending": "Envoi en cours…",
+    "success": "Merci, ton retour a bien été envoyé.",
+    "close": "Fermer",
+    "errorTooShort": "Décris un peu plus le problème (8 caractères minimum).",
+    "errorTooLong": "Le message est trop long (2 000 caractères maximum).",
+    "errorCategory": "Type de retour invalide.",
+    "categories": {
+      "bug": "Signaler un bug",
+      "idea": "Proposer une idée",
+      "other": "Autre retour"
+    }
   },
 
   "errors": {
