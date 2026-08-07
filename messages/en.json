@@ -375,7 +375,14 @@
     "title": "History",
     "filters": {
       "allSports": "All sports",
-      "allBankrolls": "All bankrolls"
+      "allBankrolls": "All bankrolls",
+      "all": "All",
+      "search": "Search a bet, an event…",
+      "clearSearch": "Clear search",
+      "clearAll": "Reset filters"
+    },
+    "summary": {
+      "bets": "{count, plural, one {# bet shown} other {# bets shown}}"
     },
     "emptyNoMatch": "No bets match these filters.",
     "selection": {

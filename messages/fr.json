@@ -375,7 +375,14 @@
     "title": "Historique",
     "filters": {
       "allSports": "Tous les sports",
-      "allBankrolls": "Toutes les bankrolls"
+      "allBankrolls": "Toutes les bankrolls",
+      "all": "Tous",
+      "search": "Rechercher un pari, un événement…",
+      "clearSearch": "Effacer la recherche",
+      "clearAll": "Réinitialiser les filtres"
+    },
+    "summary": {
+      "bets": "{count, plural, one {# pari affiché} other {# paris affichés}}"
     },
     "emptyNoMatch": "Aucun pari ne correspond à ces filtres.",
     "selection": {

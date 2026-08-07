@@ -54,6 +54,8 @@ export function HistoryList({
   const [bets, setBets] = useState(initialBets);
   const [sport, setSport] = useState<string | null>(null);
   const [bankroll, setBankroll] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [result, setResult] = useState<BetResult | null>(null);
 
   // Un seul item peut être ouvert en swipe à la fois (voir history-bet-item.tsx
   // pour la coordination swipe / appui long).
@@ -70,11 +72,16 @@ export function HistoryList({
 
   const filteredBets = useMemo(
     () =>
-      bets.filter(
-        (b) => (!sport || b.sport === sport) && (!bankroll || b.bankrollId === bankroll)
-      ),
-    [bets, sport, bankroll]
+      bets.filter((b) => {
+        const searchText = `${b.sport} ${b.betType} ${b.description ?? ""} ${b.eventResult ?? ""} ${b.bankrollName}`.toLocaleLowerCase();
+        return (!sport || b.sport === sport) && (!bankroll || b.bankrollId === bankroll) &&
+          (!result || b.result === result) && (!query.trim() || searchText.includes(query.trim().toLocaleLowerCase()));
+      }),
+    [bets, sport, bankroll, result, query]
   );
+  const selectedProfit = filteredBets
+    .filter((bet) => bet.result !== "EN_ATTENTE")
+    .reduce((sum, bet) => sum + bet.profit, 0);
 
   const groupedBets = useMemo(() => {
     const byMonth = new Map<
@@ -121,6 +128,12 @@ export function HistoryList({
   const exitSelectionMode = () => {
     setSelectionMode(false);
     setSelectedIds(new Set());
+  };
+  const clearFilters = () => {
+    setSport(null);
+    setBankroll(null);
+    setQuery("");
+    setResult(null);
   };
 
   const handleToggleSelect = (id: string) => {
@@ -203,11 +216,25 @@ export function HistoryList({
         <HistoryFilters
           sport={sport}
           bankroll={bankroll}
+          query={query}
+          result={result}
           sportOptions={sportOptions}
           bankrollOptions={scopedToBankroll ? undefined : bankrollOptions}
           onSportChange={setSport}
           onBankrollChange={setBankroll}
+          onQueryChange={setQuery}
+          onResultChange={setResult}
+          onClear={clearFilters}
         />
+      )}
+
+      {!selectionMode && bets.length > 0 && (
+        <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
+          <span>{t("summary.bets", { count: filteredBets.length })}</span>
+          <strong className={selectedProfit >= 0 ? "num text-profit" : "num text-loss"}>
+            {selectedProfit >= 0 ? "+" : ""}{selectedProfit.toFixed(2)}{currencySymbol(currency)}
+          </strong>
+        </div>
       )}
 
       {filteredBets.length === 0 ? (

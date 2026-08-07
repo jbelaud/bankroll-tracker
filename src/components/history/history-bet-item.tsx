@@ -57,6 +57,7 @@ export function HistoryBetItem({
   currency: Currency;
 }) {
   const [translateX, setTranslateX] = useState(isOpen ? OPEN_TRANSLATE : 0);
+  const [isSwiping, setIsSwiping] = useState(false);
   const gesture = useRef<{
     startX: number;
     startY: number;
@@ -73,7 +74,9 @@ export function HistoryBetItem({
 
   // Fermeture externe (un autre item vient de s'ouvrir, ou suppression annulée).
   useEffect(() => {
-    if (!isOpen) setTranslateX(0);
+    if (isOpen) return;
+    const frame = requestAnimationFrame(() => setTranslateX(0));
+    return () => cancelAnimationFrame(frame);
   }, [isOpen]);
 
   function handlePointerDown(e: React.PointerEvent) {
@@ -104,6 +107,7 @@ export function HistoryBetItem({
         return;
       }
       g.mode = "swipe";
+      setIsSwiping(true);
       onOpenChange(bet.id);
     }
 
@@ -115,6 +119,7 @@ export function HistoryBetItem({
   function handlePointerUp() {
     const g = gesture.current;
     if (g?.timer) clearTimeout(g.timer);
+    setIsSwiping(false);
 
     if (g?.mode === "swipe") {
       suppressClick.current = true;
@@ -178,7 +183,7 @@ export function HistoryBetItem({
         }}
         className={cn(
           "relative z-10 flex min-h-touch items-center gap-3 bg-background p-3 transition-transform select-none",
-          gesture.current?.mode === "swipe" ? "duration-0" : "duration-200"
+          isSwiping ? "duration-0" : "duration-200"
         )}
       >
         {selectionMode && (
