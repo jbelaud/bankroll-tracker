@@ -75,6 +75,22 @@
   "dashboard": {
     "welcomeTitle": "Bienvenue sur BetTrack",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
+    "onboarding": {
+      "ariaLabel": "Premiers pas sur BetTrack",
+      "eyebrow": "Bien démarrer",
+      "title": "Construis ton suivi de paris",
+      "description": "Trois étapes simples pour commencer à suivre ta bankroll et tes performances.",
+      "secondTitle": "Ta bankroll est prête",
+      "secondDescription": "Importe ton premier ticket : BetTrack organisera ensuite tes résultats automatiquement.",
+      "stepLabel": "Étape {count}",
+      "bankrollCta": "Créer ma bankroll",
+      "scanCta": "Importer mon premier ticket",
+      "steps": {
+        "bankroll": { "title": "Crée ta bankroll", "description": "Choisis ton bookmaker et ton capital de départ." },
+        "scan": { "title": "Importe tes paris", "description": "Envoie une capture ou ajoute tes premiers paris." },
+        "stats": { "title": "Suis tes progrès", "description": "Retrouve ton capital, ton ROI et tes performances." }
+      }
+    },
     "quota": {
       "title": "Scans IA ce mois",
       "remaining": "{used}/{limit} utilisés",

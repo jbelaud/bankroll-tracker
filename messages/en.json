@@ -75,6 +75,22 @@
   "dashboard": {
     "welcomeTitle": "Welcome to BetTrack",
     "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
+    "onboarding": {
+      "ariaLabel": "Getting started with BetTrack",
+      "eyebrow": "Get started",
+      "title": "Build your betting tracker",
+      "description": "Three simple steps to start tracking your bankroll and performance.",
+      "secondTitle": "Your bankroll is ready",
+      "secondDescription": "Import your first ticket and BetTrack will organize your results automatically.",
+      "stepLabel": "Step {count}",
+      "bankrollCta": "Create my bankroll",
+      "scanCta": "Import my first ticket",
+      "steps": {
+        "bankroll": { "title": "Create your bankroll", "description": "Choose your bookmaker and starting capital." },
+        "scan": { "title": "Import your bets", "description": "Upload a screenshot or add your first bets." },
+        "stats": { "title": "Track your progress", "description": "Find your capital, ROI and performance." }
+      }
+    },
     "quota": {
       "title": "AI scans this month",
       "remaining": "{used}/{limit} used",

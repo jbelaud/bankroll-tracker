@@ -1,6 +1,3 @@
-import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { listBankrolls } from "@/lib/actions/bankrolls";
@@ -15,6 +12,7 @@ import { GoalsCard } from "@/components/dashboard/goals-card";
 import { BankrollCards } from "@/components/dashboard/bankroll-cards";
 import { RecentBets } from "@/components/dashboard/recent-bets";
 import { PerformancePanel } from "@/components/dashboard/performance-panel";
+import { OnboardingCard } from "@/components/dashboard/onboarding-card";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
@@ -119,32 +117,22 @@ export default async function DashboardPage() {
   }));
 
   if (bankrolls.length === 0) {
-    const t = await getTranslations("dashboard");
-    const tCommon = await getTranslations("common");
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-center animate-fade-in-up">
-        <div className="glass-card flex size-16 items-center justify-center rounded-2xl">
-          <Wallet size={30} className="text-primary" aria-hidden />
-        </div>
-        <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-semibold">{t("welcomeTitle")}</h1>
-          <p className="max-w-60 text-sm text-muted-foreground">
-            {t("welcomeSubtitle")}
-          </p>
-        </div>
-        <Link
-          href="/bankrolls"
-          className="flex min-h-touch items-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95"
-        >
-          {tCommon("createBankrollCta")}
-        </Link>
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-8 animate-fade-in-up">
+        <OnboardingCard hasBankroll={false} hasBet={false} />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <Reveal index={0}>
+      {bets.length === 0 && (
+        <Reveal index={0}>
+          <OnboardingCard hasBankroll hasBet={false} />
+        </Reveal>
+      )}
+
+      <Reveal index={bets.length === 0 ? 1 : 0}>
         <PerformancePanel
           points={performancePoints}
           balance={totalBalance}
@@ -152,7 +140,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={1}>
+      <Reveal index={bets.length === 0 ? 2 : 1}>
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -162,7 +150,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={2}>
+      <Reveal index={bets.length === 0 ? 3 : 2}>
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -170,7 +158,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={3}>
+      <Reveal index={bets.length === 0 ? 4 : 3}>
         <QuotaCard
           plan={plan}
           scansUsed={quota.used}
@@ -180,11 +168,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={4}>
+      <Reveal index={bets.length === 0 ? 5 : 4}>
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={5}>
+      <Reveal index={bets.length === 0 ? 6 : 5}>
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>
