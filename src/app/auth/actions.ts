@@ -13,9 +13,22 @@ export type AuthFormState =
   | undefined;
 
 async function getOrigin() {
+  // Les redirections de confirmation/OAuth doivent revenir vers l'URL publique
+  // configurée, jamais vers une valeur Host envoyée par un client. Ce repli
+  // sur l'hôte de requête ne sert qu'au développement local.
+  const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (configuredAppUrl) {
+    return new URL(configuredAppUrl).origin;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("NEXT_PUBLIC_APP_URL doit être configuré en production");
+  }
+
   const h = await headers();
   const proto = h.get("x-forwarded-proto") ?? "http";
   const host = h.get("host");
+  if (!host) throw new Error("Host manquant");
   return `${proto}://${host}`;
 }
 
