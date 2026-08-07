@@ -39,3 +39,13 @@ export const SPORTS: Record<string, string[]> = {
 };
 
 export const SPORT_LIST = Object.keys(SPORTS);
+
+/** Retourne les types disponibles pour un sport connu, sans jamais mélanger les taxonomies. */
+export function getBetTypesForSport(sport: string): string[] {
+  return SPORTS[sport] ?? SPORTS["Autre sport"];
+}
+
+/** Vérifie qu'un type de pari appartient bien au sport sélectionné. */
+export function isCompatibleSportBetType(sport: string, betType: string): boolean {
+  return getBetTypesForSport(sport).includes(betType);
+}

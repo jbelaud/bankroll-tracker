@@ -27,6 +27,7 @@ import { TypeStatsFilter } from "@/components/stats/type-stats-filter";
 import { CondensedStatRow } from "@/components/stats/condensed-stat-row";
 import { ProfitCurve } from "@/components/stats/profit-curve";
 import { ProfitCalendar } from "@/components/stats/profit-calendar";
+import { StatsFilters } from "@/components/stats/stats-filters";
 
 const ALL_SPORTS = "__all__";
 
@@ -44,10 +45,21 @@ export default async function StatsPage({
   ]);
   const value = (key: string) => typeof query[key] === "string" ? query[key].trim() : "";
   const from = value("from"); const to = value("to"); const q = value("q").toLowerCase();
-  const bankroll = value("bankroll"); const sportFilter = value("sport"); const typeFilter = value("type");
+  const bankroll = value("bankroll"); const sportFilter = value("sport"); const requestedTypeFilter = value("type");
   const resultFilter = value("result"); const live = value("live"); const freebet = value("freebet");
   const number = (key: string) => { const n = Number(value(key)); return Number.isFinite(n) && value(key) !== "" ? n : null; };
   const minStake = number("minStake"); const maxStake = number("maxStake"); const minOdds = number("minOdds"); const maxOdds = number("maxOdds");
+  const typesBySport = Object.fromEntries(
+    Array.from(new Set(allBets.map((bet) => bet.sport))).map((sport) => [
+      sport,
+      Array.from(
+        new Set(allBets.filter((bet) => bet.sport === sport).map((bet) => bet.betType))
+      ).sort(),
+    ])
+  ) as Record<string, string[]>;
+  const typeFilter = sportFilter && typesBySport[sportFilter]?.includes(requestedTypeFilter)
+    ? requestedTypeFilter
+    : "";
   const bets = allBets.filter((bet) => {
     const day = bet.date.toISOString().slice(0, 10);
     const text = `${bet.description ?? ""} ${bet.eventResult ?? ""}`.toLowerCase();
@@ -120,25 +132,13 @@ export default async function StatsPage({
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
 
-      <details className="glass-card rounded-xl p-3" open={Boolean(from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet || minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null)}>
-        <summary className="cursor-pointer text-sm font-semibold">{t("filters.title")}</summary>
-        <form method="get" className="mt-3 grid grid-cols-2 gap-2">
-          <input name="from" type="date" defaultValue={from} aria-label={t("filters.startDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <input name="to" type="date" defaultValue={to} aria-label={t("filters.endDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <input name="q" defaultValue={q} placeholder={t("filters.search")} className="col-span-2 h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <select name="bankroll" defaultValue={bankroll} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allBankrolls")}</option>{bankrolls.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
-          <select name="sport" defaultValue={sportFilter} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allSports")}</option>{Array.from(new Set(allBets.map((item) => item.sport))).sort().map((item) => <option key={item} value={item}>{item}</option>)}</select>
-          <select name="type" defaultValue={typeFilter} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allTypes")}</option>{Array.from(new Set(allBets.map((item) => item.betType))).sort().map((item) => <option key={item} value={item}>{item}</option>)}</select>
-          <select name="result" defaultValue={resultFilter} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allResults")}</option><option value="GAGNE">{t("filters.won")}</option><option value="PERDU">{t("filters.lost")}</option><option value="REMBOURSE">{t("filters.refunded")}</option><option value="CASHE">{t("filters.cashedOut")}</option><option value="EN_ATTENTE">{t("filters.pending")}</option></select>
-          <input name="minStake" type="number" step="0.01" defaultValue={minStake ?? ""} placeholder={t("filters.minStake")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <input name="maxStake" type="number" step="0.01" defaultValue={maxStake ?? ""} placeholder={t("filters.maxStake")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <input name="minOdds" type="number" step="0.01" defaultValue={minOdds ?? ""} placeholder={t("filters.minOdds")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <input name="maxOdds" type="number" step="0.01" defaultValue={maxOdds ?? ""} placeholder={t("filters.maxOdds")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
-          <select name="live" defaultValue={live} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allLive")}</option><option value="true">{t("filters.liveOnly")}</option><option value="false">{t("filters.nonLive")}</option></select>
-          <select name="freebet" defaultValue={freebet} className="h-10 rounded-lg border border-input bg-background px-3 text-xs"><option value="">{t("filters.allFreebets")}</option><option value="true">{t("filters.freebetOnly")}</option><option value="false">{t("filters.nonFreebet")}</option></select>
-          <button type="submit" className="col-span-2 h-10 rounded-lg bg-primary text-xs font-semibold text-primary-foreground">{t("filters.apply")}</button>
-        </form>
-      </details>
+      <StatsFilters
+        values={{ from, to, q, bankroll, sport: sportFilter, type: typeFilter, result: resultFilter, live, freebet, minStake, maxStake, minOdds, maxOdds }}
+        bankrolls={bankrolls.map(({ id, name }) => ({ id, name }))}
+        sportOptions={Object.keys(typesBySport).sort()}
+        typesBySport={typesBySport}
+        open={Boolean(from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet || minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null)}
+      />
 
       <section className="glass-card rounded-xl p-3">
         <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-semibold">{t("curve.title")}</h2><span className="text-xs text-muted-foreground">{t("curve.bets", { count: bets.length })}</span></div>

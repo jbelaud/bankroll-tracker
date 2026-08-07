@@ -8,6 +8,7 @@ import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { calculateScanCostUsd } from "@/lib/scan/cost";
+import { getBetTypesForSport, isCompatibleSportBetType, SPORTS } from "@/lib/sports";
 import {
   analyzeTicketImage,
   hasConfiguredScanProvider,
@@ -186,11 +187,17 @@ export async function POST(request: NextRequest) {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
     const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
+    const rawSport = String(r.sport ?? "Autre sport").trim();
+    const sport = Object.hasOwn(SPORTS, rawSport) ? rawSport : "Autre sport";
+    const rawBetType = String(r.betType ?? "Autre").trim();
+    const taxonomyMismatch = !isCompatibleSportBetType(sport, rawBetType);
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: String(r.date ?? new Date().toISOString().slice(0, 10)),
-      sport: String(r.sport ?? "Autre sport"),
-      betType: String(r.betType ?? "Autre"),
+      sport,
+      // Un couple sport/type invalide est ramené à "Autre" pour empêcher
+      // toute donnée incohérente d'être importée. La carte de review le signale.
+      betType: taxonomyMismatch ? getBetTypesForSport(sport).at(-1)! : rawBetType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
       stake: num(r.stake),
@@ -201,6 +208,7 @@ export async function POST(request: NextRequest) {
       live: Boolean(r.live),
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
+      taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.
     if (!bet.ticketRef && looksLikeParsedDuplicate(bet, existingCandidates)) {

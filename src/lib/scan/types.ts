@@ -23,6 +23,8 @@ export type ParsedBet = {
   result: BetResult;
   cashOutAmount: number | null;
   possibleDuplicate?: boolean;
+  /** Le modèle a renvoyé un type incompatible avec le sport : validation manuelle requise. */
+  taxonomyMismatch?: boolean;
 };
 
 export const TYPE_SUGGERE_PREFIX = "[Type suggéré";

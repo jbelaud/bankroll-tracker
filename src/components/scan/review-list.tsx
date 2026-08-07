@@ -46,6 +46,7 @@ export function ReviewList({
   );
   const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
+  const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
 
   return (
     // pb élargi : la barre de confirmation fixe ne doit jamais masquer une card
@@ -75,6 +76,12 @@ export function ReviewList({
         <p className="flex items-start gap-1.5 text-xs text-chart-4">
           <Lightbulb size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("suggestedWarning")}
+        </p>
+      )}
+      {taxonomyMismatchCount > 0 && (
+        <p className="flex items-start gap-1.5 text-xs text-warning">
+          <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+          {t("taxonomyMismatchWarning")}
         </p>
       )}
 

@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
+import { getBetTypesForSport, SPORT_LIST } from "@/lib/sports";
 import { currencySymbol } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,7 @@ export function ReviewBetCard({
   const tSports = useTranslations("sports");
   const tBetTypes = useTranslations("betTypes");
   const tResults = useTranslations("results");
+  const availableBetTypes = getBetTypesForSport(bet.sport);
 
   // Le Select a besoin d'une map value->libellé traduit (utilisée pour son
   // accessibilité/typeahead) — les valeurs restent l'enum Prisma, seul le
@@ -78,7 +80,7 @@ export function ReviewBetCard({
         "glass-card flex flex-col gap-3 rounded-xl p-4",
         // !border : l'utilitaire .glass-card pose déjà un border (raccourci)
         // dans le même layer ; on force la couleur d'avertissement.
-        bet.possibleDuplicate && "!border-warning"
+        (bet.possibleDuplicate || bet.taxonomyMismatch) && "!border-warning"
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -91,6 +93,12 @@ export function ReviewBetCard({
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
               {t("duplicateBadge")}
+            </span>
+          )}
+          {bet.taxonomyMismatch && (
+            <span className="flex items-center gap-1 text-xs font-medium text-warning">
+              <Warning size={13} weight="fill" aria-hidden />
+              {t("taxonomyMismatchBadge")}
             </span>
           )}
           {suggested && (
@@ -109,6 +117,58 @@ export function ReviewBetCard({
         >
           <X size={18} aria-hidden />
         </Button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={uid("sport")} className="text-xs">
+            {t("sportLabel")}
+          </Label>
+          <Select
+            value={bet.sport}
+            onValueChange={(value) => {
+              const sport = value as string;
+              onPatch({
+                sport,
+                betType: getBetTypesForSport(sport)[0],
+                taxonomyMismatch: false,
+              });
+            }}
+            items={Object.fromEntries(SPORT_LIST.map((sport) => [sport, translateTaxonomy(tSports, sport)]))}
+          >
+            <SelectTrigger id={uid("sport")} className="min-h-touch w-full rounded-lg px-2 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SPORT_LIST.map((sport) => (
+                <SelectItem key={sport} value={sport} className="min-h-touch text-sm">
+                  {translateTaxonomy(tSports, sport)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={uid("bet-type")} className="text-xs">
+            {t("betTypeLabel")}
+          </Label>
+          <Select
+            value={bet.betType}
+            onValueChange={(value) => onPatch({ betType: value as string, taxonomyMismatch: false })}
+            items={Object.fromEntries(availableBetTypes.map((type) => [type, translateTaxonomy(tBetTypes, type)]))}
+          >
+            <SelectTrigger id={uid("bet-type")} className="min-h-touch w-full rounded-lg px-2 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {availableBetTypes.map((type) => (
+                <SelectItem key={type} value={type} className="min-h-touch text-sm">
+                  {translateTaxonomy(tBetTypes, type)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">
