@@ -3,6 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { QUALITY_BUCKET } from "@/lib/scan/quality";
+import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 
 const PERIODS = ["day", "month", "year", "all"] as const;
 type Period = (typeof PERIODS)[number];
@@ -82,7 +85,7 @@ export default async function AdminPage({
   const range = rangeFor(period);
   const createdAt = range.start ? { gte: range.start, lte: range.end } : undefined;
 
-  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions, feedbackCount, recentFeedback] =
+  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions, feedbackCount, recentFeedback, qualityCounts, qualityReports, bookmakerProfiles] =
     await Promise.all([
       prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
       prisma.user.count({ where: { createdAt } }),
@@ -118,7 +121,27 @@ export default async function AdminPage({
         take: 12,
         include: { user: { select: { email: true } } },
       }),
+      prisma.scanQualityReport.groupBy({ by: ["bookmaker"], _count: { _all: true }, orderBy: { _count: { bookmaker: "desc" } } }),
+      prisma.scanQualityReport.findMany({
+        where: { createdAt }, orderBy: [{ status: "asc" }, { correctionCount: "desc" }, { createdAt: "desc" }], take: 25,
+        select: { id: true, bookmaker: true, status: true, correctionCount: true, correctionTypes: true, model: true, createdAt: true, storagePath: true, rawExtraction: true, finalExtraction: true },
+      }),
+      prisma.bookmakerScanProfile.findMany({
+        select: { bookmaker: true, supportStatus: true, rules: true, examples: true, version: true, updatedAt: true },
+        orderBy: { bookmaker: "asc" },
+      }),
     ]);
+
+  const storage = createAdminSupabaseClient().storage.from(QUALITY_BUCKET);
+  const queueReports = await Promise.all(qualityReports.map(async (report) => {
+    const { data } = await storage.createSignedUrl(report.storagePath, 60);
+    return {
+      id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: report.correctionCount,
+      correctionTypes: Array.isArray(report.correctionTypes) ? report.correctionTypes.filter((type): type is string => typeof type === "string") : [],
+      model: report.model, createdAt: report.createdAt.toISOString(), imageUrl: data?.signedUrl ?? null,
+      rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
+    };
+  }));
 
   const plans = new Map(planCounts.map((item) => [item.plan, item._count._all]));
   const freeUsers = plans.get("FREE") ?? 0;
@@ -263,6 +286,19 @@ export default async function AdminPage({
           </ul>
         )}
       </section>
+
+      <ScanQualityQueue
+        reports={queueReports}
+        counts={qualityCounts.map((item) => ({ bookmaker: item.bookmaker, count: item._count._all }))}
+        profiles={bookmakerProfiles.map((profile) => ({
+          bookmaker: profile.bookmaker,
+          supportStatus: profile.supportStatus,
+          rules: profile.rules ?? "",
+          examplesText: profile.examples ? JSON.stringify(profile.examples, null, 2) : "",
+          version: profile.version,
+          updatedAt: profile.updatedAt.toISOString(),
+        }))}
+      />
     </div>
   );
 }

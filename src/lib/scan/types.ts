@@ -23,6 +23,8 @@ export type ParsedBet = {
   result: BetResult;
   cashOutAmount: number | null;
   possibleDuplicate?: boolean;
+  /** Index de la capture source, uniquement durant la revue côté client. */
+  sourceScanIndex?: number;
   /** Le modèle a renvoyé un type incompatible avec le sport : validation manuelle requise. */
   taxonomyMismatch?: boolean;
 };

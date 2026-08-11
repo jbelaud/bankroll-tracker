@@ -15,19 +15,22 @@ export function ReviewList({
   error,
   onConfirm,
   onRestart,
+  showQualityOffer,
   currency,
   taxonomy,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
   error: string;
-  onConfirm: (bets: ParsedBet[]) => void;
+  onConfirm: (bets: ParsedBet[], shareQuality: boolean) => void;
   onRestart: () => void;
+  showQualityOffer: boolean;
   currency: Currency;
   taxonomy: Taxonomy;
 }) {
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(new Set());
+  const [shareQuality, setShareQuality] = useState(false);
   const t = useTranslations("scan.review");
 
   const patchBet = (index: number, patch: Partial<ParsedBet>) =>
@@ -100,6 +103,25 @@ export function ReviewList({
         </p>
       )}
 
+      {showQualityOffer && (
+        <section className="rounded-xl border border-border bg-muted/40 p-3 text-xs">
+          <p className="font-medium">Ce bookmaker n&apos;est pas encore pleinement testé. Vous pouvez aider BetTrack à améliorer la compatibilité.</p>
+          <label className="mt-3 flex cursor-pointer items-start gap-2">
+            <input
+              type="checkbox"
+              checked={shareQuality}
+              onChange={(event) => setShareQuality(event.target.checked)}
+              disabled={importing}
+              className="mt-0.5"
+            />
+            <span>
+              Partager ce scan avec BetTrack pour améliorer la compatibilité de ce bookmaker.
+              <span className="mt-1 block text-muted-foreground">Seuls les administrateurs BetTrack autorisés pourront consulter la capture, uniquement à cette fin. Elle peut contenir une référence, un solde ou un pseudo ; vous pouvez la supprimer à tout moment.</span>
+            </span>
+          </label>
+        </section>
+      )}
+
       <ul className="flex flex-col gap-3">
         {bets.map((bet, i) => (
           <ReviewBetCard
@@ -124,7 +146,7 @@ export function ReviewList({
       {/* Zone nav + bouton Scan saillant : la confirmation doit rester entièrement au-dessus. */}
       <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4">
         <Button
-          onClick={() => onConfirm(kept)}
+          onClick={() => onConfirm(kept, shareQuality)}
           disabled={kept.length === 0 || importing}
           className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg"
         >

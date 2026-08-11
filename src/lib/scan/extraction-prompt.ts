@@ -5,8 +5,14 @@ import type { Taxonomy } from "@/lib/taxonomy";
 // (bankroll-tracker.jsx, buildExtractionPrompt, lignes 1451-1491). Ne pas
 // réinventer : ces règles (dates, freebet, live, cash out, Mymatch, types
 // suggérés, dédup par ticketRef) sont éprouvées sur des vrais tickets.
-export function buildExtractionPrompt(taxonomy: Taxonomy = SPORTS): string {
+export function buildExtractionPrompt(
+  taxonomy: Taxonomy = SPORTS,
+  context?: { bookmaker?: string; bookmakerRules?: string | null }
+): string {
   return `Tu es un extracteur de tickets de paris sportifs. On te donne une ou plusieurs captures d'écran d'une application de paris sportifs (Winamax, Betclic, Unibet, PMU, ParionsSport, ou autre). Chaque capture peut contenir PLUSIEURS tickets de paris empilés.
+
+Contexte fourni par l'utilisateur : la bankroll sélectionnée utilise ${context?.bookmaker ?? "un bookmaker inconnu"}. C'est un indice, pas une certitude : ne l'affirme jamais si la capture ne le confirme pas et continue l'extraction même si elle vient d'un autre bookmaker.
+${context?.bookmakerRules ? `Règles validées par l'équipe BetTrack pour ce bookmaker :\n${context.bookmakerRules}\n` : ""}
 
 Réponds UNIQUEMENT avec un tableau JSON valide, sans aucun texte avant ou après, sans balises markdown. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec un tableau vide [].
 

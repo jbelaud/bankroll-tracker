@@ -4,9 +4,10 @@ import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { useRouter } from "@/i18n/navigation";
-import { scanTickets } from "@/lib/scan/scan-client";
+import { scanTickets, type ScanTicketResult } from "@/lib/scan/scan-client";
 import type { ParsedBet } from "@/lib/scan/types";
 import { importBets } from "@/lib/actions/import-bets";
+import { finalBetsForScan } from "@/lib/scan/quality";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { UploadZone } from "./upload-zone";
 import { ScanningView } from "./scanning-view";
@@ -19,8 +20,8 @@ export type BankrollOption = { id: string; name: string; bookmaker: string };
 type FlowState =
   | { step: "idle" }
   | { step: "scanning"; files: File[]; done: number }
-  | { step: "review"; bets: ParsedBet[] }
-  | { step: "importing"; bets: ParsedBet[] };
+  | { step: "review"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] }
+  | { step: "importing"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] };
 
 export function ScanFlow({
   bankrolls,
@@ -43,16 +44,16 @@ export function ScanFlow({
       setError("");
       setFlow({ step: "scanning", files, done: 0 });
       try {
-        const bets = await scanTickets(files, (done) =>
+        const { bets, scans } = await scanTickets(files, bankrollId, (done) =>
           setFlow({ step: "scanning", files, done })
         );
-        setFlow({ step: "review", bets });
+        setFlow({ step: "review", bets, files, scans });
       } catch (e) {
         setError(e instanceof Error ? e.message : t("analysisFailed"));
         setFlow({ step: "idle" });
       }
     },
-    [t]
+    [bankrollId, t]
   );
 
   const restart = useCallback(() => {
@@ -61,14 +62,27 @@ export function ScanFlow({
   }, []);
 
   const confirmImport = useCallback(
-    async (bets: ParsedBet[]) => {
+    async (bets: ParsedBet[], shareQuality: boolean, files: File[], scans: ScanTicketResult[]) => {
       setError("");
-      setFlow({ step: "importing", bets });
+      setFlow({ step: "importing", bets, files, scans });
       const result = await importBets(bankrollId, bets);
       if (result.error) {
         setError(result.error);
-        setFlow({ step: "review", bets });
+        setFlow({ step: "review", bets, files, scans });
         return;
+      }
+      if (shareQuality) {
+        await Promise.allSettled(scans.map((scan, index) => {
+          const finalExtraction = finalBetsForScan(bets, index);
+          const form = new FormData();
+          form.append("consent", "true");
+          form.append("bankrollId", bankrollId);
+          form.append("image", files[index]);
+          form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
+          form.append("finalExtraction", JSON.stringify(finalExtraction));
+          form.append("model", scan.model);
+          return fetch("/api/scan-quality", { method: "POST", body: form });
+        }));
       }
       router.push("/dashboard");
     },
@@ -91,8 +105,9 @@ export function ScanFlow({
         initialBets={flow.bets}
         importing={flow.step === "importing"}
         error={error}
-        onConfirm={confirmImport}
+        onConfirm={(bets, shareQuality) => confirmImport(bets, shareQuality, flow.files, flow.scans)}
         onRestart={restart}
+        showQualityOffer={flow.scans.some((scan) => scan.supportStatus !== "TESTED")}
         currency={currency}
         taxonomy={taxonomy}
       />

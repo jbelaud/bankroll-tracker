@@ -1,3 +1,19 @@
+# BetTrack
+
+## Scan quality reports
+
+Opting in from the scan review stores the screenshot in the private Supabase
+Storage bucket `scan-quality-reports` and creates a server-only Prisma report.
+Screenshots are never retained for a normal scan. Set `SUPABASE_SECRET_KEY`,
+`ADMIN_EMAILS`, and `CRON_SECRET` (see `.env.local.example`), then deploy the
+Prisma migration. Vercel calls `/api/cron/scan-quality-retention` daily to
+delete expired reports and their files after 30 days.
+
+Users can request an immediate deletion through support; the server action
+`deleteOwnScanQualityReport` is ownership-checked and removes the file first.
+Administrators can use `/admin` to view the signed screenshot (60 seconds),
+compare the raw and corrected extracts, and set a bookmaker validation status.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

@@ -16,6 +16,7 @@ import { PlanCard } from "@/components/account/plan-card";
 import { FeedbackButton } from "@/components/account/feedback-button";
 import { isAdminEmail } from "@/lib/admin";
 import { canUseBetaOffer } from "@/lib/billing/beta-offer";
+import { ScanQualityReports } from "@/components/account/scan-quality-reports";
 
 export default async function AccountPage({
   params,
@@ -33,9 +34,10 @@ export default async function AccountPage({
     return null;
   }
 
-  const [dbUser, bets] = await Promise.all([
+  const [dbUser, bets, qualityReports] = await Promise.all([
     prisma.user.findUnique({ where: { id: user.id } }),
     listAllBets(),
+    prisma.scanQualityReport.findMany({ where: { userId: user.id }, select: { id: true, bookmaker: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const now = new Date();
@@ -98,6 +100,8 @@ export default async function AccountPage({
         <h2 className="text-sm font-semibold">{t("data.title")}</h2>
         <ExportDataButton />
       </section>
+
+      <ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} />
 
       <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
         <h2 className="text-sm font-semibold">{t("security.title")}</h2>

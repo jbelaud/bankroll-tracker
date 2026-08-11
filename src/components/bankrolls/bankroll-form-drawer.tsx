@@ -18,6 +18,7 @@ import {
   createBankrollForm,
   updateBankrollForm,
 } from "@/lib/actions/bankroll-forms";
+import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
 
 export type BankrollFormTarget = {
   id: string;
@@ -76,8 +77,12 @@ export function BankrollFormDrawer({
               required
               placeholder={t("bookmakerPlaceholder")}
               defaultValue={bankroll?.bookmaker ?? ""}
+              list="known-bookmakers"
               className="min-h-touch rounded-lg px-3 text-sm"
             />
+            <datalist id="known-bookmakers">
+              {KNOWN_BOOKMAKERS.map((bookmaker) => <option key={bookmaker} value={bookmaker} />)}
+            </datalist>
           </div>
 
           <div className="flex flex-col gap-1.5 text-left">

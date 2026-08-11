@@ -70,10 +70,14 @@ export async function analyzeTicketImage({
   base64,
   mediaType,
   taxonomy,
+  bookmaker,
+  bookmakerRules,
 }: {
   base64: string;
   mediaType: ScanMediaType;
   taxonomy: Taxonomy;
+  bookmaker?: string;
+  bookmakerRules?: string | null;
 }): Promise<ScanAiResponse> {
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 
@@ -89,7 +93,7 @@ export async function analyzeTicketImage({
         { text: "Analyse cette capture de ticket de paris sportifs." },
       ],
       config: {
-        systemInstruction: buildExtractionPrompt(taxonomy),
+        systemInstruction: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }),
         responseMimeType: "application/json",
         responseJsonSchema: BETS_RESPONSE_SCHEMA,
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
@@ -117,7 +121,7 @@ export async function analyzeTicketImage({
         role: "user",
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-          { type: "text", text: buildExtractionPrompt(taxonomy) },
+          { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
         ],
       },
     ],

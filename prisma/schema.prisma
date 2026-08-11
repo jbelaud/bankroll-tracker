@@ -71,6 +71,7 @@ model User {
   scanUsages ScanUsage[]
   feedbacks Feedback[]
   taxonomyEntries UserTaxonomyEntry[]
+  scanQualityReports ScanQualityReport[]
 
   @@map("users")
 }
@@ -87,6 +88,20 @@ enum Plan {
   PREMIUM
 }
 
+enum BookmakerSupportStatus {
+  TESTED
+  UNTESTED
+  VALIDATING
+}
+
+enum ScanQualityReportStatus {
+  NEW
+  REVIEWED
+  APPROVED
+  REJECTED
+  RESOLVED
+}
+
 // ------------------------------------------------------------
 // Bankroll
 // ------------------------------------------------------------
@@ -101,6 +116,7 @@ model Bankroll {
   createdAt DateTime @default(now())
 
   bets      Bet[]
+  scanQualityReports ScanQualityReport[]
 
   @@index([userId])
   @@map("bankrolls")
@@ -195,6 +211,49 @@ model ScanUsage {
   @@index([userId, createdAt])
   @@index([createdAt])
   @@map("scan_usages")
+}
+
+model BookmakerScanProfile {
+  id            String                 @id @default(uuid())
+  bookmaker     String                 @unique
+  supportStatus BookmakerSupportStatus @default(UNTESTED)
+  rules         String?
+  examples      Json?
+  version       Int                    @default(1)
+  updatedAt     DateTime               @updatedAt
+
+  @@map("bookmaker_scan_profiles")
+}
+
+// Créé seulement après consentement explicite. Les JSON contiennent les
+// extractions/corrections, jamais des clés, cookies ou sessions.
+model ScanQualityReport {
+  id                  String                  @id @default(uuid())
+  userId              String
+  user                User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankrollId          String?
+  bankroll            Bankroll?               @relation(fields: [bankrollId], references: [id], onDelete: SetNull)
+  bookmaker           String
+  detectedBookmaker   String?
+  detectionConfidence Float?
+  status              ScanQualityReportStatus @default(NEW)
+  model               String
+  promptVersion       String
+  rawExtraction       Json
+  finalExtraction     Json
+  correctionCount     Int                     @default(0)
+  correctionTypes     Json?
+  storagePath         String
+  consentedAt         DateTime
+  expiresAt           DateTime
+  adminNotes          String?
+  createdAt           DateTime                @default(now())
+  reviewedAt          DateTime?
+
+  @@index([userId, createdAt])
+  @@index([bookmaker, status, createdAt])
+  @@index([expiresAt])
+  @@map("scan_quality_reports")
 }
 
 // ------------------------------------------------------------

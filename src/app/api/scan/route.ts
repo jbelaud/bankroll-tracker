@@ -15,6 +15,8 @@ import {
   type ScanMediaType,
 } from "@/lib/scan/ai-provider";
 import type { ParsedBet } from "@/lib/scan/types";
+import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
+import { bookmakerKind } from "@/lib/bookmakers";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -88,6 +90,7 @@ export async function POST(request: NextRequest) {
   // 3. Récupération de l'image (une par requête — le client boucle pour la progression).
   const formData = await request.formData();
   const image = formData.get("image");
+  const bankrollId = String(formData.get("bankrollId") ?? "");
   if (!(image instanceof File)) {
     return NextResponse.json({ error: t("missingImage") }, { status: 400 });
   }
@@ -104,13 +107,23 @@ export async function POST(request: NextRequest) {
   }
   const base64 = Buffer.from(bytes).toString("base64");
 
-  const [dbUser, taxonomy] = await Promise.all([
+  const [dbUser, taxonomy, bankroll] = await Promise.all([
     prisma.user.findUniqueOrThrow({
     where: { id: user.id },
     select: { plan: true },
     }),
     getUserTaxonomy(user.id),
+    prisma.bankroll.findFirst({
+      where: { id: bankrollId, userId: user.id },
+      select: { bookmaker: true },
+    }),
   ]);
+  if (!bankroll) return NextResponse.json({ error: "Bankroll introuvable." }, { status: 404 });
+  const profile = await prisma.bookmakerScanProfile.findUnique({
+    where: { bookmaker: bankroll.bookmaker },
+    select: { supportStatus: true, rules: true },
+  });
+  const supportStatus = profile?.supportStatus ?? (bookmakerKind(bankroll.bookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
   if (!rateLimit.allowed) {
@@ -139,8 +152,16 @@ export async function POST(request: NextRequest) {
 
   // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
   let rawBets: unknown[];
+  let scanModel = "unknown";
   try {
-    const response = await analyzeTicketImage({ base64, mediaType, taxonomy });
+    const response = await analyzeTicketImage({
+      base64,
+      mediaType,
+      taxonomy,
+      bookmaker: bankroll.bookmaker,
+      bookmakerRules: profile?.supportStatus === "TESTED" ? profile.rules : null,
+    });
+    scanModel = response.model;
     rawBets = parseBetsArray(response.text);
 
     // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
@@ -222,5 +243,13 @@ export async function POST(request: NextRequest) {
   });
 
   quotaReserved = false;
-  return NextResponse.json({ bets });
+  return NextResponse.json({
+    bets,
+    scan: {
+      rawExtraction: rawBets,
+      model: scanModel,
+      promptVersion: SCAN_PROMPT_VERSION,
+      supportStatus,
+    },
+  });
 }

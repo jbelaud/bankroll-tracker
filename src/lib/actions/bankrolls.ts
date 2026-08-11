@@ -6,6 +6,7 @@ import { redirect } from "@/i18n/navigation";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+import { normalizeBookmaker } from "@/lib/bookmakers";
 
 const FREE_BANKROLL_LIMIT = 2;
 
@@ -29,7 +30,8 @@ export async function createBankroll(
     }
   }
 
-  if (!bookmaker.trim()) {
+  const normalizedBookmaker = normalizeBookmaker(bookmaker);
+  if (!normalizedBookmaker) {
     throw new Error(t("bookmakerRequired"));
   }
   if (!Number.isFinite(initial) || initial < 0) {
@@ -39,8 +41,8 @@ export async function createBankroll(
   return prisma.bankroll.create({
     data: {
       userId: user.id,
-      name: name.trim() || bookmaker.trim(),
-      bookmaker: bookmaker.trim(),
+      name: name.trim() || normalizedBookmaker,
+      bookmaker: normalizedBookmaker,
       initial,
     },
   });
@@ -65,7 +67,8 @@ export async function updateBankroll(
     throw new Error(t("bankrollNotFound"));
   }
 
-  if (!bookmaker.trim()) {
+  const normalizedBookmaker = normalizeBookmaker(bookmaker);
+  if (!normalizedBookmaker) {
     throw new Error(t("bookmakerRequired"));
   }
   if (!Number.isFinite(initial) || initial < 0) {
@@ -75,8 +78,8 @@ export async function updateBankroll(
   return prisma.bankroll.update({
     where: { id },
     data: {
-      name: name.trim() || bookmaker.trim(),
-      bookmaker: bookmaker.trim(),
+      name: name.trim() || normalizedBookmaker,
+      bookmaker: normalizedBookmaker,
       initial,
     },
   });
