@@ -124,7 +124,7 @@ export function BankrollList({
       )}
 
       <BankrollFormDrawer
-        key={editing?.id ?? "new"}
+        key={`${editing?.id ?? "new"}-${open ? "open" : "closed"}`}
         open={open}
         onOpenChange={setOpen}
         bankroll={editing}

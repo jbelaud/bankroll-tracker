@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import {
@@ -19,6 +19,27 @@ import {
   updateBankrollForm,
 } from "@/lib/actions/bankroll-forms";
 import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const MANUAL_BOOKMAKER = "__manual__";
+const SELECTABLE_BOOKMAKERS = KNOWN_BOOKMAKERS.filter((bookmaker) => bookmaker !== "Autre");
+const TESTED_BOOKMAKERS = new Set(["Winamax", "Betclic"]);
+
+function initialBookmakerSelection(bookmaker?: string): string {
+  if (!bookmaker) return "";
+  return bookmaker && SELECTABLE_BOOKMAKERS.includes(bookmaker as (typeof SELECTABLE_BOOKMAKERS)[number])
+    ? bookmaker
+    : MANUAL_BOOKMAKER;
+}
 
 export type BankrollFormTarget = {
   id: string;
@@ -43,6 +64,10 @@ export function BankrollFormDrawer({
   const [state, action, pending] = useActionState(
     isEdit ? updateBankrollForm : createBankrollForm,
     undefined
+  );
+  const [selectedBookmaker, setSelectedBookmaker] = useState(() => initialBookmakerSelection(bankroll?.bookmaker));
+  const [manualBookmaker, setManualBookmaker] = useState(
+    bankroll && initialBookmakerSelection(bankroll.bookmaker) === MANUAL_BOOKMAKER ? bankroll.bookmaker : ""
   );
 
   useEffect(() => {
@@ -71,18 +96,43 @@ export function BankrollFormDrawer({
             <Label htmlFor="br-bookmaker" className="text-xs">
               {t("bookmakerLabel")}
             </Label>
-            <Input
-              id="br-bookmaker"
+            <input
+              type="hidden"
               name="bookmaker"
-              required
-              placeholder={t("bookmakerPlaceholder")}
-              defaultValue={bankroll?.bookmaker ?? ""}
-              list="known-bookmakers"
-              className="min-h-touch rounded-lg px-3 text-sm"
+              value={selectedBookmaker === MANUAL_BOOKMAKER ? manualBookmaker : selectedBookmaker}
             />
-            <datalist id="known-bookmakers">
-              {KNOWN_BOOKMAKERS.map((bookmaker) => <option key={bookmaker} value={bookmaker} />)}
-            </datalist>
+            <Select value={selectedBookmaker} onValueChange={(value) => setSelectedBookmaker(value as string)}>
+              <SelectTrigger id="br-bookmaker" className="min-h-touch w-full rounded-lg px-3 text-sm">
+                <SelectValue placeholder={t("bookmakerChoose")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{t("bookmakerTested")}</SelectLabel>
+                  {SELECTABLE_BOOKMAKERS.filter((bookmaker) => TESTED_BOOKMAKERS.has(bookmaker)).map((bookmaker) => (
+                    <SelectItem key={bookmaker} value={bookmaker}>{bookmaker}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectSeparator />
+                <SelectGroup>
+                  <SelectLabel>{t("bookmakerKnown")}</SelectLabel>
+                  {SELECTABLE_BOOKMAKERS.filter((bookmaker) => !TESTED_BOOKMAKERS.has(bookmaker)).map((bookmaker) => (
+                    <SelectItem key={bookmaker} value={bookmaker}>{bookmaker}</SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectSeparator />
+                <SelectItem value={MANUAL_BOOKMAKER}>{t("bookmakerManual")}</SelectItem>
+              </SelectContent>
+            </Select>
+            {selectedBookmaker === MANUAL_BOOKMAKER && (
+              <Input
+                id="br-bookmaker-manual"
+                required
+                value={manualBookmaker}
+                onChange={(event) => setManualBookmaker(event.target.value)}
+                placeholder={t("bookmakerManualPlaceholder")}
+                className="min-h-touch rounded-lg px-3 text-sm"
+              />
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5 text-left">
