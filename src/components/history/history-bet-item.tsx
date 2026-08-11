@@ -156,6 +156,13 @@ export function HistoryBetItem({
   const TrendIcon = positive ? TrendUp : TrendDown;
   const sportLabel = translateTaxonomy(tSports, bet.sport);
   const betTypeLabel = translateTaxonomy(tBetTypes, bet.betType);
+  const resultTone = {
+    GAGNE: "bg-profit/15 text-profit",
+    PERDU: "bg-loss/15 text-loss",
+    REMBOURSE: "bg-muted text-muted-foreground",
+    CASHE: "bg-primary/15 text-primary",
+    EN_ATTENTE: "bg-muted text-muted-foreground",
+  }[bet.result];
 
   return (
     <li className="relative overflow-hidden">
@@ -230,11 +237,10 @@ export function HistoryBetItem({
               ? t("cashedOut", { amount: fmtMoney(bet.cashOutAmount ?? 0, locale, currency) })
               : t("stakeAtOdds", { stake: fmtMoney(bet.stake, locale, currency), odds: fmtOdds(bet.odds, locale) })}
           </span>
-          {bet.result === "EN_ATTENTE" ? (
-            <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
-              {tResults("EN_ATTENTE")}
-            </span>
-          ) : (
+          <span className={cn("rounded-full px-2 py-0.5 text-[0.65rem] font-semibold", resultTone)}>
+            {tResults(bet.result)}
+          </span>
+          {bet.result !== "EN_ATTENTE" && (
             <span
               className={cn(
                 "num flex items-center gap-0.5 text-sm font-semibold",
