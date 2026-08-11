@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import { buildExtractionPrompt } from "@/lib/scan/extraction-prompt";
+import type { Taxonomy } from "@/lib/taxonomy";
 
 const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"] as const;
 type GeminiModel = (typeof GEMINI_MODELS)[number];
@@ -68,9 +69,11 @@ export function hasConfiguredScanProvider(): boolean {
 export async function analyzeTicketImage({
   base64,
   mediaType,
+  taxonomy,
 }: {
   base64: string;
   mediaType: ScanMediaType;
+  taxonomy: Taxonomy;
 }): Promise<ScanAiResponse> {
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 
@@ -86,7 +89,7 @@ export async function analyzeTicketImage({
         { text: "Analyse cette capture de ticket de paris sportifs." },
       ],
       config: {
-        systemInstruction: buildExtractionPrompt(),
+        systemInstruction: buildExtractionPrompt(taxonomy),
         responseMimeType: "application/json",
         responseJsonSchema: BETS_RESPONSE_SCHEMA,
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
@@ -114,7 +117,7 @@ export async function analyzeTicketImage({
         role: "user",
         content: [
           { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-          { type: "text", text: buildExtractionPrompt() },
+          { type: "text", text: buildExtractionPrompt(taxonomy) },
         ],
       },
     ],

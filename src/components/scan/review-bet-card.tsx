@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
-import { getBetTypesForSport, SPORT_LIST } from "@/lib/sports";
 import { currencySymbol } from "@/lib/format";
+import type { Taxonomy } from "@/lib/taxonomy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,7 @@ export function ReviewBetCard({
   onPatch,
   onToggleExcluded,
   currency,
+  taxonomy,
 }: {
   bet: ParsedBet;
   index: number;
@@ -39,6 +40,7 @@ export function ReviewBetCard({
   onPatch: (patch: Partial<ParsedBet>) => void;
   onToggleExcluded: () => void;
   currency: Currency;
+  taxonomy: Taxonomy;
 }) {
   const suggested = hasSuggestedType(bet);
   const uid = (field: string) => `bet-${index}-${field}`;
@@ -46,7 +48,8 @@ export function ReviewBetCard({
   const tSports = useTranslations("sports");
   const tBetTypes = useTranslations("betTypes");
   const tResults = useTranslations("results");
-  const availableBetTypes = getBetTypesForSport(bet.sport);
+  const sportList = Object.keys(taxonomy);
+  const availableBetTypes = taxonomy[bet.sport] ?? [bet.betType];
 
   // Le Select a besoin d'une map value->libellé traduit (utilisée pour son
   // accessibilité/typeahead) — les valeurs restent l'enum Prisma, seul le
@@ -130,17 +133,17 @@ export function ReviewBetCard({
               const sport = value as string;
               onPatch({
                 sport,
-                betType: getBetTypesForSport(sport)[0],
+                betType: taxonomy[sport]?.[0] ?? "Autre",
                 taxonomyMismatch: false,
               });
             }}
-            items={Object.fromEntries(SPORT_LIST.map((sport) => [sport, translateTaxonomy(tSports, sport)]))}
+            items={Object.fromEntries(sportList.map((sport) => [sport, translateTaxonomy(tSports, sport)]))}
           >
             <SelectTrigger id={uid("sport")} className="min-h-touch w-full rounded-lg px-2 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SPORT_LIST.map((sport) => (
+              {sportList.map((sport) => (
                 <SelectItem key={sport} value={sport} className="min-h-touch text-sm">
                   {translateTaxonomy(tSports, sport)}
                 </SelectItem>

@@ -4,9 +4,12 @@ import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { ManualEntryForm } from "@/components/scan/manual-entry-form";
+import { requireUser } from "@/lib/auth";
+import { getUserTaxonomy } from "@/lib/taxonomy";
 
 export default async function ManualEntryPage() {
-  const bankrolls = await listBankrolls();
+  const user = await requireUser();
+  const [bankrolls, taxonomy] = await Promise.all([listBankrolls(), getUserTaxonomy(user.id)]);
   const t = await getTranslations("scan");
   const tCommon = await getTranslations("common");
 
@@ -40,6 +43,7 @@ export default async function ManualEntryPage() {
       <ManualEntryForm
         bankrolls={bankrolls.map((br) => ({ id: br.id, name: br.name, bookmaker: br.bookmaker }))}
         currency={currency}
+        taxonomy={taxonomy}
       />
     </div>
   );

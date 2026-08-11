@@ -8,7 +8,7 @@ import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { calculateScanCostUsd } from "@/lib/scan/cost";
-import { getBetTypesForSport, isCompatibleSportBetType, SPORTS } from "@/lib/sports";
+import { getUserTaxonomy, normalizeTaxonomyPair } from "@/lib/taxonomy";
 import {
   analyzeTicketImage,
   hasConfiguredScanProvider,
@@ -104,10 +104,13 @@ export async function POST(request: NextRequest) {
   }
   const base64 = Buffer.from(bytes).toString("base64");
 
-  const dbUser = await prisma.user.findUniqueOrThrow({
+  const [dbUser, taxonomy] = await Promise.all([
+    prisma.user.findUniqueOrThrow({
     where: { id: user.id },
     select: { plan: true },
-  });
+    }),
+    getUserTaxonomy(user.id),
+  ]);
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
   if (!rateLimit.allowed) {
@@ -137,7 +140,7 @@ export async function POST(request: NextRequest) {
   // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
   let rawBets: unknown[];
   try {
-    const response = await analyzeTicketImage({ base64, mediaType });
+    const response = await analyzeTicketImage({ base64, mediaType, taxonomy });
     rawBets = parseBetsArray(response.text);
 
     // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
@@ -187,17 +190,18 @@ export async function POST(request: NextRequest) {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
     const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
-    const rawSport = String(r.sport ?? "Autre sport").trim();
-    const sport = Object.hasOwn(SPORTS, rawSport) ? rawSport : "Autre sport";
-    const rawBetType = String(r.betType ?? "Autre").trim();
-    const taxonomyMismatch = !isCompatibleSportBetType(sport, rawBetType);
+    const { sport, betType, taxonomyMismatch } = normalizeTaxonomyPair(
+      taxonomy,
+      String(r.sport ?? "Autre sport"),
+      String(r.betType ?? "Autre")
+    );
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: String(r.date ?? new Date().toISOString().slice(0, 10)),
       sport,
-      // Un couple sport/type invalide est ramené à "Autre" pour empêcher
-      // toute donnée incohérente d'être importée. La carte de review le signale.
-      betType: taxonomyMismatch ? getBetTypesForSport(sport).at(-1)! : rawBetType,
+      // Les nouveaux couples restent disponibles pour validation ; seuls les
+      // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont ramenés à Autre.
+      betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
       stake: num(r.stake),

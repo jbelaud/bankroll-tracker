@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import { scanTickets } from "@/lib/scan/scan-client";
 import type { ParsedBet } from "@/lib/scan/types";
 import { importBets } from "@/lib/actions/import-bets";
+import type { Taxonomy } from "@/lib/taxonomy";
 import { UploadZone } from "./upload-zone";
 import { ScanningView } from "./scanning-view";
 import { ReviewList } from "./review-list";
@@ -24,9 +25,11 @@ type FlowState =
 export function ScanFlow({
   bankrolls,
   currency,
+  taxonomy,
 }: {
   bankrolls: BankrollOption[];
   currency: Currency;
+  taxonomy: Taxonomy;
 }) {
   const router = useRouter();
   const t = useTranslations("scan.error");
@@ -91,6 +94,7 @@ export function ScanFlow({
         onConfirm={confirmImport}
         onRestart={restart}
         currency={currency}
+        taxonomy={taxonomy}
       />
     );
   }

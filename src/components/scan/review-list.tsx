@@ -7,6 +7,7 @@ import { Warning, Lightbulb, ArrowCounterClockwise } from "@phosphor-icons/react
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
 import { Button } from "@/components/ui/button";
 import { ReviewBetCard } from "./review-bet-card";
+import type { Taxonomy } from "@/lib/taxonomy";
 
 export function ReviewList({
   initialBets,
@@ -15,6 +16,7 @@ export function ReviewList({
   onConfirm,
   onRestart,
   currency,
+  taxonomy,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
@@ -22,6 +24,7 @@ export function ReviewList({
   onConfirm: (bets: ParsedBet[]) => void;
   onRestart: () => void;
   currency: Currency;
+  taxonomy: Taxonomy;
 }) {
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(new Set());
@@ -47,6 +50,18 @@ export function ReviewList({
   const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
+  // Inclut immédiatement les valeurs proposées par le scan : l'utilisateur
+  // peut donc les corriger/valider avant qu'elles soient sauvegardées.
+  const reviewTaxonomy = useMemo(() => {
+    const next = Object.fromEntries(
+      Object.entries(taxonomy).map(([sport, types]) => [sport, [...types]])
+    ) as Taxonomy;
+    for (const bet of bets) {
+      next[bet.sport] ??= [];
+      if (!next[bet.sport].includes(bet.betType)) next[bet.sport].push(bet.betType);
+    }
+    return next;
+  }, [bets, taxonomy]);
 
   return (
     // pb élargi : la barre de confirmation fixe ne doit jamais masquer une card
@@ -95,6 +110,7 @@ export function ReviewList({
             onPatch={(patch) => patchBet(i, patch)}
             onToggleExcluded={() => toggleExcluded(i)}
             currency={currency}
+            taxonomy={reviewTaxonomy}
           />
         ))}
       </ul>

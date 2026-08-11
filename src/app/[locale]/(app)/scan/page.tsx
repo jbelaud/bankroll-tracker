@@ -4,9 +4,12 @@ import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { ScanFlow } from "@/components/scan/scan-flow";
+import { requireUser } from "@/lib/auth";
+import { getUserTaxonomy } from "@/lib/taxonomy";
 
 export default async function ScanPage() {
-  const bankrolls = await listBankrolls();
+  const user = await requireUser();
+  const [bankrolls, taxonomy] = await Promise.all([listBankrolls(), getUserTaxonomy(user.id)]);
   const t = await getTranslations("scan");
   const tCommon = await getTranslations("common");
 
@@ -44,6 +47,7 @@ export default async function ScanPage() {
           bookmaker: br.bookmaker,
         }))}
         currency={currency}
+        taxonomy={taxonomy}
       />
     </div>
   );

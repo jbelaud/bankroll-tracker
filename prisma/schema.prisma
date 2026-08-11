@@ -70,6 +70,7 @@ model User {
   insight   Insight?
   scanUsages ScanUsage[]
   feedbacks Feedback[]
+  taxonomyEntries UserTaxonomyEntry[]
 
   @@map("users")
 }
@@ -154,6 +155,25 @@ model Bet {
   @@index([bankrollId])
   @@index([ticketRef])
   @@map("bets")
+}
+
+// ------------------------------------------------------------
+// Taxonomie personnelle
+// ------------------------------------------------------------
+// Les sports et types standards restent dans src/lib/sports.ts. Cette table
+// ne contient que les couples ajoutés depuis les tickets d'UN utilisateur :
+// elle ne peut donc jamais modifier les suggestions d'un autre compte.
+model UserTaxonomyEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sport     String
+  betType   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, sport, betType])
+  @@index([userId, sport])
+  @@map("user_taxonomy_entries")
 }
 
 // ------------------------------------------------------------

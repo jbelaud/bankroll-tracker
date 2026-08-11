@@ -4,7 +4,7 @@ import { listAllBets } from "@/lib/actions/bets";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { currencySymbol } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
-import { getBetTypesForSport } from "@/lib/sports";
+import { getUserTaxonomy } from "@/lib/taxonomy";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
@@ -39,10 +39,11 @@ export default async function StatsPage({
 }) {
   const user = await requireUser();
   const query = await searchParams;
-  const [allBets, bankrolls, existingInsight] = await Promise.all([
+  const [allBets, bankrolls, existingInsight, taxonomy] = await Promise.all([
     listAllBets(),
     listBankrolls(),
     prisma.insight.findUnique({ where: { userId: user.id } }),
+    getUserTaxonomy(user.id),
   ]);
   const value = (key: string) => typeof query[key] === "string" ? query[key].trim() : "";
   const from = value("from"); const to = value("to"); const q = value("q").toLowerCase();
@@ -51,7 +52,10 @@ export default async function StatsPage({
   const number = (key: string) => { const n = Number(value(key)); return Number.isFinite(n) && value(key) !== "" ? n : null; };
   const minStake = number("minStake"); const maxStake = number("maxStake"); const minOdds = number("minOdds"); const maxOdds = number("maxOdds");
   const typesBySport = Object.fromEntries(
-    Array.from(new Set(allBets.map((bet) => bet.sport))).map((sport) => [sport, getBetTypesForSport(sport)])
+    Array.from(new Set([...Object.keys(taxonomy), ...allBets.map((bet) => bet.sport)])).map((sport) => [
+      sport,
+      Array.from(new Set([...(taxonomy[sport] ?? []), ...allBets.filter((bet) => bet.sport === sport).map((bet) => bet.betType)])),
+    ])
   ) as Record<string, string[]>;
   const typeFilter = sportFilter && typesBySport[sportFilter]?.includes(requestedTypeFilter)
     ? requestedTypeFilter

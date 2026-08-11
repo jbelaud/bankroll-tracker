@@ -7,6 +7,11 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { isBetResult } from "@/lib/bet-result";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
+import {
+  getUserTaxonomy,
+  normalizeTaxonomyPair,
+  saveUserTaxonomyEntry,
+} from "@/lib/taxonomy";
 
 // Revalidation commune : tous les écrans qui affichent des paris ou des
 // soldes dérivés (Dashboard, Bankrolls, Historique) doivent refléter le
@@ -60,6 +65,10 @@ export async function createBet(
 ) {
   const user = await requireUser();
   await getOwnedBankroll(bankrollId, user.id);
+  // Pendant un import massif, les nouveaux couples sont déjà enregistrés au
+  // fil de l'eau : éviter de relire tout l'historique pour chaque pari.
+  const taxonomy = await getUserTaxonomy(user.id, false);
+  const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, sport, betType);
 
   if (!Number.isFinite(stake) || stake <= 0) {
     throw new Error((await getErrorsT())("stakePositive"));
@@ -70,12 +79,15 @@ export async function createBet(
   if (!isBetResult(result)) {
     throw new Error((await getErrorsT())("invalidResult"));
   }
+  if (normalizedTaxonomy.taxonomyMismatch) {
+    throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
+  }
 
-  return prisma.bet.create({
+  const bet = await prisma.bet.create({
     data: {
       bankrollId,
-      sport,
-      betType,
+      sport: normalizedTaxonomy.sport,
+      betType: normalizedTaxonomy.betType,
       description: description.trim() || null,
       eventResult: eventResult?.trim() || null,
       stake,
@@ -90,6 +102,8 @@ export async function createBet(
       date,
     },
   });
+  await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
+  return bet;
 }
 
 export async function listBets(bankrollId: string) {

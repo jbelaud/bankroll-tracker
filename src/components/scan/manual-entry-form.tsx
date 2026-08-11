@@ -17,17 +17,19 @@ import {
 import { currencySymbol } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
-import { SPORTS, SPORT_LIST } from "@/lib/sports";
 import { createManualBetForm } from "@/lib/actions/manual-bet-form";
+import type { Taxonomy } from "@/lib/taxonomy";
 
 type BankrollOption = { id: string; name: string; bookmaker: string };
 
 export function ManualEntryForm({
   bankrolls,
   currency,
+  taxonomy,
 }: {
   bankrolls: BankrollOption[];
   currency: Currency;
+  taxonomy: Taxonomy;
 }) {
   const router = useRouter();
   const t = useTranslations("scan.manual");
@@ -38,8 +40,9 @@ export function ManualEntryForm({
   const [state, action, pending] = useActionState(createManualBetForm, undefined);
 
   const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
-  const [sport, setSport] = useState(SPORT_LIST[0]);
-  const [betType, setBetType] = useState(SPORTS[SPORT_LIST[0]][0]);
+  const sportList = Object.keys(taxonomy);
+  const [sport, setSport] = useState(sportList[0] ?? "Football");
+  const [betType, setBetType] = useState(taxonomy[sportList[0] ?? "Football"]?.[0] ?? "Autre");
   const [boosted, setBoosted] = useState(false);
   const [result, setResult] = useState<BetResult>("EN_ATTENTE");
 
@@ -49,7 +52,7 @@ export function ManualEntryForm({
 
   const handleSportChange = (value: string) => {
     setSport(value);
-    setBetType(SPORTS[value][0]);
+    setBetType(taxonomy[value]?.[0] ?? "Autre");
   };
 
   const resultItems = Object.fromEntries(
@@ -86,12 +89,12 @@ export function ManualEntryForm({
           <Label htmlFor="manual-sport" className="text-xs">
             {t("sportLabel")}
           </Label>
-          <Select value={sport} onValueChange={(v) => handleSportChange(v as string)} items={Object.fromEntries(SPORT_LIST.map((s) => [s, translateTaxonomy(tSports, s)]))}>
+          <Select value={sport} onValueChange={(v) => handleSportChange(v as string)} items={Object.fromEntries(sportList.map((s) => [s, translateTaxonomy(tSports, s)]))}>
             <SelectTrigger id="manual-sport" className="min-h-touch w-full rounded-lg px-3 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SPORT_LIST.map((s) => (
+              {sportList.map((s) => (
                 <SelectItem key={s} value={s} className="min-h-touch text-sm">
                   {translateTaxonomy(tSports, s)}
                 </SelectItem>
@@ -105,12 +108,12 @@ export function ManualEntryForm({
           <Label htmlFor="manual-bettype" className="text-xs">
             {t("betTypeLabel")}
           </Label>
-          <Select value={betType} onValueChange={(v) => setBetType(v as string)} items={Object.fromEntries(SPORTS[sport].map((bt) => [bt, translateTaxonomy(tBetTypes, bt)]))}>
+          <Select value={betType} onValueChange={(v) => setBetType(v as string)} items={Object.fromEntries((taxonomy[sport] ?? []).map((bt) => [bt, translateTaxonomy(tBetTypes, bt)]))}>
             <SelectTrigger id="manual-bettype" className="min-h-touch w-full rounded-lg px-3 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {SPORTS[sport].map((bt) => (
+              {(taxonomy[sport] ?? []).map((bt) => (
                 <SelectItem key={bt} value={bt} className="min-h-touch text-sm">
                   {translateTaxonomy(tBetTypes, bt)}
                 </SelectItem>
