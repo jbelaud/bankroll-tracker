@@ -37,11 +37,13 @@ export default async function DashboardPage() {
   let bankrolls;
   let bets;
   let dbUser;
+  let betaProgram;
   try {
-    [bankrolls, bets, dbUser] = await Promise.all([
+    [bankrolls, bets, dbUser, betaProgram] = await Promise.all([
       listBankrolls(),
       listAllBets(),
       prisma.user.findUnique({ where: { id: user.id } }),
+      prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
     ]);
   } catch (error) {
     const databaseUrl = process.env.DATABASE_URL;
@@ -165,6 +167,7 @@ export default async function DashboardPage() {
           scansLimit={quota.limit}
           initialCreditsRemaining={quota.initialCreditsRemaining}
           initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
+          betaPhaseActive={betaProgram?.phase !== "ENDED"}
         />
       </Reveal>
 

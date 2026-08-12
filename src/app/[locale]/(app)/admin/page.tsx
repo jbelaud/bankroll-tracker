@@ -47,9 +47,15 @@ function formatNumber(value: number, locale: string): string {
   return new Intl.NumberFormat(locale).format(value);
 }
 
-async function listStripeTransactions(range: DateRange): Promise<Stripe.BalanceTransaction[]> {
-  if (!stripe) return [];
+type StripeTransactionsResult = {
+  transactions: Stripe.BalanceTransaction[];
+  available: boolean;
+};
 
+async function listStripeTransactions(range: DateRange): Promise<StripeTransactionsResult> {
+  if (!stripe) return { transactions: [], available: false };
+
+  try {
   const transactions: Stripe.BalanceTransaction[] = [];
   let startingAfter: string | undefined;
   let hasMore = true;
@@ -69,7 +75,11 @@ async function listStripeTransactions(range: DateRange): Promise<Stripe.BalanceT
     startingAfter = page.data.at(-1)?.id;
   }
 
-  return transactions;
+  return { transactions, available: true };
+  } catch (error) {
+    console.error("[admin] Stripe balance transactions unavailable", error);
+    return { transactions: [], available: false };
+  }
 }
 
 export default async function AdminPage({
@@ -86,7 +96,7 @@ export default async function AdminPage({
   const range = rangeFor(period);
   const createdAt = range.start ? { gte: range.start, lte: range.end } : undefined;
 
-  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, transactions, feedbackCount, recentFeedback, qualityCounts, qualityReports, bookmakerProfiles] =
+  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, stripeTransactions, feedbackCount, recentFeedback, qualityCounts, qualityReports, bookmakerProfiles] =
     await Promise.all([
       prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
       prisma.user.count({ where: { createdAt } }),
@@ -133,18 +143,25 @@ export default async function AdminPage({
       }),
     ]);
 
-  const storage = createAdminSupabaseClient().storage.from(QUALITY_BUCKET);
-  const queueReports = await Promise.all(qualityReports.map(async (report) => {
-    const { data } = await storage.createSignedUrl(report.storagePath, 60);
-    return {
-      id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: report.correctionCount,
-      correctionTypes: Array.isArray(report.correctionTypes) ? report.correctionTypes.filter((type): type is string => typeof type === "string") : [],
-      model: report.model, createdAt: report.createdAt.toISOString(), imageUrl: data?.signedUrl ?? null,
-      rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
-    };
+  let queueReports = qualityReports.map((report) => ({
+    id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: report.correctionCount,
+    correctionTypes: Array.isArray(report.correctionTypes) ? report.correctionTypes.filter((type): type is string => typeof type === "string") : [],
+    model: report.model, createdAt: report.createdAt.toISOString(), imageUrl: null as string | null,
+    rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
   }));
+  if (qualityReports.length > 0) {
+    try {
+      const storage = createAdminSupabaseClient().storage.from(QUALITY_BUCKET);
+      queueReports = await Promise.all(queueReports.map(async (report, index) => {
+        const { data } = await storage.createSignedUrl(qualityReports[index].storagePath, 60);
+        return { ...report, imageUrl: data?.signedUrl ?? null };
+      }));
+    } catch (error) {
+      console.error("[admin] Quality screenshot storage unavailable", error);
+    }
+  }
 
-  const [betaUsage, betaUsageByUser, betaTesters] = await Promise.all([
+  const [betaUsage, betaUsageByUser, betaTesters, betaInvites, betaProgram] = await Promise.all([
     prisma.scanUsage.aggregate({ where: { createdAt, plan: "BETA_TESTER" }, _count: { _all: true }, _sum: { costUsd: true } }),
     prisma.scanUsage.groupBy({
       by: ["userId"],
@@ -153,6 +170,12 @@ export default async function AdminPage({
       _sum: { costUsd: true },
     }),
     prisma.user.findMany({ where: { plan: "BETA_TESTER" }, select: { id: true, email: true }, orderBy: { email: "asc" } }),
+    prisma.betaInvite.findMany({
+      select: { id: true, email: true, expiresAt: true, revokedAt: true, redeemedAt: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
+    prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
   ]);
   const betaUsageByUserId = new Map(betaUsageByUser.map((usage) => [usage.userId, usage]));
 
@@ -161,10 +184,11 @@ export default async function AdminPage({
   const betaTestersCount = plans.get("BETA_TESTER") ?? 0;
   const betaPremiumUsers = plans.get("BETA_PREMIUM") ?? 0;
   const premiumUsers = plans.get("PREMIUM") ?? 0;
-  const totalUsers = freeUsers + betaPremiumUsers + premiumUsers;
+  const totalUsers = freeUsers + betaTestersCount + betaPremiumUsers + premiumUsers;
   const paidUsers = betaPremiumUsers + premiumUsers;
   const conversion = totalUsers === 0 ? 0 : (paidUsers / totalUsers) * 100;
 
+  const transactions = stripeTransactions.transactions;
   const revenueTransactions = transactions.filter((transaction) =>
     ["charge", "payment", "refund", "payment_refund", "payment_failure_refund"].includes(transaction.type)
   );
@@ -231,7 +255,7 @@ export default async function AdminPage({
           <p className="mt-1 text-xs text-muted-foreground">{t("revenueDescription")}</p>
           {stripeIsTestMode && <p className="mt-1 text-xs font-medium text-warning">{t("stripeTestMode")}</p>}
         </div>
-        {!stripe ? (
+        {!stripeTransactions.available ? (
           <p className="glass-card rounded-xl p-4 text-sm text-muted-foreground">{t("stripeUnavailable")}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -255,6 +279,14 @@ export default async function AdminPage({
           scans: betaUsageByUserId.get(tester.id)?._count._all ?? 0,
           costUsd: betaUsageByUserId.get(tester.id)?._sum.costUsd ?? 0,
         }))}
+        invites={betaInvites.map((invite) => ({
+          id: invite.id,
+          email: invite.email,
+          expiresAt: invite.expiresAt.toISOString(),
+          revokedAt: invite.revokedAt?.toISOString() ?? null,
+          redeemedAt: invite.redeemedAt?.toISOString() ?? null,
+        }))}
+        betaPhaseActive={betaProgram?.phase !== "ENDED"}
         scanCount={betaUsage._count._all}
         costUsd={betaUsage._sum.costUsd ?? 0}
         formatCost={(amount) => formatMoney(amount, locale, "USD")}

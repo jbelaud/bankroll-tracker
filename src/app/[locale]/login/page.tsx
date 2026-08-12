@@ -1,13 +1,21 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signIn, signInWithGoogle } from "@/app/auth/actions";
+import { useSearchParams } from "next/navigation";
+import { authQueryErrorKey } from "@/lib/auth/error-mapping";
 
 export default function LoginPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-zinc-950" />}><LoginForm /></Suspense>;
+}
+
+function LoginForm() {
   const [state, action, pending] = useActionState(signIn, undefined);
   const t = useTranslations("auth.login");
+  const tErrors = useTranslations("auth.errors");
+  const queryError = authQueryErrorKey(useSearchParams().get("error"));
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
@@ -44,6 +52,7 @@ export default function LoginPage() {
           {state?.error && (
             <p className="text-xs text-rose-400">{state.error}</p>
           )}
+          {!state?.error && queryError && <p className="text-xs text-rose-400">{tErrors(queryError)}</p>}
 
           <button
             type="submit"

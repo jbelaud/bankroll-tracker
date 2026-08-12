@@ -9,7 +9,8 @@ import {
   createCheckoutSessionAction,
   createBillingPortalSessionAction,
 } from "@/lib/actions/billing";
-import { BILLING_UI_ENABLED, isPaidPlan } from "@/lib/billing/plans";
+import { switchBetaTesterToFreemium } from "@/lib/actions/beta-testers";
+import { isPaidPlan } from "@/lib/billing/plans";
 
 // Contrairement à fmtDate (jour/mois, pensé pour des paris récents où
 // l'année est évidente), un renouvellement d'abonnement est ~1 an dans le
@@ -24,12 +25,14 @@ export function PlanCard({
   betaOfferEligible,
   initialCreditsRemaining,
   initialCreditsExpiresAt,
+  betaPhaseActive,
 }: {
   plan: Plan;
   currentPeriodEnd: Date | null;
   betaOfferEligible: boolean;
   initialCreditsRemaining: number;
   initialCreditsExpiresAt: Date | null;
+  betaPhaseActive: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -59,7 +62,18 @@ export function PlanCard({
     }
   };
 
-  if (!BILLING_UI_ENABLED) {
+  const handleFreemium = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      await switchBetaTesterToFreemium();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Impossible de modifier le plan.");
+      setLoading(false);
+    }
+  };
+
+  if (betaPhaseActive) {
     return (
       <section aria-label={t("betaTestingTitle")} className="glass-card relative overflow-hidden rounded-xl p-4">
         <div className="pointer-events-none select-none blur-sm opacity-35" aria-hidden>
@@ -70,6 +84,17 @@ export function PlanCard({
         <div className="absolute inset-0 flex items-center justify-center bg-background/15 px-6 text-center">
           <p className="text-sm font-medium">{t("betaTestingDescription")}</p>
         </div>
+      </section>
+    );
+  }
+
+  if (plan === "BETA_TESTER") {
+    return (
+      <section aria-label={t("betaEndedTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Crown size={15} className="text-primary" weight="fill" aria-hidden />{t("betaEndedTitle")}</h2>
+        <p className="text-sm text-muted-foreground">{t("betaEndedDescription")}</p>
+        {error && <p role="alert" className="text-xs text-loss">{error}</p>}
+        <Button onClick={handleFreemium} disabled={loading} className="min-h-touch w-full rounded-lg text-sm font-semibold">{t("switchToFreemium")}</Button>
       </section>
     );
   }

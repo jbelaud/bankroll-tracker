@@ -58,6 +58,18 @@
       "noAccount": "Pas encore de compte ?",
       "signupLink": "Créer un compte"
     },
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "emailNotConfirmed": "Confirme d’abord ton adresse e-mail via le lien reçu.",
+      "accountExists": "Un compte existe déjà avec cette adresse e-mail. Connecte-toi ou réinitialise ton mot de passe.",
+      "weakPassword": "Choisis un mot de passe plus robuste, avec au moins 8 caractères.",
+      "invalidEmail": "Cette adresse e-mail n’est pas valide.",
+      "tooManyRequests": "Trop de tentatives. Patiente quelques minutes avant de réessayer.",
+      "oauthFailed": "La connexion avec Google n’a pas pu aboutir. Réessaie ou utilise ton e-mail.",
+      "callbackFailed": "La confirmation de connexion n’a pas pu être finalisée. Réessaie.",
+      "betaInviteInvalid": "Cette invitation bêta est invalide, expirée ou réservée à une autre adresse e-mail.",
+      "unavailable": "La connexion est temporairement indisponible. Réessaie dans quelques instants."
+    },
     "signup": {
       "title": "Créer un compte",
       "subtitle": "Commence à suivre tes bankrolls.",
@@ -447,6 +459,9 @@
       "title": "Abonnement",
       "betaTestingTitle": "Fonctionnalité en préparation",
       "betaTestingDescription": "La bêta est gratuite. Les informations d’abonnement seront disponibles plus tard.",
+      "betaEndedTitle": "La phase bêta est terminée",
+      "betaEndedDescription": "Merci pour vos retours. Vous pouvez maintenant choisir le forfait Freemium.",
+      "switchToFreemium": "Passer au forfait Freemium",
       "freeDescription": "Bêta gratuite : 2 bankrolls max, 10 scans IA/mois.",
       "premiumActive": "Premium actif — renouvellement le {date}.",
       "premiumActiveNoDate": "Premium actif.",

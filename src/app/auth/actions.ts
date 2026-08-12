@@ -6,6 +6,8 @@ import { redirect as redirectToLocalized } from "@/i18n/navigation";
 import { redirect } from "next/navigation";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { createClient } from "@/lib/supabase/server";
+import { isBetaInviteTokenValid, redeemBetaInvite } from "@/lib/beta/program";
+import { authErrorKey } from "@/lib/auth/error-mapping";
 
 export type AuthFormState =
   | { error: string; message?: undefined }
@@ -32,9 +34,10 @@ async function getOrigin() {
   return `${proto}://${host}`;
 }
 
-function getAuthCallbackUrl(origin: string, locale: string) {
+function getAuthCallbackUrl(origin: string, locale: string, invite?: string) {
   const callbackUrl = new URL("/auth/callback", origin);
   callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
+  if (invite) callbackUrl.searchParams.set("invite", invite);
   return callbackUrl.toString();
 }
 
@@ -45,6 +48,7 @@ export async function signIn(
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "auth.errors" });
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -53,7 +57,7 @@ export async function signIn(
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: t(authErrorKey(error, "signIn")) };
   }
 
   redirectToLocalized({ href: "/dashboard", locale });
@@ -65,11 +69,16 @@ export async function signUp(
 ): Promise<AuthFormState> {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const invite = String(formData.get("invite") ?? "") || null;
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "auth.signup" });
+  const tErrors = await getTranslations({ locale, namespace: "auth.errors" });
 
   if (password.length < 8) {
     return { error: t("passwordError") };
+  }
+  if (invite && !(await isBetaInviteTokenValid(invite, email))) {
+    return { error: tErrors("betaInviteInvalid") };
   }
 
   const supabase = await createClient();
@@ -77,34 +86,36 @@ export async function signUp(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale) },
+    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined) },
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: tErrors(authErrorKey(error, "signUp")) };
   }
 
   if (!data.session) {
     return { message: t("confirmEmailMessage") };
   }
+  if (data.user && invite) await redeemBetaInvite(invite, data.user);
 
   redirectToLocalized({ href: "/dashboard", locale });
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(formData: FormData) {
   const supabase = await createClient();
   const origin = await getOrigin();
   const locale = await getLocale();
+  const invite = String(formData.get("invite") ?? "") || null;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: getAuthCallbackUrl(origin, locale) },
+    options: { redirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined) },
   });
 
   const url = data?.url;
   if (error || !url) {
     redirectToLocalized({
-      href: { pathname: "/login", query: { error: error?.message ?? "" } },
+      href: { pathname: "/login", query: { error: "oauth_failed" } },
       locale,
     });
     return;

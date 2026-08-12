@@ -34,10 +34,11 @@ export default async function AccountPage({
     return null;
   }
 
-  const [dbUser, bets, qualityReports] = await Promise.all([
+  const [dbUser, bets, qualityReports, betaProgram] = await Promise.all([
     prisma.user.findUnique({ where: { id: user.id } }),
     listAllBets(),
     prisma.scanQualityReport.findMany({ where: { userId: user.id }, select: { id: true, bookmaker: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
+    prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
   ]);
 
   const now = new Date();
@@ -74,6 +75,7 @@ export default async function AccountPage({
         })}
         initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0}
         initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null}
+        betaPhaseActive={betaProgram?.phase !== "ENDED"}
       />
 
       <LanguageSwitcher />

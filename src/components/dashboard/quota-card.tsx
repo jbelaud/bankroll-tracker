@@ -7,7 +7,7 @@ import { Scan, Crown, CircleNotch } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSessionAction } from "@/lib/actions/billing";
-import { BILLING_UI_ENABLED, isPaidPlan } from "@/lib/billing/plans";
+import { isPaidPlan } from "@/lib/billing/plans";
 
 // Widget d'engagement/conversion sur le Dashboard — distinct de PlanCard
 // (écran Compte, informatif : date de renouvellement, gestion d'abonnement).
@@ -19,12 +19,14 @@ export function QuotaCard({
   scansLimit,
   initialCreditsRemaining,
   initialCreditsExpiresAt,
+  betaPhaseActive,
 }: {
   plan: Plan;
   scansUsed: number;
   scansLimit: number;
   initialCreditsRemaining: number;
   initialCreditsExpiresAt: Date | null;
+  betaPhaseActive: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -108,7 +110,7 @@ export function QuotaCard({
         </p>
       )}
 
-      {BILLING_UI_ENABLED && plan === "FREE" && (
+      {!betaPhaseActive && plan === "FREE" && (
         <Button
           onClick={handleUpgrade}
           disabled={loading}

@@ -72,6 +72,7 @@ model User {
   feedbacks Feedback[]
   taxonomyEntries UserTaxonomyEntry[]
   scanQualityReports ScanQualityReport[]
+  redeemedBetaInvite BetaInvite?
 
   @@map("users")
 }
@@ -87,6 +88,11 @@ enum Plan {
   BETA_TESTER
   BETA_PREMIUM
   PREMIUM
+}
+
+enum BetaPhase {
+  ACTIVE
+  ENDED
 }
 
 enum BookmakerSupportStatus {
@@ -213,6 +219,34 @@ model ScanUsage {
   @@index([userId, createdAt])
   @@index([createdAt])
   @@map("scan_usages")
+}
+
+// Une seule ligne de configuration pilote la période bêta. Les invitations
+// sont à usage unique et leur jeton n'est jamais conservé en clair.
+model BetaProgram {
+  id        String    @id @default("global")
+  phase     BetaPhase @default(ACTIVE)
+  endedAt   DateTime?
+  endedBy   String?
+  updatedAt DateTime  @updatedAt
+
+  @@map("beta_program")
+}
+
+model BetaInvite {
+  id                String    @id @default(uuid())
+  tokenHash         String    @unique
+  email             String?
+  expiresAt         DateTime
+  revokedAt         DateTime?
+  redeemedAt        DateTime?
+  redeemedByUserId  String?   @unique
+  redeemedByUser    User?     @relation(fields: [redeemedByUserId], references: [id], onDelete: SetNull)
+  createdAt         DateTime  @default(now())
+
+  @@index([expiresAt])
+  @@index([email])
+  @@map("beta_invites")
 }
 
 model BookmakerScanProfile {

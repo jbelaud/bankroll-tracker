@@ -1,13 +1,19 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { signUp, signInWithGoogle } from "@/app/auth/actions";
+import { useSearchParams } from "next/navigation";
 
 export default function SignupPage() {
+  return <Suspense fallback={<div className="min-h-screen bg-zinc-950" />}><SignupForm /></Suspense>;
+}
+
+function SignupForm() {
   const [state, action, pending] = useActionState(signUp, undefined);
   const t = useTranslations("auth.signup");
+  const invite = useSearchParams().get("invite") ?? "";
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
@@ -18,6 +24,7 @@ export default function SignupPage() {
         <p className="text-sm text-zinc-500 mb-5">{t("subtitle")}</p>
 
         <form action={action} className="space-y-3">
+          <input type="hidden" name="invite" value={invite} />
           <div>
             <label className="block text-xs uppercase tracking-wide text-zinc-500 mb-1.5 font-medium">
               {t("emailLabel")}
@@ -66,6 +73,7 @@ export default function SignupPage() {
         </div>
 
         <form action={signInWithGoogle}>
+          <input type="hidden" name="invite" value={invite} />
           <button
             type="submit"
             className="w-full bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-200 font-medium text-sm py-2.5 rounded-lg transition-colors"

@@ -58,6 +58,18 @@
       "noAccount": "Don't have an account yet?",
       "signupLink": "Create an account"
     },
+    "errors": {
+      "invalidCredentials": "Incorrect email or password.",
+      "emailNotConfirmed": "Confirm your email address using the link you received first.",
+      "accountExists": "An account already exists with this email address. Sign in or reset your password.",
+      "weakPassword": "Choose a stronger password with at least 8 characters.",
+      "invalidEmail": "This email address is not valid.",
+      "tooManyRequests": "Too many attempts. Please wait a few minutes before trying again.",
+      "oauthFailed": "Google sign-in could not be completed. Try again or use your email.",
+      "callbackFailed": "Sign-in confirmation could not be completed. Please try again.",
+      "betaInviteInvalid": "This beta invitation is invalid, expired, or reserved for another email address.",
+      "unavailable": "Sign-in is temporarily unavailable. Please try again shortly."
+    },
     "signup": {
       "title": "Create an account",
       "subtitle": "Start tracking your bankrolls.",
@@ -447,6 +459,9 @@
       "title": "Subscription",
       "betaTestingTitle": "Feature in preparation",
       "betaTestingDescription": "The beta is free. Subscription details will be available later.",
+      "betaEndedTitle": "The beta phase has ended",
+      "betaEndedDescription": "Thank you for your feedback. You can now choose the Freemium plan.",
+      "switchToFreemium": "Switch to Freemium",
       "freeDescription": "Free beta: 2 bankrolls max, 10 AI scans/month.",
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
