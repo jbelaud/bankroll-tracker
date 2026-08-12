@@ -11,9 +11,10 @@ type DupCandidate = {
 };
 
 export function looksLikeParsedDuplicate(
-  bet: DupCandidate,
+  bet: Omit<DupCandidate, "date" | "stake" | "odds"> & { date: string | null; stake: number | null; odds: number | null },
   otherBets: DupCandidate[]
 ): boolean {
+  if (!bet.date || bet.stake === null || bet.odds === null) return false;
   return otherBets.some((o) => {
     if (o.date !== bet.date) return false;
     if (Math.abs((Number(o.stake) || 0) - (Number(bet.stake) || 0)) > 0.01) return false;

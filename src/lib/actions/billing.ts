@@ -8,6 +8,7 @@ import { stripe } from "@/lib/stripe";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { canUseBetaOffer } from "@/lib/billing/beta-offer";
+import { BILLING_UI_ENABLED } from "@/lib/billing/plans";
 
 // Checkout/Portail Stripe entièrement côté serveur : pas de Stripe.js côté
 // navigateur, le client se contente d'appeler l'action et de laisser la
@@ -68,6 +69,7 @@ export async function createCheckoutSessionAction(): Promise<BillingActionResult
   const user = await requireUser();
   const locale = await getServerLocale();
   const t = await getTranslations({ locale, namespace: "account.plan" });
+  if (!BILLING_UI_ENABLED) return { error: t("betaTestingDescription") };
   const priceId = process.env.STRIPE_PRICE_ID_PREMIUM;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
@@ -139,6 +141,7 @@ export async function createBillingPortalSessionAction(): Promise<BillingActionR
   const user = await requireUser();
   const locale = await getServerLocale();
   const t = await getTranslations({ locale, namespace: "account.plan" });
+  if (!BILLING_UI_ENABLED) return { error: t("betaTestingDescription") };
 
   if (!stripe || !process.env.NEXT_PUBLIC_APP_URL) {
     return { error: t("stripeNotConfigured") };

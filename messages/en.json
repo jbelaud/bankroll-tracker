@@ -250,7 +250,7 @@
     "imageTooLarge": "Image too large (max 8 MB).",
     "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
-    "monthlyQuotaExceeded": "Monthly scan quota reached. Upgrade to Premium to scan more, or come back next month.",
+    "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
     "forbiddenOrigin": "Origin not allowed."
   },
 
@@ -445,6 +445,8 @@
     },
     "plan": {
       "title": "Subscription",
+      "betaTestingTitle": "Feature in preparation",
+      "betaTestingDescription": "The beta is free. Subscription details will be available later.",
       "freeDescription": "Free beta: 2 bankrolls max, 10 AI scans/month.",
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
@@ -545,6 +547,8 @@
     "activeUsers": "Active users",
     "activeUsersDetail": "At least one bet or scan during the period",
     "freeUsers": "Free users",
+    "betaTesters": "Beta testers",
+    "betaTesterDetail": "50 free scans / 30 days",
     "betaUsers": "Beta Premium",
     "premiumUsers": "Premium",
     "currentPlan": "Current subscription state",

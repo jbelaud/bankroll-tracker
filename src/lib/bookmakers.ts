@@ -1,5 +1,5 @@
 export const KNOWN_BOOKMAKERS = [
-  "Winamax", "Betclic", "Unibet", "Bet365", "PMU", "Parions Sport",
+  "Winamax", "Betclic", "Unibet", "Bet365", "Betify", "Sportsbet", "Stake", "PMU", "Parions Sport",
   "Bwin", "Zebet", "NetBet", "PokerStars Sports", "Polymarket", "Autre",
 ] as const;
 

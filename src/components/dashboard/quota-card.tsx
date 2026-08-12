@@ -7,6 +7,7 @@ import { Scan, Crown, CircleNotch } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSessionAction } from "@/lib/actions/billing";
+import { BILLING_UI_ENABLED, isPaidPlan } from "@/lib/billing/plans";
 
 // Widget d'engagement/conversion sur le Dashboard — distinct de PlanCard
 // (écran Compte, informatif : date de renouvellement, gestion d'abonnement).
@@ -29,6 +30,7 @@ export function QuotaCard({
   const [error, setError] = useState("");
   const t = useTranslations("dashboard.quota");
   const locale = useLocale();
+  const paidPlan = isPaidPlan(plan);
 
   const remaining = Math.max(0, scansLimit - scansUsed);
   const pct = scansLimit > 0 ? Math.min(100, (scansUsed / scansLimit) * 100) : 0;
@@ -57,7 +59,7 @@ export function QuotaCard({
           <Scan size={15} className="text-primary" weight="fill" aria-hidden />
           {t("title")}
         </h2>
-        {plan !== "FREE" && (
+        {paidPlan && (
           <span className="flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[0.65rem] font-semibold text-primary">
             <Crown size={11} weight="fill" aria-hidden />
             {t("premiumBadge")}
@@ -106,7 +108,7 @@ export function QuotaCard({
         </p>
       )}
 
-      {plan === "FREE" && (
+      {BILLING_UI_ENABLED && plan === "FREE" && (
         <Button
           onClick={handleUpgrade}
           disabled={loading}

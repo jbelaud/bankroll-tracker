@@ -81,6 +81,8 @@ export function ScanFlow({
           form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
           form.append("finalExtraction", JSON.stringify(finalExtraction));
           form.append("model", scan.model);
+          if (scan.detectedBookmaker) form.append("detectedBookmaker", scan.detectedBookmaker);
+          if (scan.detectionConfidence !== null) form.append("detectionConfidence", String(scan.detectionConfidence));
           return fetch("/api/scan-quality", { method: "POST", body: form });
         }));
       }

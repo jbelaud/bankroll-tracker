@@ -250,7 +250,7 @@
     "imageTooLarge": "Image trop volumineuse (max 8 Mo).",
     "analysisFailed": "L'analyse du ticket a échoué. Réessaie ou vérifie la capture.",
     "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
-    "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Passe à Premium pour scanner davantage, ou reviens le mois prochain.",
+    "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Reviens le mois prochain.",
     "forbiddenOrigin": "Origine non autorisée."
   },
 
@@ -445,6 +445,8 @@
     },
     "plan": {
       "title": "Abonnement",
+      "betaTestingTitle": "Fonctionnalité en préparation",
+      "betaTestingDescription": "La bêta est gratuite. Les informations d’abonnement seront disponibles plus tard.",
       "freeDescription": "Bêta gratuite : 2 bankrolls max, 10 scans IA/mois.",
       "premiumActive": "Premium actif — renouvellement le {date}.",
       "premiumActiveNoDate": "Premium actif.",
@@ -545,6 +547,8 @@
     "activeUsers": "Utilisateurs actifs",
     "activeUsersDetail": "Au moins un pari ou scan sur la période",
     "freeUsers": "Utilisateurs gratuits",
+    "betaTesters": "Bêta-testeurs",
+    "betaTesterDetail": "50 scans gratuits / 30 jours",
     "betaUsers": "Premium bêta",
     "premiumUsers": "Premium",
     "currentPlan": "État actuel des abonnements",

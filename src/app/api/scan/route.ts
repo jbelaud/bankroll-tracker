@@ -17,6 +17,8 @@ import {
 import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
 import { bookmakerKind } from "@/lib/bookmakers";
+import { parseScanAnalysis } from "@/lib/scan/response";
+import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -40,27 +42,16 @@ const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // garde-fou 8 Mo
 const ALLOWED_MEDIA = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 type Media = (typeof ALLOWED_MEDIA)[number];
 
-// Parsing robuste identique à l'artifact : retire d'éventuelles balises markdown
-// puis extrait le tableau JSON entre le premier [ et le dernier ].
-function parseBetsArray(text: string): unknown[] {
-  const cleaned = text.replace(/```json|```/g, "").trim();
-  const start = cleaned.indexOf("[");
-  const end = cleaned.lastIndexOf("]");
-  if (start === -1 || end === -1 || end < start) {
-    throw new Error("Format de réponse inattendu");
-  }
-  const parsed = JSON.parse(cleaned.slice(start, end + 1));
-  if (!Array.isArray(parsed)) throw new Error("Le JSON n'est pas un tableau");
-  return parsed;
-}
-
-function num(v: unknown): number {
-  return Number(v) || 0;
-}
 function numOrNull(v: unknown): number | null {
   if (v == null || v === "") return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
+}
+
+function isoDateOrNull(value: unknown): string | null {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value ? null : value;
 }
 
 export async function POST(request: NextRequest) {
@@ -152,6 +143,9 @@ export async function POST(request: NextRequest) {
 
   // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
   let rawBets: unknown[];
+  let rawExtraction: unknown;
+  let detectedBookmaker: string | null = null;
+  let detectionConfidence: number | null = null;
   let scanModel = "unknown";
   try {
     const response = await analyzeTicketImage({
@@ -159,10 +153,14 @@ export async function POST(request: NextRequest) {
       mediaType,
       taxonomy,
       bookmaker: bankroll.bookmaker,
-      bookmakerRules: profile?.supportStatus === "TESTED" ? profile.rules : null,
+      bookmakerRules: rulesForTestedProfile(profile),
     });
     scanModel = response.model;
-    rawBets = parseBetsArray(response.text);
+    const analysis = parseScanAnalysis(response.text);
+    rawBets = analysis.bets;
+    rawExtraction = analysis;
+    detectedBookmaker = analysis.detectedBookmaker;
+    detectionConfidence = analysis.detectionConfidence;
 
     // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
     // L'échec de la télémétrie ne doit jamais empêcher l'utilisateur de scanner.
@@ -171,6 +169,7 @@ export async function POST(request: NextRequest) {
         data: {
           userId: user.id,
           model: response.model,
+          plan: dbUser.plan,
           inputTokens: response.inputTokens,
           outputTokens: response.outputTokens,
           costUsd: calculateScanCostUsd(
@@ -218,15 +217,15 @@ export async function POST(request: NextRequest) {
     );
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
-      date: String(r.date ?? new Date().toISOString().slice(0, 10)),
+      date: isoDateOrNull(r.date),
       sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
       // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont ramenés à Autre.
       betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
-      stake: num(r.stake),
-      odds: num(r.odds),
+      stake: numOrNull(r.stake),
+      odds: numOrNull(r.odds),
       boosted,
       originalOdds: boosted ? numOrNull(r.originalOdds) : null,
       freebet: Boolean(r.freebet),
@@ -246,10 +245,12 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     bets,
     scan: {
-      rawExtraction: rawBets,
+      rawExtraction,
       model: scanModel,
       promptVersion: SCAN_PROMPT_VERSION,
       supportStatus,
+      detectedBookmaker,
+      detectionConfidence,
     },
   });
 }

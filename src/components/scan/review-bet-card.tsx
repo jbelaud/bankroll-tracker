@@ -210,8 +210,8 @@ export function ReviewBetCard({
           <Input
             id={uid("date")}
             type="date"
-            value={bet.date}
-            onChange={(e) => onPatch({ date: e.target.value })}
+            value={bet.date ?? ""}
+            onChange={(e) => onPatch({ date: e.target.value || null })}
             className="num min-h-touch rounded-lg px-3 text-sm"
           />
         </div>
@@ -225,8 +225,8 @@ export function ReviewBetCard({
             step="0.01"
             min="0"
             inputMode="decimal"
-            value={String(bet.stake)}
-            onChange={(e) => onPatch({ stake: Number(e.target.value) })}
+            value={bet.stake === null ? "" : String(bet.stake)}
+            onChange={(e) => onPatch({ stake: e.target.value === "" ? null : Number(e.target.value) })}
             className="num min-h-touch rounded-lg px-2 text-sm"
           />
         </div>
@@ -240,8 +240,8 @@ export function ReviewBetCard({
             step="0.01"
             min="0"
             inputMode="decimal"
-            value={String(bet.odds)}
-            onChange={(e) => onPatch({ odds: Number(e.target.value) })}
+            value={bet.odds === null ? "" : String(bet.odds)}
+            onChange={(e) => onPatch({ odds: e.target.value === "" ? null : Number(e.target.value) })}
             className="num min-h-touch rounded-lg px-2 text-sm"
           />
         </div>

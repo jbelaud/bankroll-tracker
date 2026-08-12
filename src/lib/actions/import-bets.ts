@@ -23,6 +23,9 @@ export async function importBets(
     const t = await getTranslations({ locale, namespace: "errors" });
     return { error: t("noBetsToImport") };
   }
+  if (bets.some((bet) => !bet.date || bet.stake === null || bet.odds === null)) {
+    return { error: "La date, la mise et la cote de chaque pari doivent être renseignées avant l'import." };
+  }
 
   try {
     for (const bet of bets) {
@@ -31,8 +34,8 @@ export async function importBets(
         bet.sport,
         bet.betType,
         bet.description,
-        bet.stake,
-        bet.odds,
+        bet.stake!,
+        bet.odds!,
         bet.boosted,
         bet.originalOdds,
         bet.freebet,
@@ -40,7 +43,7 @@ export async function importBets(
         bet.result,
         bet.cashOutAmount,
         bet.ticketRef,
-        new Date(bet.date),
+        new Date(bet.date!),
         bet.eventResult
       );
     }

@@ -23,7 +23,7 @@ export async function createBankroll(
     where: { id: user.id },
     select: { plan: true },
   });
-  if (dbUser?.plan === "FREE") {
+  if (dbUser?.plan === "FREE" || dbUser?.plan === "BETA_TESTER") {
     const count = await prisma.bankroll.count({ where: { userId: user.id } });
     if (count >= FREE_BANKROLL_LIMIT) {
       throw new Error(t("bankrollLimitReached"));

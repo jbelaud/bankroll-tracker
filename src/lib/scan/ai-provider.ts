@@ -6,44 +6,40 @@ import type { Taxonomy } from "@/lib/taxonomy";
 const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"] as const;
 type GeminiModel = (typeof GEMINI_MODELS)[number];
 
-const BETS_RESPONSE_SCHEMA = {
-  type: "array",
-  items: {
-    type: "object",
-    additionalProperties: false,
-    properties: {
-      date: { type: "string" },
-      ticketRef: { type: ["string", "null"] },
-      sport: { type: "string" },
-      betType: { type: "string" },
-      description: { type: "string" },
-      eventResult: { type: ["string", "null"] },
-      stake: { type: "number" },
-      odds: { type: "number" },
-      boosted: { type: "boolean" },
-      originalOdds: { type: ["number", "null"] },
-      freebet: { type: "boolean" },
-      live: { type: "boolean" },
-      result: { type: "string", enum: ["Gagné", "Perdu", "Remboursé", "En attente", "Cashé"] },
-      cashOutAmount: { type: ["number", "null"] },
-    },
-    required: [
-      "date",
-      "ticketRef",
-      "sport",
-      "betType",
-      "description",
-      "eventResult",
-      "stake",
-      "odds",
-      "boosted",
-      "originalOdds",
-      "freebet",
-      "live",
-      "result",
-      "cashOutAmount",
-    ],
+const BET_RESPONSE_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    date: { type: ["string", "null"] },
+    ticketRef: { type: ["string", "null"] },
+    sport: { type: "string" },
+    betType: { type: "string" },
+    description: { type: "string" },
+    eventResult: { type: ["string", "null"] },
+    stake: { type: ["number", "null"] },
+    odds: { type: ["number", "null"] },
+    boosted: { type: "boolean" },
+    originalOdds: { type: ["number", "null"] },
+    freebet: { type: "boolean" },
+    live: { type: "boolean" },
+    result: { type: "string", enum: ["Gagné", "Perdu", "Remboursé", "En attente", "Cashé"] },
+    cashOutAmount: { type: ["number", "null"] },
   },
+  required: [
+    "date", "ticketRef", "sport", "betType", "description", "eventResult",
+    "stake", "odds", "boosted", "originalOdds", "freebet", "live", "result", "cashOutAmount",
+  ],
+} as const;
+
+const SCAN_RESPONSE_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    detectedBookmaker: { type: ["string", "null"] },
+    detectionConfidence: { type: ["number", "null"] },
+    bets: { type: "array", items: BET_RESPONSE_SCHEMA },
+  },
+  required: ["detectedBookmaker", "detectionConfidence", "bets"],
 } as const;
 
 export type ScanMediaType = "image/png" | "image/jpeg" | "image/gif" | "image/webp";
@@ -95,7 +91,7 @@ export async function analyzeTicketImage({
       config: {
         systemInstruction: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }),
         responseMimeType: "application/json",
-        responseJsonSchema: BETS_RESPONSE_SCHEMA,
+        responseJsonSchema: SCAN_RESPONSE_SCHEMA,
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
       },
     });

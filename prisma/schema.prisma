@@ -84,6 +84,7 @@ enum Currency {
 
 enum Plan {
   FREE
+  BETA_TESTER
   BETA_PREMIUM
   PREMIUM
 }
@@ -203,6 +204,7 @@ model ScanUsage {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   model        String
+  plan         Plan     @default(FREE)
   inputTokens  Int
   outputTokens Int
   costUsd      Float
@@ -221,8 +223,26 @@ model BookmakerScanProfile {
   examples      Json?
   version       Int                    @default(1)
   updatedAt     DateTime               @updatedAt
+  history       BookmakerScanProfileVersion[]
 
   @@map("bookmaker_scan_profiles")
+}
+
+// Instantanés immuables des profils. Ils rendent chaque changement de règles,
+// exemples ou statut auditable sans exposer les captures au navigateur.
+model BookmakerScanProfileVersion {
+  id                     String                 @id @default(uuid())
+  bookmakerScanProfileId String
+  bookmakerScanProfile   BookmakerScanProfile   @relation(fields: [bookmakerScanProfileId], references: [id], onDelete: Cascade)
+  version                Int
+  supportStatus          BookmakerSupportStatus
+  rules                  String?
+  examples               Json?
+  createdAt              DateTime               @default(now())
+
+  @@unique([bookmakerScanProfileId, version])
+  @@index([bookmakerScanProfileId, createdAt])
+  @@map("bookmaker_scan_profile_versions")
 }
 
 // Créé seulement après consentement explicite. Les JSON contiennent les

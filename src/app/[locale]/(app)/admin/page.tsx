@@ -6,6 +6,7 @@ import { stripe } from "@/lib/stripe";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
+import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
 
 const PERIODS = ["day", "month", "year", "all"] as const;
 type Period = (typeof PERIODS)[number];
@@ -143,8 +144,21 @@ export default async function AdminPage({
     };
   }));
 
+  const [betaUsage, betaUsageByUser, betaTesters] = await Promise.all([
+    prisma.scanUsage.aggregate({ where: { createdAt, plan: "BETA_TESTER" }, _count: { _all: true }, _sum: { costUsd: true } }),
+    prisma.scanUsage.groupBy({
+      by: ["userId"],
+      where: { createdAt, plan: "BETA_TESTER" },
+      _count: { _all: true },
+      _sum: { costUsd: true },
+    }),
+    prisma.user.findMany({ where: { plan: "BETA_TESTER" }, select: { id: true, email: true }, orderBy: { email: "asc" } }),
+  ]);
+  const betaUsageByUserId = new Map(betaUsageByUser.map((usage) => [usage.userId, usage]));
+
   const plans = new Map(planCounts.map((item) => [item.plan, item._count._all]));
   const freeUsers = plans.get("FREE") ?? 0;
+  const betaTestersCount = plans.get("BETA_TESTER") ?? 0;
   const betaPremiumUsers = plans.get("BETA_PREMIUM") ?? 0;
   const premiumUsers = plans.get("PREMIUM") ?? 0;
   const totalUsers = freeUsers + betaPremiumUsers + premiumUsers;
@@ -172,6 +186,7 @@ export default async function AdminPage({
     { label: t("signups"), value: formatNumber(signups, locale), detail: t("duringPeriod", { period: periodLabel }) },
     { label: t("activeUsers"), value: formatNumber(activeUsers, locale), detail: t("activeUsersDetail") },
     { label: t("freeUsers"), value: formatNumber(freeUsers, locale), detail: t("currentPlan") },
+    { label: t("betaTesters"), value: formatNumber(betaTestersCount, locale), detail: t("betaTesterDetail") },
     { label: t("betaUsers"), value: formatNumber(betaPremiumUsers, locale), detail: t("currentPlan") },
     { label: t("premiumUsers"), value: formatNumber(premiumUsers, locale), detail: t("currentPlan") },
     { label: t("conversion"), value: `${conversion.toFixed(1)}%`, detail: t("conversionDetail", { paid: paidUsers, total: totalUsers }) },
@@ -232,6 +247,18 @@ export default async function AdminPage({
         <h2 className="text-sm font-semibold">{t("usageSection")}</h2>
         <div className="grid grid-cols-2 gap-3">{cards.slice(8).map((card) => <MetricCard key={card.label} {...card} />)}</div>
       </section>
+
+      <BetaTesterManager
+        testers={betaTesters.map((tester) => ({
+          id: tester.id,
+          email: tester.email,
+          scans: betaUsageByUserId.get(tester.id)?._count._all ?? 0,
+          costUsd: betaUsageByUserId.get(tester.id)?._sum.costUsd ?? 0,
+        }))}
+        scanCount={betaUsage._count._all}
+        costUsd={betaUsage._sum.costUsd ?? 0}
+        formatCost={(amount) => formatMoney(amount, locale, "USD")}
+      />
 
       <section className="glass-card overflow-hidden rounded-xl">
         <div className="border-b border-border p-3">

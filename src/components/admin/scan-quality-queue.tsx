@@ -45,6 +45,7 @@ export function ScanQualityQueue({
   const [rules, setRules] = useState("");
   const [examples, setExamples] = useState("");
   const [formError, setFormError] = useState("");
+  const editingProfile = profiles.find((profile) => profile.bookmaker === bookmaker.trim().replace(/\s+/g, " "));
 
   const openEditor = (target: string) => {
     const profile = profiles.find((item) => item.bookmaker === target);
@@ -57,6 +58,12 @@ export function ScanQualityQueue({
 
   const saveProfile = (event: FormEvent) => {
     event.preventDefault();
+    if (editingProfile && (editingProfile.rules !== rules.trim() || editingProfile.examplesText !== examples.trim())) {
+      const confirmed = window.confirm(
+        `Le profil ${editingProfile.bookmaker} passera de v${editingProfile.version} à v${editingProfile.version + 1}. Les règles actuelles restent dans l'historique. Continuer ?`
+      );
+      if (!confirmed) return;
+    }
     startTransition(async () => {
       try {
         await saveBookmakerScanProfile(bookmaker, rules, examples);
@@ -83,7 +90,10 @@ export function ScanQualityQueue({
 
       {editing !== null && (
         <form onSubmit={saveProfile} className="glass-card flex flex-col gap-3 rounded-xl p-3 text-xs">
-          <h3 className="font-semibold">Règles validées pour ce bookmaker</h3>
+          <h3 className="font-semibold">Profil bookmaker versionné</h3>
+          {editingProfile && (
+            <details className="rounded border border-border p-2"><summary className="cursor-pointer font-medium">Comparer v{editingProfile.version} à la proposition</summary><div className="mt-2 grid gap-2 md:grid-cols-2"><div><p className="mb-1 font-medium">Règles actuelles</p><pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-muted p-2">{editingProfile.rules || "—"}</pre></div><div><p className="mb-1 font-medium">Règles proposées</p><pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-muted p-2">{rules || "—"}</pre></div></div></details>
+          )}
           <label className="flex flex-col gap-1">Bookmaker<input required maxLength={100} value={bookmaker} onChange={(event) => setBookmaker(event.target.value)} className="rounded border border-border bg-background p-2" /></label>
           <label className="flex flex-col gap-1">Règles spécifiques validées<textarea maxLength={20_000} value={rules} onChange={(event) => setRules(event.target.value)} className="min-h-28 rounded border border-border bg-background p-2" placeholder="Règles utilisées dans le prompt uniquement après validation admin." /></label>
           <label className="flex flex-col gap-1">Exemples validés (JSON facultatif)<textarea value={examples} onChange={(event) => setExamples(event.target.value)} className="min-h-24 rounded border border-border bg-background p-2 font-mono" placeholder='[{"ticket":"…","résultat":"…"}]' /></label>

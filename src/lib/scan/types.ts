@@ -9,13 +9,14 @@ import type { BetResult } from "@prisma/client";
 //   existant correspondant → à mettre en évidence (ambre) dans la review
 export type ParsedBet = {
   ticketRef: string | null;
-  date: string; // YYYY-MM-DD
+  /** YYYY-MM-DD when fully visible; otherwise requires review before import. */
+  date: string | null;
   sport: string;
   betType: string;
   description: string;
   eventResult: string | null;
-  stake: number;
-  odds: number;
+  stake: number | null;
+  odds: number | null;
   boosted: boolean;
   originalOdds: number | null;
   freebet: boolean;

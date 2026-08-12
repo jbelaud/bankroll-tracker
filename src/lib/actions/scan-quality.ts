@@ -9,6 +9,28 @@ import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import type { ScanQualityReportStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
+type ProfileSnapshot = {
+  id: string;
+  version: number;
+  supportStatus: "TESTED" | "UNTESTED" | "VALIDATING";
+  rules: string | null;
+  examples: Prisma.JsonValue | null;
+};
+
+async function snapshotProfile(tx: Prisma.TransactionClient, profile: ProfileSnapshot) {
+  await tx.bookmakerScanProfileVersion.upsert({
+    where: { bookmakerScanProfileId_version: { bookmakerScanProfileId: profile.id, version: profile.version } },
+    update: {},
+    create: {
+      bookmakerScanProfileId: profile.id,
+      version: profile.version,
+      supportStatus: profile.supportStatus,
+      rules: profile.rules,
+      examples: profile.examples ?? Prisma.JsonNull,
+    },
+  });
+}
+
 async function removeReport(report: { id: string; storagePath: string }) {
   await createAdminSupabaseClient().storage.from(QUALITY_BUCKET).remove([report.storagePath]);
   await prisma.scanQualityReport.delete({ where: { id: report.id } });
@@ -33,10 +55,21 @@ export async function updateScanQualityReport(id: string, status: ScanQualityRep
 
 export async function setBookmakerSupport(bookmaker: string, supportStatus: "TESTED" | "UNTESTED" | "VALIDATING") {
   await requireAdmin();
-  await prisma.bookmakerScanProfile.upsert({
-    where: { bookmaker },
-    update: { supportStatus },
-    create: { bookmaker, supportStatus },
+  const normalizedBookmaker = bookmaker.trim().replace(/\s+/g, " ");
+  if (!normalizedBookmaker || normalizedBookmaker.length > 100) throw new Error("Profil bookmaker invalide.");
+  await prisma.$transaction(async (tx) => {
+    const existing = await tx.bookmakerScanProfile.findUnique({ where: { bookmaker: normalizedBookmaker } });
+    if (!existing) {
+      const created = await tx.bookmakerScanProfile.create({ data: { bookmaker: normalizedBookmaker, supportStatus } });
+      await snapshotProfile(tx, created);
+      return;
+    }
+    await snapshotProfile(tx, existing);
+    if (existing.supportStatus === supportStatus) return;
+    const updated = await tx.bookmakerScanProfile.update({
+      where: { id: existing.id }, data: { supportStatus, version: { increment: 1 } },
+    });
+    await snapshotProfile(tx, updated);
   });
   revalidatePath("/[locale]/admin", "page");
 }
@@ -60,10 +93,21 @@ export async function saveBookmakerScanProfile(bookmaker: string, rules: string,
     }
   }
 
-  await prisma.bookmakerScanProfile.upsert({
-    where: { bookmaker: normalizedBookmaker },
-    update: { rules: normalizedRules || null, examples, version: { increment: 1 } },
-    create: { bookmaker: normalizedBookmaker, rules: normalizedRules || null, examples },
+  await prisma.$transaction(async (tx) => {
+    const existing = await tx.bookmakerScanProfile.findUnique({ where: { bookmaker: normalizedBookmaker } });
+    if (!existing) {
+      const created = await tx.bookmakerScanProfile.create({
+        data: { bookmaker: normalizedBookmaker, rules: normalizedRules || null, examples },
+      });
+      await snapshotProfile(tx, created);
+      return;
+    }
+    await snapshotProfile(tx, existing);
+    const updated = await tx.bookmakerScanProfile.update({
+      where: { id: existing.id },
+      data: { rules: normalizedRules || null, examples, version: { increment: 1 } },
+    });
+    await snapshotProfile(tx, updated);
   });
   revalidatePath("/[locale]/admin", "page");
 }

@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 const WINDOW_MS = 60 * 60 * 1000; // 1h
 export const HOURLY_SCAN_LIMITS: Record<Plan, number> = {
   FREE: 15,
+  BETA_TESTER: 15,
   // Un import d'historique représente facilement plusieurs centaines d'images.
   // À ~3 paris/image, 120 analyses permettent à un Premium d'importer ~360 paris/h.
   BETA_PREMIUM: 120,

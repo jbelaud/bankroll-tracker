@@ -9,6 +9,7 @@ import {
   createCheckoutSessionAction,
   createBillingPortalSessionAction,
 } from "@/lib/actions/billing";
+import { BILLING_UI_ENABLED, isPaidPlan } from "@/lib/billing/plans";
 
 // Contrairement à fmtDate (jour/mois, pensé pour des paris récents où
 // l'année est évidente), un renouvellement d'abonnement est ~1 an dans le
@@ -34,6 +35,7 @@ export function PlanCard({
   const [error, setError] = useState("");
   const t = useTranslations("account.plan");
   const locale = useLocale();
+  const paidPlan = isPaidPlan(plan);
 
   const handleUpgrade = async () => {
     setLoading(true);
@@ -57,6 +59,21 @@ export function PlanCard({
     }
   };
 
+  if (!BILLING_UI_ENABLED) {
+    return (
+      <section aria-label={t("betaTestingTitle")} className="glass-card relative overflow-hidden rounded-xl p-4">
+        <div className="pointer-events-none select-none blur-sm opacity-35" aria-hidden>
+          <div className="mb-3 h-4 w-28 rounded bg-primary" />
+          <div className="mb-4 h-3 w-4/5 rounded bg-muted-foreground" />
+          <div className="h-10 rounded-lg bg-primary" />
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center bg-background/15 px-6 text-center">
+          <p className="text-sm font-medium">{t("betaTestingDescription")}</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section aria-label={t("title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
       <h2 className="flex items-center gap-1.5 text-sm font-semibold">
@@ -65,7 +82,7 @@ export function PlanCard({
       </h2>
 
       <p className="text-sm text-muted-foreground">
-        {plan !== "FREE"
+        {paidPlan
           ? currentPeriodEnd
             ? t(plan === "BETA_PREMIUM" ? "betaPremiumActive" : "premiumActive", {
                 date: fmtRenewalDate(currentPeriodEnd, locale),
@@ -80,7 +97,7 @@ export function PlanCard({
         </p>
       )}
 
-      {plan !== "FREE" && initialCreditsRemaining > 0 && initialCreditsExpiresAt && (
+      {paidPlan && initialCreditsRemaining > 0 && initialCreditsExpiresAt && (
         <p className="text-xs leading-relaxed text-primary">
           {t("initialCredits", {
             count: initialCreditsRemaining,
@@ -95,7 +112,7 @@ export function PlanCard({
         </p>
       )}
 
-      {plan !== "FREE" ? (
+      {paidPlan ? (
         <Button
           onClick={handleManage}
           disabled={loading}

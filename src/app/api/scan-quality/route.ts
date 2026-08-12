@@ -6,6 +6,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { correctionSummary, extensionForMime, MAX_QUALITY_REPORTS_PER_WEEK, QUALITY_ALLOWED_MEDIA, QUALITY_BUCKET, QUALITY_RETENTION_DAYS, SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
 import type { ParsedBet } from "@/lib/scan/types";
 import { hasExplicitQualityConsent } from "@/lib/scan/quality-guard";
+import { normalizeBookmakerDetection } from "@/lib/scan/response";
 
 export const runtime = "nodejs";
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -56,6 +57,10 @@ export async function POST(request: NextRequest) {
   }
 
   const id = randomUUID();
+  const detection = normalizeBookmakerDetection(
+    form.get("detectedBookmaker"),
+    Number(form.get("detectionConfidence"))
+  );
   const storagePath = `${user.id}/${id}.${extensionForMime(image.type)}`;
   const supabase = createAdminSupabaseClient();
   const { error: uploadError } = await supabase.storage.from(QUALITY_BUCKET).upload(storagePath, await image.arrayBuffer(), { contentType: image.type, upsert: false });
@@ -69,6 +74,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + QUALITY_RETENTION_DAYS * 24 * 60 * 60 * 1000);
     await prisma.scanQualityReport.create({ data: {
       id, userId: user.id, bankrollId: bankroll.id, bookmaker: bankroll.bookmaker,
+      detectedBookmaker: detection.detectedBookmaker, detectionConfidence: detection.detectionConfidence,
       model: String(form.get("model") ?? "unknown").slice(0, 100), promptVersion: SCAN_PROMPT_VERSION,
       rawExtraction: rawExtraction as object, finalExtraction: finalExtraction as object,
       correctionCount: count, correctionTypes: types, storagePath, consentedAt: new Date(), expiresAt,

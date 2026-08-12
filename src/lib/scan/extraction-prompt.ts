@@ -12,20 +12,26 @@ export function buildExtractionPrompt(
   return `Tu es un extracteur de tickets de paris sportifs. On te donne une ou plusieurs captures d'écran d'une application de paris sportifs (Winamax, Betclic, Unibet, PMU, ParionsSport, ou autre). Chaque capture peut contenir PLUSIEURS tickets de paris empilés.
 
 Contexte fourni par l'utilisateur : la bankroll sélectionnée utilise ${context?.bookmaker ?? "un bookmaker inconnu"}. C'est un indice, pas une certitude : ne l'affirme jamais si la capture ne le confirme pas et continue l'extraction même si elle vient d'un autre bookmaker.
-${context?.bookmakerRules ? `Règles validées par l'équipe BetTrack pour ce bookmaker :\n${context.bookmakerRules}\n` : ""}
+${context?.bookmakerRules ? `Règles validées par l'équipe BetTrack pour ${context.bookmaker} :\n${context.bookmakerRules}\nCes règles ne sont applicables que si les éléments visuels confirment ${context.bookmaker}. Si la capture montre un autre bookmaker ou si l'identification est incertaine, ignore ces règles et signale l'identification réelle ou null.\n` : ""}
 
-Réponds UNIQUEMENT avec un tableau JSON valide, sans aucun texte avant ou après, sans balises markdown. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec un tableau vide [].
+Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte avant ou après, sans balises markdown :
+{
+  "detectedBookmaker": "nom du bookmaker visible, ou null si les indices visuels sont insuffisants",
+  "detectionConfidence": nombre entre 0 et 1, ou null si detectedBookmaker est null,
+  "bets": [objets de pari]
+}
+Identifie le bookmaker uniquement à partir d'indices visibles (logo, palette, structure du ticket, libellés). Ne déduis jamais le bookmaker depuis la bankroll fournie. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
 
 Schéma attendu pour chaque pari :
 {
-  "date": "AAAA-MM-JJ",
+  "date": "AAAA-MM-JJ, ou null si l'année ou la date complète ne sont pas visibles",
   "ticketRef": "référence du ticket telle qu'affichée (ex: 6FQSQQOU), ou null si non visible",
   "sport": "Football" | "Cyclisme" | autre sport si évident,
   "betType": voir liste ci-dessous,
   "description": "sélection jouée et affiche (ex: Match nul — Mexique - Équateur)",
   "eventResult": "score/résultat final de l'événement (ex: Mexique 2 - 0 Équateur), ou null si non affiché",
-  "stake": nombre (la mise en euros),
-  "odds": nombre (la cote),
+  "stake": nombre (la mise en euros), ou null si non visible,
+  "odds": nombre (la cote), ou null si non visible,
   "boosted": false,
   "originalOdds": null,
   "freebet": false,
@@ -40,7 +46,8 @@ ${JSON.stringify(taxonomy, null, 0)}
 Précision cyclisme : "Vainqueur" ou "Podium 1er" (quelle que soit la formulation du bookmaker) = toujours "Top 1". On uniformise systématiquement en Top 1 / Top 3 / Top 10, jamais de libellé bookmaker brut.
 
 Règles impératives :
-- "date" : utilise la date affichée en bas du ticket (format ticket "10h02 - 22 juin 2026" → "2026-06-22").
+- "date" : utilise la date affichée en bas du ticket (format ticket "10h02 - 22 juin 2026" → "2026-06-22"). Si l'année ou la date complète n'est pas visible, mets null : ne complète jamais avec la date actuelle.
+- "stake" et "odds" : si l'une de ces valeurs n'est pas visible, mets null. Ne la calcule jamais depuis un gain, des cotes de jambes ou une autre valeur affichée.
 - "sport" : déduis-le d'abord de la compétition, des participants et du contexte de l'événement, JAMAIS du type de pari, de la cote ou du nom d'une promotion. Une promotion bookmaker n'est jamais une information sportive. Exemples : Afrique du Sud - Canada en rugby doit avoir "sport": "Rugby", même avec un badge « La Grosse Cote Boostée » ; un coureur, une étape ou un classement cycliste doit avoir "sport": "Cyclisme".
 - CONTRÔLE FINAL OBLIGATOIRE avant chaque objet JSON : choisis ensuite "betType" dans la liste rattachée à CE sport dans la taxonomie ci-dessus dès qu'il existe. Ne mélange jamais deux listes : "Buteur", "Passeur décisif", "But sur penalty" et "Score exact" sont du Football, jamais du Cyclisme ; "Top 1", "Top 3", "Top 10", "Vainqueur d'étape" et "Classement général" sont du Cyclisme, jamais du Football. Si le sport ou le marché est réellement nouveau, conserve le sport exact et propose un nom de sport/type court, générique et cohérent en français. Ce nouveau couple sera ajouté uniquement à la liste personnelle de cet utilisateur après qu'il l'aura validé dans l'app. Ne change jamais le sport juste pour faire correspondre un type de pari.
 - "description" et "eventResult" sont STRICTEMENT distincts, pour TOUS les sports : "description" contient uniquement l'intitulé de la sélection jouée et les participants. Ne recopie jamais le résultat final de l'événement dans cette description. Mets le résultat réellement affiché dans "eventResult" avec le format adapté au sport : score pour football/rugby/basket, score en sets pour tennis, classement/temps pour cyclisme. Exemple football : pari « Match nul » sur Mexique - Équateur terminé 2-0 → "description": "Match nul — Mexique - Équateur", "eventResult": "Mexique 2 - 0 Équateur". Pour un pari « Score exact », conserve le score PRONOSTIQUÉ dans la description, mais place le score FINAL réellement affiché dans "eventResult". Si le résultat de l'événement n'est pas clairement visible ou si le pari est en attente, mets "eventResult": null.

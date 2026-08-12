@@ -1,5 +1,6 @@
 import type { Plan } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { hasInitialScanCredits } from "@/lib/billing/plans";
 
 const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 export const INITIAL_SCAN_CREDIT = 300;
@@ -7,6 +8,7 @@ export const INITIAL_SCAN_CREDIT_DURATION_DAYS = 30;
 
 export const MONTHLY_LIMITS: Record<Plan, number> = {
   FREE: 10,
+  BETA_TESTER: 50,
   BETA_PREMIUM: 100,
   PREMIUM: 200,
 };
@@ -31,7 +33,7 @@ export async function checkMonthlyQuota(userId: string, plan: Plan): Promise<Quo
 
     const now = new Date();
     const hasInitialCredit =
-      plan !== "FREE" &&
+      hasInitialScanCredits(plan) &&
       user.initialScanCreditRemaining > 0 &&
       user.initialScanCreditExpiresAt !== null &&
       user.initialScanCreditExpiresAt > now;
@@ -121,7 +123,7 @@ export async function getMonthlyQuotaStatus(
   const used = elapsed > WINDOW_MS ? 0 : user.monthlyScanCount;
 
   const hasInitialCredit =
-    plan !== "FREE" &&
+    hasInitialScanCredits(plan) &&
     user.initialScanCreditRemaining > 0 &&
     user.initialScanCreditExpiresAt !== null &&
     user.initialScanCreditExpiresAt > new Date();
