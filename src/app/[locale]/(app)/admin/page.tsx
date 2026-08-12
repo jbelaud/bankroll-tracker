@@ -289,7 +289,7 @@ export default async function AdminPage({
         betaPhaseActive={betaProgram?.phase !== "ENDED"}
         scanCount={betaUsage._count._all}
         costUsd={betaUsage._sum.costUsd ?? 0}
-        formatCost={(amount) => formatMoney(amount, locale, "USD")}
+        locale={locale}
       />
 
       <section className="glass-card overflow-hidden rounded-xl">

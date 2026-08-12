@@ -13,19 +13,20 @@ export function BetaTesterManager({
   betaPhaseActive,
   scanCount,
   costUsd,
-  formatCost,
+  locale,
 }: {
   testers: BetaTester[];
   invites: Invite[];
   betaPhaseActive: boolean;
   scanCount: number;
   costUsd: number;
-  formatCost: (amount: number) => string;
+  locale: string;
 }) {
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [latestInviteUrl, setLatestInviteUrl] = useState("");
+  const formatCost = (amount: number) => new Intl.NumberFormat(locale, { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(amount);
 
   const createInvite = (event: FormEvent) => {
     event.preventDefault();
