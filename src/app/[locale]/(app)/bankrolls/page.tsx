@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
+import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import {
@@ -9,8 +10,8 @@ import {
 } from "@/components/bankrolls/bankroll-list";
 
 export default async function BankrollsPage() {
-  const [bankrolls, bets] = await Promise.all([listBankrolls(), listAllBets()]);
-  const summaries = summarizeBankrolls(bankrolls, bets);
+  const [bankrolls, bets, movements] = await Promise.all([listBankrolls(), listAllBets(), listAllBankrollMovements()]);
+  const summaries = summarizeBankrolls(bankrolls, bets, movements);
 
   const items: BankrollListItem[] = bankrolls.map((br) => {
     const summary = summaries.find((s) => s.id === br.id)!;

@@ -2,7 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
+import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { computeProfit, realStake } from "@/lib/profit";
+import { movementDelta } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { getMonthlyQuotaStatus } from "@/lib/scan/monthly-quota";
@@ -13,6 +15,7 @@ import { BankrollCards } from "@/components/dashboard/bankroll-cards";
 import { RecentBets } from "@/components/dashboard/recent-bets";
 import { PerformancePanel } from "@/components/dashboard/performance-panel";
 import { OnboardingCard } from "@/components/dashboard/onboarding-card";
+import { CapitalFlowCard } from "@/components/dashboard/capital-flow-card";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
@@ -38,12 +41,14 @@ export default async function DashboardPage() {
   let bets;
   let dbUser;
   let betaProgram;
+  let movements;
   try {
-    [bankrolls, bets, dbUser, betaProgram] = await Promise.all([
+    [bankrolls, bets, dbUser, betaProgram, movements] = await Promise.all([
       listBankrolls(),
       listAllBets(),
       prisma.user.findUnique({ where: { id: user.id } }),
       prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
+      listAllBankrollMovements(),
     ]);
   } catch (error) {
     const databaseUrl = process.env.DATABASE_URL;
@@ -75,8 +80,11 @@ export default async function DashboardPage() {
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const totalInitial = bankrolls.reduce((s, br) => s + br.initial, 0);
+  const totalDeposits = movements.filter((movement) => movement.type === "DEPOSIT").reduce((sum, movement) => sum + movement.amount, 0);
+  const totalWithdrawals = movements.filter((movement) => movement.type === "WITHDRAWAL").reduce((sum, movement) => sum + movement.amount, 0);
+  const totalNetFunding = totalInitial + totalDeposits - totalWithdrawals;
   const totalProfit = settled.reduce((s, b) => s + computeProfit(b), 0);
-  const totalBalance = totalInitial + totalProfit;
+  const totalBalance = totalNetFunding + totalProfit;
   const totalStaked = settled.reduce((s, b) => s + realStake(b), 0);
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const wonCount = settled.filter((b) => b.result === "GAGNE").length;
@@ -92,18 +100,22 @@ export default async function DashboardPage() {
 
   // Courbe globale du capital : tous les paris réglés de l'utilisateur, toutes
   // bankrolls confondues. Les filtres de période sont appliqués côté interface.
-  const performancePoints = settled.reduce<Array<{ date: string; balance: number }>>(
-    (points, bet) => {
+  const performanceEvents = [
+    ...settled.map((bet) => ({ date: bet.date, delta: computeProfit(bet) })),
+    ...movements.map((movement) => ({ date: movement.date, delta: movementDelta(movement) })),
+  ].sort((a, b) => a.date.getTime() - b.date.getTime());
+  const performancePoints = performanceEvents.reduce<Array<{ date: string; balance: number }>>(
+    (points, event) => {
       points.push({
-        date: bet.date.toISOString().slice(0, 10),
-        balance: (points.at(-1)?.balance ?? totalInitial) + computeProfit(bet),
+        date: event.date.toISOString().slice(0, 10),
+        balance: (points.at(-1)?.balance ?? totalInitial) + event.delta,
       });
       return points;
     },
     []
   );
 
-  const bankrollSummaries = summarizeBankrolls(bankrolls, bets);
+  const bankrollSummaries = summarizeBankrolls(bankrolls, bets, movements);
 
   const bankrollName = (id: string) =>
     bankrolls.find((br) => br.id === id)?.name ?? "—";
@@ -143,6 +155,16 @@ export default async function DashboardPage() {
       </Reveal>
 
       <Reveal index={bets.length === 0 ? 2 : 1}>
+        <CapitalFlowCard
+          deposits={totalDeposits}
+          withdrawals={totalWithdrawals}
+          netFunding={totalNetFunding}
+          profit={totalProfit}
+          currency={currency}
+        />
+      </Reveal>
+
+      <Reveal index={bets.length === 0 ? 3 : 2}>
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -152,7 +174,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 3 : 2}>
+      <Reveal index={bets.length === 0 ? 4 : 3}>
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -160,7 +182,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 4 : 3}>
+      <Reveal index={bets.length === 0 ? 5 : 4}>
         <QuotaCard
           plan={plan}
           scansUsed={quota.used}
@@ -171,11 +193,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 5 : 4}>
+      <Reveal index={bets.length === 0 ? 6 : 5}>
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 6 : 5}>
+      <Reveal index={bets.length === 0 ? 7 : 6}>
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>

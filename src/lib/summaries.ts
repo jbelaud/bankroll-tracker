@@ -1,5 +1,5 @@
-import type { Bankroll, Bet } from "@prisma/client";
-import { computeProfit } from "@/lib/profit";
+import type { Bankroll, BankrollMovement, Bet } from "@prisma/client";
+import { summarizeBankrollCapital } from "@/lib/bankroll-balance";
 
 export type BankrollSummary = {
   id: string;
@@ -13,20 +13,17 @@ export type BankrollSummary = {
 // (même sémantique que le Dashboard de l'artifact).
 export function summarizeBankrolls(
   bankrolls: Bankroll[],
-  bets: Bet[]
+  bets: Bet[],
+  movements: BankrollMovement[] = []
 ): BankrollSummary[] {
-  const settled = bets.filter((b) => b.result !== "EN_ATTENTE");
-
   return bankrolls.map((br) => {
-    const profit = settled
-      .filter((b) => b.bankrollId === br.id)
-      .reduce((s, b) => s + computeProfit(b), 0);
+    const summary = summarizeBankrollCapital(br, bets, movements);
     return {
       id: br.id,
       name: br.name,
       bookmaker: br.bookmaker,
-      balance: br.initial + profit,
-      profit,
+      balance: summary.balance,
+      profit: summary.profit,
     };
   });
 }

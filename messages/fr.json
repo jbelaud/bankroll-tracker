@@ -136,6 +136,16 @@
       "statsCta": "Statistiques",
       "historyCta": "Historique"
     },
+    "capital": {
+      "ariaLabel": "Synthèse du capital et des mouvements",
+      "eyebrow": "Fonds et performance",
+      "title": "Résultat par rapport aux fonds engagés",
+      "netFunding": "Fonds nets",
+      "deposits": "Dépôts",
+      "withdrawals": "Retraits",
+      "performance": "Performance sur fonds nets : {value}",
+      "performanceUnavailable": "Ajoute des fonds pour calculer une performance."
+    },
     "bankrollCards": {
       "ariaLabel": "Mes bankrolls",
       "title": "Mes bankrolls"
@@ -186,6 +196,29 @@
     "initial": "Capital initial",
     "bets": "Paris",
     "pending": "En attente",
+    "capitalStatsTitle": "Fonds et gains/pertes",
+    "netFunding": "Fonds nets",
+    "betProfit": "Gains / pertes",
+    "deposits": "Dépôts ajoutés",
+    "withdrawals": "Retraits",
+    "performanceOnFunding": "Performance sur fonds nets : {value}",
+    "performanceUnavailable": "Ajoute des fonds pour calculer une performance.",
+    "movementsTitle": "Dépôts et retraits",
+    "movementsDescription": "Les mouvements modifient le solde, sans modifier tes gains de paris.",
+    "addMovement": "Ajouter",
+    "noMovements": "Aucun dépôt ou retrait enregistré.",
+    "movementDrawerTitle": "Ajouter un mouvement",
+    "movementDrawerDescription": "Enregistre un dépôt ou un retrait sur cette bankroll.",
+    "movementTypeLabel": "Type",
+    "movementAmountLabel": "Montant",
+    "movementDateLabel": "Date",
+    "movementNoteLabel": "Note (facultative)",
+    "movementNotePlaceholder": "Ex. virement vers mon compte",
+    "movementSubmit": "Enregistrer le mouvement",
+    "movementSubmitting": "Enregistrement…",
+    "movementTypes": { "DEPOSIT": "Dépôt", "WITHDRAWAL": "Retrait" },
+    "deleteMovement": "Supprimer",
+    "deleteMovementConfirm": "Supprimer ce mouvement ?",
     "deleteConfirmTitle": "Supprimer cette bankroll ?",
     "deleteConfirmWithBets": "Cela supprimera aussi définitivement {count, plural, one {# pari associé} other {# paris associés}} à cette bankroll. Cette action est irréversible.",
     "deleteConfirmNoBets": "Cette action est irréversible."
@@ -640,7 +673,12 @@
     "profitGoalPositive": "L'objectif de bénéfice doit être un nombre positif.",
     "lossLimitPositive": "La limite de perte doit être un nombre positif.",
     "noBetsToImport": "Aucun pari à importer.",
-    "invalidCurrency": "Devise invalide."
+    "invalidCurrency": "Devise invalide.",
+    "invalidMovementType": "Type de mouvement invalide.",
+    "movementAmountPositive": "Le montant doit être supérieur à zéro.",
+    "movementDateInvalid": "La date du mouvement est invalide.",
+    "withdrawalExceedsBalance": "Le retrait ne peut pas dépasser le solde disponible.",
+    "movementNotFound": "Mouvement introuvable."
   },
 
   "results": {

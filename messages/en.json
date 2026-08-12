@@ -136,6 +136,16 @@
       "statsCta": "Statistics",
       "historyCta": "History"
     },
+    "capital": {
+      "ariaLabel": "Capital and cash movement summary",
+      "eyebrow": "Funds and performance",
+      "title": "Result against funds committed",
+      "netFunding": "Net funds",
+      "deposits": "Deposits",
+      "withdrawals": "Withdrawals",
+      "performance": "Performance on net funds: {value}",
+      "performanceUnavailable": "Add funds to calculate a performance."
+    },
     "bankrollCards": {
       "ariaLabel": "My bankrolls",
       "title": "My bankrolls"
@@ -186,6 +196,29 @@
     "initial": "Starting capital",
     "bets": "Bets",
     "pending": "Pending",
+    "capitalStatsTitle": "Funds and profit/loss",
+    "netFunding": "Net funds",
+    "betProfit": "Profit / loss",
+    "deposits": "Added deposits",
+    "withdrawals": "Withdrawals",
+    "performanceOnFunding": "Performance on net funds: {value}",
+    "performanceUnavailable": "Add funds to calculate a performance.",
+    "movementsTitle": "Deposits and withdrawals",
+    "movementsDescription": "Movements change the balance without changing your betting profit.",
+    "addMovement": "Add",
+    "noMovements": "No deposit or withdrawal recorded.",
+    "movementDrawerTitle": "Add a movement",
+    "movementDrawerDescription": "Record a deposit or withdrawal for this bankroll.",
+    "movementTypeLabel": "Type",
+    "movementAmountLabel": "Amount",
+    "movementDateLabel": "Date",
+    "movementNoteLabel": "Note (optional)",
+    "movementNotePlaceholder": "E.g. transfer to my bank account",
+    "movementSubmit": "Save movement",
+    "movementSubmitting": "Saving…",
+    "movementTypes": { "DEPOSIT": "Deposit", "WITHDRAWAL": "Withdrawal" },
+    "deleteMovement": "Delete",
+    "deleteMovementConfirm": "Delete this movement?",
     "deleteConfirmTitle": "Delete this bankroll?",
     "deleteConfirmWithBets": "This will also permanently delete {count, plural, one {# bet} other {# bets}} associated with this bankroll. This action is irreversible.",
     "deleteConfirmNoBets": "This action is irreversible."
@@ -640,7 +673,12 @@
     "profitGoalPositive": "Profit goal must be a positive number.",
     "lossLimitPositive": "Loss limit must be a positive number.",
     "noBetsToImport": "No bets to import.",
-    "invalidCurrency": "Invalid currency."
+    "invalidCurrency": "Invalid currency.",
+    "invalidMovementType": "Invalid movement type.",
+    "movementAmountPositive": "Amount must be greater than zero.",
+    "movementDateInvalid": "Movement date is invalid.",
+    "withdrawalExceedsBalance": "The withdrawal cannot exceed the available balance.",
+    "movementNotFound": "Movement not found."
   },
 
   "results": {
