@@ -16,6 +16,7 @@ import { RecentBets } from "@/components/dashboard/recent-bets";
 import { PerformancePanel } from "@/components/dashboard/performance-panel";
 import { OnboardingCard } from "@/components/dashboard/onboarding-card";
 import { CapitalFlowCard } from "@/components/dashboard/capital-flow-card";
+import { DiscordCommunityCard } from "@/components/dashboard/discord-community-card";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
@@ -197,7 +198,13 @@ export default async function DashboardPage() {
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 7 : 6}>
+      {bets.length > 0 && (
+        <Reveal index={6}>
+          <DiscordCommunityCard />
+        </Reveal>
+      )}
+
+      <Reveal index={7}>
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>

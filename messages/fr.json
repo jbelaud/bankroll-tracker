@@ -110,6 +110,11 @@
         "stats": { "title": "Suis tes progrès", "description": "Retrouve ton capital, ton ROI et tes performances." }
       }
     },
+    "community": {
+      "title": "Communauté Discord",
+      "description": "Partage tes captures de bookmakers et tes retours pour améliorer BetTrack.",
+      "join": "Rejoindre"
+    },
     "quota": {
       "title": "Scans IA ce mois",
       "remaining": "{used}/{limit} utilisés",

@@ -110,6 +110,11 @@
         "stats": { "title": "Track your progress", "description": "Find your capital, ROI and performance." }
       }
     },
+    "community": {
+      "title": "Discord community",
+      "description": "Share bookmaker screenshots and feedback to help improve BetTrack.",
+      "join": "Join"
+    },
     "quota": {
       "title": "AI scans this month",
       "remaining": "{used}/{limit} used",
