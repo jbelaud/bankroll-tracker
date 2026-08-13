@@ -100,6 +100,10 @@
       "stepLabel": "Étape {count}",
       "bankrollCta": "Créer ma bankroll",
       "scanCta": "Importer mon premier ticket",
+      "discord": {
+        "title": "Rejoindre le Discord BetTrack",
+        "description": "Partage tes captures et tes retours avec la communauté bêta."
+      },
       "steps": {
         "bankroll": { "title": "Crée ta bankroll", "description": "Choisis ton bookmaker et ton capital de départ." },
         "scan": { "title": "Importe tes paris", "description": "Envoie une capture ou ajoute tes premiers paris." },
@@ -475,6 +479,11 @@
       "sectionTitle": "Retour bêta",
       "sectionDescription": "Un bug, une idée ou un écran à améliorer ? Ton retour arrive directement dans l’administration.",
       "open": "Envoyer un retour bêta"
+    },
+    "discord": {
+      "sectionTitle": "Communauté Discord",
+      "sectionDescription": "Partage tes captures de bookmakers, tes idées et tes retours avec la communauté bêta.",
+      "join": "Rejoindre le Discord"
     },
     "profileAriaLabel": "Profil",
     "connectedAs": "Connecté en tant que",

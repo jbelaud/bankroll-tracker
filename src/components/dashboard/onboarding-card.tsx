@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { ChartBar, CheckCircle, Scan, Wallet } from "@phosphor-icons/react/dist/ssr";
+import { ArrowSquareOutIcon, ChartBar, CheckCircle, DiscordLogoIcon, Scan, Wallet } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@/i18n/navigation";
 
 export async function OnboardingCard({
@@ -65,6 +65,22 @@ export async function OnboardingCard({
       >
         {action.label}
       </Link>
+
+      <a
+        href="https://discord.gg/aMc8jDAAx"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 flex min-h-touch items-center justify-between gap-3 rounded-xl border border-border bg-background/45 px-4 py-3 transition-colors hover:bg-muted/60"
+      >
+        <span className="flex items-center gap-3 text-left">
+          <DiscordLogoIcon size={22} weight="fill" className="shrink-0 text-primary" aria-hidden />
+          <span>
+            <span className="block text-sm font-semibold">{t("discord.title")}</span>
+            <span className="block text-xs text-muted-foreground">{t("discord.description")}</span>
+          </span>
+        </span>
+        <ArrowSquareOutIcon size={17} className="shrink-0 text-muted-foreground" aria-hidden />
+      </a>
     </section>
   );
 }

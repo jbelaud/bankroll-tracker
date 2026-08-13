@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { ArrowSquareOutIcon, DiscordLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -80,6 +81,25 @@ export default async function AccountPage({
 
       <LanguageSwitcher />
       <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />
+
+      <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+        <div className="flex gap-3">
+          <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
+          <div>
+            <h2 className="text-sm font-semibold">{t("discord.sectionTitle")}</h2>
+            <p className="mt-1 text-xs text-muted-foreground">{t("discord.sectionDescription")}</p>
+          </div>
+        </div>
+        <a
+          href="https://discord.gg/aMc8jDAAx"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-h-touch items-center justify-center gap-2 rounded-lg border border-primary/35 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+        >
+          {t("discord.join")}
+          <ArrowSquareOutIcon size={16} aria-hidden />
+        </a>
+      </section>
 
       <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
         <div>

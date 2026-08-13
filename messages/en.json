@@ -100,6 +100,10 @@
       "stepLabel": "Step {count}",
       "bankrollCta": "Create my bankroll",
       "scanCta": "Import my first ticket",
+      "discord": {
+        "title": "Join the BetTrack Discord",
+        "description": "Share your screenshots and feedback with the beta community."
+      },
       "steps": {
         "bankroll": { "title": "Create your bankroll", "description": "Choose your bookmaker and starting capital." },
         "scan": { "title": "Import your bets", "description": "Upload a screenshot or add your first bets." },
@@ -475,6 +479,11 @@
       "sectionTitle": "Beta feedback",
       "sectionDescription": "A bug, an idea, or a screen to improve? Your feedback goes straight to the administration area.",
       "open": "Send beta feedback"
+    },
+    "discord": {
+      "sectionTitle": "Discord community",
+      "sectionDescription": "Share bookmaker screenshots, ideas and feedback with the beta community.",
+      "join": "Join Discord"
     },
     "profileAriaLabel": "Profile",
     "connectedAs": "Signed in as",
