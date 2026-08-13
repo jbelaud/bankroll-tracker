@@ -155,7 +155,13 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 2 : 1}>
+      {bets.length > 0 && (
+        <Reveal index={1}>
+          <DiscordCommunityCard />
+        </Reveal>
+      )}
+
+      <Reveal index={2}>
         <CapitalFlowCard
           deposits={totalDeposits}
           withdrawals={totalWithdrawals}
@@ -165,7 +171,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 3 : 2}>
+      <Reveal index={3}>
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -175,7 +181,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 4 : 3}>
+      <Reveal index={4}>
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -183,7 +189,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 5 : 4}>
+      <Reveal index={5}>
         <QuotaCard
           plan={plan}
           scansUsed={quota.used}
@@ -194,15 +200,9 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={bets.length === 0 ? 6 : 5}>
+      <Reveal index={6}>
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
-
-      {bets.length > 0 && (
-        <Reveal index={6}>
-          <DiscordCommunityCard />
-        </Reveal>
-      )}
 
       <Reveal index={7}>
         <RecentBets bets={recentBets} />
