@@ -437,6 +437,10 @@
     "summary": {
       "bets": "{count, plural, one {# bet shown} other {# bets shown}}"
     },
+    "accordion": {
+      "bets": "{count, plural, one {# bet} other {# bets}}",
+      "week": "Week of {start} to {end}"
+    },
     "emptyNoMatch": "No bets match these filters.",
     "selection": {
       "count": "{count, plural, one {# selected} other {# selected}}",

@@ -437,6 +437,10 @@
     "summary": {
       "bets": "{count, plural, one {# pari affiché} other {# paris affichés}}"
     },
+    "accordion": {
+      "bets": "{count, plural, one {# pari} other {# paris}}",
+      "week": "Semaine du {start} au {end}"
+    },
     "emptyNoMatch": "Aucun pari ne correspond à ces filtres.",
     "selection": {
       "count": "{count, plural, one {# sélectionné} other {# sélectionnés}}",

@@ -4,10 +4,11 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { BetResult, Currency } from "@prisma/client";
-import { CalendarX, X } from "@phosphor-icons/react";
+import { CaretDown, CalendarX, X } from "@phosphor-icons/react";
 import { deleteBet, deleteBets } from "@/lib/actions/bets";
 import { currencySymbol } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
+import { groupHistoryBets } from "@/lib/history-grouping";
 import { Button } from "@/components/ui/button";
 import { HistoryFilters } from "./history-filters";
 import { HistoryBetItem } from "./history-bet-item";
@@ -64,6 +65,9 @@ export function HistoryList({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deleteTargetIds, setDeleteTargetIds] = useState<string[] | null>(null);
   const [editTarget, setEditTarget] = useState<HistoryBetItemData | null>(null);
+  const [openMonthKey, setOpenMonthKey] = useState<string | null>(null);
+  const [openWeekKey, setOpenWeekKey] = useState<string | null>(null);
+  const [openDayKey, setOpenDayKey] = useState<string | null>(null);
 
   const sportOptions = useMemo(
     () => Array.from(new Set(bets.map((b) => b.sport))).sort(),
@@ -83,47 +87,27 @@ export function HistoryList({
     .filter((bet) => bet.result !== "EN_ATTENTE")
     .reduce((sum, bet) => sum + bet.profit, 0);
 
-  const groupedBets = useMemo(() => {
-    const byMonth = new Map<
-      string,
-      {
-        label: string;
-        days: Map<string, { label: string; profit: number; bets: HistoryBetItemData[] }>;
-      }
-    >();
+  const groupedBets = useMemo(() => groupHistoryBets(filteredBets, locale), [filteredBets, locale]);
 
-    for (const bet of filteredBets) {
-      const monthKey = `${bet.date.getFullYear()}-${String(bet.date.getMonth() + 1).padStart(2, "0")}`;
-      const dayKey = bet.date.toISOString().slice(0, 10);
-      const month = byMonth.get(monthKey) ?? {
-        label: new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(bet.date),
-        days: new Map(),
-      };
-      const day = month.days.get(dayKey) ?? {
-        label: new Intl.DateTimeFormat(locale, {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        }).format(bet.date),
-        profit: 0,
-        bets: [],
-      };
+  const formatWeekDate = useMemo(
+    () => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }),
+    [locale]
+  );
 
-      day.profit += bet.profit;
-      day.bets.push(bet);
-      month.days.set(dayKey, day);
-      byMonth.set(monthKey, month);
-    }
+  const toggleMonth = (monthKey: string) => {
+    setOpenMonthKey((current) => (current === monthKey ? null : monthKey));
+    setOpenWeekKey(null);
+    setOpenDayKey(null);
+  };
 
-    return Array.from(byMonth.entries()).map(([key, month]) => ({
-      key,
-      label: month.label,
-      days: Array.from(month.days.entries()).map(([dayKey, day]) => ({
-        key: dayKey,
-        ...day,
-      })),
-    }));
-  }, [filteredBets, locale]);
+  const toggleWeek = (weekKey: string) => {
+    setOpenWeekKey((current) => (current === weekKey ? null : weekKey));
+    setOpenDayKey(null);
+  };
+
+  const toggleDay = (dayKey: string) => {
+    setOpenDayKey((current) => (current === dayKey ? null : dayKey));
+  };
 
   const exitSelectionMode = () => {
     setSelectionMode(false);
@@ -248,39 +232,95 @@ export function HistoryList({
         <div className="flex flex-col gap-4">
           {groupedBets.map((month) => (
             <section key={month.key} className="overflow-hidden rounded-xl border border-border">
-              <h2 className="bg-muted/40 px-3 py-2 text-sm font-semibold capitalize">
-                {month.label}
+              <h2>
+                <button
+                  type="button"
+                  aria-expanded={openMonthKey === month.key}
+                  onClick={() => toggleMonth(month.key)}
+                  className="flex min-h-touch w-full items-center justify-between gap-3 bg-muted/40 px-3 py-2 text-left text-sm font-semibold capitalize transition-colors hover:bg-muted/60"
+                >
+                  <span>{month.label}</span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">{t("accordion.bets", { count: month.betCount })}</span>
+                    <span className={month.profit >= 0 ? "num text-profit" : "num text-loss"}>
+                      {month.profit >= 0 ? "+" : ""}{month.profit.toFixed(2)}{currencySymbol(currency)}
+                    </span>
+                    <CaretDown className={openMonthKey === month.key ? "rotate-180 transition-transform" : "transition-transform"} size={16} aria-hidden />
+                  </span>
+                </button>
               </h2>
-              <div className="flex flex-col gap-3 p-2">
-                {month.days.map((day) => (
-                  <div key={day.key}>
-                    <div className="flex items-center justify-between px-1 pb-1.5 text-xs">
-                      <h3 className="font-medium capitalize text-muted-foreground">{day.label}</h3>
-                      <span className={day.profit >= 0 ? "num font-semibold text-profit" : "num font-semibold text-loss"}>
-                        {day.profit >= 0 ? "+" : ""}{day.profit.toFixed(2)}{currencySymbol(currency)}
-                      </span>
-                    </div>
-                    <ul className="glass-card divide-y divide-border overflow-hidden rounded-lg">
-                      {day.bets.map((bet) => (
-                        <HistoryBetItem
-                          key={bet.id}
-                          bet={bet}
-                          selectionMode={selectionMode}
-                          selected={selectedIds.has(bet.id)}
-                          isOpen={openItemId === bet.id}
-                          showBankrollName={!scopedToBankroll}
-                          onOpenChange={setOpenItemId}
-                          onToggleSelect={handleToggleSelect}
-                          onEnterSelection={handleEnterSelection}
-                          onRequestDelete={(id) => setDeleteTargetIds([id])}
-                          onRequestEdit={handleRequestEdit}
-                          currency={currency}
-                        />
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              {openMonthKey === month.key ? (
+                <div className="flex flex-col gap-2 p-2">
+                  {month.weeks.map((week) => {
+                    const weekId = `${month.key}:${week.key}`;
+                    return (
+                      <div key={weekId} className="overflow-hidden rounded-lg border border-border/80">
+                        <button
+                          type="button"
+                          aria-expanded={openWeekKey === weekId}
+                          onClick={() => toggleWeek(weekId)}
+                          className="flex min-h-touch w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs font-medium transition-colors hover:bg-muted/40"
+                        >
+                          <span>{t("accordion.week", { start: formatWeekDate.format(week.start), end: formatWeekDate.format(week.end) })}</span>
+                          <span className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{t("accordion.bets", { count: week.betCount })}</span>
+                            <span className={week.profit >= 0 ? "num text-profit" : "num text-loss"}>
+                              {week.profit >= 0 ? "+" : ""}{week.profit.toFixed(2)}{currencySymbol(currency)}
+                            </span>
+                            <CaretDown className={openWeekKey === weekId ? "rotate-180 transition-transform" : "transition-transform"} size={15} aria-hidden />
+                          </span>
+                        </button>
+                        {openWeekKey === weekId ? (
+                          <div className="flex flex-col gap-2 border-t border-border/80 p-2">
+                            {week.days.map((day) => {
+                              const dayId = `${weekId}:${day.key}`;
+                              return (
+                                <div key={dayId}>
+                                  <button
+                                    type="button"
+                                    aria-expanded={openDayKey === dayId}
+                                    onClick={() => toggleDay(dayId)}
+                                    className="flex min-h-touch w-full items-center justify-between gap-3 rounded-md px-2 text-left text-xs transition-colors hover:bg-muted/40"
+                                  >
+                                    <span className="font-medium capitalize text-muted-foreground">{day.label}</span>
+                                    <span className="flex items-center gap-2">
+                                      <span className="text-muted-foreground">{t("accordion.bets", { count: day.bets.length })}</span>
+                                      <span className={day.profit >= 0 ? "num font-semibold text-profit" : "num font-semibold text-loss"}>
+                                        {day.profit >= 0 ? "+" : ""}{day.profit.toFixed(2)}{currencySymbol(currency)}
+                                      </span>
+                                      <CaretDown className={openDayKey === dayId ? "rotate-180 transition-transform" : "transition-transform"} size={14} aria-hidden />
+                                    </span>
+                                  </button>
+                                  {openDayKey === dayId ? (
+                                    <ul className="glass-card divide-y divide-border overflow-hidden rounded-lg">
+                                      {day.bets.map((bet) => (
+                                        <HistoryBetItem
+                                          key={bet.id}
+                                          bet={bet}
+                                          selectionMode={selectionMode}
+                                          selected={selectedIds.has(bet.id)}
+                                          isOpen={openItemId === bet.id}
+                                          showBankrollName={!scopedToBankroll}
+                                          onOpenChange={setOpenItemId}
+                                          onToggleSelect={handleToggleSelect}
+                                          onEnterSelection={handleEnterSelection}
+                                          onRequestDelete={(id) => setDeleteTargetIds([id])}
+                                          onRequestEdit={handleRequestEdit}
+                                          currency={currency}
+                                        />
+                                      ))}
+                                    </ul>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
             </section>
           ))}
         </div>
