@@ -137,13 +137,13 @@
       "historyCta": "Historique"
     },
     "capital": {
-      "ariaLabel": "Synthèse du capital et des mouvements",
-      "eyebrow": "Fonds et performance",
-      "title": "Résultat par rapport aux fonds engagés",
+      "ariaLabel": "Synthèse de la bankroll globale",
+      "eyebrow": "Bankroll globale",
+      "title": "Vue d'ensemble de tes bankrolls",
       "netFunding": "Fonds nets",
       "deposits": "Dépôts",
       "withdrawals": "Retraits",
-      "performance": "Performance sur fonds nets : {value}",
+      "performance": "Performance globale sur fonds nets : {value}",
       "performanceUnavailable": "Ajoute des fonds pour calculer une performance."
     },
     "bankrollCards": {

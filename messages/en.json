@@ -137,13 +137,13 @@
       "historyCta": "History"
     },
     "capital": {
-      "ariaLabel": "Capital and cash movement summary",
-      "eyebrow": "Funds and performance",
-      "title": "Result against funds committed",
+      "ariaLabel": "Global bankroll summary",
+      "eyebrow": "Global bankroll",
+      "title": "Overview of your bankrolls",
       "netFunding": "Net funds",
       "deposits": "Deposits",
       "withdrawals": "Withdrawals",
-      "performance": "Performance on net funds: {value}",
+      "performance": "Overall performance on net funds: {value}",
       "performanceUnavailable": "Add funds to calculate a performance."
     },
     "bankrollCards": {
