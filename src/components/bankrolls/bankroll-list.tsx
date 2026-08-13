@@ -27,16 +27,10 @@ export function BankrollList({
   currency: Currency;
 }) {
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<BankrollFormTarget | undefined>();
   const locale = useLocale();
   const t = useTranslations("bankrolls");
 
   const openCreate = () => {
-    setEditing(undefined);
-    setOpen(true);
-  };
-  const openEdit = (br: BankrollFormTarget) => {
-    setEditing(br);
     setOpen(true);
   };
 
@@ -102,32 +96,22 @@ export function BankrollList({
                   </div>
                 </div>
               </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={t("editAriaLabel", { name: br.name })}
-                onClick={() =>
-                  openEdit({
-                    id: br.id,
-                    name: br.name,
-                    bookmaker: br.bookmaker,
-                    initial: br.initial,
-                  })
-                }
-                className="absolute right-3 top-3 min-h-touch min-w-touch rounded-lg text-muted-foreground"
+              <Link
+                href={`/bankrolls/${br.id}`}
+                aria-label={t("openAriaLabel", { name: br.name })}
+                className="absolute right-3 top-3 flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <PencilSimple size={18} aria-hidden />
-              </Button>
+              </Link>
             </li>
           ))}
         </ul>
       )}
 
       <BankrollFormDrawer
-        key={`${editing?.id ?? "new"}-${open ? "open" : "closed"}`}
+        key={open ? "open" : "closed"}
         open={open}
         onOpenChange={setOpen}
-        bankroll={editing}
         currency={currency}
       />
     </div>
