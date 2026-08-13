@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { hashBetaInviteToken, normalizeBetaInviteEmail } from "./invite-token";
 
 export const BETA_INVITE_DURATION_DAYS = 14;
+// 128 bits d'entropie : 22 caractères base64url, tout en restant impossible
+// à deviner dans le cadre de liens valables 14 jours.
+export const BETA_INVITE_TOKEN_BYTES = 16;
 
 export { hashBetaInviteToken, normalizeBetaInviteEmail } from "./invite-token";
 

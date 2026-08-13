@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import {
   BETA_INVITE_DURATION_DAYS,
+  BETA_INVITE_TOKEN_BYTES,
   hashBetaInviteToken,
   isBetaPhaseActive,
   normalizeBetaInviteEmail,
@@ -35,7 +36,7 @@ export async function createBetaInvite(emailInput: string): Promise<{ url: strin
 
   const email = normalizeBetaInviteEmail(emailInput);
   if (emailInput.trim() && !email) throw new Error("Adresse e-mail invalide.");
-  const token = randomBytes(32).toString("base64url");
+  const token = randomBytes(BETA_INVITE_TOKEN_BYTES).toString("base64url");
   const expiresAt = new Date(Date.now() + BETA_INVITE_DURATION_DAYS * 24 * 60 * 60 * 1_000);
   await prisma.betaInvite.create({ data: { tokenHash: hashBetaInviteToken(token), email, expiresAt } });
   revalidateBetaViews();
