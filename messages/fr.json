@@ -278,6 +278,16 @@
         "cashoutLabel": "Montant encaissé ({currency})"
       }
     },
+    "complete": {
+      "title": "Paris importés !",
+      "description": "{count, plural, one {# pari a été ajouté à ta bankroll.} other {# paris ont été ajoutés à ta bankroll.}}",
+      "firstTitle": "Ton premier scan est terminé !",
+      "firstDescription": "{count, plural, one {# pari est maintenant enregistré dans ta bankroll.} other {# paris sont maintenant enregistrés dans ta bankroll.}}",
+      "discordTitle": "Aide-nous à améliorer BetTrack",
+      "discordDescription": "Rejoins le Discord bêta pour partager tes retours et tes captures de bookmakers, après avoir masqué toute donnée personnelle.",
+      "joinDiscord": "Rejoindre le Discord",
+      "dashboardCta": "Accéder à mon tableau de bord"
+    },
     "error": {
       "analysisFailed": "L'analyse a échoué."
     },

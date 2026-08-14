@@ -278,6 +278,16 @@
         "cashoutLabel": "Cashed out amount ({currency})"
       }
     },
+    "complete": {
+      "title": "Bets imported!",
+      "description": "{count, plural, one {# bet was added to your bankroll.} other {# bets were added to your bankroll.}}",
+      "firstTitle": "Your first scan is complete!",
+      "firstDescription": "{count, plural, one {# bet is now recorded in your bankroll.} other {# bets are now recorded in your bankroll.}}",
+      "discordTitle": "Help us improve BetTrack",
+      "discordDescription": "Join the beta Discord to share feedback and bookmaker screenshots, after hiding any personal data.",
+      "joinDiscord": "Join Discord",
+      "dashboardCta": "Go to my dashboard"
+    },
     "error": {
       "analysisFailed": "Analysis failed."
     },

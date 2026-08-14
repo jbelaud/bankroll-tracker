@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
+import { ArrowSquareOut, CheckCircle, DiscordLogo } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { scanTickets, type ScanTicketResult } from "@/lib/scan/scan-client";
 import type { ParsedBet } from "@/lib/scan/types";
@@ -12,6 +13,7 @@ import type { Taxonomy } from "@/lib/taxonomy";
 import { UploadZone } from "./upload-zone";
 import { ScanningView } from "./scanning-view";
 import { ReviewList } from "./review-list";
+import { Button } from "@/components/ui/button";
 
 export type BankrollOption = { id: string; name: string; bookmaker: string };
 
@@ -21,7 +23,8 @@ type FlowState =
   | { step: "idle" }
   | { step: "scanning"; files: File[]; done: number }
   | { step: "review"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] }
-  | { step: "importing"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] };
+  | { step: "importing"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] }
+  | { step: "completed"; imported: number; firstImport: boolean };
 
 export function ScanFlow({
   bankrolls,
@@ -34,6 +37,7 @@ export function ScanFlow({
 }) {
   const router = useRouter();
   const t = useTranslations("scan.error");
+  const tComplete = useTranslations("scan.complete");
   const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
   const [error, setError] = useState("");
@@ -66,7 +70,7 @@ export function ScanFlow({
       setError("");
       setFlow({ step: "importing", bets, files, scans });
       const result = await importBets(bankrollId, bets);
-      if (result.error) {
+      if (result.imported === undefined) {
         setError(result.error);
         setFlow({ step: "review", bets, files, scans });
         return;
@@ -86,9 +90,13 @@ export function ScanFlow({
           return fetch("/api/scan-quality", { method: "POST", body: form });
         }));
       }
-      router.push("/dashboard");
+      setFlow({
+        step: "completed",
+        imported: result.imported,
+        firstImport: result.firstImport,
+      });
     },
-    [bankrollId, router]
+    [bankrollId]
   );
 
   if (flow.step === "scanning") {
@@ -113,6 +121,58 @@ export function ScanFlow({
         currency={currency}
         taxonomy={taxonomy}
       />
+    );
+  }
+
+  if (flow.step === "completed") {
+    const title = flow.firstImport ? tComplete("firstTitle") : tComplete("title");
+    const description = flow.firstImport
+      ? tComplete("firstDescription", { count: flow.imported })
+      : tComplete("description", { count: flow.imported });
+
+    return (
+      <section
+        aria-label={title}
+        className="glass-card mx-auto flex w-full max-w-md flex-col items-center gap-5 rounded-2xl p-6 text-center"
+      >
+        <span className="flex size-14 items-center justify-center rounded-full bg-profit/15 text-profit">
+          <CheckCircle size={34} weight="fill" aria-hidden />
+        </span>
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        </div>
+
+        {flow.firstImport ? (
+          <div className="w-full rounded-xl border border-primary/35 bg-primary/10 p-4 text-left">
+            <div className="flex gap-3">
+              <DiscordLogo size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
+              <div>
+                <h3 className="text-sm font-semibold">{tComplete("discordTitle")}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tComplete("discordDescription")}</p>
+              </div>
+            </div>
+            <a
+              href="https://discord.gg/aMc8jDAAx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex min-h-touch items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98]"
+            >
+              {tComplete("joinDiscord")}
+              <ArrowSquareOut size={16} aria-hidden />
+            </a>
+          </div>
+        ) : null}
+
+        <Button
+          type="button"
+          variant={flow.firstImport ? "outline" : "default"}
+          onClick={() => router.push("/dashboard")}
+          className="min-h-touch w-full rounded-lg text-sm font-semibold"
+        >
+          {tComplete("dashboardCta")}
+        </Button>
+      </section>
     );
   }
 
