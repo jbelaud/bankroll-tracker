@@ -73,6 +73,7 @@ model User {
   taxonomyEntries UserTaxonomyEntry[]
   scanQualityReports ScanQualityReport[]
   redeemedBetaInvite BetaInvite?
+  betaInviteRedemptions BetaInviteRedemption[]
 
   @@map("users")
 }
@@ -260,16 +261,35 @@ model BetaInvite {
   id                String    @id @default(uuid())
   tokenHash         String    @unique
   email             String?
+  maxRedemptions    Int       @default(1)
+  redemptionCount   Int       @default(0)
   expiresAt         DateTime
   revokedAt         DateTime?
   redeemedAt        DateTime?
   redeemedByUserId  String?   @unique
   redeemedByUser    User?     @relation(fields: [redeemedByUserId], references: [id], onDelete: SetNull)
+  redemptions       BetaInviteRedemption[]
   createdAt         DateTime  @default(now())
 
   @@index([expiresAt])
   @@index([email])
   @@map("beta_invites")
+}
+
+// Chaque inscription par un lien de campagne est conservée côté serveur pour
+// afficher les jauges admin. Le jeton reste uniquement stocké sous forme de
+// hash dans BetaInvite.
+model BetaInviteRedemption {
+  id           String     @id @default(uuid())
+  betaInviteId String
+  betaInvite   BetaInvite @relation(fields: [betaInviteId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  redeemedAt   DateTime   @default(now())
+
+  @@unique([betaInviteId, userId])
+  @@index([betaInviteId, redeemedAt])
+  @@map("beta_invite_redemptions")
 }
 
 model BookmakerScanProfile {

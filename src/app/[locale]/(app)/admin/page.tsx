@@ -171,7 +171,8 @@ export default async function AdminPage({
     }),
     prisma.user.findMany({ where: { plan: "BETA_TESTER" }, select: { id: true, email: true }, orderBy: { email: "asc" } }),
     prisma.betaInvite.findMany({
-      select: { id: true, email: true, expiresAt: true, revokedAt: true, redeemedAt: true },
+      where: { email: null },
+      select: { id: true, expiresAt: true, revokedAt: true, maxRedemptions: true, redemptionCount: true },
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
@@ -281,10 +282,10 @@ export default async function AdminPage({
         }))}
         invites={betaInvites.map((invite) => ({
           id: invite.id,
-          email: invite.email,
           expiresAt: invite.expiresAt.toISOString(),
           revokedAt: invite.revokedAt?.toISOString() ?? null,
-          redeemedAt: invite.redeemedAt?.toISOString() ?? null,
+          maxRedemptions: invite.maxRedemptions,
+          redemptionCount: invite.redemptionCount,
         }))}
         betaPhaseActive={betaProgram?.phase !== "ENDED"}
         scanCount={betaUsage._count._all}

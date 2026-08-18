@@ -10,9 +10,10 @@ import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import {
   BETA_INVITE_DURATION_DAYS,
   BETA_INVITE_TOKEN_BYTES,
+  DEFAULT_BETA_CAMPAIGN_MAX_REDEMPTIONS,
+  MAX_BETA_CAMPAIGN_MAX_REDEMPTIONS,
   hashBetaInviteToken,
   isBetaPhaseActive,
-  normalizeBetaInviteEmail,
 } from "@/lib/beta/program";
 
 function revalidateBetaViews() {
@@ -30,23 +31,35 @@ async function inviteBaseUrl(): Promise<string> {
   return `${requestHeaders.get("x-forwarded-proto") ?? "http"}://${host}`;
 }
 
-export async function createBetaInvite(emailInput: string): Promise<{ url: string }> {
+export async function createBetaCampaignInvite(maxRedemptionsInput?: number): Promise<{ url: string; maxRedemptions: number }> {
   await requireAdmin();
   if (!(await isBetaPhaseActive())) throw new Error("La phase bêta est terminée.");
 
-  const email = normalizeBetaInviteEmail(emailInput);
-  if (emailInput.trim() && !email) throw new Error("Adresse e-mail invalide.");
+  const maxRedemptions = Number.isInteger(maxRedemptionsInput)
+    ? Number(maxRedemptionsInput)
+    : DEFAULT_BETA_CAMPAIGN_MAX_REDEMPTIONS;
+  if (maxRedemptions < 1 || maxRedemptions > MAX_BETA_CAMPAIGN_MAX_REDEMPTIONS) {
+    throw new Error(`Choisis entre 1 et ${MAX_BETA_CAMPAIGN_MAX_REDEMPTIONS} inscriptions.`);
+  }
+
   const token = randomBytes(BETA_INVITE_TOKEN_BYTES).toString("base64url");
   const expiresAt = new Date(Date.now() + BETA_INVITE_DURATION_DAYS * 24 * 60 * 60 * 1_000);
-  await prisma.betaInvite.create({ data: { tokenHash: hashBetaInviteToken(token), email, expiresAt } });
+  // Un seul lien partagé actif à la fois : en créer un nouveau invalide le précédent.
+  await prisma.$transaction(async (tx) => {
+    await tx.betaInvite.updateMany({
+      where: { email: null, revokedAt: null, expiresAt: { gt: new Date() } },
+      data: { revokedAt: new Date() },
+    });
+    await tx.betaInvite.create({ data: { tokenHash: hashBetaInviteToken(token), expiresAt, maxRedemptions } });
+  });
   revalidateBetaViews();
 
-  return { url: `${await inviteBaseUrl()}/${await getServerLocale()}/signup?invite=${encodeURIComponent(token)}` };
+  return { url: `${await inviteBaseUrl()}/${await getServerLocale()}/signup?invite=${encodeURIComponent(token)}`, maxRedemptions };
 }
 
 export async function revokeBetaInvite(id: string) {
   await requireAdmin();
-  await prisma.betaInvite.updateMany({ where: { id, redeemedAt: null, revokedAt: null }, data: { revokedAt: new Date() } });
+  await prisma.betaInvite.updateMany({ where: { id, revokedAt: null }, data: { revokedAt: new Date() } });
   revalidateBetaViews();
 }
 
@@ -68,7 +81,7 @@ export async function endBetaPhase() {
       update: { phase: "ENDED", endedAt: now, endedBy: admin.email ?? null },
       create: { id: "global", phase: "ENDED", endedAt: now, endedBy: admin.email ?? null },
     });
-    await tx.betaInvite.updateMany({ where: { redeemedAt: null, revokedAt: null }, data: { revokedAt: now } });
+    await tx.betaInvite.updateMany({ where: { revokedAt: null }, data: { revokedAt: now } });
   });
   revalidateBetaViews();
 }
