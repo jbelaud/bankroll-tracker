@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Scan, Images, PencilSimpleLine } from "@phosphor-icons/react";
+import { Scan, Images, PencilSimpleLine, Sparkle, FrameCorners, ListChecks } from "@phosphor-icons/react";
 import {
   Select,
   SelectContent,
@@ -100,6 +100,32 @@ export function UploadZone({
         <p className="max-w-56 text-center text-xs text-muted-foreground">
           {t("hint")}
         </p>
+
+        <section
+          aria-label={t("tips.ariaLabel")}
+          className="w-full max-w-sm rounded-2xl border border-primary/25 bg-primary/[0.06] p-4 text-left shadow-[0_12px_32px_-24px_color-mix(in_oklch,var(--primary),transparent_15%)] transition-colors hover:bg-primary/[0.09]"
+        >
+          <div className="flex items-start gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <Sparkle size={18} weight="fill" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary">{t("tips.eyebrow")}</p>
+              <h2 className="mt-0.5 text-sm font-semibold tracking-tight">{t("tips.title")}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("tips.description")}</p>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="flex gap-2 rounded-xl bg-background/70 p-2.5">
+              <FrameCorners size={18} className="mt-0.5 shrink-0 text-primary" weight="bold" aria-hidden />
+              <p className="text-xs leading-relaxed text-muted-foreground">{t("tips.clearCapture")}</p>
+            </div>
+            <div className="flex gap-2 rounded-xl bg-background/70 p-2.5">
+              <ListChecks size={18} className="mt-0.5 shrink-0 text-primary" weight="bold" aria-hidden />
+              <p className="text-xs leading-relaxed text-muted-foreground">{t("tips.multipleBets")}</p>
+            </div>
+          </div>
+        </section>
 
         <Button
           variant="outline"

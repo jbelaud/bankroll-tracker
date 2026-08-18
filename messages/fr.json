@@ -245,7 +245,15 @@
       "scanButton": "Scanner un ticket",
       "hint": "Prends ton ticket en photo, l'IA extrait les paris automatiquement.",
       "gallery": "Depuis la galerie (multi-sélection)",
-      "manualEntry": "Saisir un pari manuellement"
+      "manualEntry": "Saisir un pari manuellement",
+      "tips": {
+        "ariaLabel": "Conseils pour réussir le scan",
+        "eyebrow": "Astuce scan",
+        "title": "Optimise chaque analyse",
+        "description": "Pour mieux utiliser ton quota, privilégie une capture nette qui regroupe plusieurs paris du même ticket.",
+        "clearCapture": "Cadre le ticket entier, sans reflet ni texte coupé.",
+        "multipleBets": "Plusieurs paris sur une capture : un seul scan, plus de données importées."
+      }
     },
     "scanning": {
       "progress": "Analyse {current}/{total}…",
