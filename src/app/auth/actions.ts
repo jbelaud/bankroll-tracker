@@ -10,7 +10,7 @@ import { isBetaInviteTokenValid, redeemBetaInvite } from "@/lib/beta/program";
 import { authErrorKey } from "@/lib/auth/error-mapping";
 
 export type AuthFormState =
-  | { error: string; message?: undefined }
+  | { error: string; errorCode?: "signupEmailRateLimited"; message?: undefined }
   | { message: string; error?: undefined }
   | undefined;
 
@@ -90,7 +90,8 @@ export async function signUp(
   });
 
   if (error) {
-    return { error: tErrors(authErrorKey(error, "signUp")) };
+    const errorKey = authErrorKey(error, "signUp");
+    return { error: tErrors(errorKey), errorCode: errorKey === "signupEmailRateLimited" ? errorKey : undefined };
   }
 
   if (!data.session) {

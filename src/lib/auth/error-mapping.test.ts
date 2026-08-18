@@ -8,7 +8,8 @@ describe("authentication error mapping", () => {
 
   it("returns actionable errors for sign-up and provider rate limits", () => {
     expect(authErrorKey({ code: "user_already_exists" }, "signUp")).toBe("accountExists");
-    expect(authErrorKey({ code: "over_email_send_rate_limit" }, "signUp")).toBe("tooManyRequests");
+    expect(authErrorKey({ code: "over_email_send_rate_limit" }, "signUp")).toBe("signupEmailRateLimited");
+    expect(authErrorKey({ code: "rate_limit" }, "signIn")).toBe("tooManyRequests");
   });
 
   it("accepts only known query error codes", () => {

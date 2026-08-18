@@ -14,6 +14,7 @@ function SignupForm() {
   const [state, action, pending] = useActionState(signUp, undefined);
   const t = useTranslations("auth.signup");
   const invite = useSearchParams().get("invite") ?? "";
+  const signupEmailRateLimited = Boolean(state && "errorCode" in state && state.errorCode === "signupEmailRateLimited");
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
@@ -51,7 +52,7 @@ function SignupForm() {
           </div>
 
           {state?.error && (
-            <p className="text-xs text-rose-400">{state.error}</p>
+            <p className="text-xs leading-5 text-rose-400">{state.error}</p>
           )}
           {state?.message && (
             <p className="text-xs text-emerald-400">{state.message}</p>
@@ -59,7 +60,7 @@ function SignupForm() {
 
           <button
             type="submit"
-            disabled={pending}
+            disabled={pending || signupEmailRateLimited}
             className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
             {pending ? t("submitting") : t("submit")}
