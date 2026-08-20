@@ -272,6 +272,8 @@
       "duplicateWarning": "Bets outlined in orange: no reference on the ticket, but date/stake/odds/description match a bet you already have — check it isn't a duplicate before confirming.",
       "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
       "taxonomyMismatchWarning": "Some sports and bet types do not match. Check them before importing: they were set to “Other” to avoid saving inconsistent data.",
+      "bankrollLabel": "Import into this bankroll",
+      "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
       "importing": "Importing…",
       "noneToImport": "No bets to import",
@@ -479,6 +481,7 @@
     "emptyNoMatch": "No bets match these filters.",
     "selection": {
       "count": "{count, plural, one {# selected} other {# selected}}",
+      "move": "Move",
       "cancelAriaLabel": "Cancel selection"
     },
     "item": {
@@ -494,6 +497,15 @@
       "confirmSingle": "Delete",
       "confirmPlural": "Delete ({count})",
       "deleting": "Deleting…"
+    },
+    "moveDrawer": {
+      "titleSingle": "Move this bet",
+      "titlePlural": "Move {count} bets",
+      "description": "The bets will keep all their details and be assigned to the selected bankroll.",
+      "bankrollLabel": "New bankroll",
+      "confirmSingle": "Move bet",
+      "confirmPlural": "Move {count} bets",
+      "moving": "Moving…"
     },
     "editResult": {
       "title": "Edit result",

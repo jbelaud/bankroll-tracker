@@ -117,6 +117,14 @@ export function ScanFlow({
         error={error}
         onConfirm={(bets, shareQuality) => confirmImport(bets, shareQuality, flow.files, flow.scans)}
         onRestart={restart}
+        bankrolls={bankrolls}
+        bankrollId={bankrollId}
+        onBankrollChange={setBankrollId}
+        detectedBookmakers={Array.from(new Set(
+          flow.scans
+            .filter((scan) => scan.detectionConfidence !== null && scan.detectionConfidence >= 0.75)
+            .flatMap((scan) => (scan.detectedBookmaker ? [scan.detectedBookmaker] : []))
+        ))}
         showQualityOffer={flow.scans.some((scan) => scan.supportStatus !== "TESTED")}
         currency={currency}
         taxonomy={taxonomy}

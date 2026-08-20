@@ -137,7 +137,12 @@ export default async function BankrollDetailPage({
 
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold">{t("historyTitle")}</h2>
-        <HistoryList bets={items} scopedToBankroll currency={currency} />
+      <HistoryList
+        bets={items}
+        bankrollOptions={bankrolls.filter((item) => !item.locked).map((item) => ({ id: item.id, name: item.name }))}
+        scopedToBankroll
+        currency={currency}
+      />
       </section>
     </div>
   );

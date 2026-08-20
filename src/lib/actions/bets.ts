@@ -25,6 +25,7 @@ function revalidateBetViews() {
   revalidatePath("/[locale]/history", "page");
   revalidatePath("/[locale]/dashboard", "page");
   revalidatePath("/[locale]/bankrolls", "page");
+  revalidatePath("/[locale]/bankrolls/[id]", "page");
 }
 
 async function getErrorsT() {
@@ -175,6 +176,37 @@ export async function deleteBets(betIds: string[]) {
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
   });
   revalidateBetViews();
+}
+
+// Déplace un ou plusieurs paris entre deux bankrolls du même utilisateur.
+// Les deux extrémités sont contrôlées côté serveur : un ID transmis par le
+// navigateur ne donne jamais accès à la bankroll ou aux paris d'un tiers.
+export async function moveBets(betIds: string[], targetBankrollId: string) {
+  const user = await requireUser();
+  if (betIds.length === 0) return { moved: 0 };
+
+  await getOwnedBankroll(targetBankrollId, user.id);
+  const bets = await prisma.bet.findMany({
+    where: { id: { in: betIds }, bankroll: { userId: user.id } },
+    select: { id: true, bankrollId: true },
+  });
+  const sourceLocked = await Promise.all(
+    bets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
+  );
+  if (sourceLocked.some(Boolean)) {
+    throw new Error((await getErrorsT())("bankrollLocked"));
+  }
+
+  const moved = await prisma.bet.updateMany({
+    where: {
+      id: { in: bets.map((bet) => bet.id) },
+      bankroll: { userId: user.id },
+      bankrollId: { not: targetBankrollId },
+    },
+    data: { bankrollId: targetBankrollId },
+  });
+  revalidateBetViews();
+  return { moved: moved.count };
 }
 
 export async function updateBetResult(

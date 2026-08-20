@@ -5,9 +5,18 @@ import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { Warning, Lightbulb, ArrowCounterClockwise } from "@phosphor-icons/react";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
+import { normalizeBookmaker } from "@/lib/bookmakers";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ReviewBetCard } from "./review-bet-card";
 import type { Taxonomy } from "@/lib/taxonomy";
+import type { BankrollOption } from "./scan-flow";
 
 export function ReviewList({
   initialBets,
@@ -15,6 +24,10 @@ export function ReviewList({
   error,
   onConfirm,
   onRestart,
+  bankrolls,
+  bankrollId,
+  onBankrollChange,
+  detectedBookmakers,
   showQualityOffer,
   currency,
   taxonomy,
@@ -24,6 +37,10 @@ export function ReviewList({
   error: string;
   onConfirm: (bets: ParsedBet[], shareQuality: boolean) => void;
   onRestart: () => void;
+  bankrolls: BankrollOption[];
+  bankrollId: string;
+  onBankrollChange: (id: string) => void;
+  detectedBookmakers: string[];
   showQualityOffer: boolean;
   currency: Currency;
   taxonomy: Taxonomy;
@@ -53,6 +70,16 @@ export function ReviewList({
   const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
+  const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
+  const bookmakerMismatch = Boolean(
+    selectedBankroll &&
+      detectedBookmakers.length > 0 &&
+      detectedBookmakers.some(
+        (bookmaker) =>
+          normalizeBookmaker(bookmaker).toLocaleLowerCase("fr") !==
+          normalizeBookmaker(selectedBankroll.bookmaker).toLocaleLowerCase("fr")
+      )
+  );
   // Inclut immédiatement les valeurs proposées par le scan : l'utilisateur
   // peut donc les corriger/valider avant qu'elles soient sauvegardées.
   const reviewTaxonomy = useMemo(() => {
@@ -101,6 +128,41 @@ export function ReviewList({
           <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("taxonomyMismatchWarning")}
         </p>
+      )}
+
+      <section className="rounded-xl border border-border bg-muted/40 p-3">
+        <label htmlFor="review-bankroll" className="text-xs font-medium">
+          {t("bankrollLabel")}
+        </label>
+        <Select
+          value={bankrollId}
+          onValueChange={(value) => onBankrollChange(value as string)}
+          disabled={importing}
+          items={Object.fromEntries(
+            bankrolls.map((bankroll) => [bankroll.id, `${bankroll.name} (${bankroll.bookmaker})`])
+          )}
+        >
+          <SelectTrigger id="review-bankroll" className="mt-2 min-h-touch w-full rounded-lg px-3 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {bankrolls.map((bankroll) => (
+              <SelectItem key={bankroll.id} value={bankroll.id} className="min-h-touch text-sm">
+                {bankroll.name} ({bankroll.bookmaker})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </section>
+
+      {bookmakerMismatch && selectedBankroll && (
+        <section className="flex items-start gap-2 rounded-xl border border-warning/50 bg-warning/10 p-3 text-xs text-warning">
+          <Warning size={16} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+          <p>{t("bookmakerMismatch", {
+            detected: detectedBookmakers.join(", "),
+            selected: selectedBankroll.bookmaker,
+          })}</p>
+        </section>
       )}
 
       {showQualityOffer && (

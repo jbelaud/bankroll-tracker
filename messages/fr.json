@@ -272,6 +272,8 @@
       "duplicateWarning": "Paris entourés en orange : pas de référence sur le ticket, mais date/mise/cote/description identiques à un pari déjà connu — vérifie qu'il ne s'agit pas d'un doublon avant de confirmer.",
       "suggestedWarning": "Certains paris n'ont pas de type existant qui correspond bien — repère le préfixe « [Type suggéré…] » dans leur description.",
       "taxonomyMismatchWarning": "Certains sports et types de pari ne concordent pas. Vérifie-les avant l'import : ils ont été mis sur « Autre » pour ne pas enregistrer de donnée incohérente.",
+      "bankrollLabel": "Importer dans cette bankroll",
+      "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
       "importing": "Import en cours…",
       "noneToImport": "Aucun pari à importer",
@@ -479,6 +481,7 @@
     "emptyNoMatch": "Aucun pari ne correspond à ces filtres.",
     "selection": {
       "count": "{count, plural, one {# sélectionné} other {# sélectionnés}}",
+      "move": "Déplacer",
       "cancelAriaLabel": "Annuler la sélection"
     },
     "item": {
@@ -494,6 +497,15 @@
       "confirmSingle": "Supprimer",
       "confirmPlural": "Supprimer ({count})",
       "deleting": "Suppression…"
+    },
+    "moveDrawer": {
+      "titleSingle": "Déplacer ce pari",
+      "titlePlural": "Déplacer {count} paris",
+      "description": "Les paris conserveront toutes leurs informations et seront rattachés à la bankroll choisie.",
+      "bankrollLabel": "Nouvelle bankroll",
+      "confirmSingle": "Déplacer le pari",
+      "confirmPlural": "Déplacer {count} paris",
+      "moving": "Déplacement…"
     },
     "editResult": {
       "title": "Modifier le résultat",

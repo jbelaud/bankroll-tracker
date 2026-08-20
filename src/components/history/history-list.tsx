@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { BetResult, Currency } from "@prisma/client";
-import { CaretDown, CalendarX, X } from "@phosphor-icons/react";
-import { deleteBet, deleteBets } from "@/lib/actions/bets";
+import { CaretDown, CalendarX, X, ArrowsLeftRight } from "@phosphor-icons/react";
+import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
 import { currencySymbol } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import { groupHistoryBets } from "@/lib/history-grouping";
@@ -14,6 +14,7 @@ import { HistoryFilters } from "./history-filters";
 import { HistoryBetItem } from "./history-bet-item";
 import { DeleteBetsDrawer } from "./delete-bets-drawer";
 import { EditResultSheet } from "./edit-result-sheet";
+import { MoveBetsDrawer } from "./move-bets-drawer";
 
 export type HistoryBetItemData = {
   id: string;
@@ -64,6 +65,7 @@ export function HistoryList({
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deleteTargetIds, setDeleteTargetIds] = useState<string[] | null>(null);
+  const [moveTargetIds, setMoveTargetIds] = useState<string[] | null>(null);
   const [editTarget, setEditTarget] = useState<HistoryBetItemData | null>(null);
   const [openMonthKey, setOpenMonthKey] = useState<string | null>(null);
   const [openWeekKey, setOpenWeekKey] = useState<string | null>(null);
@@ -169,6 +171,22 @@ export function HistoryList({
     router.refresh();
   };
 
+  const handleConfirmMove = async (targetBankrollId: string) => {
+    if (!moveTargetIds) return;
+    await moveBets(moveTargetIds, targetBankrollId);
+    const target = bankrollOptions?.find((bankroll) => bankroll.id === targetBankrollId);
+    if (target) {
+      const movedIds = new Set(moveTargetIds);
+      setBets((previous) => previous.map((bet) =>
+        movedIds.has(bet.id) ? { ...bet, bankrollId: target.id, bankrollName: target.name } : bet
+      ));
+    }
+    setOpenItemId(null);
+    setMoveTargetIds(null);
+    exitSelectionMode();
+    router.refresh();
+  };
+
   return (
     <div className="flex flex-col gap-3">
       {selectionMode ? (
@@ -177,6 +195,15 @@ export function HistoryList({
             {t("selection.count", { count: selectedIds.size })}
           </span>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMoveTargetIds(Array.from(selectedIds))}
+              className="min-h-touch rounded-lg text-xs font-semibold"
+            >
+              <ArrowsLeftRight size={14} aria-hidden />
+              {t("selection.move")}
+            </Button>
             <Button
               variant="destructive"
               size="sm"
@@ -331,6 +358,14 @@ export function HistoryList({
         open={deleteTargetIds !== null}
         onOpenChange={(open) => !open && setDeleteTargetIds(null)}
         onConfirm={handleConfirmDelete}
+      />
+
+      <MoveBetsDrawer
+        count={moveTargetIds?.length ?? 0}
+        bankrollOptions={bankrollOptions ?? []}
+        open={moveTargetIds !== null}
+        onOpenChange={(open) => !open && setMoveTargetIds(null)}
+        onConfirm={handleConfirmMove}
       />
 
       <EditResultSheet
