@@ -24,6 +24,7 @@ export default async function BankrollsPage() {
       profit: summary.profit,
       betCount: bets.filter((bet) => bet.bankrollId === br.id).length,
       pendingCount: bets.filter((bet) => bet.bankrollId === br.id && bet.result === "EN_ATTENTE").length,
+      locked: br.locked,
     };
   });
 

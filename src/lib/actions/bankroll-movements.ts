@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { summarizeBankrollCapital } from "@/lib/bankroll-balance";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
+import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 
 function isMovementType(value: string): value is BankrollMovementType {
   return value === "DEPOSIT" || value === "WITHDRAWAL";
@@ -24,6 +25,9 @@ export async function listBankrollMovements(bankrollId: string) {
   const user = await requireUser();
   const bankroll = await prisma.bankroll.findFirst({ where: { id: bankrollId, userId: user.id }, select: { id: true } });
   if (!bankroll) throw new Error((await getTranslations({ locale: await getServerLocale(), namespace: "errors" }))("bankrollNotFound"));
+  if (await isBankrollLockedForUser(user.id, bankrollId)) {
+    throw new Error((await getTranslations({ locale: await getServerLocale(), namespace: "errors" }))("bankrollLocked"));
+  }
 
   return prisma.bankrollMovement.findMany({ where: { bankrollId }, orderBy: [{ date: "desc" }, { createdAt: "desc" }] });
 }
@@ -54,6 +58,7 @@ export async function createBankrollMovement(
     include: { bets: true, movements: true },
   });
   if (!bankroll) throw new Error(t("bankrollNotFound"));
+  if (await isBankrollLockedForUser(user.id, bankrollId)) throw new Error(t("bankrollLocked"));
 
   const current = summarizeBankrollCapital(bankroll, bankroll.bets, bankroll.movements).balance;
   if (type === "WITHDRAWAL" && amount > current) throw new Error(t("withdrawalExceedsBalance"));
@@ -72,6 +77,9 @@ export async function deleteBankrollMovement(movementId: string) {
     select: { id: true, bankrollId: true },
   });
   if (!movement) throw new Error((await getTranslations({ locale: await getServerLocale(), namespace: "errors" }))("movementNotFound"));
+  if (await isBankrollLockedForUser(user.id, movement.bankrollId)) {
+    throw new Error((await getTranslations({ locale: await getServerLocale(), namespace: "errors" }))("bankrollLocked"));
+  }
   await prisma.bankrollMovement.delete({ where: { id: movement.id } });
   await refreshMovementViews(movement.bankrollId);
 }

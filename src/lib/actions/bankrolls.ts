@@ -7,8 +7,8 @@ import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { normalizeBookmaker } from "@/lib/bookmakers";
-
-const FREE_BANKROLL_LIMIT = 2;
+import { activeBankrollLimit, isBankrollLocked } from "@/lib/billing/bankroll-limits";
+import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 
 export async function createBankroll(
   name: string,
@@ -23,10 +23,11 @@ export async function createBankroll(
     where: { id: user.id },
     select: { plan: true },
   });
-  if (dbUser?.plan === "FREE" || dbUser?.plan === "BETA_TESTER") {
+  const limit = dbUser ? activeBankrollLimit(dbUser.plan) : null;
+  if (limit !== null) {
     const count = await prisma.bankroll.count({ where: { userId: user.id } });
-    if (count >= FREE_BANKROLL_LIMIT) {
-      throw new Error(t("bankrollLimitReached"));
+    if (count >= limit) {
+      throw new Error(t("bankrollLimitReached", { limit }));
     }
   }
 
@@ -66,6 +67,9 @@ export async function updateBankroll(
   if (!owned) {
     throw new Error(t("bankrollNotFound"));
   }
+  if (await isBankrollLockedForUser(user.id, id)) {
+    throw new Error(t("bankrollLocked"));
+  }
 
   const normalizedBookmaker = normalizeBookmaker(bookmaker);
   if (!normalizedBookmaker) {
@@ -88,10 +92,20 @@ export async function updateBankroll(
 export async function listBankrolls() {
   const user = await requireUser();
 
-  return prisma.bankroll.findMany({
+  const [dbUser, bankrollsByAge] = await Promise.all([
+    prisma.user.findUniqueOrThrow({ where: { id: user.id }, select: { plan: true } }),
+    prisma.bankroll.findMany({
     where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+  ]);
+
+  return bankrollsByAge
+    .map((bankroll, index) => ({
+      ...bankroll,
+      locked: isBankrollLocked(dbUser.plan, index),
+    }))
+    .reverse();
 }
 
 export async function deleteBankroll(id: string) {

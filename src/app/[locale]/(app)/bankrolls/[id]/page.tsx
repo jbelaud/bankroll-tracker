@@ -12,6 +12,8 @@ import { Sparkline } from "@/components/dashboard/sparkline";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
 import { BankrollCapitalStats } from "@/components/bankrolls/bankroll-capital-stats";
 import { BankrollMovementPanel } from "@/components/bankrolls/bankroll-movement-panel";
+import { Link } from "@/i18n/navigation";
+import { LockKey } from "@phosphor-icons/react/dist/ssr";
 
 export default async function BankrollDetailPage({
   params,
@@ -24,6 +26,26 @@ export default async function BankrollDetailPage({
   const bankrolls = await listBankrolls();
   const bankroll = bankrolls.find((b) => b.id === id);
   if (!bankroll) notFound();
+
+  if (bankroll.locked) {
+    const t = await getTranslations("bankrolls.locked");
+    return (
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-8 animate-fade-in-up">
+        <section className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 text-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <LockKey size={22} weight="fill" aria-hidden />
+          </span>
+          <div>
+            <h1 className="text-lg font-semibold">{t("title")}</h1>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t("description")}</p>
+          </div>
+          <Link href="/account" className="flex min-h-touch items-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95">
+            {t("cta")}
+          </Link>
+        </section>
+      </div>
+    );
+  }
 
   const [bets, movements] = await Promise.all([listBets(id), listBankrollMovements(id)]);
 

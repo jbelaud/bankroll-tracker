@@ -7,10 +7,13 @@ import { HistoryList, type HistoryBetItemData } from "@/components/history/histo
 
 export default async function HistoryPage() {
   const [bets, bankrolls] = await Promise.all([listAllBets(), listBankrolls()]);
+  const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
+  const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
+  const activeBets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
 
-  const bankrollName = (id: string) => bankrolls.find((br) => br.id === id)?.name ?? "—";
+  const bankrollName = (id: string) => activeBankrolls.find((br) => br.id === id)?.name ?? "—";
 
-  const items: HistoryBetItemData[] = bets.map((b) => ({
+  const items: HistoryBetItemData[] = activeBets.map((b) => ({
     id: b.id,
     bankrollId: b.bankrollId,
     bankrollName: bankrollName(b.bankrollId),
@@ -30,7 +33,7 @@ export default async function HistoryPage() {
     profit: computeProfit(b),
   }));
 
-  const bankrollOptions = bankrolls.map((br) => ({ id: br.id, name: br.name }));
+  const bankrollOptions = activeBankrolls.map((br) => ({ id: br.id, name: br.name }));
   const t = await getTranslations("history");
   const currency = await getServerCurrency();
 

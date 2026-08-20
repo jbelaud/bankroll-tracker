@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Plus, PencilSimple, Wallet } from "@phosphor-icons/react";
+import { Plus, PencilSimple, Wallet, LockKey, Crown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { fmtMoney, fmtMoneySigned } from "@/lib/format";
@@ -17,6 +17,7 @@ export type BankrollListItem = BankrollFormTarget & {
   profit: number;
   betCount: number;
   pendingCount: number;
+  locked: boolean;
 };
 
 export function BankrollList({
@@ -57,7 +58,28 @@ export function BankrollList({
               className="glass-card relative flex min-h-48 flex-col gap-4 rounded-2xl p-4 animate-fade-in-up"
               style={{ animationDelay: `${(i + 1) * 60}ms` }}
             >
-              <Link
+              {br.locked ? (
+                <div className="flex flex-1 flex-col justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                      <LockKey size={18} weight="fill" aria-hidden />
+                    </span>
+                    <div>
+                      <h2 className="text-sm font-semibold">{t("locked.title")}</h2>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("locked.description")}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/account"
+                    className="flex min-h-touch items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-[0.98]"
+                  >
+                    <Crown size={16} weight="fill" aria-hidden />
+                    {t("locked.cta")}
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <Link
                 href={`/bankrolls/${br.id}`}
                 aria-label={t("openAriaLabel", { name: br.name })}
                 className="flex min-w-0 flex-1 flex-col gap-4"
@@ -96,13 +118,15 @@ export function BankrollList({
                   </div>
                 </div>
               </Link>
-              <Link
-                href={`/bankrolls/${br.id}`}
-                aria-label={t("openAriaLabel", { name: br.name })}
-                className="absolute right-3 top-3 flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <PencilSimple size={18} aria-hidden />
-              </Link>
+                  <Link
+                    href={`/bankrolls/${br.id}`}
+                    aria-label={t("openAriaLabel", { name: br.name })}
+                    className="absolute right-3 top-3 flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    <PencilSimple size={18} aria-hidden />
+                  </Link>
+                </>
+              )}
             </li>
           ))}
         </ul>

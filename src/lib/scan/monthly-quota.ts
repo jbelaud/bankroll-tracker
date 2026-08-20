@@ -6,11 +6,18 @@ const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 export const INITIAL_SCAN_CREDIT = 300;
 export const INITIAL_SCAN_CREDIT_DURATION_DAYS = 30;
 
+export const SCAN_QUOTA_CONFIG: Record<Plan, { limit: number }> = {
+  FREE: { limit: 10 },
+  BETA_TESTER: { limit: 50 },
+  BETA_PREMIUM: { limit: 100 },
+  PREMIUM: { limit: 200 },
+};
+
 export const MONTHLY_LIMITS: Record<Plan, number> = {
-  FREE: 10,
-  BETA_TESTER: 50,
-  BETA_PREMIUM: 100,
-  PREMIUM: 200,
+  FREE: SCAN_QUOTA_CONFIG.FREE.limit,
+  BETA_TESTER: SCAN_QUOTA_CONFIG.BETA_TESTER.limit,
+  BETA_PREMIUM: SCAN_QUOTA_CONFIG.BETA_PREMIUM.limit,
+  PREMIUM: SCAN_QUOTA_CONFIG.PREMIUM.limit,
 };
 
 export type ScanQuotaReservation = "initial" | "monthly";
@@ -52,8 +59,8 @@ export async function checkMonthlyQuota(userId: string, plan: Plan): Promise<Quo
       }
     }
 
+    const { limit } = SCAN_QUOTA_CONFIG[plan];
     const elapsed = now.getTime() - user.monthlyScanWindowStart.getTime();
-    const limit = MONTHLY_LIMITS[plan];
 
     if (elapsed > WINDOW_MS) {
       await tx.user.update({
@@ -119,6 +126,7 @@ export async function getMonthlyQuotaStatus(
     },
   });
 
+  const { limit } = SCAN_QUOTA_CONFIG[plan];
   const elapsed = Date.now() - user.monthlyScanWindowStart.getTime();
   const used = elapsed > WINDOW_MS ? 0 : user.monthlyScanCount;
 
@@ -130,7 +138,7 @@ export async function getMonthlyQuotaStatus(
 
   return {
     used,
-    limit: MONTHLY_LIMITS[plan],
+    limit,
     initialCreditsRemaining: hasInitialCredit ? user.initialScanCreditRemaining : 0,
     initialCreditsExpiresAt: hasInitialCredit ? user.initialScanCreditExpiresAt : null,
   };

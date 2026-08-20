@@ -10,10 +10,11 @@ import { getUserTaxonomy } from "@/lib/taxonomy";
 export default async function ScanPage() {
   const user = await requireUser();
   const [bankrolls, taxonomy] = await Promise.all([listBankrolls(), getUserTaxonomy(user.id)]);
+  const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const t = await getTranslations("scan");
   const tCommon = await getTranslations("common");
 
-  if (bankrolls.length === 0) {
+  if (activeBankrolls.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-center animate-fade-in-up">
         <div className="glass-card flex size-16 items-center justify-center rounded-2xl">
@@ -41,7 +42,7 @@ export default async function ScanPage() {
     <div className="flex flex-1 flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <ScanFlow
-        bankrolls={bankrolls.map((br) => ({
+        bankrolls={activeBankrolls.map((br) => ({
           id: br.id,
           name: br.name,
           bookmaker: br.bookmaker,

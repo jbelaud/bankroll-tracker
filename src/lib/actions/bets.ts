@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { isBetResult } from "@/lib/bet-result";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
+import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import {
   getUserTaxonomy,
   normalizeTaxonomyPair,
@@ -41,6 +42,9 @@ async function getOwnedBankroll(bankrollId: string, userId: string) {
 
   if (!bankroll) {
     throw new Error((await getErrorsT())("bankrollNotFound"));
+  }
+  if (await isBankrollLockedForUser(userId, bankrollId)) {
+    throw new Error((await getErrorsT())("bankrollLocked"));
   }
 
   return bankroll;
@@ -132,9 +136,13 @@ export async function listAllBets() {
 async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
+    select: { id: true, bankrollId: true },
   });
   if (!bet) {
     throw new Error((await getErrorsT())("betNotFound"));
+  }
+  if (await isBankrollLockedForUser(userId, bet.bankrollId)) {
+    throw new Error((await getErrorsT())("bankrollLocked"));
   }
   return bet;
 }
@@ -149,6 +157,17 @@ export async function deleteBet(betId: string) {
 
 export async function deleteBets(betIds: string[]) {
   const user = await requireUser();
+
+  const targetedBets = await prisma.bet.findMany({
+    where: { id: { in: betIds }, bankroll: { userId: user.id } },
+    select: { bankrollId: true },
+  });
+  const lockedResults = await Promise.all(
+    targetedBets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
+  );
+  if (lockedResults.some(Boolean)) {
+    throw new Error((await getErrorsT())("bankrollLocked"));
+  }
 
   // deleteMany filtré par relation : un id appartenant à un autre compte est
   // silencieusement ignoré plutôt que de faire échouer tout le lot.

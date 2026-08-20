@@ -82,6 +82,10 @@ export async function endBetaPhase() {
       create: { id: "global", phase: "ENDED", endedAt: now, endedBy: admin.email ?? null },
     });
     await tx.betaInvite.updateMany({ where: { revokedAt: null }, data: { revokedAt: now } });
+    // Le passage au Freemium est global et immédiat : les deux bankrolls les
+    // plus récentes deviennent alors verrouillées si le compte en possède plus
+    // de deux. Les abonnements payants bêta restent, eux, inchangés.
+    await tx.user.updateMany({ where: { plan: "BETA_TESTER" }, data: { plan: "FREE" } });
   });
   revalidateBetaViews();
 }

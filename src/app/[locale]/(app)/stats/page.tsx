@@ -45,6 +45,9 @@ export default async function StatsPage({
     prisma.insight.findUnique({ where: { userId: user.id } }),
     getUserTaxonomy(user.id),
   ]);
+  const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
+  const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
+  const accessibleBets = allBets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
   const value = (key: string) => typeof query[key] === "string" ? query[key].trim() : "";
   const from = value("from"); const to = value("to"); const q = value("q").toLowerCase();
   const bankroll = value("bankroll"); const sportFilter = value("sport"); const requestedTypeFilter = value("type");
@@ -52,9 +55,9 @@ export default async function StatsPage({
   const number = (key: string) => { const n = Number(value(key)); return Number.isFinite(n) && value(key) !== "" ? n : null; };
   const minStake = number("minStake"); const maxStake = number("maxStake"); const minOdds = number("minOdds"); const maxOdds = number("maxOdds");
   const typesBySport = Object.fromEntries(
-    Array.from(new Set([...Object.keys(taxonomy), ...allBets.map((bet) => bet.sport)])).map((sport) => [
+    Array.from(new Set([...Object.keys(taxonomy), ...accessibleBets.map((bet) => bet.sport)])).map((sport) => [
       sport,
-      Array.from(new Set([...(taxonomy[sport] ?? []), ...allBets.filter((bet) => bet.sport === sport).map((bet) => bet.betType)])),
+      Array.from(new Set([...(taxonomy[sport] ?? []), ...accessibleBets.filter((bet) => bet.sport === sport).map((bet) => bet.betType)])),
     ])
   ) as Record<string, string[]>;
   const typeFilter = sportFilter && typesBySport[sportFilter]?.includes(requestedTypeFilter)
@@ -94,7 +97,7 @@ export default async function StatsPage({
     ),
   };
 
-  const bookmakerByBankrollId = new Map(bankrolls.map((br) => [br.id, br.bookmaker]));
+  const bookmakerByBankrollId = new Map(activeBankrolls.map((br) => [br.id, br.bookmaker]));
   const byBookmaker = groupStats(bets, (b) => bookmakerByBankrollId.get(b.bankrollId) ?? "—");
 
   const daily = Object.values(
@@ -111,8 +114,11 @@ export default async function StatsPage({
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
 
-  const cooldownUntil = existingInsight
-    ? existingInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS
+  const visibleInsight = bankrolls.some((bankroll) => bankroll.locked)
+    ? null
+    : existingInsight;
+  const cooldownUntil = visibleInsight
+    ? visibleInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS
     : null;
   const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
 
@@ -127,7 +133,7 @@ export default async function StatsPage({
       filters={
         <StatsFilters
           values={{ from, to, q, bankroll, sport: sportFilter, type: typeFilter, result: resultFilter, live, freebet, minStake, maxStake, minOdds, maxOdds }}
-          bankrolls={bankrolls.map(({ id, name }) => ({ id, name }))}
+          bankrolls={activeBankrolls.map(({ id, name }) => ({ id, name }))}
           sportOptions={Object.keys(typesBySport).sort()}
           typesBySport={typesBySport}
         />
@@ -192,7 +198,7 @@ export default async function StatsPage({
 
       <InsightsCard
         settledCount={settledCount}
-        initialInsight={onCooldown ? (existingInsight!.data as unknown as InsightResult) : null}
+        initialInsight={onCooldown ? (visibleInsight!.data as unknown as InsightResult) : null}
         initialCooldownUntil={onCooldown ? cooldownUntil : null}
       />
     </StatsWorkspace>

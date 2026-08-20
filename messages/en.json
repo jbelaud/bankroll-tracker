@@ -178,6 +178,11 @@
     "roi": "ROI",
     "bets": "Bets",
     "pendingShort": "{count} pending",
+    "locked": {
+      "title": "Bankroll locked",
+      "description": "The Freemium plan includes 2 active bankrolls. Upgrade to Premium to access this bankroll again.",
+      "cta": "Unlock with Premium"
+    },
     "drawer": {
       "newTitle": "New bankroll",
       "editTitle": "Edit bankroll",
@@ -324,6 +329,7 @@
     "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
+    "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "forbiddenOrigin": "Origin not allowed."
   },
 
@@ -532,7 +538,7 @@
       "betaEndedTitle": "The beta phase has ended",
       "betaEndedDescription": "Thank you for your feedback. You can now choose the Freemium plan.",
       "switchToFreemium": "Switch to Freemium",
-      "freeDescription": "Free beta: 2 bankrolls max, 10 AI scans/month.",
+      "freeDescription": "Freemium: up to 2 active bankrolls and 10 AI scans/month.",
       "premiumActive": "Premium active — renews on {date}.",
       "premiumActiveNoDate": "Premium active.",
       "betaPremiumActive": "Beta Premium active — renews on {date}.",
@@ -699,7 +705,8 @@
 
   "errors": {
     "bankrollNotFound": "Bankroll not found.",
-    "bankrollLimitReached": "Free plan limit of 2 bankrolls reached. Upgrade to Premium for unlimited bankrolls.",
+    "bankrollLimitReached": "Limit of {limit} bankrolls reached. Upgrade to Premium for unlimited bankrolls.",
+    "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "bookmakerRequired": "Bookmaker is required.",
     "initialCapitalPositive": "Starting capital must be a positive number.",
     "stakePositive": "Stake must be a positive number.",

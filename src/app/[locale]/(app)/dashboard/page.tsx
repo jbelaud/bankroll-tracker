@@ -74,6 +74,13 @@ export default async function DashboardPage() {
   const currency = await getServerCurrency();
   const quota = await getMonthlyQuotaStatus(user.id, plan);
 
+  // Après le passage au Freemium, les bankrolls verrouillées ne doivent plus
+  // alimenter les soldes, statistiques ni paris affichés sur le Dashboard.
+  const activeBankrollIds = new Set(bankrolls.filter((bankroll) => !bankroll.locked).map((bankroll) => bankroll.id));
+  bankrolls = bankrolls.filter((bankroll) => activeBankrollIds.has(bankroll.id));
+  bets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
+  movements = movements.filter((movement) => activeBankrollIds.has(movement.bankrollId));
+
   // Même sémantique que le Dashboard de l'artifact : seuls les paris
   // réglés comptent dans le solde et les stats.
   const settled = bets

@@ -19,6 +19,7 @@ import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
 import { bookmakerKind } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
 import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
+import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -110,6 +111,9 @@ export async function POST(request: NextRequest) {
     }),
   ]);
   if (!bankroll) return NextResponse.json({ error: "Bankroll introuvable." }, { status: 404 });
+  if (await isBankrollLockedForUser(user.id, bankrollId)) {
+    return NextResponse.json({ error: t("bankrollLocked") }, { status: 403 });
+  }
   const profile = await prisma.bookmakerScanProfile.findUnique({
     where: { bookmaker: bankroll.bookmaker },
     select: { supportStatus: true, rules: true },

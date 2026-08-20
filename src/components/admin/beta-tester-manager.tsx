@@ -66,7 +66,7 @@ export function BetaTesterManager({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold">Bêta-testeurs</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Chaque bêta-testeur a 50 scans IA gratuits par fenêtre de 30 jours.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Chaque bêta-testeur a 50 scans IA gratuits par fenêtre de 30 jours et jusqu’à 4 bankrolls actives.</p>
         </div>
         {betaPhaseActive ? <Button size="sm" variant="outline" disabled={pending} onClick={finishBeta}>Terminer la bêta</Button> : <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium">Bêta terminée</span>}
       </div>
