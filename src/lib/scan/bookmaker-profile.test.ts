@@ -16,4 +16,10 @@ describe("bookmaker scan profile rules", () => {
     const prompt = buildExtractionPrompt(undefined, { bookmaker: "Betclic", bookmakerRules: null });
     expect(prompt).toContain("Ne déduis jamais le bookmaker depuis la bankroll fournie.");
   });
+
+  it("keeps an available cashout offer as a pending bet", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain('Un bouton ou une offre "Cashout 0,70 €" visible sur un ticket "En cours"');
+    expect(prompt).toContain('garde "result": "En attente" et "cashOutAmount": null');
+  });
 });
