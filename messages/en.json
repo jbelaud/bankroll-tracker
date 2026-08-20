@@ -249,15 +249,16 @@
       "importInto": "Import into",
       "scanButton": "Scan a ticket",
       "hint": "Take a photo of your ticket, the AI extracts the bets automatically.",
-      "gallery": "From gallery (multi-select)",
+      "gallery": "From gallery (max 5 screenshots)",
+      "galleryLimit": "Select no more than {count} screenshots at a time.",
       "manualEntry": "Enter a bet manually",
       "tips": {
         "ariaLabel": "Tips for a successful scan",
         "eyebrow": "Scan tip",
         "title": "Get more from each scan",
-        "description": "To make the most of your quota, use a clear screenshot that includes several bets from the same ticket.",
+        "description": "For a reliable scan, use a clear screenshot with no more than 5 bets.",
         "clearCapture": "Frame the whole ticket, with no glare or cropped text.",
-        "multipleBets": "Several bets in one screenshot: one scan, more imported data."
+        "multipleBets": "Ideally, keep to 5 bets per screenshot: too many tickets reduce readability."
       }
     },
     "scanning": {

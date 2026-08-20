@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Scan, Images, PencilSimpleLine, Sparkle, FrameCorners, ListChecks } from "@phosphor-icons/react";
@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import type { BankrollOption } from "./scan-flow";
 
+const MAX_GALLERY_IMAGES = 5;
+
 export function UploadZone({
   bankrolls,
   bankrollId,
@@ -28,10 +30,21 @@ export function UploadZone({
 }) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
+  const [galleryError, setGalleryError] = useState("");
   const t = useTranslations("scan.upload");
 
-  const handleFiles = (list: FileList | null) => {
+  const handleCameraFiles = (list: FileList | null) => {
     if (list && list.length > 0) onFilesSelected(Array.from(list));
+  };
+
+  const handleGalleryFiles = (list: FileList | null) => {
+    if (!list || list.length === 0) return;
+    if (list.length > MAX_GALLERY_IMAGES) {
+      setGalleryError(t("galleryLimit", { count: MAX_GALLERY_IMAGES }));
+      return;
+    }
+    setGalleryError("");
+    onFilesSelected(Array.from(list));
   };
 
   return (
@@ -70,7 +83,7 @@ export function UploadZone({
         accept="image/*"
         capture="environment"
         className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => handleCameraFiles(e.target.files)}
         aria-hidden
         tabIndex={-1}
       />
@@ -80,7 +93,7 @@ export function UploadZone({
         accept="image/*"
         multiple
         className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => handleGalleryFiles(e.target.files)}
         aria-hidden
         tabIndex={-1}
       />
@@ -135,6 +148,11 @@ export function UploadZone({
           <Images size={18} aria-hidden />
           {t("gallery")}
         </Button>
+        {galleryError && (
+          <p role="alert" className="max-w-sm text-center text-xs text-loss">
+            {galleryError}
+          </p>
+        )}
 
         <Link
           href="/scan/manual"

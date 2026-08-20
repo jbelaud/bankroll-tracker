@@ -249,15 +249,16 @@
       "importInto": "Importer dans",
       "scanButton": "Scanner un ticket",
       "hint": "Prends ton ticket en photo, l'IA extrait les paris automatiquement.",
-      "gallery": "Depuis la galerie (multi-sélection)",
+      "gallery": "Depuis la galerie (5 captures max)",
+      "galleryLimit": "Sélectionne au maximum {count} captures à la fois.",
       "manualEntry": "Saisir un pari manuellement",
       "tips": {
         "ariaLabel": "Conseils pour réussir le scan",
         "eyebrow": "Astuce scan",
         "title": "Optimise chaque analyse",
-        "description": "Pour mieux utiliser ton quota, privilégie une capture nette qui regroupe plusieurs paris du même ticket.",
+        "description": "Pour un scan fiable, privilégie une capture nette avec 5 paris maximum.",
         "clearCapture": "Cadre le ticket entier, sans reflet ni texte coupé.",
-        "multipleBets": "Plusieurs paris sur une capture : un seul scan, plus de données importées."
+        "multipleBets": "Idéalement 5 paris maximum par capture : trop de tickets réduit la lisibilité."
       }
     },
     "scanning": {
