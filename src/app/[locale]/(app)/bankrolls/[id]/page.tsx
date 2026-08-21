@@ -47,7 +47,12 @@ export default async function BankrollDetailPage({
     );
   }
 
-  const [bets, movements] = await Promise.all([listBets(id), listBankrollMovements(id)]);
+  // Le pool PostgreSQL de production ne dispose que d'une connexion. Ces
+  // actions font chacune des vérifications d'accès avant leur requête : les
+  // exécuter en parallèle peut donc épuiser le pool pendant un rafraîchissement
+  // après déplacement d'un pari (P2024). Les séquencer garde le rendu fiable.
+  const bets = await listBets(id);
+  const movements = await listBankrollMovements(id);
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
   // le solde ; la courbe part du capital initial puis cumule pari par pari.
