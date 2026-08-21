@@ -21,6 +21,7 @@ describe("bookmaker scan profile rules", () => {
     const prompt = buildExtractionPrompt();
     expect(prompt).toContain('Un bouton ou une offre "Cashout 0,70 €" visible sur un ticket "En cours"');
     expect(prompt).toContain('garde "result": "En attente" et "cashOutAmount": null');
+    expect(prompt).toContain("Ce statut final explicite est prioritaire sur le statut d'une sélection individuelle.");
   });
 
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
@@ -31,5 +32,15 @@ describe("bookmaker scan profile rules", () => {
     expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: validating })).not.toContain(unibetRule);
     expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: tested })).toContain(unibetRule);
     expect(buildExtractionPrompt()).toContain("Une exception ne peut venir que de règles spécifiques déjà fournies par un profil bookmaker TESTED");
+  });
+
+  it("keeps the Bet365 credit rule opt-in until its profile is TESTED", () => {
+    const bet365Rule = "Bet Crédits explicitement visible : freebet=true.";
+    const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: bet365Rule });
+    const tested = rulesForTestedProfile({ supportStatus: "TESTED", rules: bet365Rule });
+
+    expect(buildExtractionPrompt(undefined, { bookmaker: "Bet365", bookmakerRules: validating })).not.toContain(bet365Rule);
+    expect(buildExtractionPrompt(undefined, { bookmaker: "Bet365", bookmakerRules: tested })).toContain(bet365Rule);
+    expect(buildExtractionPrompt()).toContain("ou si une règle spécifique d'un profil bookmaker TESTED fourni ci-dessus désigne explicitement un équivalent");
   });
 });
