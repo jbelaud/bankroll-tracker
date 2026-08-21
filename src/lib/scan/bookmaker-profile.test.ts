@@ -22,4 +22,14 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain('Un bouton ou une offre "Cashout 0,70 €" visible sur un ticket "En cours"');
     expect(prompt).toContain('garde "result": "En attente" et "cashOutAmount": null');
   });
+
+  it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
+    const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
+    const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });
+    const tested = rulesForTestedProfile({ supportStatus: "TESTED", rules: unibetRule });
+
+    expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: validating })).not.toContain(unibetRule);
+    expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: tested })).toContain(unibetRule);
+    expect(buildExtractionPrompt()).toContain("Une exception ne peut venir que de règles spécifiques déjà fournies par un profil bookmaker TESTED");
+  });
 });
