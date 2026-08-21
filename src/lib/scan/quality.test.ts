@@ -29,6 +29,7 @@ describe("scan quality consent and ownership", () => {
 
   it("keeps known untested and custom bookmakers distinct", () => {
     expect(bookmakerKind("Winamax")).toBe("tested");
+    expect(bookmakerKind("Unibet")).toBe("tested");
     expect(bookmakerKind("Bet365")).toBe("untested");
     expect(bookmakerKind("Local Bookmaker")).toBe("custom");
     expect(extensionForMime("image/jpeg")).toBe("jpg");

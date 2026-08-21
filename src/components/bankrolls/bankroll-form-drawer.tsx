@@ -18,7 +18,7 @@ import {
   createBankrollForm,
   updateBankrollForm,
 } from "@/lib/actions/bankroll-forms";
-import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
+import { KNOWN_BOOKMAKERS, TESTED_BOOKMAKERS } from "@/lib/bookmakers";
 import {
   Select,
   SelectContent,
@@ -32,7 +32,6 @@ import {
 
 const MANUAL_BOOKMAKER = "__manual__";
 const SELECTABLE_BOOKMAKERS = KNOWN_BOOKMAKERS.filter((bookmaker) => bookmaker !== "Autre");
-const TESTED_BOOKMAKERS = new Set(["Winamax", "Betclic"]);
 
 function initialBookmakerSelection(bookmaker?: string): string {
   if (!bookmaker) return "";
