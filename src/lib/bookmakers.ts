@@ -3,7 +3,7 @@ export const KNOWN_BOOKMAKERS = [
   "Bwin", "Zebet", "NetBet", "PokerStars Sports", "Polymarket", "Autre",
 ] as const;
 
-export const TESTED_BOOKMAKERS = new Set(["Winamax", "Betclic", "Unibet"]);
+export const TESTED_BOOKMAKERS = new Set(["Winamax", "Betclic", "Unibet", "Bet365"]);
 export type BookmakerKind = "tested" | "untested" | "custom";
 
 export function normalizeBookmaker(value: string): string {
