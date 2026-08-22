@@ -5,8 +5,8 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import "../globals.css";
 import { cn } from "@/lib/utils";
-import { ResponsibleGamblingFooter } from "@/components/responsible-gambling-footer";
 import { routing } from "@/i18n/routing";
+import { siteMetadataBase } from "@/lib/marketing-seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,8 +19,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BetTrack",
-  description: "Suivi de bankroll paris sportifs",
+  metadataBase: siteMetadataBase,
+  applicationName: "BetTrack",
+  title: {
+    default: "BetTrack",
+    template: "%s | BetTrack",
+  },
+  description: "Sports-betting bankroll tracking",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = {
@@ -55,7 +63,6 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
           {children}
-          <ResponsibleGamblingFooter />
         </NextIntlClientProvider>
       </body>
     </html>

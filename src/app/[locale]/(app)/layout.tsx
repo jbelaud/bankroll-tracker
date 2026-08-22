@@ -1,4 +1,13 @@
 import { AppNav } from "@/components/app-nav";
+import { ResponsibleGamblingFooter } from "@/components/responsible-gambling-footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AppLayout({
   children,
@@ -10,6 +19,7 @@ export default function AppLayout({
         {children}
       </main>
       <AppNav />
+      <ResponsibleGamblingFooter />
     </div>
   );
 }

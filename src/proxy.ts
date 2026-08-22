@@ -117,6 +117,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // /api et /auth restent hors i18n (route API + callback OAuth fixe) —
-  // next-intl ne doit jamais essayer de les préfixer.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api|auth).*)"],
+  // next-intl ne doit jamais essayer de les préfixer. Les fichiers SEO
+  // racine restent eux aussi sans locale pour respecter leurs conventions.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api|auth|robots.txt|sitemap.xml|llms.txt|manifest.webmanifest).*)"],
 };

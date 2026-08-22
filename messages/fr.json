@@ -744,5 +744,367 @@
     "PERDU": "Perdu",
     "REMBOURSE": "Remboursé",
     "CASHE": "Cashé"
+  },
+
+  "marketing": {
+    "header": {
+      "homeAriaLabel": "Accueil BetTrack",
+      "navAriaLabel": "Navigation du site",
+      "languageAriaLabel": "Passer la langue en anglais",
+      "menuAriaLabel": "Ouvrir le menu",
+      "features": "Fonctionnalités",
+      "import": "Import par capture",
+      "bookmakers": "Bookmakers",
+      "pricing": "Tarifs",
+      "faq": "FAQ",
+      "login": "Se connecter",
+      "cta": "Essayer BetTrack"
+    },
+    "footer": {
+      "description": "Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs.",
+      "languageAriaLabel": "Passer la langue en anglais",
+      "product": "Produit",
+      "learn": "Ressources",
+      "account": "Compte",
+      "features": "Fonctionnalités",
+      "import": "Import par capture",
+      "bookmakers": "Bookmakers pris en charge",
+      "pricing": "Tarifs",
+      "bankroll": "Suivi de bankroll",
+      "faq": "Questions fréquentes",
+      "responsible": "Jeu responsable",
+      "login": "Connexion",
+      "signup": "Créer un compte",
+      "contact": "Contact",
+      "privacy": "Confidentialité",
+      "terms": "Conditions d’utilisation",
+      "legal": "Mentions légales",
+      "sales": "Conditions de vente",
+      "copyright": "© {year} BetTrack. Tous droits réservés.",
+      "responsibleNotice": "Réservé aux adultes. BetTrack aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+    },
+    "hero": {
+      "eyebrow": "Le suivi de bankroll, sans ressaisie",
+      "title": "Suivez votre bankroll sans saisir vos paris à la main.",
+      "description": "Importez vos tickets de pari depuis vos captures d’écran. BetTrack extrait les informations, vous laisse les vérifier puis les organise pour suivre votre bankroll.",
+      "primaryCta": "Essayer BetTrack",
+      "secondaryCta": "Voir comment ça marche",
+      "reassuranceOne": "Vos informations sont toujours revues avant l’enregistrement.",
+      "reassuranceTwo": "Aucun identifiant de bookmaker n’est demandé."
+    },
+    "trust": {
+      "trustOne": "Un outil de suivi, pas un bookmaker",
+      "trustTwo": "Correction possible avant l’import",
+      "trustThree": "Données organisées dans votre compte"
+    },
+    "problem": {
+      "eyebrow": "Le problème",
+      "title": "Quand le suivi manuel devient une corvée, les statistiques perdent leur valeur.",
+      "description": "Noter chaque pari dans un tableur prend du temps. Les historiques deviennent incomplets et il devient difficile de comprendre réellement sa performance.",
+      "items": {
+        "manual": {
+          "number": "01",
+          "title": "Des saisies répétitives",
+          "description": "Date, mise, cote, résultat : les mêmes informations sont à recopier après chaque session."
+        },
+        "history": {
+          "number": "02",
+          "title": "Un historique incomplet",
+          "description": "Quelques oublis suffisent à fausser la vision de sa bankroll, de son profit ou de son ROI."
+        },
+        "visibility": {
+          "number": "03",
+          "title": "Moins de recul",
+          "description": "Sans historique fiable, comparer ses résultats par sport, type de pari ou bookmaker devient difficile."
+        }
+      }
+    },
+    "solution": {
+      "title": "BetTrack transforme vos captures en historique de suivi.",
+      "description": "Vous envoyez vos captures, contrôlez les données extraites et enregistrez uniquement ce qui est correct. Vos paris alimentent ensuite votre historique, vos bankrolls et vos statistiques."
+    },
+    "steps": {
+      "eyebrow": "Comment ça marche",
+      "title": "Trois étapes, avec votre validation à chaque import.",
+      "description": "L’extraction accélère la saisie ; elle ne remplace jamais votre contrôle.",
+      "items": {
+        "upload": {
+          "title": "Ajoutez vos captures",
+          "description": "Sélectionnez une ou plusieurs captures de tickets depuis l’écran d’import."
+        },
+        "review": {
+          "title": "Vérifiez les paris extraits",
+          "description": "Corrigez les informations nécessaires et choisissez la bankroll à laquelle les rattacher."
+        },
+        "analyze": {
+          "title": "Suivez votre performance",
+          "description": "Retrouvez les paris enregistrés dans l’historique, les bankrolls et les tableaux de statistiques."
+        }
+      }
+    },
+    "features": {
+      "eyebrow": "Fonctionnalités vérifiées",
+      "title": "Le nécessaire pour garder une vue claire sur son activité.",
+      "description": "BetTrack se concentre sur l’import, la vérification des données et l’analyse de l’historique.",
+      "more": "Explorer les fonctionnalités",
+      "items": {
+        "import": {
+          "title": "Import de captures",
+          "description": "Analysez une ou plusieurs captures de tickets dans un même parcours d’import."
+        },
+        "review": {
+          "title": "Revue et correction",
+          "description": "Vérifiez les éléments extraits avant de les enregistrer dans votre historique."
+        },
+        "bankrolls": {
+          "title": "Plusieurs bankrolls",
+          "description": "Organisez vos suivis selon vos besoins et suivez les mouvements de capital."
+        },
+        "stats": {
+          "title": "Statistiques détaillées",
+          "description": "Consultez profit, ROI, taux de réussite et répartitions par sport, type ou bookmaker."
+        },
+        "formats": {
+          "title": "Formats de pari",
+          "description": "Les paris live, freebets, cotes boostées, remboursements et cash-outs sont pris en compte."
+        },
+        "export": {
+          "title": "Export des données",
+          "description": "Exportez vos bankrolls et vos paris depuis votre compte."
+        }
+      }
+    },
+    "bookmakers": {
+      "eyebrow": "Profils d’import validés",
+      "title": "Des tickets testés pour une lecture plus fiable.",
+      "description": "Les profils actuellement validés concernent Winamax, Betclic, Unibet et Bet365. D’autres bookmakers peuvent être ajoutés dans une bankroll, mais leur lecture par capture n’est pas annoncée comme validée.",
+      "more": "Voir le détail de la compatibilité",
+      "independence": "BetTrack est indépendant et n’est affilié à aucun des bookmakers affichés."
+    },
+    "pricing": {
+      "eyebrow": "Tarification transparente",
+      "title": "Les offres publiques seront affichées avant toute facturation.",
+      "description": "La configuration de lancement est encore en validation. Aucun prix ou avantage non confirmé n’est publié sur cette page.",
+      "cardTitle": "Une offre claire avant paiement",
+      "cardDescription": "Les fonctionnalités payantes, limites d’import, conditions de renouvellement et prix applicables seront affichés dans le parcours concerné avant tout paiement.",
+      "cta": "Comprendre les tarifs"
+    },
+    "faq": {
+      "eyebrow": "Questions fréquentes",
+      "title": "Des réponses directes sur BetTrack.",
+      "description": "Les réponses ci-dessous correspondent aux fonctionnalités actuellement présentes dans l’application.",
+      "more": "Voir toute la FAQ",
+      "items": {
+        "what": {
+          "question": "Qu’est-ce que BetTrack ?",
+          "answer": "BetTrack est un outil personnel de suivi et d’analyse de bankroll pour les paris sportifs. Il aide à organiser un historique de paris ; il ne place pas de pari et ne fournit pas de conseil de pari."
+        },
+        "import": {
+          "question": "Comment fonctionne l’import par capture d’écran ?",
+          "answer": "Vous ajoutez une ou plusieurs captures de tickets. BetTrack extrait les informations visibles, puis vous les présente pour revue et correction avant l’enregistrement."
+        },
+        "bookmakers": {
+          "question": "Quels bookmakers sont pris en charge ?",
+          "answer": "Les profils d’import actuellement validés sont Winamax, Betclic, Unibet et Bet365. L’application permet aussi de créer des bankrolls avec d’autres bookmakers, sans promettre le même niveau de validation pour leur import."
+        },
+        "review": {
+          "question": "Puis-je corriger les informations extraites ?",
+          "answer": "Oui. Chaque pari extrait passe par une étape de revue : vous pouvez corriger les données avant de les enregistrer."
+        },
+        "credentials": {
+          "question": "BetTrack demande-t-il mes identifiants de bookmaker ?",
+          "answer": "Non. L’import repose sur les captures que vous choisissez d’envoyer. BetTrack ne demande pas de connexion à votre compte bookmaker."
+        },
+        "stats": {
+          "question": "Quelles statistiques sont disponibles ?",
+          "answer": "L’application affiche notamment le solde, le profit, le ROI, le taux de réussite et des répartitions par période, sport, type de pari et bookmaker."
+        },
+        "mobile": {
+          "question": "BetTrack fonctionne-t-il sur mobile ?",
+          "answer": "Oui. L’interface est conçue pour être utilisable sur mobile, notamment pour ajouter des captures et consulter son suivi."
+        },
+        "pricing": {
+          "question": "Comment fonctionne l’abonnement ?",
+          "answer": "La tarification publique est encore en cours de validation. Lorsqu’une offre payante est proposée, le prix, les limites et les conditions de renouvellement sont affichés avant paiement."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Gardez une trace claire de vos paris, sans passer vos soirées à les recopier.",
+      "description": "Créez votre espace BetTrack pour organiser vos captures, votre historique et vos indicateurs de bankroll.",
+      "cta": "Créer mon compte"
+    },
+    "preview": {
+      "appName": "BetTrack",
+      "label": "Aperçu produit",
+      "uploadLabel": "1. Import",
+      "uploadTitle": "Ajoutez vos captures",
+      "uploadDescription": "Vos tickets sont préparés pour revue.",
+      "reviewLabel": "2. Vérification",
+      "checked": "À vérifier",
+      "saved": "3. Enregistrer dans l’historique",
+      "statsLabel": "4. Statistiques",
+      "statsTitle": "Suivez l’évolution de votre bankroll",
+      "chartAlt": "Illustration d’une courbe d’évolution de bankroll",
+      "caption": "Représentation de l’interface BetTrack à partir des composants existants."
+    },
+    "structured": {
+      "organizationDescription": "BetTrack est un outil de suivi de bankroll pour les paris sportifs.",
+      "websiteDescription": "Importez des tickets de paris depuis des captures, vérifiez les données puis suivez votre historique et vos statistiques.",
+      "applicationDescription": "Application web de suivi de bankroll et d’analyse de paris sportifs avec import de captures et étape de revue."
+    },
+    "meta": {
+      "home": {
+        "title": "BetTrack — Suivi de bankroll par capture d’écran",
+        "description": "Importez vos tickets de paris depuis vos captures, vérifiez les données extraites et suivez votre bankroll avec BetTrack."
+      },
+      "features": {
+        "title": "Fonctionnalités de suivi de bankroll",
+        "description": "Découvrez l’import par capture, la revue des paris, les bankrolls et les statistiques disponibles dans BetTrack."
+      },
+      "import": {
+        "title": "Importer des tickets de pari depuis des captures",
+        "description": "Découvrez comment BetTrack extrait les paris depuis vos captures, puis vous laisse les vérifier avant l’enregistrement."
+      },
+      "bankroll": {
+        "title": "Suivi de bankroll pour les paris sportifs",
+        "description": "Organisez votre historique de paris et consultez vos indicateurs de bankroll, profit et ROI avec BetTrack."
+      },
+      "pricing": {
+        "title": "Tarifs et abonnement BetTrack",
+        "description": "Les conditions, limites et prix de BetTrack sont affichés de façon transparente avant tout paiement."
+      },
+      "bookmakers": {
+        "title": "Bookmakers validés pour l’import BetTrack",
+        "description": "Consultez les profils de bookmakers actuellement validés pour l’import par capture dans BetTrack."
+      },
+      "faq": {
+        "title": "FAQ BetTrack",
+        "description": "Réponses aux questions fréquentes sur l’import de captures, les bookmakers, les statistiques et la confidentialité."
+      },
+      "contact": {
+        "title": "Contacter BetTrack",
+        "description": "Découvrez le canal de retour disponible pour les utilisateurs de BetTrack."
+      },
+      "legal": {
+        "title": "Mentions légales BetTrack",
+        "description": "État des informations d’édition légales de BetTrack."
+      },
+      "sales": {
+        "title": "Conditions de vente BetTrack",
+        "description": "État des conditions de vente et de souscription de BetTrack."
+      }
+    },
+    "info": {
+      "breadcrumbAriaLabel": "Fil d’Ariane",
+      "home": "Accueil",
+      "cta": "Essayer BetTrack"
+    },
+    "pages": {
+      "features": {
+        "eyebrow": "Fonctionnalités BetTrack",
+        "title": "Un historique de paris plus simple à suivre.",
+        "description": "BetTrack réunit l’import par capture, la revue des données et les indicateurs utiles pour suivre une bankroll.",
+        "sectionTitle": "Du ticket à l’analyse, sans étape cachée",
+        "intro": "Le parcours est conçu pour faire gagner du temps tout en laissant la décision finale à l’utilisateur avant chaque enregistrement.",
+        "points": {
+          "one": { "title": "Import contrôlé", "description": "Analysez vos captures sans avoir à recopier chaque champ manuellement." },
+          "two": { "title": "Historique organisé", "description": "Conservez paris, bankrolls et mouvements de capital au même endroit." },
+          "three": { "title": "Lecture de la performance", "description": "Examinez profit, ROI et répartitions à partir des paris enregistrés." }
+        },
+        "notice": { "title": "Pas de promesse de performance", "description": "BetTrack sert à mesurer et organiser des données. Il ne conseille pas de parier et ne garantit aucun résultat." }
+      },
+      "import": {
+        "eyebrow": "Import par capture d’écran",
+        "title": "Vos tickets de pari, prêts à être revus plutôt qu’à être ressaisis.",
+        "description": "Ajoutez des captures de tickets et laissez BetTrack préparer les informations avant votre validation.",
+        "sectionTitle": "L’automatisation accélère ; votre revue décide.",
+        "intro": "L’extraction propose les éléments visibles dans les captures. Les informations restent modifiables avant de rejoindre l’historique.",
+        "points": {
+          "one": { "title": "Plusieurs captures", "description": "Le parcours d’import permet de sélectionner plusieurs images de tickets." },
+          "two": { "title": "Plusieurs tickets visibles", "description": "L’extraction est conçue pour relever les tickets visibles, y compris lorsqu’ils sont empilés dans une capture." },
+          "three": { "title": "Correction avant sauvegarde", "description": "Ajustez la bankroll, les champs et les résultats lorsque cela est nécessaire." }
+        },
+        "notice": { "title": "Une capture non reconnue ?", "description": "Vous gardez la possibilité de compléter ou de saisir un pari manuellement. Les images ordinaires ne sont pas conservées après l’analyse." }
+      },
+      "bankroll": {
+        "eyebrow": "Suivi de bankroll",
+        "title": "Comprendre son historique de paris avec des données regroupées.",
+        "description": "Retrouvez vos bankrolls, mouvements de capital, paris et statistiques dans la même application.",
+        "sectionTitle": "Des indicateurs construits à partir de votre historique",
+        "intro": "BetTrack calcule les indicateurs à partir des paris enregistrés et des mouvements de bankroll, sans les confondre.",
+        "points": {
+          "one": { "title": "Solde et évolution", "description": "Visualisez l’évolution de la bankroll à partir du capital et des paris réglés." },
+          "two": { "title": "Profit et ROI", "description": "Consultez les indicateurs calculés pour les paris enregistrés dans votre suivi." },
+          "three": { "title": "Filtres utiles", "description": "Analysez selon la période, le sport, le type de pari ou le bookmaker." }
+        },
+        "notice": { "title": "Un outil de contrôle", "description": "Les indicateurs servent à mieux comprendre l’activité passée, pas à prédire des gains ou recommander une mise." }
+      },
+      "pricing": {
+        "eyebrow": "Tarifs BetTrack",
+        "title": "Aucun prix non validé ne sera affiché comme une offre publique.",
+        "description": "Le dépôt contient une configuration de facturation, mais l’offre de lancement et ses prix publics restent à confirmer.",
+        "sectionTitle": "Ce qui sera affiché avant paiement",
+        "intro": "Toute offre payante doit présenter son prix, sa fréquence de renouvellement, ses limites d’import et ses fonctionnalités avant l’accès au paiement.",
+        "points": {
+          "one": { "title": "Prix transparent", "description": "Le montant applicable sera présenté avant la validation d’un abonnement." },
+          "two": { "title": "Limites explicites", "description": "Les limites d’import et les éventuels crédits seront indiqués avec l’offre concernée." },
+          "three": { "title": "Renouvellement clair", "description": "Les conditions de renouvellement seront visibles avant tout paiement." }
+        },
+        "notice": { "title": "État actuel", "description": "Aucun prix public n’est affiché ici tant que la décision commerciale n’est pas approuvée. Créer un compte ne vaut pas souscription à une offre payante." }
+      },
+      "bookmakers": {
+        "eyebrow": "Compatibilité bookmaker",
+        "title": "Quatre profils actuellement validés pour l’import par capture.",
+        "description": "Winamax, Betclic, Unibet et Bet365 disposent de profils de lecture validés dans l’application.",
+        "sectionTitle": "Une compatibilité annoncée avec prudence",
+        "intro": "Les autres bookmakers peuvent être utilisés pour organiser une bankroll, mais BetTrack ne les présente pas comme validés pour la même lecture automatique.",
+        "points": {
+          "one": { "title": "Profils validés", "description": "Winamax, Betclic, Unibet et Bet365 sont les profils déclarés testés dans le code." },
+          "two": { "title": "Révision systématique", "description": "Même avec un profil validé, les données extraites sont présentées pour contrôle avant l’enregistrement." },
+          "three": { "title": "Service indépendant", "description": "BetTrack n’est affilié à aucun bookmaker et ne place aucune mise." }
+        },
+        "notice": { "title": "Évolution contrôlée", "description": "La validation de nouveaux profils dépend des retours et vérifications réalisés dans l’application ; elle n’est pas présumée pour les marques non listées." }
+      },
+      "contact": {
+        "eyebrow": "Contact et retours",
+        "title": "Le canal de retour actuel est disponible depuis un compte BetTrack.",
+        "description": "L’application propose un formulaire de retour bêta authentifié afin d’envoyer un problème, une idée ou une autre demande.",
+        "sectionTitle": "Comment transmettre un retour",
+        "intro": "Après connexion, utilisez le formulaire de retour de l’application. Le contexte de la page est ajouté afin d’aider au traitement de votre demande.",
+        "points": {
+          "one": { "title": "Bugs", "description": "Signalez les problèmes rencontrés pendant l’utilisation." },
+          "two": { "title": "Idées", "description": "Partagez les améliorations qui faciliteraient votre suivi." },
+          "three": { "title": "Données", "description": "Les demandes relatives aux données peuvent être faites depuis ce canal." }
+        },
+        "notice": { "title": "Adresse publique à compléter", "description": "Aucune adresse de contact publique n’est configurée dans le dépôt. Elle devra être ajoutée avant une commercialisation ouverte." }
+      },
+      "legal": {
+        "eyebrow": "Mentions légales",
+        "title": "Les informations d’édition doivent être complétées avant la commercialisation.",
+        "description": "Le dépôt ne contient pas l’identité légale de l’éditeur, son adresse ou ses coordonnées de contact publiques.",
+        "sectionTitle": "Informations manquantes à fournir",
+        "intro": "Cette page rend l’absence de ces informations explicite ; elle ne remplace pas des mentions légales complètes.",
+        "points": {
+          "one": { "title": "Éditeur", "description": "Nom ou dénomination sociale à renseigner." },
+          "two": { "title": "Coordonnées", "description": "Adresse, e-mail de contact et autres informations obligatoires à renseigner." },
+          "three": { "title": "Hébergement", "description": "Informations d’hébergement à valider et publier." }
+        },
+        "notice": { "title": "Publication à finaliser", "description": "Ces éléments doivent être validés par le responsable légal avant l’ouverture commerciale. Aucun contenu juridique absent n’est inventé par BetTrack." }
+      },
+      "sales": {
+        "eyebrow": "Conditions de vente",
+        "title": "Les conditions de vente seront publiées avec l’offre commerciale approuvée.",
+        "description": "Les prix publics et la documentation contractuelle ne sont pas finalisés dans le dépôt actuel.",
+        "sectionTitle": "Éléments à valider avant une offre payante",
+        "intro": "La souscription doit préciser la tarification, le renouvellement, la résiliation, le droit applicable et les modalités de remboursement selon le cadre choisi.",
+        "points": {
+          "one": { "title": "Offre et prix", "description": "Les tarifs approuvés et les limites correspondantes doivent être fournis." },
+          "two": { "title": "Renouvellement", "description": "Les conditions de renouvellement et de résiliation doivent être validées." },
+          "three": { "title": "Informations légales", "description": "L’éditeur et les contacts requis doivent être publiés avec les conditions." }
+        },
+        "notice": { "title": "Pas de vente publique annoncée", "description": "Cette page ne constitue pas des conditions de vente. Elle signale les éléments qui doivent être fournis avant toute commercialisation." }
+      }
+    }
   }
 }

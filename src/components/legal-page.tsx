@@ -74,10 +74,10 @@ const copy: Record<LegalKind, Record<"fr" | "en", { title: string; intro: string
 export function LegalPage({ locale, kind }: { locale: Locale; kind: LegalKind }) {
   const language = locale === "en" ? "en" : "fr";
   const page = copy[kind][language];
-  const backLabel = language === "en" ? "Back to sign in" : "Retour à la connexion";
+  const backLabel = language === "en" ? "Back to home" : "Retour à l’accueil";
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-4 pt-7 pb-[calc(2rem+var(--rg-footer-h))]">
+    <article className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-5 px-4 py-12 sm:py-16">
       <header>
         <h1 className="text-2xl font-semibold">{page.title}</h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{page.intro}</p>
@@ -88,9 +88,9 @@ export function LegalPage({ locale, kind }: { locale: Locale; kind: LegalKind })
           {section.paragraphs.map((paragraph) => <p key={paragraph} className="mt-2 text-xs leading-relaxed text-muted-foreground">{paragraph}</p>)}
         </section>
       ))}
-      <Link href="/login" locale={locale} className="min-h-touch rounded-lg border border-border px-4 py-3 text-center text-sm font-semibold">
+      <Link href="/" locale={locale} className="min-h-touch rounded-lg border border-border px-4 py-3 text-center text-sm font-semibold">
         {backLabel}
       </Link>
-    </main>
+    </article>
   );
 }

@@ -744,5 +744,367 @@
     "PERDU": "Lost",
     "REMBOURSE": "Void",
     "CASHE": "Cashed Out"
+  },
+
+  "marketing": {
+    "header": {
+      "homeAriaLabel": "BetTrack home",
+      "navAriaLabel": "Website navigation",
+      "languageAriaLabel": "Switch language to French",
+      "menuAriaLabel": "Open menu",
+      "features": "Features",
+      "import": "Screenshot import",
+      "bookmakers": "Bookmakers",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "login": "Log in",
+      "cta": "Try BetTrack"
+    },
+    "footer": {
+      "description": "An independent tool to import, organize and analyze your sports-betting history.",
+      "languageAriaLabel": "Switch language to French",
+      "product": "Product",
+      "learn": "Resources",
+      "account": "Account",
+      "features": "Features",
+      "import": "Screenshot import",
+      "bookmakers": "Supported bookmakers",
+      "pricing": "Pricing",
+      "bankroll": "Bankroll tracking",
+      "faq": "Frequently asked questions",
+      "responsible": "Responsible gambling",
+      "login": "Log in",
+      "signup": "Create an account",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "terms": "Terms of use",
+      "legal": "Legal notice",
+      "sales": "Terms of sale",
+      "copyright": "© {year} BetTrack. All rights reserved.",
+      "responsibleNotice": "Adults only. BetTrack helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
+    },
+    "hero": {
+      "eyebrow": "Bankroll tracking without retyping",
+      "title": "Track your bankroll without entering every bet by hand.",
+      "description": "Import betting slips from your screenshots. BetTrack extracts the information, lets you review it, then organizes it for bankroll tracking.",
+      "primaryCta": "Try BetTrack",
+      "secondaryCta": "See how it works",
+      "reassuranceOne": "You always review the information before it is saved.",
+      "reassuranceTwo": "No bookmaker credentials are required."
+    },
+    "trust": {
+      "trustOne": "A tracking tool, not a bookmaker",
+      "trustTwo": "Review and correction before import",
+      "trustThree": "Data organized in your account"
+    },
+    "problem": {
+      "eyebrow": "The problem",
+      "title": "When manual tracking becomes a chore, statistics lose their value.",
+      "description": "Writing every bet in a spreadsheet takes time. Histories become incomplete and it gets difficult to understand real performance.",
+      "items": {
+        "manual": {
+          "number": "01",
+          "title": "Repeated data entry",
+          "description": "Date, stake, odds and result: the same fields must be copied after every session."
+        },
+        "history": {
+          "number": "02",
+          "title": "An incomplete history",
+          "description": "A few omissions are enough to distort your view of bankroll, profit or ROI."
+        },
+        "visibility": {
+          "number": "03",
+          "title": "Less perspective",
+          "description": "Without a reliable history, comparing results by sport, bet type or bookmaker is difficult."
+        }
+      }
+    },
+    "solution": {
+      "title": "BetTrack turns screenshots into a usable betting history.",
+      "description": "Upload screenshots, check the extracted data and save only what is correct. Your bets then feed your history, bankrolls and statistics."
+    },
+    "steps": {
+      "eyebrow": "How it works",
+      "title": "Three steps, with your review at every import.",
+      "description": "Extraction speeds up entry; it never replaces your review.",
+      "items": {
+        "upload": {
+          "title": "Add screenshots",
+          "description": "Select one or more betting-slip screenshots from the import screen."
+        },
+        "review": {
+          "title": "Review extracted bets",
+          "description": "Correct information where needed and choose the bankroll to attach it to."
+        },
+        "analyze": {
+          "title": "Track performance",
+          "description": "Find saved bets in your history, bankrolls and statistics workspace."
+        }
+      }
+    },
+    "features": {
+      "eyebrow": "Verified features",
+      "title": "What you need to keep a clear view of your activity.",
+      "description": "BetTrack focuses on screenshot import, data review and betting-history analysis.",
+      "more": "Explore features",
+      "items": {
+        "import": {
+          "title": "Screenshot import",
+          "description": "Analyze one or more betting-slip screenshots in a single import flow."
+        },
+        "review": {
+          "title": "Review and correction",
+          "description": "Check extracted details before saving them to your history."
+        },
+        "bankrolls": {
+          "title": "Multiple bankrolls",
+          "description": "Organize tracking to suit your needs and monitor capital movements."
+        },
+        "stats": {
+          "title": "Detailed statistics",
+          "description": "View profit, ROI, win rate and breakdowns by sport, bet type or bookmaker."
+        },
+        "formats": {
+          "title": "Bet formats",
+          "description": "Live bets, free bets, boosted odds, void bets and cash-outs are accounted for."
+        },
+        "export": {
+          "title": "Data export",
+          "description": "Export bankrolls and bets from your account."
+        }
+      }
+    },
+    "bookmakers": {
+      "eyebrow": "Validated import profiles",
+      "title": "Tested betting slips for more reliable reading.",
+      "description": "Validated profiles currently cover Winamax, Betclic, Unibet and Bet365. Other bookmakers can be added to a bankroll, but their screenshot reading is not presented as validated.",
+      "more": "See compatibility details",
+      "independence": "BetTrack is independent and is not affiliated with any bookmaker displayed."
+    },
+    "pricing": {
+      "eyebrow": "Transparent pricing",
+      "title": "Public plans will be shown before any billing takes place.",
+      "description": "The launch configuration is still being validated. This page does not publish unconfirmed prices or benefits.",
+      "cardTitle": "A clear offer before payment",
+      "cardDescription": "Paid features, import limits, renewal terms and applicable prices will be shown in the relevant flow before any payment.",
+      "cta": "Understand pricing"
+    },
+    "faq": {
+      "eyebrow": "Frequently asked questions",
+      "title": "Straight answers about BetTrack.",
+      "description": "The answers below reflect functionality currently available in the app.",
+      "more": "View the full FAQ",
+      "items": {
+        "what": {
+          "question": "What is BetTrack?",
+          "answer": "BetTrack is a personal bankroll tracking and analysis tool for sports betting. It helps organize betting history; it does not place bets or provide betting advice."
+        },
+        "import": {
+          "question": "How does screenshot import work?",
+          "answer": "You add one or more betting-slip screenshots. BetTrack extracts visible information, then presents it for review and correction before saving."
+        },
+        "bookmakers": {
+          "question": "Which bookmakers are supported?",
+          "answer": "The currently validated import profiles are Winamax, Betclic, Unibet and Bet365. You can also create bankrolls for other bookmakers, without the same validated-import promise."
+        },
+        "review": {
+          "question": "Can I correct extracted information?",
+          "answer": "Yes. Every extracted bet goes through a review step, where you can correct details before saving."
+        },
+        "credentials": {
+          "question": "Does BetTrack require bookmaker login details?",
+          "answer": "No. Import uses screenshots you choose to send. BetTrack does not ask you to connect your bookmaker account."
+        },
+        "stats": {
+          "question": "Which statistics are available?",
+          "answer": "The app displays bankroll balance, profit, ROI, win rate and breakdowns by period, sport, bet type and bookmaker."
+        },
+        "mobile": {
+          "question": "Is BetTrack available on mobile?",
+          "answer": "Yes. The interface is designed for mobile use, including adding screenshots and reviewing your tracking."
+        },
+        "pricing": {
+          "question": "How does the subscription work?",
+          "answer": "Public pricing is still being validated. When a paid plan is offered, its price, limits and renewal terms are shown before payment."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Keep a clear record of your bets without spending evenings retyping them.",
+      "description": "Create your BetTrack space to organize screenshots, history and bankroll indicators.",
+      "cta": "Create my account"
+    },
+    "preview": {
+      "appName": "BetTrack",
+      "label": "Product preview",
+      "uploadLabel": "1. Import",
+      "uploadTitle": "Add screenshots",
+      "uploadDescription": "Your slips are prepared for review.",
+      "reviewLabel": "2. Review",
+      "checked": "To review",
+      "saved": "3. Save to history",
+      "statsLabel": "4. Statistics",
+      "statsTitle": "Follow your bankroll evolution",
+      "chartAlt": "Illustration of a bankroll evolution chart",
+      "caption": "Interface representation built from existing BetTrack components."
+    },
+    "structured": {
+      "organizationDescription": "BetTrack is a bankroll tracking tool for sports betting.",
+      "websiteDescription": "Import betting slips from screenshots, check extracted data, then follow your history and statistics.",
+      "applicationDescription": "Web application for bankroll tracking and sports-betting analysis with screenshot import and a review step."
+    },
+    "meta": {
+      "home": {
+        "title": "BetTrack — Screenshot bankroll tracking",
+        "description": "Import betting slips from screenshots, review extracted information and track your bankroll with BetTrack."
+      },
+      "features": {
+        "title": "Bankroll tracking features",
+        "description": "Explore screenshot import, bet review, bankrolls and the statistics available in BetTrack."
+      },
+      "import": {
+        "title": "Import betting slips from screenshots",
+        "description": "Learn how BetTrack extracts bets from your screenshots, then lets you review them before saving."
+      },
+      "bankroll": {
+        "title": "Sports-betting bankroll tracking",
+        "description": "Organize betting history and view bankroll, profit and ROI indicators with BetTrack."
+      },
+      "pricing": {
+        "title": "BetTrack pricing and subscription",
+        "description": "BetTrack prices, limits and terms are shown transparently before payment."
+      },
+      "bookmakers": {
+        "title": "Bookmakers validated for BetTrack import",
+        "description": "See the bookmaker profiles currently validated for screenshot import in BetTrack."
+      },
+      "faq": {
+        "title": "BetTrack FAQ",
+        "description": "Answers to common questions about screenshot import, bookmakers, statistics and privacy."
+      },
+      "contact": {
+        "title": "Contact BetTrack",
+        "description": "Learn about the feedback channel available to BetTrack users."
+      },
+      "legal": {
+        "title": "BetTrack legal notice",
+        "description": "Status of BetTrack publisher information."
+      },
+      "sales": {
+        "title": "BetTrack terms of sale",
+        "description": "Status of BetTrack subscription and sales terms."
+      }
+    },
+    "info": {
+      "breadcrumbAriaLabel": "Breadcrumb",
+      "home": "Home",
+      "cta": "Try BetTrack"
+    },
+    "pages": {
+      "features": {
+        "eyebrow": "BetTrack features",
+        "title": "A simpler way to follow betting history.",
+        "description": "BetTrack brings together screenshot import, data review and useful indicators for bankroll tracking.",
+        "sectionTitle": "From betting slip to analysis, with no hidden step",
+        "intro": "The flow is designed to save time while leaving the final decision with the user before every save.",
+        "points": {
+          "one": { "title": "Controlled import", "description": "Analyze screenshots without copying every field by hand." },
+          "two": { "title": "Organized history", "description": "Keep bets, bankrolls and capital movements in the same place." },
+          "three": { "title": "Performance reading", "description": "Review profit, ROI and breakdowns from saved bets." }
+        },
+        "notice": { "title": "No performance promise", "description": "BetTrack measures and organizes data. It does not recommend betting or guarantee any outcome." }
+      },
+      "import": {
+        "eyebrow": "Screenshot import",
+        "title": "Betting slips ready to review instead of retype.",
+        "description": "Add betting-slip screenshots and let BetTrack prepare the information for your approval.",
+        "sectionTitle": "Automation speeds things up; your review decides.",
+        "intro": "Extraction proposes visible information from screenshots. It remains editable before joining your history.",
+        "points": {
+          "one": { "title": "Several screenshots", "description": "The import flow lets you select multiple betting-slip images." },
+          "two": { "title": "Several visible slips", "description": "Extraction is designed to pick up visible tickets, including tickets stacked in one screenshot." },
+          "three": { "title": "Correction before saving", "description": "Adjust bankroll, fields and results whenever needed." }
+        },
+        "notice": { "title": "A screenshot is not recognized?", "description": "You can still complete or enter a bet manually. Ordinary images are not retained after analysis." }
+      },
+      "bankroll": {
+        "eyebrow": "Bankroll tracking",
+        "title": "Understand betting history through grouped data.",
+        "description": "Find bankrolls, capital movements, bets and statistics in the same application.",
+        "sectionTitle": "Indicators built from your betting history",
+        "intro": "BetTrack calculates indicators from saved bets and bankroll movements, without mixing the two.",
+        "points": {
+          "one": { "title": "Balance and evolution", "description": "View bankroll evolution from capital and settled bets." },
+          "two": { "title": "Profit and ROI", "description": "Check indicators calculated for bets saved in your tracking." },
+          "three": { "title": "Useful filters", "description": "Analyze by period, sport, bet type or bookmaker." }
+        },
+        "notice": { "title": "A tool for perspective", "description": "Indicators help understand past activity. They do not predict gains or recommend a stake." }
+      },
+      "pricing": {
+        "eyebrow": "BetTrack pricing",
+        "title": "No unapproved price is presented as a public offer.",
+        "description": "The repository contains billing configuration, but its public launch plan and prices still need confirmation.",
+        "sectionTitle": "What will be shown before payment",
+        "intro": "Any paid plan must show its price, renewal frequency, import limits and included features before access to payment.",
+        "points": {
+          "one": { "title": "Transparent price", "description": "The applicable amount will be shown before subscription is confirmed." },
+          "two": { "title": "Explicit limits", "description": "Import limits and any credits will be shown with the relevant plan." },
+          "three": { "title": "Clear renewal", "description": "Renewal terms will be visible before payment." }
+        },
+        "notice": { "title": "Current status", "description": "No public price is shown here while the commercial decision is awaiting approval. Creating an account is not subscribing to a paid plan." }
+      },
+      "bookmakers": {
+        "eyebrow": "Bookmaker compatibility",
+        "title": "Four profiles currently validated for screenshot import.",
+        "description": "Winamax, Betclic, Unibet and Bet365 have validated reading profiles in the application.",
+        "sectionTitle": "Compatibility presented carefully",
+        "intro": "Other bookmakers can be used to organize a bankroll, but BetTrack does not present them as having the same validated automatic reading.",
+        "points": {
+          "one": { "title": "Validated profiles", "description": "Winamax, Betclic, Unibet and Bet365 are the profiles declared tested in the codebase." },
+          "two": { "title": "Always review", "description": "Even with a validated profile, extracted data is presented for review before it is saved." },
+          "three": { "title": "Independent service", "description": "BetTrack is not affiliated with any bookmaker and does not place a stake." }
+        },
+        "notice": { "title": "Controlled evolution", "description": "Validation of new profiles depends on feedback and checks performed in the application; it is never presumed for brands not listed." }
+      },
+      "contact": {
+        "eyebrow": "Contact and feedback",
+        "title": "The current feedback channel is available from a BetTrack account.",
+        "description": "The app includes an authenticated beta-feedback form for problems, ideas and other requests.",
+        "sectionTitle": "How to send feedback",
+        "intro": "After logging in, use the app feedback form. The current page context is added to make the request easier to handle.",
+        "points": {
+          "one": { "title": "Bugs", "description": "Report issues encountered while using the app." },
+          "two": { "title": "Ideas", "description": "Share improvements that would make tracking easier." },
+          "three": { "title": "Data", "description": "Data-related requests can be made through this channel." }
+        },
+        "notice": { "title": "Public address to add", "description": "No public contact address is configured in the repository. One must be added before open commercial availability." }
+      },
+      "legal": {
+        "eyebrow": "Legal notice",
+        "title": "Publisher information must be completed before commercial availability.",
+        "description": "The repository does not contain the publisher’s legal identity, address or public contact details.",
+        "sectionTitle": "Information still required",
+        "intro": "This page makes the absence of that information explicit; it does not replace complete legal notice content.",
+        "points": {
+          "one": { "title": "Publisher", "description": "Name or legal entity to provide." },
+          "two": { "title": "Contact details", "description": "Address, contact email and other required details to provide." },
+          "three": { "title": "Hosting", "description": "Hosting information to validate and publish." }
+        },
+        "notice": { "title": "Publication to complete", "description": "These details must be approved by the legal owner before commercial opening. BetTrack does not invent missing legal content." }
+      },
+      "sales": {
+        "eyebrow": "Terms of sale",
+        "title": "Terms of sale will be published with the approved commercial offer.",
+        "description": "Public prices and contractual documentation are not finalized in the current repository.",
+        "sectionTitle": "Items to validate before a paid offer",
+        "intro": "Subscription needs to specify pricing, renewal, cancellation, applicable law and refunds according to the chosen legal framework.",
+        "points": {
+          "one": { "title": "Offer and price", "description": "Approved pricing and corresponding limits must be supplied." },
+          "two": { "title": "Renewal", "description": "Renewal and cancellation terms must be validated." },
+          "three": { "title": "Legal information", "description": "Publisher and required contacts must be published alongside the terms." }
+        },
+        "notice": { "title": "No public sale claimed", "description": "This page is not terms of sale. It flags the items that need to be supplied before commercial availability." }
+      }
+    }
   }
 }
