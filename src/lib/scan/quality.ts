@@ -1,3 +1,4 @@
+import { isBetResult, labelToBetResult } from "@/lib/bet-result";
 import type { ParsedBet } from "@/lib/scan/types";
 
 export const QUALITY_BUCKET = "scan-quality-reports";
@@ -18,14 +19,37 @@ const DIFF_FIELDS: (keyof ParsedBet)[] = [
   "sport", "betType", "description", "eventResult", "date", "stake", "odds", "result",
 ];
 
+function rawBetsFromExtraction(raw: unknown): Record<string, unknown>[] {
+  if (Array.isArray(raw)) {
+    return raw.filter((bet): bet is Record<string, unknown> =>
+      Boolean(bet) && typeof bet === "object" && !Array.isArray(bet)
+    );
+  }
+
+  if (raw && typeof raw === "object" && "bets" in raw && Array.isArray(raw.bets)) {
+    return raw.bets.filter((bet): bet is Record<string, unknown> =>
+      Boolean(bet) && typeof bet === "object" && !Array.isArray(bet)
+    );
+  }
+
+  return [];
+}
+
+function comparableValue(field: keyof ParsedBet, value: unknown): string {
+  if (field !== "result") return String(value ?? "");
+
+  const result = String(value ?? "");
+  return labelToBetResult(result) ?? (isBetResult(result) ? result : result);
+}
+
 export function correctionSummary(raw: unknown, final: ParsedBet[]) {
-  const rawBets = Array.isArray(raw) ? raw as Record<string, unknown>[] : [];
+  const rawBets = rawBetsFromExtraction(raw);
   const types = new Set<string>();
   let count = Math.abs(rawBets.length - final.length);
 
   for (let index = 0; index < Math.min(rawBets.length, final.length); index++) {
     for (const field of DIFF_FIELDS) {
-      if (String(rawBets[index][field] ?? "") !== String(final[index][field] ?? "")) {
+      if (comparableValue(field, rawBets[index][field]) !== comparableValue(field, final[index][field])) {
         count++;
         types.add(field);
       }

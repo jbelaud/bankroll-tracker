@@ -8,8 +8,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SIGNED_URL_SECONDS = 60;
+type ImageRouteContext = { params: Promise<{ id: string }> };
 
-export async function GET(_request: NextRequest, context: RouteContext<"/api/admin/scan-quality/[id]/image">) {
+export async function GET(_request: NextRequest, context: ImageRouteContext) {
   await requireAdmin();
   const { id } = await context.params;
   const report = await prisma.scanQualityReport.findUnique({

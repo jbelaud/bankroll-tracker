@@ -27,6 +27,16 @@ describe("scan quality consent and ownership", () => {
     expect(correctionSummary(raw, corrected)).toEqual({ count: 2, types: ["sport", "odds"] });
   });
 
+  it("does not treat a saved full extraction response as a correction", () => {
+    const rawResponse = {
+      detectedBookmaker: "Winamax",
+      detectionConfidence: 0.99,
+      bets: [{ ...raw[0], result: "En attente" }],
+    };
+
+    expect(correctionSummary(rawResponse, final)).toEqual({ count: 0, types: [] });
+  });
+
   it("keeps known untested and custom bookmakers distinct", () => {
     expect(bookmakerKind("Winamax")).toBe("tested");
     expect(bookmakerKind("Unibet")).toBe("tested");
