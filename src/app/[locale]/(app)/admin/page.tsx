@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
+import { correctionSummary } from "@/lib/scan/quality";
+import type { ParsedBet } from "@/lib/scan/types";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
 import { ReferralManager } from "@/components/admin/referral-manager";
@@ -142,12 +144,17 @@ export default async function AdminPage({
       }),
     ]);
 
-  let queueReports = qualityReports.map((report) => ({
-    id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: report.correctionCount,
-    correctionTypes: Array.isArray(report.correctionTypes) ? report.correctionTypes.filter((type): type is string => typeof type === "string") : [],
-    model: report.model, createdAt: report.createdAt.toISOString(),
-    rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
-  }));
+  let queueReports = qualityReports.map((report) => {
+    const finalExtraction = Array.isArray(report.finalExtraction) ? report.finalExtraction as ParsedBet[] : [];
+    const summary = correctionSummary(report.rawExtraction, finalExtraction);
+
+    return {
+      id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: summary.count,
+      correctionTypes: summary.types,
+      model: report.model, createdAt: report.createdAt.toISOString(),
+      rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
+    };
+  });
 
   const [betaUsage, betaUsageByUser, betaTesters, betaInvites, betaProgram] = await Promise.all([
     prisma.scanUsage.aggregate({ where: { createdAt, plan: "BETA_TESTER" }, _count: { _all: true }, _sum: { costUsd: true } }),
