@@ -18,7 +18,7 @@ import {
 } from "@/lib/scan/ai-provider";
 import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
-import { bookmakerKind } from "@/lib/bookmakers";
+import { bookmakerKind, normalizeBookmaker } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
 import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
@@ -118,14 +118,15 @@ export async function POST(request: NextRequest) {
     }),
   ]);
   if (!bankroll) return NextResponse.json({ error: "Bankroll introuvable." }, { status: 404 });
+  const normalizedBookmaker = normalizeBookmaker(bankroll.bookmaker);
   if (await isBankrollLockedForUser(user.id, bankrollId)) {
     return NextResponse.json({ error: t("bankrollLocked") }, { status: 403 });
   }
   const profile = await prisma.bookmakerScanProfile.findUnique({
-    where: { bookmaker: bankroll.bookmaker },
+    where: { bookmaker: normalizedBookmaker },
     select: { supportStatus: true, rules: true },
   });
-  const supportStatus = profile?.supportStatus ?? (bookmakerKind(bankroll.bookmaker) === "tested" ? "TESTED" : "UNTESTED");
+  const supportStatus = profile?.supportStatus ?? (bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },
@@ -173,7 +174,7 @@ export async function POST(request: NextRequest) {
       base64,
       mediaType,
       taxonomy,
-      bookmaker: bankroll.bookmaker,
+      bookmaker: normalizedBookmaker,
       bookmakerRules: rulesForTestedProfile(profile),
     });
     scanModel = response.model;

@@ -10,6 +10,14 @@ describe("scan response bookmaker detection", () => {
     });
   });
 
+  it("normalizes a visually detected PEC.bet alias", () => {
+    expect(parseScanAnalysis('{"detectedBookmaker":"pecbet","detectionConfidence":0.96,"bets":[]}')).toEqual({
+      detectedBookmaker: "PEC.bet",
+      detectionConfidence: 0.96,
+      bets: [],
+    });
+  });
+
   it("removes a bookmaker guess when confidence is insufficient", () => {
     expect(parseScanAnalysis('{"detectedBookmaker":"Unibet","detectionConfidence":0.5,"bets":[]}')).toEqual({
       detectedBookmaker: null,

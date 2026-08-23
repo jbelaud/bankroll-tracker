@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bookmakerKind } from "../bookmakers";
+import { bookmakerKind, normalizeBookmaker } from "../bookmakers";
 import { correctionSummary, extensionForMime, finalBetsForScan, parseQualityIssueType } from "./quality";
 import { hasExplicitQualityConsent, isOwnedBy, isPrivateQualityStoragePath } from "./quality-guard";
 import type { ParsedBet } from "./types";
@@ -41,6 +41,8 @@ describe("scan quality consent and ownership", () => {
     expect(bookmakerKind("Winamax")).toBe("tested");
     expect(bookmakerKind("Unibet")).toBe("tested");
     expect(bookmakerKind("Bet365")).toBe("tested");
+    expect(bookmakerKind("pecbet")).toBe("untested");
+    expect(normalizeBookmaker(" pec.bet ")).toBe("PEC.bet");
     expect(bookmakerKind("Local Bookmaker")).toBe("custom");
     expect(extensionForMime("image/jpeg")).toBe("jpg");
   });

@@ -1,3 +1,5 @@
+import { normalizeBookmaker } from "@/lib/bookmakers";
+
 export const MIN_BOOKMAKER_DETECTION_CONFIDENCE = 0.75;
 
 export type BookmakerDetection = {
@@ -38,7 +40,7 @@ export function normalizeBookmakerDetection(
     return { detectedBookmaker: null, detectionConfidence: null };
   }
 
-  return { detectedBookmaker: bookmaker, detectionConfidence: confidence };
+  return { detectedBookmaker: normalizeBookmaker(bookmaker), detectionConfidence: confidence };
 }
 
 /** Parses the AI envelope while accepting legacy array responses during rollout. */

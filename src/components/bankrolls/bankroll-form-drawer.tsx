@@ -18,7 +18,7 @@ import {
   createBankrollForm,
   updateBankrollForm,
 } from "@/lib/actions/bankroll-forms";
-import { KNOWN_BOOKMAKERS, TESTED_BOOKMAKERS } from "@/lib/bookmakers";
+import { KNOWN_BOOKMAKERS, normalizeBookmaker, TESTED_BOOKMAKERS } from "@/lib/bookmakers";
 import {
   Select,
   SelectContent,
@@ -35,8 +35,9 @@ const SELECTABLE_BOOKMAKERS = KNOWN_BOOKMAKERS.filter((bookmaker) => bookmaker !
 
 function initialBookmakerSelection(bookmaker?: string): string {
   if (!bookmaker) return "";
-  return bookmaker && SELECTABLE_BOOKMAKERS.includes(bookmaker as (typeof SELECTABLE_BOOKMAKERS)[number])
-    ? bookmaker
+  const normalizedBookmaker = normalizeBookmaker(bookmaker);
+  return SELECTABLE_BOOKMAKERS.includes(normalizedBookmaker as (typeof SELECTABLE_BOOKMAKERS)[number])
+    ? normalizedBookmaker
     : MANUAL_BOOKMAKER;
 }
 
