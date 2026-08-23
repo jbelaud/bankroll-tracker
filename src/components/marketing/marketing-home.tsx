@@ -38,6 +38,7 @@ const stepItems: { key: "upload" | "review" | "analyze"; icon: Icon }[] = [
 const faqKeys = [
   "what",
   "import",
+  "completed",
   "bookmakers",
   "review",
   "credentials",
@@ -71,7 +72,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
                 {t("hero.primaryCta")}
                 <ArrowRight size={18} weight="bold" aria-hidden />
               </Link>
-              <a href="#how-it-works" className="marketing-secondary-cta">
+              <a href="#product-demo" className="marketing-secondary-cta">
                 {t("hero.secondaryCta")}
               </a>
             </div>
@@ -276,7 +277,7 @@ function SectionIntro({
 
 function ProductPreview({ text }: { text: (key: string) => string }) {
   return (
-    <div className="relative mx-auto w-full max-w-2xl">
+    <div id="product-demo" className="relative mx-auto w-full max-w-2xl scroll-mt-24">
       <div className="absolute -inset-8 -z-10 rounded-full bg-primary/15 blur-3xl" aria-hidden />
       <div className="overflow-hidden rounded-[1.7rem] border border-white/12 bg-card/95 p-3 shadow-[0_30px_80px_oklch(0.02_0.01_260_/_60%)] sm:p-4">
         <div className="flex items-center justify-between rounded-2xl border border-border bg-background/70 px-4 py-3">
@@ -298,8 +299,9 @@ function ProductPreview({ text }: { text: (key: string) => string }) {
               <span className="flex size-7 items-center justify-center rounded-lg bg-primary/15 text-primary">
                 <Camera size={14} weight="bold" aria-hidden />
               </span>
-              <span className="h-2.5 flex-1 rounded-full bg-foreground/12" aria-hidden />
+              <span className="text-xs font-semibold text-foreground">{text("preview.selectedCount")}</span>
             </div>
+            <p className="mt-3 text-[0.68rem] leading-4 text-muted-foreground">{text("preview.uploadHint")}</p>
           </article>
           <article className="rounded-2xl border border-border bg-background/70 p-4">
             <div className="flex items-center justify-between">
@@ -307,19 +309,25 @@ function ProductPreview({ text }: { text: (key: string) => string }) {
               <CheckCircle size={18} className="text-profit" weight="fill" aria-hidden />
             </div>
             <div className="mt-4 space-y-2">
-              {["one", "two"].map((key) => (
-                <div key={key} className="rounded-xl border border-border bg-card p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="h-2.5 w-16 rounded-full bg-foreground/18" aria-hidden />
-                    <span className="rounded bg-profit-muted px-1.5 py-0.5 text-[0.6rem] font-semibold text-profit">{text("preview.checked")}</span>
-                  </div>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    <span className="h-2 rounded-full bg-foreground/10" aria-hidden />
-                    <span className="h-2 rounded-full bg-foreground/10" aria-hidden />
-                    <span className="h-2 rounded-full bg-foreground/10" aria-hidden />
-                  </div>
+              <div className="rounded-xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-semibold">{text("preview.completedBet")}</span>
+                  <span className="rounded bg-profit-muted px-1.5 py-0.5 text-[0.6rem] font-semibold text-profit">{text("preview.won")}</span>
                 </div>
-              ))}
+                <p className="mt-1 text-[0.68rem] text-muted-foreground">{text("preview.completedFields")}</p>
+                <div className="mt-3 grid grid-cols-3 gap-2 text-[0.62rem] text-muted-foreground">
+                  <span className="rounded bg-muted px-1.5 py-1">{text("preview.fieldDate")}</span>
+                  <span className="rounded bg-muted px-1.5 py-1">{text("preview.fieldOdds")}</span>
+                  <span className="rounded bg-muted px-1.5 py-1">{text("preview.fieldResult")}</span>
+                </div>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs font-semibold">{text("preview.pendingBet")}</span>
+                  <span className="rounded bg-primary/12 px-1.5 py-0.5 text-[0.6rem] font-semibold text-primary">{text("preview.toReview")}</span>
+                </div>
+                <p className="mt-1 text-[0.68rem] text-muted-foreground">{text("preview.pendingFields")}</p>
+              </div>
             </div>
             <div className="mt-3 rounded-xl bg-primary p-3 text-xs font-semibold text-primary-foreground">{text("preview.saved")}</div>
           </article>

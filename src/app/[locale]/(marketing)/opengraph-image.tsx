@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "BetTrack — Screenshot import and bankroll tracking";
+export const alt = "BetTrack — Betting-slip screenshots turned into bankroll history";
 export const size = {
   width: 1200,
   height: 630,
@@ -28,13 +28,13 @@ export default function OpenGraphImage() {
             <span>Bet<span style={{ color: "#75a7ff" }}>Track</span></span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 850 }}>
-            <span style={{ color: "#75a7ff", fontSize: 24, fontWeight: 700, letterSpacing: 3 }}>BANKROLL TRACKING</span>
-            <span style={{ marginTop: 22, fontSize: 70, fontWeight: 700, lineHeight: 1.08 }}>Import your betting slips from screenshots.</span>
-            <span style={{ marginTop: 25, color: "#b6becd", fontSize: 28, lineHeight: 1.4 }}>Review extracted information, then follow your history and statistics.</span>
+            <span style={{ color: "#75a7ff", fontSize: 24, fontWeight: 700, letterSpacing: 3 }}>BETTING-SLIP SCREENSHOT IMPORT</span>
+            <span style={{ marginTop: 22, fontSize: 70, fontWeight: 700, lineHeight: 1.08 }}>Turn betting slips into bankroll history.</span>
+            <span style={{ marginTop: 25, color: "#b6becd", fontSize: 28, lineHeight: 1.4 }}>Read visible ticket information, review structured bets, then update your tracking.</span>
           </div>
           <div style={{ display: "flex", gap: 14 }}>
-            <span style={{ display: "flex", padding: "10px 16px", borderRadius: 20, background: "rgba(117,167,255,0.16)", color: "#b7d0ff", fontSize: 20 }}>Review before saving</span>
-            <span style={{ display: "flex", padding: "10px 16px", borderRadius: 20, background: "rgba(46,232,165,0.12)", color: "#8ff4ca", fontSize: 20 }}>Independent tracker</span>
+            <span style={{ display: "flex", padding: "10px 16px", borderRadius: 20, background: "rgba(117,167,255,0.16)", color: "#b7d0ff", fontSize: 20 }}>Multiple screenshots</span>
+            <span style={{ display: "flex", padding: "10px 16px", borderRadius: 20, background: "rgba(46,232,165,0.12)", color: "#8ff4ca", fontSize: 20 }}>Review before import</span>
           </div>
         </div>
       </div>

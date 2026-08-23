@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 const faqKeys = [
   "what",
   "import",
+  "completed",
   "bookmakers",
   "review",
   "credentials",

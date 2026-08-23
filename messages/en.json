@@ -832,44 +832,44 @@
       "responsibleNotice": "Adults only. BetTrack helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
     },
     "hero": {
-      "eyebrow": "Bankroll tracking without retyping",
-      "title": "Track your bankroll without entering every bet by hand.",
-      "description": "Import betting slips from your screenshots. BetTrack extracts the information, lets you review it, then organizes it for bankroll tracking.",
-      "primaryCta": "Try BetTrack",
-      "secondaryCta": "See how it works",
-      "reassuranceOne": "You always review the information before it is saved.",
-      "reassuranceTwo": "No bookmaker credentials are required."
+      "eyebrow": "Smart betting-slip screenshot import",
+      "title": "Turn betting slips into a usable bankroll history.",
+      "description": "Add one or more screenshots: BetTrack recognizes and structures visible bets. When a completed slip displays a status and its profile is validated, that status can be proposed too. You have the final say before import.",
+      "primaryCta": "Import my screenshots",
+      "secondaryCta": "See the demo",
+      "reassuranceOne": "Multiple screenshots and visible slips in one workflow.",
+      "reassuranceTwo": "Reading profiles validated bookmaker by bookmaker."
     },
     "trust": {
-      "trustOne": "A tracking tool, not a bookmaker",
-      "trustTwo": "Review and correction before import",
-      "trustThree": "Data organized in your account"
+      "trustOne": "No bookmaker-account access required",
+      "trustTwo": "Visible data structured, then reviewed",
+      "trustThree": "History and statistics updated after import"
     },
     "problem": {
       "eyebrow": "The problem",
-      "title": "When manual tracking becomes a chore, statistics lose their value.",
-      "description": "Writing every bet in a spreadsheet takes time. Histories become incomplete and it gets difficult to understand real performance.",
+      "title": "When tickets pile up, a reliable history becomes hard to maintain.",
+      "description": "Manual entry is slow, especially for older or already settled tickets. Missing fields weaken the view of bankroll activity.",
       "items": {
         "manual": {
           "number": "01",
           "title": "Repeated data entry",
-          "description": "Date, stake, odds and result: the same fields must be copied after every session."
+          "description": "Date, sport, selection, stake, odds and status: the same ticket details are copied over and over."
         },
         "history": {
           "number": "02",
-          "title": "An incomplete history",
-          "description": "A few omissions are enough to distort your view of bankroll, profit or ROI."
+          "title": "Older tickets left out",
+          "description": "Settled slips often stay outside the tracker, leaving an incomplete picture of past activity."
         },
         "visibility": {
           "number": "03",
           "title": "Less perspective",
-          "description": "Without a reliable history, comparing results by sport, bet type or bookmaker is difficult."
+          "description": "Without structured history, reviewing results by sport, bet type or bookmaker becomes difficult."
         }
       }
     },
     "solution": {
-      "title": "BetTrack turns screenshots into a usable betting history.",
-      "description": "Upload screenshots, check the extracted data and save only what is correct. Your bets then feed your history, bankrolls and statistics."
+      "title": "BetTrack turns betting-slip screenshots into structured history.",
+      "description": "It prepares the visible data: date, sport, bet type, selection, stake and odds — plus an event result or bet status when readable. You validate what is correct before your history and statistics are updated."
     },
     "steps": {
       "eyebrow": "How it works",
@@ -878,31 +878,31 @@
       "items": {
         "upload": {
           "title": "Add screenshots",
-          "description": "Select one or more betting-slip screenshots from the import screen."
+          "description": "Select one or more screenshots. Multiple visible slips can be reviewed in the same workflow."
         },
         "review": {
           "title": "Review extracted bets",
-          "description": "Correct information where needed and choose the bankroll to attach it to."
+          "description": "Correct details, completed statuses and the bankroll when needed before saving."
         },
         "analyze": {
           "title": "Track performance",
-          "description": "Find saved bets in your history, bankrolls and statistics workspace."
+        "description": "Find validated bets in history, bankrolls and statistics."
         }
       }
     },
     "features": {
       "eyebrow": "Verified features",
-      "title": "What you need to keep a clear view of your activity.",
-      "description": "BetTrack focuses on screenshot import, data review and betting-history analysis.",
+      "title": "A betting-slip reader built for tracking, not generic text extraction.",
+      "description": "BetTrack focuses on structured screenshot import, controlled review and betting-history analysis.",
       "more": "Explore features",
       "items": {
         "import": {
           "title": "Screenshot import",
-          "description": "Analyze one or more betting-slip screenshots in a single import flow."
+          "description": "Add several screenshots and review the visible tickets in one import flow."
         },
         "review": {
           "title": "Review and correction",
-          "description": "Check extracted details before saving them to your history."
+          "description": "Check and correct extracted ticket details before they update your history."
         },
         "bankrolls": {
           "title": "Multiple bankrolls",
@@ -914,7 +914,7 @@
         },
         "formats": {
           "title": "Bet formats",
-          "description": "Live bets, free bets, boosted odds, void bets and cash-outs are accounted for."
+          "description": "Live bets, free bets, boosted odds, refunds and cash-outs can be reviewed when shown on the ticket."
         },
         "export": {
           "title": "Data export",
@@ -951,6 +951,10 @@
           "question": "How does screenshot import work?",
           "answer": "You add one or more betting-slip screenshots. BetTrack extracts visible information, then presents it for review and correction before saving."
         },
+        "completed": {
+          "question": "Can I import a ticket that is already settled?",
+          "answer": "Yes. If a visible ticket displays a completed status, BetTrack can propose it for review with its available details, such as an event result when it is readable. You confirm or correct it before saving."
+        },
         "bookmakers": {
           "question": "Which bookmakers are supported?",
           "answer": "The currently validated import profiles are Winamax, Betclic, Unibet and Bet365. You can also create bankrolls for other bookmakers, without the same validated-import promise."
@@ -978,41 +982,52 @@
       }
     },
     "finalCta": {
-      "title": "Keep a clear record of your bets without spending evenings retyping them.",
-      "description": "Create your BetTrack space to organize screenshots, history and bankroll indicators.",
-      "cta": "Create my account"
+      "title": "Start with your screenshots. Keep the history you can actually use.",
+      "description": "Create your BetTrack space to review visible tickets, complete them when needed and follow your bankroll over time.",
+      "cta": "Create my tracking space"
     },
     "preview": {
       "appName": "BetTrack",
-      "label": "Product preview",
-      "uploadLabel": "1. Import",
-      "uploadTitle": "Add screenshots",
-      "uploadDescription": "Your slips are prepared for review.",
-      "reviewLabel": "2. Review",
+      "label": "Product workflow demo",
+      "uploadLabel": "1. Add",
+      "uploadTitle": "Your betting-slip screenshots",
+      "uploadDescription": "Visible slips are grouped for a single review.",
+      "selectedCount": "3 screenshots selected",
+      "uploadHint": "Reading keeps only what is genuinely visible on tickets.",
+      "reviewLabel": "2. Bets recognized",
+      "completedBet": "Football · Winner",
+      "completedFields": "Date · stake · odds · visible event result",
+      "pendingBet": "Tennis · Winner",
+      "pendingFields": "Selection, stake and odds ready to review",
+      "won": "Won",
+      "toReview": "To review",
+      "fieldDate": "12 Aug 2026",
+      "fieldOdds": "1.85",
+      "fieldResult": "2 - 0",
       "checked": "To review",
-      "saved": "3. Save to history",
+      "saved": "3. Validate and update history",
       "statsLabel": "4. Statistics",
       "statsTitle": "Follow your bankroll evolution",
       "chartAlt": "Illustration of a bankroll evolution chart",
-      "caption": "Interface representation built from existing BetTrack components."
+      "caption": "Illustration of the workflow. Imported details always depend on what is visibly readable on each ticket."
     },
     "structured": {
-      "organizationDescription": "BetTrack is a bankroll tracking tool for sports betting.",
-      "websiteDescription": "Import betting slips from screenshots, check extracted data, then follow your history and statistics.",
-      "applicationDescription": "Web application for bankroll tracking and sports-betting analysis with screenshot import and a review step."
+      "organizationDescription": "BetTrack is a bankroll tracking tool with structured betting-slip screenshot import.",
+      "websiteDescription": "Turn visible betting-slip information from screenshots into reviewed history and bankroll statistics.",
+      "applicationDescription": "Web application for bankroll tracking and sports-betting analysis, with structured screenshot import and a mandatory review step."
     },
     "meta": {
       "home": {
-        "title": "BetTrack — Screenshot bankroll tracking",
-        "description": "Import betting slips from screenshots, review extracted information and track your bankroll with BetTrack."
+        "title": "BetTrack — Turn betting slips into bankroll history",
+        "description": "Add betting-slip screenshots, review structured visible details and update your bankroll history with BetTrack."
       },
       "features": {
-        "title": "Bankroll tracking features",
-        "description": "Explore screenshot import, bet review, bankrolls and the statistics available in BetTrack."
+        "title": "Screenshot import and bankroll tracking features",
+        "description": "Explore structured betting-slip import, review, bankroll history and statistics in BetTrack."
       },
       "import": {
-        "title": "Import betting slips from screenshots",
-        "description": "Learn how BetTrack extracts bets from your screenshots, then lets you review them before saving."
+        "title": "Turn betting-slip screenshots into history",
+        "description": "Learn how BetTrack structures visible ticket details and lets you review them before updating history."
       },
       "bankroll": {
         "title": "Sports-betting bankroll tracking",
@@ -1023,8 +1038,8 @@
         "description": "BetTrack prices, limits and terms are shown transparently before payment."
       },
       "bookmakers": {
-        "title": "Bookmakers validated for BetTrack import",
-        "description": "See the bookmaker profiles currently validated for screenshot import in BetTrack."
+        "title": "Bookmaker profiles validated for BetTrack import",
+        "description": "See which bookmaker reading profiles are validated for betting-slip screenshot import in BetTrack."
       },
       "faq": {
         "title": "BetTrack FAQ",
@@ -1051,27 +1066,27 @@
     "pages": {
       "features": {
         "eyebrow": "BetTrack features",
-        "title": "A simpler way to follow betting history.",
-        "description": "BetTrack brings together screenshot import, data review and useful indicators for bankroll tracking.",
-        "sectionTitle": "From betting slip to analysis, with no hidden step",
-        "intro": "The flow is designed to save time while leaving the final decision with the user before every save.",
+        "title": "From betting-slip screenshot to usable bankroll history.",
+        "description": "BetTrack brings together structured reading of visible tickets, review and useful indicators for bankroll tracking.",
+        "sectionTitle": "A controlled path from screenshot to history",
+        "intro": "Import speeds up visible-ticket entry, while the final validation always stays with the user.",
         "points": {
-          "one": { "title": "Controlled import", "description": "Analyze screenshots without copying every field by hand." },
+          "one": { "title": "Controlled import", "description": "Add one or more screenshots and find visible bets ready to be reviewed." },
           "two": { "title": "Organized history", "description": "Keep bets, bankrolls and capital movements in the same place." },
           "three": { "title": "Performance reading", "description": "Review profit, ROI and breakdowns from saved bets." }
         },
         "notice": { "title": "No performance promise", "description": "BetTrack measures and organizes data. It does not recommend betting or guarantee any outcome." }
       },
       "import": {
-        "eyebrow": "Screenshot import",
-        "title": "Betting slips ready to review instead of retype.",
-        "description": "Add betting-slip screenshots and let BetTrack prepare the information for your approval.",
-        "sectionTitle": "Automation speeds things up; your review decides.",
-        "intro": "Extraction proposes visible information from screenshots. It remains editable before joining your history.",
+        "eyebrow": "Betting-slip screenshot reading",
+        "title": "Your screenshots become bets ready to join your history.",
+        "description": "Add one or more screenshots: BetTrack structures visible slips and presents them before import.",
+        "sectionTitle": "Ticket-aware reading, with essential review.",
+        "intro": "Extraction proposes what is genuinely visible: date, sport, bet type, selection, stake, odds and, when readable, event result and bet status. Everything stays editable.",
         "points": {
-          "one": { "title": "Several screenshots", "description": "The import flow lets you select multiple betting-slip images." },
-          "two": { "title": "Several visible slips", "description": "Extraction is designed to pick up visible tickets, including tickets stacked in one screenshot." },
-          "three": { "title": "Correction before saving", "description": "Adjust bankroll, fields and results whenever needed." }
+          "one": { "title": "One or several screenshots", "description": "Select multiple images and group visible slips into the same review." },
+          "two": { "title": "Visible slips and statuses", "description": "When a settled ticket shows its status and a bookmaker profile is validated, BetTrack can propose it for review." },
+          "three": { "title": "Correction before saving", "description": "Adjust bankroll, fields, event result or status before updating history." }
         },
         "notice": { "title": "A screenshot is not recognized?", "description": "You can still complete or enter a bet manually. Ordinary images are not retained after analysis." }
       },
@@ -1103,16 +1118,16 @@
       },
       "bookmakers": {
         "eyebrow": "Bookmaker compatibility",
-        "title": "Four profiles currently validated for screenshot import.",
-        "description": "Winamax, Betclic, Unibet and Bet365 have validated reading profiles in the application.",
-        "sectionTitle": "Compatibility presented carefully",
-        "intro": "Other bookmakers can be used to organize a bankroll, but BetTrack does not present them as having the same validated automatic reading.",
+        "title": "Reading profiles validated bookmaker by bookmaker.",
+        "description": "Winamax, Betclic, Unibet and Bet365 currently have validated reading profiles in the application.",
+        "sectionTitle": "Why every bookmaker is checked separately",
+        "intro": "Ticket layouts, labels and statuses differ. Rules from a validated profile are applied only when its bookmaker is visually identified.",
         "points": {
-          "one": { "title": "Validated profiles", "description": "Winamax, Betclic, Unibet and Bet365 are the profiles declared tested in the codebase." },
+          "one": { "title": "Validated profiles", "description": "Winamax, Betclic, Unibet and Bet365 are the currently tested reading profiles." },
           "two": { "title": "Always review", "description": "Even with a validated profile, extracted data is presented for review before it is saved." },
           "three": { "title": "Independent service", "description": "BetTrack is not affiliated with any bookmaker and does not place a stake." }
         },
-        "notice": { "title": "Controlled evolution", "description": "Validation of new profiles depends on feedback and checks performed in the application; it is never presumed for brands not listed." }
+        "notice": { "title": "Controlled evolution", "description": "Other bookmakers can be added to a bankroll. Their screenshot reading is not advertised as validated before dedicated checks." }
       },
       "contact": {
         "eyebrow": "Contact and feedback",
