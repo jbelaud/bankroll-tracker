@@ -9,6 +9,7 @@ import { computeProfit, realStake } from "@/lib/profit";
 import { computeGlobalStats, groupStats, bucketStats, ODDS_BUCKETS, oddsBucket } from "@/lib/stats";
 import { buildInsightsPrompt, parseInsightResult } from "@/lib/insights/insights-prompt";
 import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
+import { isPaidPlan } from "@/lib/billing/plans";
 import {
   generateTextWithConfiguredProvider,
   hasConfiguredScanProvider,
@@ -21,6 +22,11 @@ export type GenerateInsightsResult =
 export async function generateInsightsAction(): Promise<GenerateInsightsResult> {
   const user = await requireUser();
   const t = await getTranslations({ locale: await getServerLocale(), namespace: "stats.insights" });
+  const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { plan: true } });
+
+  if (!isPaidPlan(dbUser?.plan ?? "FREE")) {
+    return { error: t("premiumRequired") };
+  }
 
   const now = Date.now();
   const bankrolls = await listBankrolls();

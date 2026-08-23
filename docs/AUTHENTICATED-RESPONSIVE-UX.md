@@ -30,7 +30,7 @@ La barre latérale contient uniquement des routes existantes : tableau de bord, 
 | `/history` | Filtres disposés horizontalement sur desktop, tableau dense avec date, événement, sport/type, bankroll, mise, cote, résultat, P&L et actions ; cartes groupées et gestes tactiles conservés sur mobile. |
 | `/scan` | Zone de dépôt desktop, sélection appareil photo/galerie préservée, limite actuelle de cinq captures préservée, revue en colonne latérale + cartes de validation en grille. |
 | `/scan/manual` | Formulaire conservé avec largeur de lecture contrôlée sur grand écran. |
-| `/stats` | Indicateurs en grille, courbe de bénéfice déjà présente dans le code, analyse, tableaux et calendrier latéral sur desktop ; filtres et calendrier en tiroirs sur mobile. |
+| `/stats` | Pour les comptes Premium, les Insights IA sont placés avant la vue d’ensemble. Les comptes gratuits voient un aperçu flouté sans données et un CTA vers l’abonnement ; l’action serveur applique la même restriction. Indicateurs en grille, courbe de bénéfice déjà présente dans le code, analyse, tableaux et calendrier latéral sur desktop ; filtres et calendrier en tiroirs sur mobile. |
 | `/bankrolls` | Grille de cartes jusqu’à quatre colonnes selon la largeur, création non étirée inutilement. Le lien de démarrage `?create=1` ouvre la même création de bankroll existante puis nettoie l’URL. |
 | `/bankrolls/[id]` | Répartition desktop entre capital, actions, mouvements, courbe et historique ; pile mobile conservée. |
 | `/account` | Profil, abonnement, objectifs, préférences, retours, export, partages qualité et sécurité en grille sur desktop ; pile lisible sur mobile. |

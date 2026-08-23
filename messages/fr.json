@@ -440,6 +440,11 @@
     "insights": {
       "ariaLabel": "Insights IA",
       "title": "Insights IA",
+      "premiumEyebrow": "Fonctionnalité Premium",
+      "premiumTitle": "Des Insights IA pour analyser votre suivi",
+      "premiumDescription": "Débloquez des analyses de vos performances par sport, type de pari, bookmaker et tranche de cote.",
+      "premiumCta": "Débloquer avec Premium",
+      "premiumRequired": "Les Insights IA sont réservés à l'abonnement Premium.",
       "locked": "Ajoute au moins quelques paris réglés pour débloquer l'analyse IA de tes performances.",
       "generate": "Générer l'analyse",
       "regenerate": "Régénérer",

@@ -20,6 +20,7 @@ import {
   stakeBucketLabel,
 } from "@/lib/stats";
 import { InsightsCard } from "@/components/stats/insights-card";
+import { PremiumInsightsCard } from "@/components/stats/premium-insights-card";
 import { OverviewGrid } from "@/components/stats/overview-grid";
 import { StatsTabs } from "@/components/stats/stats-tabs";
 import { StatsTable } from "@/components/stats/stats-table";
@@ -30,6 +31,7 @@ import { ProfitCalendar } from "@/components/stats/profit-calendar";
 import { StatsFilters } from "@/components/stats/stats-filters";
 import { StatsWorkspace } from "@/components/stats/stats-workspace";
 import { ProfitCurve } from "@/components/stats/profit-curve";
+import { isPaidPlan } from "@/lib/billing/plans";
 
 const ALL_SPORTS = "__all__";
 
@@ -40,12 +42,14 @@ export default async function StatsPage({
 }) {
   const user = await requireUser();
   const query = await searchParams;
-  const [allBets, bankrolls, existingInsight, taxonomy] = await Promise.all([
+  const [allBets, bankrolls, existingInsight, taxonomy, dbUser] = await Promise.all([
     listAllBets(),
     listBankrolls(),
     prisma.insight.findUnique({ where: { userId: user.id } }),
     getUserTaxonomy(user.id),
+    prisma.user.findUnique({ where: { id: user.id }, select: { plan: true } }),
   ]);
+  const paidPlan = isPaidPlan(dbUser?.plan ?? "FREE");
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const accessibleBets = allBets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
@@ -125,7 +129,7 @@ export default async function StatsPage({
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
 
-  const visibleInsight = bankrolls.some((bankroll) => bankroll.locked)
+  const visibleInsight = !paidPlan || bankrolls.some((bankroll) => bankroll.locked)
     ? null
     : existingInsight;
   const cooldownUntil = visibleInsight
@@ -151,6 +155,16 @@ export default async function StatsPage({
       }
       calendar={<ProfitCalendar entries={daily} currency={currency} />}
     >
+      {paidPlan ? (
+        <InsightsCard
+          settledCount={settledCount}
+          initialInsight={onCooldown ? (visibleInsight!.data as unknown as InsightResult) : null}
+          initialCooldownUntil={onCooldown ? cooldownUntil : null}
+        />
+      ) : (
+        <PremiumInsightsCard />
+      )}
+
       <section aria-label={t("overview.ariaLabel")} className="flex flex-col gap-3">
         <div>
           <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
@@ -212,12 +226,6 @@ export default async function StatsPage({
         <CondensedStatRow icon={Gift} label={tCondensed("freebets")} count={stats.freebetCount} winRate={stats.freebetWinRate} profit={stats.freebetProfit} currency={currency} />
         <CondensedStatRow icon={Radio} label={tCondensed("live")} count={stats.liveCount} winRate={stats.liveWinRate} profit={stats.liveProfit} currency={currency} />
       </section>
-
-      <InsightsCard
-        settledCount={settledCount}
-        initialInsight={onCooldown ? (visibleInsight!.data as unknown as InsightResult) : null}
-        initialCooldownUntil={onCooldown ? cooldownUntil : null}
-      />
     </StatsWorkspace>
   );
 }

@@ -440,6 +440,11 @@
     "insights": {
       "ariaLabel": "AI Insights",
       "title": "AI Insights",
+      "premiumEyebrow": "Premium feature",
+      "premiumTitle": "AI Insights for your betting tracker",
+      "premiumDescription": "Unlock performance analyses by sport, bet type, bookmaker and odds range.",
+      "premiumCta": "Unlock with Premium",
+      "premiumRequired": "AI Insights are reserved for Premium subscribers.",
       "locked": "Add at least a few settled bets to unlock AI analysis of your performance.",
       "generate": "Generate analysis",
       "regenerate": "Regenerate",
