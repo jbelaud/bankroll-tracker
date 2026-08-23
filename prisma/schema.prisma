@@ -110,6 +110,12 @@ enum ScanQualityReportStatus {
   RESOLVED
 }
 
+enum ScanQualityIssueType {
+  INCORRECT
+  INCOMPLETE
+  OTHER
+}
+
 // ------------------------------------------------------------
 // Bankroll
 // ------------------------------------------------------------
@@ -334,6 +340,8 @@ model ScanQualityReport {
   detectedBookmaker   String?
   detectionConfidence Float?
   status              ScanQualityReportStatus @default(NEW)
+  issueType           ScanQualityIssueType    @default(INCORRECT)
+  issueDetails        String?
   model               String
   promptVersion       String
   rawExtraction       Json

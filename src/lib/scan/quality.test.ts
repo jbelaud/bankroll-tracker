@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { bookmakerKind } from "../bookmakers";
-import { correctionSummary, extensionForMime, finalBetsForScan } from "./quality";
+import { correctionSummary, extensionForMime, finalBetsForScan, parseQualityIssueType } from "./quality";
 import { hasExplicitQualityConsent, isOwnedBy, isPrivateQualityStoragePath } from "./quality-guard";
 import type { ParsedBet } from "./types";
 
@@ -40,5 +40,11 @@ describe("scan quality consent and ownership", () => {
     const first = { ...final[0], sourceScanIndex: 0 };
     expect(finalBetsForScan([first, second], 0)).toEqual([first]);
     expect(finalBetsForScan([first, second], 1)).toEqual([second]);
+  });
+
+  it("only accepts the supported beta issue types", () => {
+    expect(parseQualityIssueType("INCORRECT")).toBe("INCORRECT");
+    expect(parseQualityIssueType("INCOMPLETE")).toBe("INCOMPLETE");
+    expect(parseQualityIssueType("anything else")).toBeNull();
   });
 });

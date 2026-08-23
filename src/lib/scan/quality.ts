@@ -5,6 +5,14 @@ export const QUALITY_RETENTION_DAYS = 30;
 export const SCAN_PROMPT_VERSION = "2026-08-11";
 export const MAX_QUALITY_REPORTS_PER_WEEK = 20;
 export const QUALITY_ALLOWED_MEDIA = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
+export const QUALITY_ISSUE_TYPES = ["INCORRECT", "INCOMPLETE", "OTHER"] as const;
+export type QualityIssueType = (typeof QUALITY_ISSUE_TYPES)[number];
+
+export function parseQualityIssueType(value: FormDataEntryValue | null): QualityIssueType | null {
+  return typeof value === "string" && QUALITY_ISSUE_TYPES.includes(value as QualityIssueType)
+    ? value as QualityIssueType
+    : null;
+}
 
 const DIFF_FIELDS: (keyof ParsedBet)[] = [
   "sport", "betType", "description", "eventResult", "date", "stake", "odds", "result",

@@ -35,7 +35,7 @@ export function ReviewList({
   initialBets: ParsedBet[];
   importing: boolean;
   error: string;
-  onConfirm: (bets: ParsedBet[], shareQuality: boolean) => void;
+  onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string) => void;
   onRestart: () => void;
   bankrolls: BankrollOption[];
   bankrollId: string;
@@ -48,6 +48,8 @@ export function ReviewList({
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(new Set());
   const [shareQuality, setShareQuality] = useState(false);
+  const [qualityIssueType, setQualityIssueType] = useState("INCORRECT");
+  const [qualityIssueDetails, setQualityIssueDetails] = useState("");
   const t = useTranslations("scan.review");
 
   const patchBet = (index: number, patch: Partial<ParsedBet>) =>
@@ -182,6 +184,33 @@ export function ReviewList({
               <span className="mt-1 block text-muted-foreground">{t("qualityOffer.details")}</span>
             </span>
           </label>
+          {shareQuality && (
+            <div className="mt-3 flex flex-col gap-2">
+              <label htmlFor="scan-issue-type" className="font-medium">{t("qualityOffer.issueTypeLabel")}</label>
+              <select
+                id="scan-issue-type"
+                value={qualityIssueType}
+                onChange={(event) => setQualityIssueType(event.target.value)}
+                disabled={importing}
+                className="min-h-touch rounded-lg border border-input bg-background px-3 text-sm"
+              >
+                <option value="INCORRECT">{t("qualityOffer.issueTypes.incorrect")}</option>
+                <option value="INCOMPLETE">{t("qualityOffer.issueTypes.incomplete")}</option>
+                <option value="OTHER">{t("qualityOffer.issueTypes.other")}</option>
+              </select>
+              <label htmlFor="scan-issue-details" className="font-medium">{t("qualityOffer.detailsLabel")}</label>
+              <textarea
+                id="scan-issue-details"
+                value={qualityIssueDetails}
+                onChange={(event) => setQualityIssueDetails(event.target.value.slice(0, 1_000))}
+                disabled={importing}
+                maxLength={1_000}
+                rows={3}
+                placeholder={t("qualityOffer.detailsPlaceholder")}
+                className="rounded-lg border border-input bg-background p-2 text-sm"
+              />
+            </div>
+          )}
         </section>
       )}
       </aside>
@@ -210,7 +239,7 @@ export function ReviewList({
       {/* Zone nav + bouton Scan saillant : la confirmation doit rester entièrement au-dessus. */}
       <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4 lg:left-64 lg:bottom-[calc(1rem+var(--rg-footer-h))] lg:max-w-none lg:px-8 xl:px-10">
         <Button
-          onClick={() => onConfirm(kept, shareQuality)}
+          onClick={() => onConfirm(kept, shareQuality, qualityIssueType, qualityIssueDetails)}
           disabled={kept.length === 0 || importing}
           className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg lg:mx-auto lg:max-w-2xl"
         >

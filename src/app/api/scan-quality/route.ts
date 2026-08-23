@@ -7,6 +7,8 @@ import { correctionSummary, extensionForMime, MAX_QUALITY_REPORTS_PER_WEEK, QUAL
 import type { ParsedBet } from "@/lib/scan/types";
 import { hasExplicitQualityConsent } from "@/lib/scan/quality-guard";
 import { normalizeBookmakerDetection } from "@/lib/scan/response";
+import { parseQualityIssueType } from "@/lib/scan/quality";
+import { sendQualityReportToDiscord } from "@/lib/scan/discord-quality";
 
 export const runtime = "nodejs";
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -29,8 +31,12 @@ export async function POST(request: NextRequest) {
 
   const form = await request.formData();
   const consent = hasExplicitQualityConsent(form.get("consent"));
+  const issueType = parseQualityIssueType(form.get("issueType"));
+  const issueDetailsValue = form.get("issueDetails");
+  const issueDetails = typeof issueDetailsValue === "string" ? issueDetailsValue.trim().slice(0, 1_000) || null : null;
   const image = form.get("image");
   if (!consent) return NextResponse.json({ error: "Le consentement explicite est requis." }, { status: 400 });
+  if (!issueType) return NextResponse.json({ error: "Type de problème invalide." }, { status: 400 });
   if (!(image instanceof File) || !QUALITY_ALLOWED_MEDIA.includes(image.type as (typeof QUALITY_ALLOWED_MEDIA)[number]) || image.size === 0 || image.size > MAX_IMAGE_BYTES) {
     return NextResponse.json({ error: "Image invalide ou trop volumineuse." }, { status: 415 });
   }
@@ -76,6 +82,7 @@ export async function POST(request: NextRequest) {
       id, userId: user.id, bankrollId: bankroll.id, bookmaker: bankroll.bookmaker,
       detectedBookmaker: detection.detectedBookmaker, detectionConfidence: detection.detectionConfidence,
       model: String(form.get("model") ?? "unknown").slice(0, 100), promptVersion: SCAN_PROMPT_VERSION,
+      issueType, issueDetails,
       rawExtraction: rawExtraction as object, finalExtraction: finalExtraction as object,
       correctionCount: count, correctionTypes: types, storagePath, consentedAt: new Date(), expiresAt,
     } });
@@ -84,5 +91,8 @@ export async function POST(request: NextRequest) {
     console.error("[scan-quality] report creation failed", error);
     return NextResponse.json({ error: "Le partage n'a pas pu être enregistré." }, { status: 500 });
   }
-  return NextResponse.json({ ok: true }, { status: 201 });
+  const discord = await sendQualityReportToDiscord({
+    reportId: id, bookmaker: bankroll.bookmaker, issueType, issueDetails, image,
+  });
+  return NextResponse.json({ ok: true, discordSent: discord.sent }, { status: 201 });
 }

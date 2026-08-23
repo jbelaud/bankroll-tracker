@@ -66,7 +66,7 @@ export function ScanFlow({
   }, []);
 
   const confirmImport = useCallback(
-    async (bets: ParsedBet[], shareQuality: boolean, files: File[], scans: ScanTicketResult[]) => {
+    async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, files: File[], scans: ScanTicketResult[]) => {
       setError("");
       setFlow({ step: "importing", bets, files, scans });
       const result = await importBets(bankrollId, bets);
@@ -80,6 +80,8 @@ export function ScanFlow({
           const finalExtraction = finalBetsForScan(bets, index);
           const form = new FormData();
           form.append("consent", "true");
+          form.append("issueType", qualityIssueType);
+          if (qualityIssueDetails) form.append("issueDetails", qualityIssueDetails);
           form.append("bankrollId", bankrollId);
           form.append("image", files[index]);
           form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
@@ -115,7 +117,7 @@ export function ScanFlow({
         initialBets={flow.bets}
         importing={flow.step === "importing"}
         error={error}
-        onConfirm={(bets, shareQuality) => confirmImport(bets, shareQuality, flow.files, flow.scans)}
+        onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, flow.files, flow.scans)}
         onRestart={restart}
         bankrolls={bankrolls}
         bankrollId={bankrollId}
@@ -125,7 +127,7 @@ export function ScanFlow({
             .filter((scan) => scan.detectionConfidence !== null && scan.detectionConfidence >= 0.75)
             .flatMap((scan) => (scan.detectedBookmaker ? [scan.detectedBookmaker] : []))
         ))}
-        showQualityOffer={flow.scans.some((scan) => scan.supportStatus !== "TESTED")}
+        showQualityOffer
         currency={currency}
         taxonomy={taxonomy}
       />

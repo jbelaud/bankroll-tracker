@@ -299,9 +299,17 @@
       "bankrollLabel": "Import into this bankroll",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "qualityOffer": {
-        "title": "This bookmaker has not yet been fully tested. You can help BetTrack improve compatibility.",
-        "consent": "Share this scan with BetTrack to help improve compatibility for this bookmaker.",
-        "details": "Only authorized BetTrack administrators can access the screenshot, solely for this purpose. It may contain a reference, balance or username; you can delete it at any time."
+        "title": "Was there a problem with this scan?",
+        "consent": "Send this scan to BetTrack so we can fix the issue.",
+        "details": "The screenshot and your report will be sent to the BetTrack team's private Discord channel. It may contain a reference, balance or username; only share it if you agree.",
+        "issueTypeLabel": "What is the issue?",
+        "issueTypes": {
+          "incorrect": "Incorrect information",
+          "incomplete": "Missing information",
+          "other": "Other issue"
+        },
+        "detailsLabel": "Details (optional)",
+        "detailsPlaceholder": "E.g. the odds or a bet was not detected"
       },
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
       "importing": "Importing…",

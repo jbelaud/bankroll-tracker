@@ -299,9 +299,17 @@
       "bankrollLabel": "Importer dans cette bankroll",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "qualityOffer": {
-        "title": "Ce bookmaker n'est pas encore pleinement testé. Vous pouvez aider BetTrack à améliorer la compatibilité.",
-        "consent": "Partager ce scan avec BetTrack pour améliorer la compatibilité de ce bookmaker.",
-        "details": "Seuls les administrateurs BetTrack autorisés pourront consulter la capture, uniquement à cette fin. Elle peut contenir une référence, un solde ou un pseudo ; vous pouvez la supprimer à tout moment."
+        "title": "Un problème avec ce scan ?",
+        "consent": "Envoyer ce scan à BetTrack pour nous aider à corriger le problème.",
+        "details": "La capture et votre signalement seront envoyés dans le canal Discord privé de l'équipe BetTrack. Elle peut contenir une référence, un solde ou un pseudo ; ne partagez que si vous l'acceptez.",
+        "issueTypeLabel": "Quel est le problème ?",
+        "issueTypes": {
+          "incorrect": "Informations incorrectes",
+          "incomplete": "Informations manquantes",
+          "other": "Autre problème"
+        },
+        "detailsLabel": "Précision (facultatif)",
+        "detailsPlaceholder": "Ex. la cote ou un pari n'a pas été détecté"
       },
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
       "importing": "Import en cours…",
