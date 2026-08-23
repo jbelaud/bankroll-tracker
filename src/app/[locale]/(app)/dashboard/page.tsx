@@ -162,7 +162,7 @@ export default async function DashboardPage() {
         </Reveal>
       )}
 
-      <Reveal index={bets.length === 0 ? 1 : 0} className="xl:col-span-8">
+      <Reveal index={2} className="xl:order-3 xl:col-span-8">
         <PerformancePanel
           points={performancePoints}
           balance={totalBalance}
@@ -170,13 +170,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      {bets.length > 0 && (
-        <Reveal index={1} className="xl:col-span-4">
-          <DiscordCommunityCard />
-        </Reveal>
-      )}
-
-      <Reveal index={2} className="xl:col-span-8">
+      <Reveal index={bets.length === 0 ? 1 : 0} className="xl:order-1 xl:col-span-8">
         <CapitalFlowCard
           deposits={totalDeposits}
           withdrawals={totalWithdrawals}
@@ -186,17 +180,36 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={3} className="xl:col-span-4">
-        <KpiRow
-          profit={totalProfit}
-          roi={roi}
-          winRate={winRate}
-          settledCount={settled.length}
-          wonCount={wonCount}
-        />
-      </Reveal>
+      <div className="flex flex-col gap-6 xl:order-2 xl:col-span-4 xl:row-span-2">
+        <Reveal index={3}>
+          <KpiRow
+            profit={totalProfit}
+            roi={roi}
+            winRate={winRate}
+            settledCount={settled.length}
+            wonCount={wonCount}
+          />
+        </Reveal>
 
-      <Reveal index={4} className="xl:col-span-4">
+        <Reveal index={4}>
+          <QuotaCard
+            plan={plan}
+            scansUsed={quota.used}
+            scansLimit={quota.limit}
+            initialCreditsRemaining={quota.initialCreditsRemaining}
+            initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
+            betaPhaseActive={betaProgram?.phase !== "ENDED"}
+          />
+        </Reveal>
+
+        {bets.length > 0 && (
+          <Reveal index={5}>
+            <DiscordCommunityCard />
+          </Reveal>
+        )}
+      </div>
+
+      <Reveal index={6} className="xl:order-4 xl:col-span-4">
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -204,22 +217,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={5} className="xl:col-span-4">
-        <QuotaCard
-          plan={plan}
-          scansUsed={quota.used}
-          scansLimit={quota.limit}
-          initialCreditsRemaining={quota.initialCreditsRemaining}
-          initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
-          betaPhaseActive={betaProgram?.phase !== "ENDED"}
-        />
-      </Reveal>
-
-      <Reveal index={6} className="xl:col-span-5">
+      <Reveal index={7} className="xl:order-5 xl:col-span-5">
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={7} className="xl:col-span-7">
+      <Reveal index={8} className="xl:order-6 xl:col-span-7">
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>
