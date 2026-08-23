@@ -14,6 +14,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
 import { SignOutButton } from "@/components/account/sign-out-button";
+import { PlanStatusSummary } from "@/components/account/plan-status-summary";
+import type { Plan } from "@prisma/client";
 
 const NAV_ITEMS = [
   { href: "/dashboard", key: "home", icon: House },
@@ -32,7 +34,13 @@ const DESKTOP_NAV_GROUPS = [
 
 const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((item) => item.key !== "history");
 
-export function AppNav() {
+export function AppNav({
+  plan,
+  currentPeriodEnd,
+}: {
+  plan: Plan;
+  currentPeriodEnd: Date | null;
+}) {
   const pathname = usePathname();
   const t = useTranslations("nav");
 
@@ -80,7 +88,8 @@ export function AppNav() {
               </div>
             ))}
           </div>
-          <div className="mt-auto border-t border-border pt-4">
+          <div className="mt-auto flex flex-col gap-3 border-t border-border pt-4">
+            <PlanStatusSummary plan={plan} currentPeriodEnd={currentPeriodEnd} variant="sidebar" />
             <SignOutButton />
           </div>
         </nav>
@@ -130,6 +139,7 @@ export function AppNav() {
           );
           })}
         </ul>
+        <PlanStatusSummary plan={plan} currentPeriodEnd={currentPeriodEnd} variant="mobile" />
       </nav>
     </>
   );

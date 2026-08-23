@@ -11,6 +11,7 @@ import {
 } from "@/lib/actions/billing";
 import { switchBetaTesterToFreemium } from "@/lib/actions/beta-testers";
 import { isPaidPlan } from "@/lib/billing/plans";
+import { PlanStatusSummary } from "./plan-status-summary";
 
 // Contrairement à fmtDate (jour/mois, pensé pour des paris récents où
 // l'année est évidente), un renouvellement d'abonnement est ~1 an dans le
@@ -75,15 +76,13 @@ export function PlanCard({
 
   if (betaPhaseActive) {
     return (
-      <section aria-label={t("betaTestingTitle")} className="glass-card relative overflow-hidden rounded-xl p-4">
-        <div className="pointer-events-none select-none blur-sm opacity-35" aria-hidden>
-          <div className="mb-3 h-4 w-28 rounded bg-primary" />
-          <div className="mb-4 h-3 w-4/5 rounded bg-muted-foreground" />
-          <div className="h-10 rounded-lg bg-primary" />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-background/15 px-6 text-center">
-          <p className="text-sm font-medium">{t("betaTestingDescription")}</p>
-        </div>
+      <section aria-label={t("title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+          <Crown size={15} className="text-primary" weight="fill" aria-hidden />
+          {t("title")}
+        </h2>
+        <PlanStatusSummary plan={plan} currentPeriodEnd={currentPeriodEnd} variant="card" />
+        <p className="text-xs leading-relaxed text-muted-foreground">{t("betaTestingDescription")}</p>
       </section>
     );
   }
@@ -92,6 +91,7 @@ export function PlanCard({
     return (
       <section aria-label={t("betaEndedTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
         <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Crown size={15} className="text-primary" weight="fill" aria-hidden />{t("betaEndedTitle")}</h2>
+        <PlanStatusSummary plan={plan} currentPeriodEnd={currentPeriodEnd} variant="card" />
         <p className="text-sm text-muted-foreground">{t("betaEndedDescription")}</p>
         {error && <p role="alert" className="text-xs text-loss">{error}</p>}
         <Button onClick={handleFreemium} disabled={loading} className="min-h-touch w-full rounded-lg text-sm font-semibold">{t("switchToFreemium")}</Button>
@@ -105,6 +105,8 @@ export function PlanCard({
         <Crown size={15} className="text-primary" weight="fill" aria-hidden />
         {t("title")}
       </h2>
+
+      <PlanStatusSummary plan={plan} currentPeriodEnd={currentPeriodEnd} variant="card" />
 
       <p className="text-sm text-muted-foreground">
         {paidPlan

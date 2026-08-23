@@ -45,6 +45,19 @@
     }
   },
 
+  "subscriptionStatus": {
+    "ariaLabel": "View my subscription",
+    "label": "Subscription",
+    "freemium": "Freemium",
+    "freemiumDetail": "No expiry date",
+    "beta": "Beta access",
+    "betaDetail": "End date set by BetTrack",
+    "betaPremium": "Beta Premium",
+    "premium": "Premium",
+    "periodEnd": "Billing date: {date}",
+    "active": "Active access"
+  },
+
   "footer": {
     "label": "Responsible gambling:",
     "privacy": "Privacy",

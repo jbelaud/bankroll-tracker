@@ -45,6 +45,19 @@
     }
   },
 
+  "subscriptionStatus": {
+    "ariaLabel": "Voir mon abonnement",
+    "label": "Abonnement",
+    "freemium": "Freemium",
+    "freemiumDetail": "Sans date d’expiration",
+    "beta": "Accès bêta",
+    "betaDetail": "Fin définie par BetTrack",
+    "betaPremium": "Premium bêta",
+    "premium": "Premium",
+    "periodEnd": "Échéance : {date}",
+    "active": "Accès actif"
+  },
+
   "footer": {
     "label": "Jeu responsable :",
     "privacy": "Confidentialité",
