@@ -67,6 +67,9 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
             <p className="mt-6 max-w-xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
               {t("hero.description")}
             </p>
+            <p className="mt-3 max-w-xl text-xs leading-5 text-muted-foreground">
+              {t("hero.ocrNote")}
+            </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/signup" locale={locale} className="marketing-primary-cta">
                 {t("hero.primaryCta")}

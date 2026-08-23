@@ -35,6 +35,7 @@
     "history": "History",
     "bankrolls": "Bankrolls",
     "scanner": "Scan",
+    "scannerDesktop": "OCR Scan",
     "stats": "Stats",
     "account": "Account",
     "groups": {
@@ -264,14 +265,14 @@
   },
 
   "scan": {
-    "title": "Scan a ticket",
+    "title": "OCR Scan",
     "noBankroll": {
       "title": "No bankroll yet",
       "description": "Scanning imports your bets into a bankroll: create one first."
     },
     "upload": {
       "importInto": "Import into",
-      "scanButton": "Scan a ticket",
+      "scanButton": "Start OCR Scan",
       "hint": "Take a photo of your ticket, the AI extracts the bets automatically.",
       "gallery": "From gallery (max 5 screenshots)",
       "galleryLimit": "Select no more than {count} screenshots at a time.",
@@ -845,10 +846,11 @@
       "responsibleNotice": "Adults only. BetTrack helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
     },
     "hero": {
-      "eyebrow": "Smart betting-slip screenshot import",
-      "title": "Turn betting slips into a usable bankroll history.",
-      "description": "Add one or more screenshots: BetTrack recognizes and structures visible bets. When a completed slip displays a status and its profile is validated, that status can be proposed too. You have the final say before import.",
-      "primaryCta": "Import my screenshots",
+      "eyebrow": "Betting-slip OCR Scan*",
+      "title": "Scan betting slips into a usable bankroll history.",
+      "description": "Add one or more screenshots: BetTrack's OCR Scan reads and structures visible bet information. When a completed slip displays a status and its profile is validated, that status can be proposed too. You have the final say before import.",
+      "ocrNote": "* OCR means optical character recognition: BetTrack reads the visible elements in your screenshots to prepare bets for review.",
+      "primaryCta": "Start my OCR Scan",
       "secondaryCta": "See the demo",
       "reassuranceOne": "Multiple screenshots and visible slips in one workflow.",
       "reassuranceTwo": "Reading profiles validated bookmaker by bookmaker."
@@ -905,12 +907,12 @@
     },
     "features": {
       "eyebrow": "Verified features",
-      "title": "A betting-slip reader built for tracking, not generic text extraction.",
-      "description": "BetTrack focuses on structured screenshot import, controlled review and betting-history analysis.",
+      "title": "An OCR ticket scanner built for tracking, not generic text extraction.",
+      "description": "BetTrack uses OCR Scan to read and organize visible ticket information for your betting tracker.",
       "more": "Explore features",
       "items": {
         "import": {
-          "title": "Screenshot import",
+          "title": "Betting-slip OCR Scan",
           "description": "Add several screenshots and review the visible tickets in one import flow."
         },
         "review": {
@@ -1031,8 +1033,8 @@
     },
     "meta": {
       "home": {
-        "title": "BetTrack — Turn betting slips into bankroll history",
-        "description": "Add betting-slip screenshots, review structured visible details and update your bankroll history with BetTrack."
+        "title": "BetTrack — OCR betting-slip scan and bankroll tracking",
+        "description": "Use OCR to scan one or more betting-slip screenshots, review structured bets and track your bankroll without manual entry."
       },
       "features": {
         "title": "Screenshot import and bankroll tracking features",

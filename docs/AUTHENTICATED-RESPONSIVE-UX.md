@@ -12,7 +12,7 @@ L’interface authentifiée conserve une seule architecture de routes et les mê
 | Ordinateur (>= 1024 px) | Barre latérale persistante avec toutes les routes réelles, bouton d’import et déconnexion confirmée | En-tête compact, zone centrée jusqu’à 1536 px et grilles de contenu |
 | Grand écran (>= 1280 px) | Même barre latérale | Grilles 12 colonnes, tableaux et cartes plus denses ; largeur maximum maîtrisée |
 
-La barre latérale contient uniquement des routes existantes : tableau de bord, historique, import, statistiques, bankrolls et compte. Sur desktop, ces entrées sont regroupées en **Suivi**, **Analyse** et **Gérer**, afin de faciliter le repérage sans créer de nouvelle fonctionnalité. La navigation basse mobile est conservée ; l’historique reste accessible depuis le tableau de bord et les liens existants, sans surcharger les cinq emplacements tactiles historiques.
+La barre latérale contient uniquement des routes existantes : tableau de bord, historique, Scan OCR, statistiques, bankrolls et compte. Sur desktop, ces entrées sont regroupées en **Suivi**, **Analyse** et **Gérer**, afin de faciliter le repérage sans créer de nouvelle fonctionnalité. La navigation basse mobile est conservée ; le libellé compact « Scan » y est maintenu et l’historique reste accessible depuis le tableau de bord et les liens existants, sans surcharger les cinq emplacements tactiles historiques.
 
 ## Composants desktop réutilisables
 

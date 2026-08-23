@@ -34,7 +34,8 @@
     "home": "Accueil",
     "history": "Historique",
     "bankrolls": "Bankrolls",
-    "scanner": "Scanner",
+    "scanner": "Scan",
+    "scannerDesktop": "Scan OCR",
     "stats": "Stats",
     "account": "Compte",
     "groups": {
@@ -264,14 +265,14 @@
   },
 
   "scan": {
-    "title": "Scanner un ticket",
+    "title": "Scan OCR",
     "noBankroll": {
       "title": "Pas encore de bankroll",
       "description": "Le scan importe tes paris dans une bankroll : crée-la d'abord."
     },
     "upload": {
       "importInto": "Importer dans",
-      "scanButton": "Scanner un ticket",
+      "scanButton": "Lancer le scan OCR",
       "hint": "Prends ton ticket en photo, l'IA extrait les paris automatiquement.",
       "gallery": "Depuis la galerie (5 captures max)",
       "galleryLimit": "Sélectionne au maximum {count} captures à la fois.",
@@ -845,10 +846,11 @@
       "responsibleNotice": "Réservé aux adultes. BetTrack aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
     },
     "hero": {
-      "eyebrow": "Import intelligent de tickets de pari",
-      "title": "Transformez vos tickets de pari en historique de bankroll.",
-      "description": "Ajoutez une ou plusieurs captures : BetTrack reconnaît et structure les paris visibles. Lorsqu’un ticket terminé l’affiche et que son profil est validé, son statut peut aussi être proposé. Vous gardez le dernier mot avant l’import.",
-      "primaryCta": "Importer mes captures",
+      "eyebrow": "Scan OCR* de tickets de pari",
+      "title": "Scannez vos tickets de pari pour alimenter votre historique.",
+      "description": "Ajoutez une ou plusieurs captures : le Scan OCR de BetTrack lit et structure les informations visibles. Lorsqu’un ticket terminé l’affiche et que son profil est validé, son statut peut aussi être proposé. Vous gardez le dernier mot avant l’import.",
+      "ocrNote": "* OCR signifie reconnaissance optique de caractères : BetTrack lit les éléments visibles sur vos captures pour préparer les paris à vérifier.",
+      "primaryCta": "Lancer mon Scan OCR",
       "secondaryCta": "Voir la démonstration",
       "reassuranceOne": "Plusieurs captures et tickets visibles dans un même parcours.",
       "reassuranceTwo": "Profils de lecture validés bookmaker par bookmaker."
@@ -905,12 +907,12 @@
     },
     "features": {
       "eyebrow": "Fonctionnalités vérifiées",
-      "title": "Un lecteur de tickets conçu pour le suivi, pas un simple OCR.",
-      "description": "BetTrack ne se contente pas de lire du texte : il organise les informations d’un ticket pour les rendre utilisables dans votre suivi.",
+      "title": "Un Scan OCR de tickets conçu pour le suivi, pas un simple lecteur de texte.",
+      "description": "BetTrack utilise le Scan OCR pour lire puis organiser les informations visibles d’un ticket afin de les rendre utilisables dans votre suivi.",
       "more": "Explorer les fonctionnalités",
       "items": {
         "import": {
-          "title": "Import de captures",
+          "title": "Scan OCR de tickets",
           "description": "Ajoutez plusieurs captures dans le même parcours et regroupez les tickets visibles pour une seule revue."
         },
         "review": {
@@ -1030,8 +1032,8 @@
     },
     "meta": {
       "home": {
-        "title": "BetTrack — Transformez vos tickets en historique de bankroll",
-        "description": "Importez une ou plusieurs captures de tickets, vérifiez les paris structurés et suivez votre bankroll sans ressaisie manuelle."
+        "title": "BetTrack — Scan OCR de tickets et suivi de bankroll",
+        "description": "Scannez une ou plusieurs captures de tickets avec l’OCR, vérifiez les paris structurés et suivez votre bankroll sans ressaisie manuelle."
       },
       "features": {
         "title": "Fonctionnalités de suivi de bankroll",

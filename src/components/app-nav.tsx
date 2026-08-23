@@ -18,7 +18,7 @@ import { SignOutButton } from "@/components/account/sign-out-button";
 const NAV_ITEMS = [
   { href: "/dashboard", key: "home", icon: House },
   { href: "/history", key: "history", icon: ListBullets },
-  { href: "/scan", key: "scanner", icon: Scan, primary: true },
+  { href: "/scan", key: "scanner", desktopKey: "scannerDesktop", icon: Scan, primary: true },
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
   { href: "/account", key: "account", icon: UserCircle },
@@ -54,7 +54,7 @@ export function AppNav() {
                 </p>
                 <ul className="mt-2 flex flex-col gap-1">
                   {items.map(({ href, key, icon: Icon, ...item }) => {
-                    const label = t(key);
+                    const label = t("desktopKey" in item ? item.desktopKey : key);
                     const active = pathname.startsWith(href);
                     const isPrimary = "primary" in item && item.primary;
 
@@ -139,19 +139,22 @@ export function AppTopBar() {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const currentItem = NAV_ITEMS.find((item) => pathname.startsWith(item.href));
+  const currentLabel = currentItem
+    ? t("desktopKey" in currentItem ? currentItem.desktopKey : currentItem.key)
+    : "BetTrack";
 
   return (
     <header className="sticky top-0 z-30 hidden h-20 items-center justify-between border-b border-border bg-background/88 px-6 backdrop-blur-xl lg:flex xl:px-8">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <ChartLineUp size={18} className="text-primary" weight="bold" aria-hidden />
-        <span>{currentItem ? t(currentItem.key) : "BetTrack"}</span>
+        <span>{currentLabel}</span>
       </div>
       <Link
         href="/scan"
         className="inline-flex min-h-touch items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-[0_12px_28px_oklch(0.72_0.14_250_/_18%)] transition-transform hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <Scan size={18} weight="bold" aria-hidden />
-        {t("scanner")}
+        {t("scannerDesktop")}
       </Link>
     </header>
   );
