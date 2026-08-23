@@ -26,7 +26,7 @@ La barre latérale contient uniquement des routes existantes : tableau de bord, 
 
 | Route | Mise en œuvre responsive |
 | --- | --- |
-| `/dashboard` | Grille 12 colonnes sur desktop : la synthèse « Bankroll globale » précède l’évolution du capital à gauche. Une colonne latérale rassemble les indicateurs, le quota de scans IA puis la communauté lorsqu’elle est pertinente. Objectifs, bankrolls et paris récents restent répartis sans inventer de données. Sans bankroll, le parcours de démarrage utilise une largeur contrôlée et un indicateur de progression desktop. |
+| `/dashboard` | Grille 12 colonnes sur desktop : la synthèse « Bankroll globale » précède l’évolution du capital à gauche. Une colonne latérale rassemble les indicateurs, le quota de scans IA puis la communauté lorsqu’elle est pertinente. Sous les objectifs, les cartes « Mes bankrolls » et « Paris récents » commencent sur la même rangée en deux colonnes. Sans bankroll, le parcours de démarrage utilise une largeur contrôlée et un indicateur de progression desktop. |
 | `/history` | Filtres disposés horizontalement sur desktop, tableau dense avec date, événement, sport/type, bankroll, mise, cote, résultat, P&L et actions ; cartes groupées et gestes tactiles conservés sur mobile. |
 | `/scan` | Zone de dépôt desktop, sélection appareil photo/galerie préservée, limite actuelle de cinq captures préservée, revue en colonne latérale + cartes de validation en grille. |
 | `/scan/manual` | Formulaire conservé avec largeur de lecture contrôlée sur grand écran. |

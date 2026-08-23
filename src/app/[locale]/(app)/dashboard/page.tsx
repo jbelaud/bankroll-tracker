@@ -217,7 +217,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={7} className="xl:order-5 xl:col-span-5">
+      <Reveal index={7} className="xl:order-5 xl:col-start-1 xl:col-span-5">
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
