@@ -15,7 +15,6 @@ type Report = {
   correctionCount: number;
   model: string;
   createdAt: string;
-  imageUrl: string | null;
   rawExtraction: unknown;
   finalExtraction: unknown;
   correctionTypes: string[];
@@ -109,7 +108,7 @@ export function ScanQualityQueue({
         <article key={report.id} className="glass-card flex flex-col gap-3 rounded-xl p-3 text-xs">
           <div className="flex items-center justify-between gap-2"><strong>{report.bookmaker}</strong><span>{report.status} · {report.correctionCount} correction(s)</span></div>
           <p className="text-muted-foreground">{new Date(report.createdAt).toLocaleString()} · {report.model}{report.correctionTypes.length ? ` · ${report.correctionTypes.join(", ")}` : ""}</p>
-          {report.imageUrl && <a href={report.imageUrl} target="_blank" rel="noreferrer" className="text-primary underline">Ouvrir la capture (URL signée 60 s)</a>}
+          <a href={`/api/admin/scan-quality/${encodeURIComponent(report.id)}/image`} target="_blank" rel="noreferrer" className="text-primary underline">Ouvrir la capture sécurisée</a>
           <details><summary className="cursor-pointer font-medium">Comparer l&apos;extraction et la correction</summary><div className="mt-2 grid gap-2 md:grid-cols-2"><pre className="overflow-auto rounded bg-muted p-2">{JSON.stringify(report.rawExtraction, null, 2)}</pre><pre className="overflow-auto rounded bg-muted p-2">{JSON.stringify(report.finalExtraction, null, 2)}</pre></div></details>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" disabled={pending} onClick={() => startTransition(() => updateScanQualityReport(report.id, "REVIEWED"))}>Consulté</Button>

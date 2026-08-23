@@ -3,8 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
 import { ReferralManager } from "@/components/admin/referral-manager";
@@ -136,7 +134,7 @@ export default async function AdminPage({
       prisma.scanQualityReport.groupBy({ by: ["bookmaker"], _count: { _all: true }, orderBy: { _count: { bookmaker: "desc" } } }),
       prisma.scanQualityReport.findMany({
         where: { createdAt }, orderBy: [{ status: "asc" }, { correctionCount: "desc" }, { createdAt: "desc" }], take: 25,
-        select: { id: true, bookmaker: true, status: true, correctionCount: true, correctionTypes: true, model: true, createdAt: true, storagePath: true, rawExtraction: true, finalExtraction: true },
+        select: { id: true, bookmaker: true, status: true, correctionCount: true, correctionTypes: true, model: true, createdAt: true, rawExtraction: true, finalExtraction: true },
       }),
       prisma.bookmakerScanProfile.findMany({
         select: { bookmaker: true, supportStatus: true, rules: true, examples: true, version: true, updatedAt: true },
@@ -147,20 +145,9 @@ export default async function AdminPage({
   let queueReports = qualityReports.map((report) => ({
     id: report.id, bookmaker: report.bookmaker, status: report.status, correctionCount: report.correctionCount,
     correctionTypes: Array.isArray(report.correctionTypes) ? report.correctionTypes.filter((type): type is string => typeof type === "string") : [],
-    model: report.model, createdAt: report.createdAt.toISOString(), imageUrl: null as string | null,
+    model: report.model, createdAt: report.createdAt.toISOString(),
     rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
   }));
-  if (qualityReports.length > 0) {
-    try {
-      const storage = createAdminSupabaseClient().storage.from(QUALITY_BUCKET);
-      queueReports = await Promise.all(queueReports.map(async (report, index) => {
-        const { data } = await storage.createSignedUrl(qualityReports[index].storagePath, 60);
-        return { ...report, imageUrl: data?.signedUrl ?? null };
-      }));
-    } catch (error) {
-      console.error("[admin] Quality screenshot storage unavailable", error);
-    }
-  }
 
   const [betaUsage, betaUsageByUser, betaTesters, betaInvites, betaProgram] = await Promise.all([
     prisma.scanUsage.aggregate({ where: { createdAt, plan: "BETA_TESTER" }, _count: { _all: true }, _sum: { costUsd: true } }),
