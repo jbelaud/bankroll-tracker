@@ -37,6 +37,7 @@
     "scanner": "Scan",
     "scannerDesktop": "Scan OCR",
     "stats": "Stats",
+    "referrals": "Parrainage",
     "account": "Compte",
     "groups": {
       "tracking": "Suivi",
@@ -159,6 +160,8 @@
       "remaining": "{used}/{limit} utilisés",
       "premiumBadge": "Premium",
       "initialCredits": "Crédit d'import : {count} scans restants jusqu'au {date}.",
+      "referralCredits": "{count} scans de parrainage à vie disponibles.",
+      "referralCta": "Parrainer des amis",
       "upgradeCta": "Débloquer plus de scans"
     },
     "hero": {
@@ -383,6 +386,7 @@
     "analysisFailed": "L'analyse du ticket a échoué. Réessaie ou vérifie la capture.",
     "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
     "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Reviens le mois prochain.",
+    "duplicateScan": "Cette capture a déjà été analysée. Elle ne compte pas deux fois.",
     "bankrollLocked": "Cette bankroll est verrouillée avec le forfait Freemium. Passe à Premium pour y accéder.",
     "forbiddenOrigin": "Origine non autorisée."
   },
@@ -585,9 +589,49 @@
     }
   },
 
+  "referral": {
+    "title": "Parraine tes amis, gagne des scans OCR",
+    "description": "Invite tes amis à tester BetTrack pendant la bêta. Ton ami reçoit 10 scans OCR après son premier scan valide, et tu peux gagner jusqu’à 20 scans OCR à vie pour chaque filleul actif.",
+    "benefits": {
+      "first": "+10 scans après son premier scan valide",
+      "second": "+10 scans supplémentaires après son 5e scan",
+      "cumulative": "Tes récompenses sont cumulables",
+      "lifetime": "Tes scans gagnés n’expirent jamais"
+    },
+    "linkLabel": "Ton lien de parrainage",
+    "copy": "Copier mon lien",
+    "copied": "Lien de parrainage copié !",
+    "copyFailed": "Impossible de copier le lien automatiquement.",
+    "share": "Partager",
+    "shareDiscord": "Copier pour Discord",
+    "shareNative": "Partager avec…",
+    "shareText": "Teste BetTrack avec mon lien de parrainage !",
+    "stats": {
+      "invited": "Amis inscrits",
+      "active": "Filleuls actifs",
+      "earned": "Scans gagnés",
+      "balance": "Solde de scans à vie"
+    },
+    "progressTitle": "Progression de tes filleuls",
+    "empty": "Tes prochains filleuls apparaîtront ici après leur inscription.",
+    "status": {
+      "REGISTERED": "Inscrit",
+      "FIRST_SCAN": "Premier scan effectué",
+      "FIVE_SCANS": "5 scans effectués",
+      "COMPLETE": "Récompense complète débloquée"
+    },
+    "pendingFirst": "Encore 1 scan valide pour débloquer 10 scans",
+    "pendingSecond": "Encore {count} scans valides pour débloquer 10 scans supplémentaires",
+    "complete": "Récompense complète débloquée : 20 scans gagnés",
+    "unlocked": "{count}/20 scans débloqués",
+    "privacy": "Les adresses e-mail des filleuls sont masquées pour protéger leur vie privée.",
+    "referredRewardMessage": "Ton premier scan valide a débloqué {count} scans OCR offerts à vie."
+  },
+
   "account": {
     "title": "Compte",
     "adminLink": "Administration",
+    "referralLink": "Parrainer des amis",
     "feedback": {
       "sectionTitle": "Retour bêta",
       "sectionDescription": "Un bug, une idée ou un écran à améliorer ? Ton retour arrive directement dans l’administration.",
@@ -713,6 +757,28 @@
   "admin": {
     "title": "Administration",
     "description": "Pilotage des utilisateurs, des revenus Stripe et de la consommation IA.",
+    "referrals": {
+      "title": "Parrainages bêta",
+      "description": "Suivi auditable des filleuls, récompenses et signalements anti-fraude.",
+      "empty": "Aucun parrainage pour le moment.",
+      "scanCount": "{count} scans valides",
+      "flag": "Signaler",
+      "clearFlag": "Lever le signalement",
+      "flagPrompt": "Motif du signalement :",
+      "flagged": "Signalé : {reason}",
+      "noRewards": "Aucune récompense débloquée.",
+      "cancel": "Annuler le gain",
+      "cancelPrompt": "Motif d'annulation de la récompense :",
+      "cancelReason": "Motif : {reason}",
+      "actionFailed": "L'action n'a pas pu être effectuée.",
+      "rewardTypes": {
+        "REFEREE_FIRST_VALID_SCAN": "Filleul · premier scan",
+        "REFERRER_FIRST_VALID_SCAN": "Parrain · premier scan",
+        "REFERRER_FIFTH_VALID_SCAN": "Parrain · cinquième scan",
+        "REFERRER_SUBSCRIPTION_PAYMENT": "Parrain · paiement"
+      },
+      "rewardStatus": { "GRANTED": "accordée", "CANCELLED": "annulée" }
+    },
     "periodFilter": "Période analysée",
     "periods": {
       "day": "Aujourd’hui",

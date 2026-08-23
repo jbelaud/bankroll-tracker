@@ -10,6 +10,16 @@ type DupCandidate = {
   description: string;
 };
 
+/** A bookmaker ticket reference is a stronger duplicate signal than heuristics. */
+export function hasKnownTicketReference(ticketRef: string | null, knownReferences: Iterable<string | null>): boolean {
+  const normalized = ticketRef?.trim();
+  if (!normalized) return false;
+  for (const knownReference of knownReferences) {
+    if (knownReference?.trim() === normalized) return true;
+  }
+  return false;
+}
+
 export function looksLikeParsedDuplicate(
   bet: Omit<DupCandidate, "date" | "stake" | "odds"> & { date: string | null; stake: number | null; odds: number | null },
   otherBets: DupCandidate[]

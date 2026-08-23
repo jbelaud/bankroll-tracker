@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { createHash } from "crypto";
+import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { labelToBetResult } from "@/lib/bet-result";
-import { looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
+import { hasKnownTicketReference, looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
@@ -20,6 +22,8 @@ import { bookmakerKind } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
 import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
+import { processValidReferralScan } from "@/lib/referral/service";
+import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -98,6 +102,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: t("imageTooLarge") }, { status: 413 });
   }
   const base64 = Buffer.from(bytes).toString("base64");
+  // Une même capture ne peut pas être rejouée pour faire progresser un
+  // parrainage. Le hash ne quitte jamais le serveur et ne conserve pas l'image.
+  const sourceHash = createHash("sha256").update(Buffer.from(bytes)).digest("hex");
 
   const [dbUser, taxonomy, bankroll] = await Promise.all([
     prisma.user.findUniqueOrThrow({
@@ -119,6 +126,14 @@ export async function POST(request: NextRequest) {
     select: { supportStatus: true, rules: true },
   });
   const supportStatus = profile?.supportStatus ?? (bookmakerKind(bankroll.bookmaker) === "tested" ? "TESTED" : "UNTESTED");
+
+  const duplicateScan = await prisma.scanUsage.findUnique({
+    where: { userId_sourceHash: { userId: user.id, sourceHash } },
+    select: { id: true },
+  });
+  if (duplicateScan) {
+    return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
+  }
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
   if (!rateLimit.allowed) {
@@ -151,6 +166,8 @@ export async function POST(request: NextRequest) {
   let detectedBookmaker: string | null = null;
   let detectionConfidence: number | null = null;
   let scanModel = "unknown";
+  let scanInputTokens = 0;
+  let scanOutputTokens = 0;
   try {
     const response = await analyzeTicketImage({
       base64,
@@ -160,32 +177,14 @@ export async function POST(request: NextRequest) {
       bookmakerRules: rulesForTestedProfile(profile),
     });
     scanModel = response.model;
+    scanInputTokens = response.inputTokens;
+    scanOutputTokens = response.outputTokens;
     const analysis = parseScanAnalysis(response.text);
     rawBets = analysis.bets;
     rawExtraction = analysis;
     detectedBookmaker = analysis.detectedBookmaker;
     detectionConfidence = analysis.detectionConfidence;
 
-    // Une analyse peut coûter des tokens même si aucun pari n'est trouvé.
-    // L'échec de la télémétrie ne doit jamais empêcher l'utilisateur de scanner.
-    try {
-      await prisma.scanUsage.create({
-        data: {
-          userId: user.id,
-          model: response.model,
-          plan: dbUser.plan,
-          inputTokens: response.inputTokens,
-          outputTokens: response.outputTokens,
-          costUsd: calculateScanCostUsd(
-            response.model,
-            response.inputTokens,
-            response.outputTokens
-          ),
-        },
-      });
-    } catch (usageError) {
-      console.error("[scan] impossible d'enregistrer la consommation", usageError);
-    }
   } catch (e) {
     await releaseQuota();
     console.error("[scan] extraction échouée", e);
@@ -193,6 +192,28 @@ export async function POST(request: NextRequest) {
   }
 
   if (rawBets.length === 0) {
+    // Conserve la télémétrie de l'analyse (comme avant le parrainage), mais
+    // marque explicitement ce scan vide comme non éligible à toute récompense.
+    try {
+      await prisma.scanUsage.create({
+        data: {
+          userId: user.id,
+          model: scanModel,
+          plan: dbUser.plan,
+          inputTokens: scanInputTokens,
+          outputTokens: scanOutputTokens,
+          costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
+          sourceHash,
+          referralEligible: false,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        await releaseQuota();
+        return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
+      }
+      throw error;
+    }
     await releaseQuota();
     return NextResponse.json({ error: t("noBetsFound") }, { status: 422 });
   }
@@ -200,7 +221,7 @@ export async function POST(request: NextRequest) {
   // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
   const existing = await prisma.bet.findMany({
     where: { bankroll: { userId: user.id } },
-    select: { date: true, stake: true, odds: true, description: true },
+    select: { date: true, stake: true, odds: true, description: true, ticketRef: true },
   });
   const existingCandidates = existing.map((b) => ({
     date: b.date.toISOString().slice(0, 10),
@@ -208,6 +229,7 @@ export async function POST(request: NextRequest) {
     odds: b.odds,
     description: b.description ?? "",
   }));
+  const existingTicketRefs = existing.map((bet) => bet.ticketRef);
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
@@ -239,11 +261,45 @@ export async function POST(request: NextRequest) {
       taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.
-    if (!bet.ticketRef && looksLikeParsedDuplicate(bet, existingCandidates)) {
+    if (
+      hasKnownTicketReference(bet.ticketRef, existingTicketRefs) ||
+      (!bet.ticketRef && looksLikeParsedDuplicate(bet, existingCandidates))
+    ) {
       bet.possibleDuplicate = true;
     }
     return bet;
   });
+
+  const referralEligible = hasValidReferralScan(bets);
+  let scanUsage;
+  try {
+    // Le journal de consommation est également l'événement idempotent utilisé
+    // par le programme de parrainage. L'index userId/sourceHash bloque les
+    // doublons, y compris lors de requêtes concurrentes.
+    scanUsage = await prisma.scanUsage.create({
+      data: {
+        userId: user.id,
+        model: scanModel,
+        plan: dbUser.plan,
+        inputTokens: scanInputTokens,
+        outputTokens: scanOutputTokens,
+        costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
+        sourceHash,
+        referralEligible,
+      },
+      select: { id: true },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      await releaseQuota();
+      return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
+    }
+    throw error;
+  }
+
+  const referralResult = referralEligible
+    ? await processValidReferralScan(user.id, scanUsage.id)
+    : { earnedReferralScans: 0 };
 
   quotaReserved = false;
   return NextResponse.json({
@@ -255,6 +311,7 @@ export async function POST(request: NextRequest) {
       supportStatus,
       detectedBookmaker,
       detectionConfidence,
+      earnedReferralScans: referralResult.earnedReferralScans,
     },
   });
 }

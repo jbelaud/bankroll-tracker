@@ -21,6 +21,7 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
   const t = useTranslations("auth.signup");
   const tMarketing = useTranslations("marketing");
   const invite = useSearchParams().get("invite") ?? "";
+  const referral = useSearchParams().get("ref") ?? "";
   const signupEmailRateLimited = Boolean(state && "errorCode" in state && state.errorCode === "signupEmailRateLimited");
   const offer = betaPhaseActive ? "beta" : "standard";
 
@@ -54,6 +55,7 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
 
           <form action={signInWithGoogle} className="mt-6">
             <input type="hidden" name="invite" value={invite} />
+            <input type="hidden" name="referral" value={referral} />
             <button type="submit" className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition hover:border-primary/50 hover:bg-muted">
               <GoogleMark />{t("google")}
             </button>
@@ -63,6 +65,7 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
 
           <form action={action} className="space-y-4">
             <input type="hidden" name="invite" value={invite} />
+            <input type="hidden" name="referral" value={referral} />
             <div>
               <label htmlFor="signup-email" className="mb-2 block text-sm font-medium text-foreground">{t("emailLabel")}</label>
               <input id="signup-email" type="email" name="email" autoComplete="email" required className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/15" />

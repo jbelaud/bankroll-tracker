@@ -37,6 +37,7 @@
     "scanner": "Scan",
     "scannerDesktop": "OCR Scan",
     "stats": "Stats",
+    "referrals": "Referrals",
     "account": "Account",
     "groups": {
       "tracking": "Tracking",
@@ -159,6 +160,8 @@
       "remaining": "{used}/{limit} used",
       "premiumBadge": "Premium",
       "initialCredits": "Import credit: {count} scans remaining until {date}.",
+      "referralCredits": "{count} lifetime referral scans available.",
+      "referralCta": "Refer friends",
       "upgradeCta": "Unlock more scans"
     },
     "hero": {
@@ -383,6 +386,7 @@
     "analysisFailed": "Ticket analysis failed. Try again or check the capture.",
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
+    "duplicateScan": "This screenshot has already been analyzed. It cannot count twice.",
     "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "forbiddenOrigin": "Origin not allowed."
   },
@@ -585,9 +589,49 @@
     }
   },
 
+  "referral": {
+    "title": "Refer friends, earn OCR scans",
+    "description": "Invite friends to test BetTrack during the beta. Your friend gets 10 OCR scans after their first valid scan, and you can earn up to 20 lifetime OCR scans for every active referral.",
+    "benefits": {
+      "first": "+10 scans after their first valid scan",
+      "second": "+10 more scans after their 5th scan",
+      "cumulative": "Your rewards stack up",
+      "lifetime": "Your earned scans never expire"
+    },
+    "linkLabel": "Your referral link",
+    "copy": "Copy my link",
+    "copied": "Referral link copied!",
+    "copyFailed": "The link could not be copied automatically.",
+    "share": "Share",
+    "shareDiscord": "Copy for Discord",
+    "shareNative": "Share with…",
+    "shareText": "Try BetTrack with my referral link!",
+    "stats": {
+      "invited": "Friends signed up",
+      "active": "Active referrals",
+      "earned": "Scans earned",
+      "balance": "Lifetime scan balance"
+    },
+    "progressTitle": "Your referrals' progress",
+    "empty": "Your next referrals will appear here once they sign up.",
+    "status": {
+      "REGISTERED": "Signed up",
+      "FIRST_SCAN": "First scan completed",
+      "FIVE_SCANS": "5 scans completed",
+      "COMPLETE": "Full reward unlocked"
+    },
+    "pendingFirst": "1 more valid scan to unlock 10 scans",
+    "pendingSecond": "{count} more valid scans to unlock 10 additional scans",
+    "complete": "Full reward unlocked: 20 scans earned",
+    "unlocked": "{count}/20 scans unlocked",
+    "privacy": "Referral email addresses are masked to protect their privacy.",
+    "referredRewardMessage": "Your first valid scan unlocked {count} lifetime OCR scans."
+  },
+
   "account": {
     "title": "Account",
     "adminLink": "Administration",
+    "referralLink": "Refer friends",
     "feedback": {
       "sectionTitle": "Beta feedback",
       "sectionDescription": "A bug, an idea, or a screen to improve? Your feedback goes straight to the administration area.",
@@ -713,6 +757,28 @@
   "admin": {
     "title": "Administration",
     "description": "Track users, Stripe revenue and AI consumption.",
+    "referrals": {
+      "title": "Beta referrals",
+      "description": "Auditable tracking of referrals, rewards and anti-fraud flags.",
+      "empty": "No referrals yet.",
+      "scanCount": "{count} valid scans",
+      "flag": "Flag",
+      "clearFlag": "Clear flag",
+      "flagPrompt": "Reason for flagging:",
+      "flagged": "Flagged: {reason}",
+      "noRewards": "No reward unlocked.",
+      "cancel": "Cancel reward",
+      "cancelPrompt": "Reason for cancelling the reward:",
+      "cancelReason": "Reason: {reason}",
+      "actionFailed": "The action could not be completed.",
+      "rewardTypes": {
+        "REFEREE_FIRST_VALID_SCAN": "Referred user · first scan",
+        "REFERRER_FIRST_VALID_SCAN": "Referrer · first scan",
+        "REFERRER_FIFTH_VALID_SCAN": "Referrer · fifth scan",
+        "REFERRER_SUBSCRIPTION_PAYMENT": "Referrer · payment"
+      },
+      "rewardStatus": { "GRANTED": "granted", "CANCELLED": "cancelled" }
+    },
     "periodFilter": "Selected period",
     "periods": {
       "day": "Today",

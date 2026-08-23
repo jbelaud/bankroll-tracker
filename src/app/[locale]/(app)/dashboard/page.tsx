@@ -198,6 +198,7 @@ export default async function DashboardPage() {
             scansLimit={quota.limit}
             initialCreditsRemaining={quota.initialCreditsRemaining}
             initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
+            referralCreditsRemaining={quota.referralCreditsRemaining}
             betaPhaseActive={betaProgram?.phase !== "ENDED"}
           />
         </Reveal>

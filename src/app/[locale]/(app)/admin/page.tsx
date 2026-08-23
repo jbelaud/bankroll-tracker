@@ -7,6 +7,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
+import { ReferralManager } from "@/components/admin/referral-manager";
 
 const PERIODS = ["day", "month", "year", "all"] as const;
 type Period = (typeof PERIODS)[number];
@@ -178,6 +179,23 @@ export default async function AdminPage({
     }),
     prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
   ]);
+  const referrals = await prisma.referral.findMany({
+    select: {
+      id: true,
+      validScanCount: true,
+      suspiciousAt: true,
+      suspiciousReason: true,
+      createdAt: true,
+      referrer: { select: { email: true } },
+      referredUser: { select: { email: true } },
+      rewards: {
+        select: { id: true, amount: true, type: true, status: true, cancellationReason: true, createdAt: true },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
   const betaUsageByUserId = new Map(betaUsageByUser.map((usage) => [usage.userId, usage]));
 
   const plans = new Map(planCounts.map((item) => [item.plan, item._count._all]));
@@ -290,6 +308,23 @@ export default async function AdminPage({
         betaPhaseActive={betaProgram?.phase !== "ENDED"}
         scanCount={betaUsage._count._all}
         costUsd={betaUsage._sum.costUsd ?? 0}
+        locale={locale}
+      />
+
+      <ReferralManager
+        referrals={referrals.map((referral) => ({
+          id: referral.id,
+          referrerEmail: referral.referrer.email,
+          referredEmail: referral.referredUser.email,
+          validScanCount: referral.validScanCount,
+          suspiciousAt: referral.suspiciousAt?.toISOString() ?? null,
+          suspiciousReason: referral.suspiciousReason,
+          createdAt: referral.createdAt.toISOString(),
+          rewards: referral.rewards.map((reward) => ({
+            ...reward,
+            createdAt: reward.createdAt.toISOString(),
+          })),
+        }))}
         locale={locale}
       />
 

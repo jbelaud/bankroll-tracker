@@ -7,6 +7,7 @@ export type ScanTicketResult = {
   supportStatus: "TESTED" | "UNTESTED" | "VALIDATING";
   detectedBookmaker: string | null;
   detectionConfidence: number | null;
+  earnedReferralScans: number;
 };
 
 // Appelle la vraie route d'extraction (POST /api/scan) une image à la fois,
@@ -40,6 +41,7 @@ export async function scanTickets(
         supportStatus: ScanTicketResult["supportStatus"];
         detectedBookmaker: string | null;
         detectionConfidence: number | null;
+        earnedReferralScans: number;
       };
     };
     const sourcedBets = bets.map((bet) => ({ ...bet, sourceScanIndex: i }));
@@ -50,6 +52,7 @@ export async function scanTickets(
       supportStatus: scan.supportStatus,
       detectedBookmaker: scan.detectedBookmaker,
       detectionConfidence: scan.detectionConfidence,
+      earnedReferralScans: scan.earnedReferralScans,
     });
 
     // Dédup intra-lot par référence de ticket (une même ref sur deux captures).

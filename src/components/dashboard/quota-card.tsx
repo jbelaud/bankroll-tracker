@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { createCheckoutSessionAction } from "@/lib/actions/billing";
 import { isPaidPlan } from "@/lib/billing/plans";
+import { Link } from "@/i18n/navigation";
 
 // Widget d'engagement/conversion sur le Dashboard — distinct de PlanCard
 // (écran Compte, informatif : date de renouvellement, gestion d'abonnement).
@@ -19,6 +20,7 @@ export function QuotaCard({
   scansLimit,
   initialCreditsRemaining,
   initialCreditsExpiresAt,
+  referralCreditsRemaining,
   betaPhaseActive,
 }: {
   plan: Plan;
@@ -26,6 +28,7 @@ export function QuotaCard({
   scansLimit: number;
   initialCreditsRemaining: number;
   initialCreditsExpiresAt: Date | null;
+  referralCreditsRemaining: number;
   betaPhaseActive: boolean;
 }) {
   const [loading, setLoading] = useState(false);
@@ -82,6 +85,12 @@ export function QuotaCard({
         </p>
       )}
 
+      {referralCreditsRemaining > 0 && (
+        <p className="rounded-lg bg-profit/10 px-3 py-2 text-xs leading-relaxed text-profit">
+          {t("referralCredits", { count: referralCreditsRemaining })}
+        </p>
+      )}
+
       <div className="flex flex-col gap-1.5">
         <div className="flex items-baseline justify-between">
           <span className="num text-2xl font-bold tracking-tight">{remaining}</span>
@@ -124,6 +133,9 @@ export function QuotaCard({
           {t("upgradeCta")}
         </Button>
       )}
+      <Link href="/referrals" className="text-center text-xs font-semibold text-primary underline-offset-4 hover:underline">
+        {t("referralCta")}
+      </Link>
     </section>
   );
 }

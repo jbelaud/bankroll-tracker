@@ -10,6 +10,7 @@ const PROTECTED_ROUTES = [
   "/stats",
   "/account",
   "/history",
+  "/referrals",
 ];
 const AUTH_ROUTES = ["/login", "/signup"];
 

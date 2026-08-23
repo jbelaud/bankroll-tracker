@@ -10,6 +10,7 @@ import {
   ChartBar,
   ListBullets,
   UserCircle,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: "/scan", key: "scanner", desktopKey: "scannerDesktop", icon: Scan, primary: true },
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
+  { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },
 ] as const;
 
@@ -32,7 +34,7 @@ const DESKTOP_NAV_GROUPS = [
   { key: "manage", items: NAV_ITEMS.slice(4) },
 ] as const;
 
-const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((item) => item.key !== "history");
+const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((item) => item.key !== "history" && item.key !== "referrals");
 
 export function AppNav({
   plan,

@@ -24,7 +24,7 @@ type FlowState =
   | { step: "scanning"; files: File[]; done: number }
   | { step: "review"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] }
   | { step: "importing"; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[] }
-  | { step: "completed"; imported: number; firstImport: boolean };
+  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number };
 
 export function ScanFlow({
   bankrolls,
@@ -38,6 +38,7 @@ export function ScanFlow({
   const router = useRouter();
   const t = useTranslations("scan.error");
   const tComplete = useTranslations("scan.complete");
+  const tReferral = useTranslations("referral");
   const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
   const [error, setError] = useState("");
@@ -96,6 +97,7 @@ export function ScanFlow({
         step: "completed",
         imported: result.imported,
         firstImport: result.firstImport,
+        earnedReferralScans: scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0),
       });
     },
     [bankrollId]
@@ -152,6 +154,12 @@ export function ScanFlow({
           <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
           <p className="mt-2 text-sm text-muted-foreground">{description}</p>
         </div>
+
+        {flow.earnedReferralScans > 0 ? (
+          <p role="status" className="w-full rounded-xl border border-profit/30 bg-profit/10 px-3 py-2.5 text-left text-sm text-profit">
+            {tReferral("referredRewardMessage", { count: flow.earnedReferralScans })}
+          </p>
+        ) : null}
 
         {flow.firstImport ? (
           <div className="w-full rounded-xl border border-primary/35 bg-primary/10 p-4 text-left">

@@ -1,6 +1,7 @@
 import type { Plan } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { hasInitialScanCredits } from "@/lib/billing/plans";
+import { nextScanCreditSource } from "./credit-priority";
 
 const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 export const INITIAL_SCAN_CREDIT = 300;
@@ -20,7 +21,9 @@ export const MONTHLY_LIMITS: Record<Plan, number> = {
   PREMIUM: SCAN_QUOTA_CONFIG.PREMIUM.limit,
 };
 
-export type ScanQuotaReservation = "initial" | "monthly";
+// Priorité intentionnelle : le quota périodique est toujours consommé avant
+// les crédits à durée limitée, puis les crédits de parrainage à vie en dernier.
+export type ScanQuotaReservation = "initial" | "monthly" | "referral";
 
 type QuotaCheckResult =
   | { allowed: true; reservation: ScanQuotaReservation }
@@ -35,17 +38,46 @@ export async function checkMonthlyQuota(userId: string, plan: Plan): Promise<Quo
         monthlyScanWindowStart: true,
         initialScanCreditRemaining: true,
         initialScanCreditExpiresAt: true,
+        referralScanCredits: true,
       },
     });
 
     const now = new Date();
+    const { limit } = SCAN_QUOTA_CONFIG[plan];
+    const elapsed = now.getTime() - user.monthlyScanWindowStart.getTime();
+
     const hasInitialCredit =
       hasInitialScanCredits(plan) &&
       user.initialScanCreditRemaining > 0 &&
       user.initialScanCreditExpiresAt !== null &&
       user.initialScanCreditExpiresAt > now;
+    const creditSource = nextScanCreditSource({
+      monthlyWindowExpired: elapsed > WINDOW_MS,
+      monthlyUsed: user.monthlyScanCount,
+      monthlyLimit: limit,
+      hasInitialCredit,
+      referralCredits: user.referralScanCredits,
+    });
 
-    if (hasInitialCredit) {
+    // Les scans inclus dans le plan bêta sont préservés en priorité. Une
+    // nouvelle fenêtre ne touche jamais au solde de parrainage à vie.
+    if (creditSource === "monthly" && elapsed > WINDOW_MS) {
+      await tx.user.update({
+        where: { id: userId },
+        data: { monthlyScanCount: 1, monthlyScanWindowStart: now },
+      });
+      return { allowed: true, reservation: "monthly" };
+    }
+
+    if (creditSource === "monthly") {
+      await tx.user.update({
+        where: { id: userId },
+        data: { monthlyScanCount: { increment: 1 } },
+      });
+      return { allowed: true, reservation: "monthly" };
+    }
+
+    if (creditSource === "initial") {
       const reservedCredit = await tx.user.updateMany({
         where: {
           id: userId,
@@ -59,29 +91,22 @@ export async function checkMonthlyQuota(userId: string, plan: Plan): Promise<Quo
       }
     }
 
-    const { limit } = SCAN_QUOTA_CONFIG[plan];
-    const elapsed = now.getTime() - user.monthlyScanWindowStart.getTime();
-
-    if (elapsed > WINDOW_MS) {
-      await tx.user.update({
-        where: { id: userId },
-        data: { monthlyScanCount: 1, monthlyScanWindowStart: now },
+    // Les gains de parrainage n'expirent jamais et ne sont utilisés qu'après
+    // tous les autres crédits applicables.
+    if (creditSource === "referral") {
+      const reservedCredit = await tx.user.updateMany({
+        where: { id: userId, referralScanCredits: { gt: 0 } },
+        data: { referralScanCredits: { decrement: 1 } },
       });
-      return { allowed: true, reservation: "monthly" };
+      if (reservedCredit.count === 1) {
+        return { allowed: true, reservation: "referral" };
+      }
     }
 
-    if (user.monthlyScanCount >= limit) {
-      return {
-        allowed: false,
-        retryAfterSeconds: Math.ceil((WINDOW_MS - elapsed) / 1000),
-      };
-    }
-
-    await tx.user.update({
-      where: { id: userId },
-      data: { monthlyScanCount: { increment: 1 } },
-    });
-    return { allowed: true, reservation: "monthly" };
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.ceil((WINDOW_MS - elapsed) / 1000),
+    };
   });
 }
 
@@ -93,6 +118,14 @@ export async function releaseMonthlyQuota(
     await prisma.user.updateMany({
       where: { id: userId, initialScanCreditRemaining: { gte: 0 } },
       data: { initialScanCreditRemaining: { increment: 1 } },
+    });
+    return;
+  }
+
+  if (reservation === "referral") {
+    await prisma.user.updateMany({
+      where: { id: userId },
+      data: { referralScanCredits: { increment: 1 } },
     });
     return;
   }
@@ -115,6 +148,7 @@ export async function getMonthlyQuotaStatus(
   limit: number;
   initialCreditsRemaining: number;
   initialCreditsExpiresAt: Date | null;
+  referralCreditsRemaining: number;
 }> {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -123,6 +157,7 @@ export async function getMonthlyQuotaStatus(
       monthlyScanWindowStart: true,
       initialScanCreditRemaining: true,
       initialScanCreditExpiresAt: true,
+      referralScanCredits: true,
     },
   });
 
@@ -141,5 +176,6 @@ export async function getMonthlyQuotaStatus(
     limit,
     initialCreditsRemaining: hasInitialCredit ? user.initialScanCreditRemaining : 0,
     initialCreditsExpiresAt: hasInitialCredit ? user.initialScanCreditExpiresAt : null,
+    referralCreditsRemaining: user.referralScanCredits,
   };
 }

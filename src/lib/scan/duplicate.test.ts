@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { looksLikeParsedDuplicate } from "./duplicate";
+import { hasKnownTicketReference, looksLikeParsedDuplicate } from "./duplicate";
 
 const knownBet = {
   date: "2026-07-10",
@@ -21,5 +21,10 @@ describe("looksLikeParsedDuplicate", () => {
   it("does not flag a ticket when a core attribute differs", () => {
     expect(looksLikeParsedDuplicate({ ...knownBet, odds: 1.9 }, [knownBet])).toBe(false);
     expect(looksLikeParsedDuplicate({ ...knownBet, date: "2026-07-11" }, [knownBet])).toBe(false);
+  });
+
+  it("recognises a previously imported bookmaker ticket reference", () => {
+    expect(hasKnownTicketReference("AB-123", ["AB-123", null])).toBe(true);
+    expect(hasKnownTicketReference("AB-123", ["AB-124"])).toBe(false);
   });
 });

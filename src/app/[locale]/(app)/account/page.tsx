@@ -109,6 +109,13 @@ export default async function AccountPage({
         <FeedbackButton />
       </section>
 
+      <Link
+        href="/referrals"
+        className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
+      >
+        {t("referralLink")}
+      </Link>
+
       {isAdminEmail(user.email) && (
         <Link
           href="/admin"

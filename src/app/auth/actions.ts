@@ -8,6 +8,10 @@ import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { createClient } from "@/lib/supabase/server";
 import { isBetaInviteTokenValid, redeemBetaInvite } from "@/lib/beta/program";
 import { authErrorKey } from "@/lib/auth/error-mapping";
+import {
+  attachStoredReferralToNewUser,
+  storeReferralContext,
+} from "@/lib/referral/service";
 
 export type AuthFormState =
   | { error: string; errorCode?: "signupEmailRateLimited"; message?: undefined }
@@ -70,6 +74,7 @@ export async function signUp(
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const invite = String(formData.get("invite") ?? "") || null;
+  const referral = String(formData.get("referral") ?? "") || null;
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "auth.signup" });
   const tErrors = await getTranslations({ locale, namespace: "auth.errors" });
@@ -80,6 +85,10 @@ export async function signUp(
   if (invite && !(await isBetaInviteTokenValid(invite, email))) {
     return { error: tErrors("betaInviteInvalid") };
   }
+
+  // Le contexte signé survit à la confirmation d'e-mail et au détour OAuth,
+  // sans laisser le code accessible au navigateur.
+  await storeReferralContext(referral);
 
   const supabase = await createClient();
   const origin = await getOrigin();
@@ -98,6 +107,7 @@ export async function signUp(
     return { message: t("confirmEmailMessage") };
   }
   if (data.user && invite) await redeemBetaInvite(invite, data.user);
+  if (data.user) await attachStoredReferralToNewUser(data.user.id);
 
   redirectToLocalized({ href: "/dashboard", locale });
 }
@@ -107,6 +117,9 @@ export async function signInWithGoogle(formData: FormData) {
   const origin = await getOrigin();
   const locale = await getLocale();
   const invite = String(formData.get("invite") ?? "") || null;
+  const referral = String(formData.get("referral") ?? "") || null;
+
+  await storeReferralContext(referral);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
