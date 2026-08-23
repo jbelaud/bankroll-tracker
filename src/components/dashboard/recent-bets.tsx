@@ -43,12 +43,12 @@ export async function RecentBets({ bets }: { bets: RecentBet[] }) {
           {tCommon("noBetsYet")}
         </div>
       ) : (
-        <ul className="glass-card divide-y divide-border rounded-xl">
+        <ul className="glass-card divide-y divide-border rounded-xl lg:divide-y-0">
           {bets.map((bet) => {
             const positive = bet.profit >= 0;
             const Icon = positive ? TrendUp : TrendDown;
             return (
-              <li key={bet.id} className="flex min-h-touch items-center gap-3 p-3">
+              <li key={bet.id} className="flex min-h-touch items-center gap-3 p-3 lg:border-b lg:border-border last:lg:border-b-0">
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium">
                     {translateTaxonomy(tSports, bet.sport)}

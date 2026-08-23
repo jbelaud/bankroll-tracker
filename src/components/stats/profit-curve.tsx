@@ -10,7 +10,8 @@ export function ProfitCurve({ data, currency }: { data: { date: string; cumulati
 
   if (data.length === 0) return <p className="py-12 text-center text-sm text-muted-foreground">{t("empty")}</p>;
   return (
-    <ResponsiveContainer width="100%" height={260}>
+    <div className="h-65 lg:h-80">
+    <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={data} margin={{ left: -18, right: 8, top: 12 }}>
         <defs><linearGradient id="profit-curve" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="var(--profit)" stopOpacity={0.3} /><stop offset="100%" stopColor="var(--profit)" stopOpacity={0.02} /></linearGradient></defs>
         <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
@@ -20,5 +21,6 @@ export function ProfitCurve({ data, currency }: { data: { date: string; cumulati
         <Area type="monotone" dataKey="cumulative" stroke="var(--profit)" strokeWidth={2.5} fill="url(#profit-curve)" />
       </AreaChart>
     </ResponsiveContainer>
+    </div>
   );
 }

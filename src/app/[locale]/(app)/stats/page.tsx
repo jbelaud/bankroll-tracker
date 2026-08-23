@@ -29,6 +29,7 @@ import { CondensedStatRow } from "@/components/stats/condensed-stat-row";
 import { ProfitCalendar } from "@/components/stats/profit-calendar";
 import { StatsFilters } from "@/components/stats/stats-filters";
 import { StatsWorkspace } from "@/components/stats/stats-workspace";
+import { ProfitCurve } from "@/components/stats/profit-curve";
 
 const ALL_SPORTS = "__all__";
 
@@ -111,6 +112,16 @@ export default async function StatsPage({
         return map;
       }, {})
   ).sort((a, b) => a.date.localeCompare(b.date));
+  const cumulativeProfit = daily.reduce<Array<{ date: string; cumulative: number }>>(
+    (points, entry) => {
+      points.push({
+        date: entry.date,
+        cumulative: (points.at(-1)?.cumulative ?? 0) + entry.profit,
+      });
+      return points;
+    },
+    []
+  );
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
 
@@ -153,15 +164,21 @@ export default async function StatsPage({
           <h2 className="text-sm font-semibold">{t("sections.analysis")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("sections.analysisDescription")}</p>
         </div>
-        <div className="glass-card rounded-xl p-3">
-          <StatsTabs
-            oddsData={oddsData}
-            stakeData={stakeData}
-            monthlyData={stats.monthly}
-            distributionData={stats.distribution}
-            sportData={bySport}
-            currency={currency}
-          />
+        <div className="grid gap-3 xl:grid-cols-2">
+          <div className="glass-card rounded-xl p-3 lg:p-4">
+            <h3 className="text-sm font-semibold">{t("curve.title")}</h3>
+            <ProfitCurve data={cumulativeProfit} currency={currency} />
+          </div>
+          <div className="glass-card rounded-xl p-3 lg:p-4">
+            <StatsTabs
+              oddsData={oddsData}
+              stakeData={stakeData}
+              monthlyData={stats.monthly}
+              distributionData={stats.distribution}
+              sportData={bySport}
+              currency={currency}
+            />
+          </div>
         </div>
       </section>
 

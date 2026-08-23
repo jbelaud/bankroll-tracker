@@ -23,7 +23,7 @@ export async function BankrollCapitalStats({
   return (
     <section aria-label={t("capitalStatsTitle")} className="glass-card rounded-xl p-3">
       <h2 className="mb-3 text-sm font-semibold">{t("capitalStatsTitle")}</h2>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <CapitalItem label={t("netFunding")} value={fmtMoney(netFunding, locale, currency)} />
         <CapitalItem label={t("betProfit")} value={fmtMoneySigned(profit, locale, currency)} className={profitClass} />
         <CapitalItem label={t("deposits")} value={fmtMoney(deposits, locale, currency)} />

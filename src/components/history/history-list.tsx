@@ -4,11 +4,12 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { BetResult, Currency } from "@prisma/client";
-import { CaretDown, CalendarX, X, ArrowsLeftRight } from "@phosphor-icons/react";
+import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
-import { currencySymbol } from "@/lib/format";
+import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import { groupHistoryBets } from "@/lib/history-grouping";
+import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { Button } from "@/components/ui/button";
 import { HistoryFilters } from "./history-filters";
 import { HistoryBetItem } from "./history-bet-item";
@@ -242,9 +243,19 @@ export function HistoryList({
       {!selectionMode && bets.length > 0 && (
         <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
           <span>{t("summary.bets", { count: filteredBets.length })}</span>
-          <strong className={selectedProfit >= 0 ? "num text-profit" : "num text-loss"}>
-            {selectedProfit >= 0 ? "+" : ""}{selectedProfit.toFixed(2)}{currencySymbol(currency)}
-          </strong>
+          <div className="flex items-center gap-3">
+            <strong className={selectedProfit >= 0 ? "num text-profit" : "num text-loss"}>
+              {selectedProfit >= 0 ? "+" : ""}{selectedProfit.toFixed(2)}{currencySymbol(currency)}
+            </strong>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectionMode(true)}
+              className="hidden min-h-touch rounded-lg text-xs font-semibold lg:inline-flex"
+            >
+              {t("table.select")}
+            </Button>
+          </div>
         </div>
       )}
 
@@ -256,7 +267,18 @@ export function HistoryList({
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <>
+          <DesktopHistoryTable
+            bets={filteredBets}
+            currency={currency}
+            scopedToBankroll={scopedToBankroll}
+            selectionMode={selectionMode}
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onRequestEdit={handleRequestEdit}
+            onRequestDelete={(id) => setDeleteTargetIds([id])}
+          />
+          <div className="flex flex-col gap-4 lg:hidden">
           {groupedBets.map((month) => (
             <section key={month.key} className="overflow-hidden rounded-xl border border-border">
               <h2>
@@ -350,7 +372,8 @@ export function HistoryList({
               ) : null}
             </section>
           ))}
-        </div>
+          </div>
+        </>
       )}
 
       <DeleteBetsDrawer
@@ -376,6 +399,106 @@ export function HistoryList({
         onSaved={handleSaved}
         currency={currency}
       />
+    </div>
+  );
+}
+
+function DesktopHistoryTable({
+  bets,
+  currency,
+  scopedToBankroll,
+  selectionMode,
+  selectedIds,
+  onToggleSelect,
+  onRequestEdit,
+  onRequestDelete,
+}: {
+  bets: HistoryBetItemData[];
+  currency: Currency;
+  scopedToBankroll: boolean;
+  selectionMode: boolean;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onRequestEdit: (id: string) => void;
+  onRequestDelete: (id: string) => void;
+}) {
+  const locale = useLocale();
+  const t = useTranslations("history.table");
+  const tResults = useTranslations("results");
+  const tSports = useTranslations("sports");
+  const tBetTypes = useTranslations("betTypes");
+
+  return (
+    <div className="hidden overflow-hidden rounded-xl border border-border lg:block">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[860px] border-collapse text-left text-xs">
+          <thead className="bg-muted/45 text-[0.65rem] uppercase tracking-wider text-muted-foreground">
+            <tr>
+              {selectionMode && <th className="w-12 px-3 py-3 font-medium"><span className="sr-only">{t("select")}</span></th>}
+              <th className="whitespace-nowrap px-3 py-3 font-medium">{t("date")}</th>
+              <th className="min-w-56 px-3 py-3 font-medium">{t("event")}</th>
+              <th className="whitespace-nowrap px-3 py-3 font-medium">{t("sport")}</th>
+              {!scopedToBankroll && <th className="px-3 py-3 font-medium">{t("bankroll")}</th>}
+              <th className="whitespace-nowrap px-3 py-3 text-right font-medium">{t("stake")}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-right font-medium">{t("odds")}</th>
+              <th className="whitespace-nowrap px-3 py-3 font-medium">{t("result")}</th>
+              <th className="whitespace-nowrap px-3 py-3 text-right font-medium">{t("profit")}</th>
+              <th className="w-24 px-3 py-3 text-right font-medium">{t("actions")}</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/80">
+            {bets.map((bet) => {
+              const positive = bet.profit >= 0;
+              const TrendIcon = positive ? TrendUp : TrendDown;
+              const event = bet.description || bet.eventResult || "—";
+
+              return (
+                <tr key={bet.id} aria-selected={selectionMode ? selectedIds.has(bet.id) : undefined} className="bg-background/35 transition-colors hover:bg-muted/35">
+                  {selectionMode && (
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => onToggleSelect(bet.id)}
+                        aria-pressed={selectedIds.has(bet.id)}
+                        aria-label={`${t("select")} ${event}`}
+                        className={selectedIds.has(bet.id) ? "flex min-h-touch min-w-touch items-center justify-center rounded border border-primary bg-primary text-primary-foreground" : "flex min-h-touch min-w-touch items-center justify-center rounded border border-input bg-background"}
+                      >
+                        {selectedIds.has(bet.id) ? "✓" : null}
+                      </button>
+                    </td>
+                  )}
+                  <td className="num whitespace-nowrap px-3 py-3 text-muted-foreground">{fmtDateWithYear(bet.date, locale)}</td>
+                  <td className="max-w-80 px-3 py-3">
+                    <span className="block truncate font-medium">{event}</span>
+                    {bet.description && bet.eventResult && <span className="mt-0.5 block truncate text-muted-foreground">{bet.eventResult}</span>}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <span className="block font-medium">{translateTaxonomy(tSports, bet.sport)}</span>
+                    <span className="block text-muted-foreground">{translateTaxonomy(tBetTypes, bet.betType)}</span>
+                  </td>
+                  {!scopedToBankroll && <td className="max-w-32 truncate px-3 py-3 text-muted-foreground">{bet.bankrollName}</td>}
+                  <td className="num whitespace-nowrap px-3 py-3 text-right">{fmtMoney(bet.stake, locale, currency)}</td>
+                  <td className="num whitespace-nowrap px-3 py-3 text-right">{fmtOdds(bet.odds, locale)}</td>
+                  <td className="px-3 py-3"><span className="inline-flex rounded-full bg-muted px-2 py-1 font-medium text-muted-foreground">{tResults(bet.result)}</span></td>
+                  <td className={positive ? "num whitespace-nowrap px-3 py-3 text-right font-semibold text-profit" : "num whitespace-nowrap px-3 py-3 text-right font-semibold text-loss"}>
+                    {bet.result === "EN_ATTENTE" ? "—" : <span className="inline-flex items-center gap-1"><TrendIcon size={13} weight="bold" aria-hidden />{fmtMoneySigned(bet.profit, locale, currency)}</span>}
+                  </td>
+                  <td className="px-2 py-2">
+                    <div className="flex justify-end gap-1">
+                      <button type="button" onClick={() => onRequestEdit(bet.id)} aria-label={t("editAriaLabel")} className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                        <PencilSimple size={17} aria-hidden />
+                      </button>
+                      <button type="button" onClick={() => onRequestDelete(bet.id)} aria-label={t("deleteAriaLabel")} className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-loss-muted hover:text-loss">
+                        <TrashSimple size={17} aria-hidden />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

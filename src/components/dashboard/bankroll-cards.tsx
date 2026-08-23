@@ -31,12 +31,12 @@ export async function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[
           {tCommon("seeAll")}
         </Link>
       </div>
-      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1">
+      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-2 lg:overflow-visible lg:px-0">
         {bankrolls.map((br) => (
           <Link
             key={br.id}
             href={`/bankrolls/${br.id}`}
-            className="glass-card flex w-40 shrink-0 snap-start flex-col gap-2 rounded-xl p-4 transition-transform active:scale-[0.97]"
+            className="glass-card flex w-40 shrink-0 snap-start flex-col gap-2 rounded-xl p-4 transition-transform active:scale-[0.97] lg:w-auto lg:shrink"
           >
             <div className="flex flex-col">
               <span className="truncate text-sm font-medium">{br.name}</span>

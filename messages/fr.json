@@ -32,10 +32,16 @@
   "nav": {
     "ariaLabel": "Navigation principale",
     "home": "Accueil",
+    "history": "Historique",
     "bankrolls": "Bankrolls",
     "scanner": "Scanner",
     "stats": "Stats",
-    "account": "Compte"
+    "account": "Compte",
+    "groups": {
+      "tracking": "Suivi",
+      "analysis": "Analyse",
+      "manage": "Gérer"
+    }
   },
 
   "footer": {
@@ -106,6 +112,7 @@
   },
 
   "dashboard": {
+    "title": "Tableau de bord",
     "welcomeTitle": "Bienvenue sur BetTrack",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
     "onboarding": {
@@ -291,6 +298,11 @@
       "taxonomyMismatchWarning": "Certains sports et types de pari ne concordent pas. Vérifie-les avant l'import : ils ont été mis sur « Autre » pour ne pas enregistrer de donnée incohérente.",
       "bankrollLabel": "Importer dans cette bankroll",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
+      "qualityOffer": {
+        "title": "Ce bookmaker n'est pas encore pleinement testé. Vous pouvez aider BetTrack à améliorer la compatibilité.",
+        "consent": "Partager ce scan avec BetTrack pour améliorer la compatibilité de ce bookmaker.",
+        "details": "Seuls les administrateurs BetTrack autorisés pourront consulter la capture, uniquement à cette fin. Elle peut contenir une référence, un solde ou un pseudo ; vous pouvez la supprimer à tout moment."
+      },
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
       "importing": "Import en cours…",
       "noneToImport": "Aucun pari à importer",
@@ -491,6 +503,20 @@
     "summary": {
       "bets": "{count, plural, one {# pari affiché} other {# paris affichés}}"
     },
+    "table": {
+      "select": "Sélectionner",
+      "date": "Date",
+      "event": "Événement",
+      "sport": "Sport",
+      "bankroll": "Bankroll",
+      "stake": "Mise",
+      "odds": "Cote",
+      "result": "Résultat",
+      "profit": "P&L",
+      "actions": "Actions",
+      "editAriaLabel": "Modifier le résultat de ce pari",
+      "deleteAriaLabel": "Supprimer ce pari"
+    },
     "accordion": {
       "bets": "{count, plural, one {# pari} other {# paris}}",
       "week": "Semaine du {start} au {end}"
@@ -560,6 +586,11 @@
       "title": "Mes données",
       "exportJson": "Exporter tout (JSON)",
       "exportCsv": "Exporter les paris (CSV)"
+    },
+    "qualityReports": {
+      "title": "Partages qualité des scans",
+      "description": "Vous pouvez supprimer immédiatement un partage et sa capture privée.",
+      "delete": "Supprimer"
     },
     "plan": {
       "title": "Abonnement",

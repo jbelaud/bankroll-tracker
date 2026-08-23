@@ -46,7 +46,7 @@ export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; cu
   const t = await getTranslations("stats.overview");
 
   return (
-    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-2">
+    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
       <StatCard label={t("totalBets")} value={String(stats.totalBets)} />
       <StatCard
         label={t("avgOdds")}

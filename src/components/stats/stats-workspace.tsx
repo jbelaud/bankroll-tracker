@@ -46,7 +46,7 @@ export function StatsWorkspace({
             <button
               type="button"
               onClick={() => setCalendarOpen(true)}
-              className="inline-flex min-h-touch items-center gap-1.5 rounded-xl border border-input bg-background px-3 text-xs font-semibold transition-colors hover:bg-muted"
+              className="inline-flex min-h-touch items-center gap-1.5 rounded-xl border border-input bg-background px-3 text-xs font-semibold transition-colors hover:bg-muted lg:hidden"
             >
               <CalendarBlank size={15} weight="bold" aria-hidden />
               {t("calendar")}
@@ -61,7 +61,10 @@ export function StatsWorkspace({
           </div>
         )}
 
-        {children}
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="flex min-w-0 flex-col gap-6">{children}</div>
+          <aside className="hidden lg:sticky lg:top-24 lg:block">{calendar}</aside>
+        </div>
       </div>
 
       <Drawer open={filtersOpen} onOpenChange={setFiltersOpen} swipeDirection="left">
@@ -81,22 +84,24 @@ export function StatsWorkspace({
         </DrawerContent>
       </Drawer>
 
-      <Drawer open={calendarOpen} onOpenChange={setCalendarOpen} showSwipeHandle>
-        <DrawerContent className="rounded-t-2xl">
-          <DrawerHeader className="flex-row items-center justify-between p-4 pb-0">
-            <DrawerTitle className="text-base">{t("calendar")}</DrawerTitle>
-            <button
-              type="button"
-              onClick={() => setCalendarOpen(false)}
-              aria-label={t("close")}
-              className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-            >
-              <X size={18} aria-hidden />
-            </button>
-          </DrawerHeader>
-          <div className="p-4 pb-[max(env(safe-area-inset-bottom),1.5rem)]">{calendar}</div>
-        </DrawerContent>
-      </Drawer>
+      <div className="lg:hidden">
+        <Drawer open={calendarOpen} onOpenChange={setCalendarOpen} showSwipeHandle>
+          <DrawerContent className="rounded-t-2xl">
+            <DrawerHeader className="flex-row items-center justify-between p-4 pb-0">
+              <DrawerTitle className="text-base">{t("calendar")}</DrawerTitle>
+              <button
+                type="button"
+                onClick={() => setCalendarOpen(false)}
+                aria-label={t("close")}
+                className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <X size={18} aria-hidden />
+              </button>
+            </DrawerHeader>
+            <div className="p-4 pb-[max(env(safe-area-inset-bottom),1.5rem)]">{calendar}</div>
+          </DrawerContent>
+        </Drawer>
+      </div>
     </>
   );
 }

@@ -31,6 +31,7 @@ export function UploadZone({
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
   const [galleryError, setGalleryError] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
   const t = useTranslations("scan.upload");
 
   const handleCameraFiles = (list: FileList | null) => {
@@ -47,9 +48,15 @@ export function UploadZone({
     onFilesSelected(Array.from(list));
   };
 
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    handleGalleryFiles(event.dataTransfer.files);
+  };
+
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex flex-col gap-1.5 animate-fade-in-up">
+      <div className="flex flex-col gap-1.5 animate-fade-in-up lg:max-w-md">
         <Label htmlFor="scan-bankroll" className="text-xs">
           {t("importInto")}
         </Label>
@@ -99,13 +106,22 @@ export function UploadZone({
       />
 
       <div
-        className="flex flex-1 flex-col items-center justify-center gap-5 animate-fade-in-up"
+        onDragEnter={(event) => {
+          event.preventDefault();
+          setIsDragging(true);
+        }}
+        onDragOver={(event) => event.preventDefault()}
+        onDragLeave={(event) => {
+          if (event.currentTarget === event.target) setIsDragging(false);
+        }}
+        onDrop={handleDrop}
+        className={`flex flex-1 flex-col items-center justify-center gap-5 rounded-2xl border border-dashed p-5 animate-fade-in-up lg:min-h-[32rem] lg:p-8 ${isDragging ? "border-primary bg-primary/10" : "border-border bg-muted/15"}`}
         style={{ animationDelay: "80ms" }}
       >
         <button
           type="button"
           onClick={() => cameraRef.current?.click()}
-          className="flex size-36 flex-col items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground animate-pulse-glow transition-transform active:scale-95"
+          className="flex size-36 flex-col items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground animate-pulse-glow transition-transform active:scale-95 lg:size-40"
         >
           <Scan size={44} weight="bold" aria-hidden />
           <span className="text-sm font-semibold">{t("scanButton")}</span>
@@ -116,7 +132,7 @@ export function UploadZone({
 
         <section
           aria-label={t("tips.ariaLabel")}
-          className="w-full max-w-sm rounded-2xl border border-primary/25 bg-primary/[0.06] p-4 text-left shadow-[0_12px_32px_-24px_color-mix(in_oklch,var(--primary),transparent_15%)] transition-colors hover:bg-primary/[0.09]"
+          className="w-full max-w-xl rounded-2xl border border-primary/25 bg-primary/[0.06] p-4 text-left shadow-[0_12px_32px_-24px_color-mix(in_oklch,var(--primary),transparent_15%)] transition-colors hover:bg-primary/[0.09]"
         >
           <div className="flex items-start gap-3">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">

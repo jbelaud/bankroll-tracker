@@ -95,8 +95,8 @@ export function ReviewList({
 
   return (
     // pb élargi : la barre de confirmation fixe ne doit jamais masquer une card
-    <div className="flex flex-col gap-4 pb-24">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-28">
+      <div className="flex items-center justify-between lg:col-span-12">
         <h2 className="text-base font-semibold">
           {t("title", { count: bets.length })}
         </h2>
@@ -112,24 +112,25 @@ export function ReviewList({
       </div>
 
       {duplicateCount > 0 && (
-        <p className="flex items-start gap-1.5 text-xs text-warning">
+        <p className="flex items-start gap-1.5 text-xs text-warning lg:col-span-12">
           <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("duplicateWarning")}
         </p>
       )}
       {suggestedCount > 0 && (
-        <p className="flex items-start gap-1.5 text-xs text-chart-4">
+        <p className="flex items-start gap-1.5 text-xs text-chart-4 lg:col-span-12">
           <Lightbulb size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("suggestedWarning")}
         </p>
       )}
       {taxonomyMismatchCount > 0 && (
-        <p className="flex items-start gap-1.5 text-xs text-warning">
+        <p className="flex items-start gap-1.5 text-xs text-warning lg:col-span-12">
           <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("taxonomyMismatchWarning")}
         </p>
       )}
 
+      <aside className="flex flex-col gap-3 lg:col-span-3 lg:sticky lg:top-24">
       <section className="rounded-xl border border-border bg-muted/40 p-3">
         <label htmlFor="review-bankroll" className="text-xs font-medium">
           {t("bankrollLabel")}
@@ -167,7 +168,7 @@ export function ReviewList({
 
       {showQualityOffer && (
         <section className="rounded-xl border border-border bg-muted/40 p-3 text-xs">
-          <p className="font-medium">Ce bookmaker n&apos;est pas encore pleinement testé. Vous pouvez aider BetTrack à améliorer la compatibilité.</p>
+          <p className="font-medium">{t("qualityOffer.title")}</p>
           <label className="mt-3 flex cursor-pointer items-start gap-2">
             <input
               type="checkbox"
@@ -177,14 +178,15 @@ export function ReviewList({
               className="mt-0.5"
             />
             <span>
-              Partager ce scan avec BetTrack pour améliorer la compatibilité de ce bookmaker.
-              <span className="mt-1 block text-muted-foreground">Seuls les administrateurs BetTrack autorisés pourront consulter la capture, uniquement à cette fin. Elle peut contenir une référence, un solde ou un pseudo ; vous pouvez la supprimer à tout moment.</span>
+              {t("qualityOffer.consent")}
+              <span className="mt-1 block text-muted-foreground">{t("qualityOffer.details")}</span>
             </span>
           </label>
         </section>
       )}
+      </aside>
 
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3 lg:col-span-9 xl:grid xl:grid-cols-2">
         {bets.map((bet, i) => (
           <ReviewBetCard
             key={i}
@@ -200,17 +202,17 @@ export function ReviewList({
       </ul>
 
       {error && (
-        <p role="alert" className="text-xs text-loss">
+        <p role="alert" className="text-xs text-loss lg:col-span-12">
           {error}
         </p>
       )}
 
       {/* Zone nav + bouton Scan saillant : la confirmation doit rester entièrement au-dessus. */}
-      <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4">
+      <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4 lg:left-64 lg:bottom-[calc(1rem+var(--rg-footer-h))] lg:max-w-none lg:px-8 xl:px-10">
         <Button
           onClick={() => onConfirm(kept, shareQuality)}
           disabled={kept.length === 0 || importing}
-          className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg"
+          className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg lg:mx-auto lg:max-w-2xl"
         >
           {importing
             ? t("importing")

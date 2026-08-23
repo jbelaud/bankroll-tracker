@@ -9,7 +9,12 @@ import {
   type BankrollListItem,
 } from "@/components/bankrolls/bankroll-list";
 
-export default async function BankrollsPage() {
+export default async function BankrollsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ create?: string | string[] }>;
+}) {
+  const { create } = await searchParams;
   const [bankrolls, bets, movements] = await Promise.all([listBankrolls(), listAllBets(), listAllBankrollMovements()]);
   const summaries = summarizeBankrolls(bankrolls, bets, movements);
 
@@ -37,7 +42,11 @@ export default async function BankrollsPage() {
         <h1 className="text-xl font-semibold">{t("title")}</h1>
         <p className="mt-1 text-xs text-muted-foreground">{t("subtitle", { count: bankrolls.length })}</p>
       </header>
-      <BankrollList bankrolls={items} currency={currency} />
+      <BankrollList
+        bankrolls={items}
+        currency={currency}
+        initialCreateOpen={create === "1"}
+      />
     </div>
   );
 }

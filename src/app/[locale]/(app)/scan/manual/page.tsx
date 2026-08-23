@@ -39,7 +39,7 @@ export default async function ManualEntryPage() {
   const currency = await getServerCurrency();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex max-w-3xl flex-col gap-4">
       <h1 className="text-xl font-semibold">{tCommon("manualEntryTitle")}</h1>
       <ManualEntryForm
         bankrolls={activeBankrolls.map((br) => ({ id: br.id, name: br.name, bookmaker: br.bookmaker }))}

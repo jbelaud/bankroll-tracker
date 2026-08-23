@@ -7,7 +7,7 @@ export async function ResponsibleGamblingFooter() {
 
   return (
     <footer className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm">
-      <div className="mx-auto flex h-[var(--rg-footer-h)] max-w-md flex-col items-center justify-center px-3 text-center text-[0.6rem] text-muted-foreground">
+      <div className="mx-auto flex h-[var(--rg-footer-h)] max-w-md flex-col items-center justify-center px-3 text-center text-[0.6rem] text-muted-foreground lg:max-w-none lg:pl-64">
         <p>
           {t("label")}{" "}
           <a href="https://www.joueurs-info-service.fr" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">

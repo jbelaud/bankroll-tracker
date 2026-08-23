@@ -46,13 +46,13 @@ export function PerformancePanel({
   }));
 
   return (
-    <section aria-label={t("ariaLabel")} className="overflow-hidden rounded-2xl border border-border bg-linear-to-br from-primary/12 via-background to-profit/10 p-4">
+    <section aria-label={t("ariaLabel")} className="overflow-hidden rounded-2xl border border-border bg-linear-to-br from-primary/12 via-background to-profit/10 p-4 lg:p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             {t("eyebrow")}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{fmtMoney(balance, locale, currency)}</h1>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight">{fmtMoney(balance, locale, currency)}</h2>
         </div>
         <Link
           href="/stats"
@@ -63,7 +63,7 @@ export function PerformancePanel({
         </Link>
       </div>
 
-      <div className="mt-3 h-52">
+      <div className="mt-3 h-52 lg:h-72">
         {chartData.length >= 2 ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 8, right: 4, left: -18, bottom: 0 }}>

@@ -55,12 +55,12 @@ export default async function AccountPage({
   const t = await getTranslations("account");
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+    <div className="flex flex-col gap-4 xl:grid xl:grid-cols-12 xl:items-start xl:gap-6">
+      <h1 className="text-xl font-semibold xl:col-span-12">{t("title")}</h1>
 
-      <ProfileHeader email={user.email ?? ""} />
+      <div className="xl:col-span-7"><ProfileHeader email={user.email ?? ""} /></div>
 
-      <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+      <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-5">
         <div className="flex gap-3">
           <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
           <div>
@@ -79,29 +79,29 @@ export default async function AccountPage({
         </a>
       </section>
 
-      <AccountGoalsCard
-        monthProfit={monthProfit}
-        initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0}
-        initialLossLimit={dbUser?.monthlyLossLimit ?? 0}
-        currency={dbUser?.currency ?? "EUR"}
-      />
+      <div className="xl:col-span-6"><AccountGoalsCard
+          monthProfit={monthProfit}
+          initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0}
+          initialLossLimit={dbUser?.monthlyLossLimit ?? 0}
+          currency={dbUser?.currency ?? "EUR"}
+        /></div>
 
-      <PlanCard
-        plan={dbUser?.plan ?? "FREE"}
-        currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
-        betaOfferEligible={canUseBetaOffer({
-          email: user.email,
-          betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
-        })}
-        initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0}
-        initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null}
-        betaPhaseActive={betaProgram?.phase !== "ENDED"}
-      />
+      <div className="xl:col-span-6"><PlanCard
+          plan={dbUser?.plan ?? "FREE"}
+          currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
+          betaOfferEligible={canUseBetaOffer({
+            email: user.email,
+            betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
+          })}
+          initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0}
+          initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null}
+          betaPhaseActive={betaProgram?.phase !== "ENDED"}
+        /></div>
 
-      <LanguageSwitcher />
-      <CurrencySwitcher currency={dbUser?.currency ?? "EUR"} />
+      <div className="xl:col-span-3"><LanguageSwitcher /></div>
+      <div className="xl:col-span-3"><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
 
-      <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+      <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
         <div>
           <h2 className="text-sm font-semibold">{t("feedback.sectionTitle")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("feedback.sectionDescription")}</p>
@@ -112,20 +112,20 @@ export default async function AccountPage({
       {isAdminEmail(user.email) && (
         <Link
           href="/admin"
-          className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary"
+          className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
         >
           {t("adminLink")}
         </Link>
       )}
 
-      <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+      <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
         <h2 className="text-sm font-semibold">{t("data.title")}</h2>
         <ExportDataButton />
       </section>
 
-      <ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} />
+      <div className="xl:col-span-12"><ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} /></div>
 
-      <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+      <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
         <h2 className="text-sm font-semibold">{t("security.title")}</h2>
         <SignOutButton />
       </section>

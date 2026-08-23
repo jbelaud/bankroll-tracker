@@ -50,7 +50,7 @@ export async function KpiRow({
   const t = await getTranslations("dashboard.kpi");
 
   return (
-    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-3">
+    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
       <KpiTile label={t("bets")} value={String(settledCount)} sub={t("settled", { count: settledCount })} />
       <KpiTile label={t("profit")} value={fmtMoneySigned(profit, locale, currency)} trend={profit} />
       <KpiTile

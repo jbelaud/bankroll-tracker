@@ -93,54 +93,62 @@ export default async function BankrollDetailPage({
   const currency = await getServerCurrency();
 
   return (
-    <div className="flex flex-col gap-4">
-      <BankrollDetailHeader
-        name={bankroll.name}
-        bookmaker={bankroll.bookmaker}
-        balance={balance}
-        profit={profit}
-        initial={bankroll.initial}
-        betCount={bets.length}
-        pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
-        currency={currency}
-      />
+    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6">
+      <div className="lg:col-span-12">
+        <BankrollDetailHeader
+          name={bankroll.name}
+          bookmaker={bankroll.bookmaker}
+          balance={balance}
+          profit={profit}
+          initial={bankroll.initial}
+          betCount={bets.length}
+          pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
+          currency={currency}
+        />
+      </div>
 
-      <BankrollCapitalStats
-        deposits={capital.deposits}
-        withdrawals={capital.withdrawals}
-        netFunding={capital.netFunding}
-        profit={capital.profit}
-        performancePct={capital.performancePct}
-        currency={currency}
-      />
+      <div className="lg:col-span-5">
+        <BankrollCapitalStats
+          deposits={capital.deposits}
+          withdrawals={capital.withdrawals}
+          netFunding={capital.netFunding}
+          profit={capital.profit}
+          performancePct={capital.performancePct}
+          currency={currency}
+        />
+      </div>
 
-      <BankrollDetailActions
-        bankroll={{
-          id: bankroll.id,
-          name: bankroll.name,
-          bookmaker: bankroll.bookmaker,
-          initial: bankroll.initial,
-        }}
-        betCount={bets.length}
-        deleteAction={deleteThisBankroll}
-        currency={currency}
-      />
+      <div className="lg:col-span-3">
+        <BankrollDetailActions
+          bankroll={{
+            id: bankroll.id,
+            name: bankroll.name,
+            bookmaker: bankroll.bookmaker,
+            initial: bankroll.initial,
+          }}
+          betCount={bets.length}
+          deleteAction={deleteThisBankroll}
+          currency={currency}
+        />
+      </div>
 
-      <BankrollMovementPanel
-        bankrollId={bankroll.id}
-        movements={movements.map((movement) => ({ id: movement.id, type: movement.type, amount: movement.amount, note: movement.note, date: movement.date.toISOString() }))}
-        currency={currency}
-        locale={locale}
-        today={new Date().toISOString().slice(0, 10)}
-      />
+      <div className="lg:col-span-4">
+        <BankrollMovementPanel
+          bankrollId={bankroll.id}
+          movements={movements.map((movement) => ({ id: movement.id, type: movement.type, amount: movement.amount, note: movement.note, date: movement.date.toISOString() }))}
+          currency={currency}
+          locale={locale}
+          today={new Date().toISOString().slice(0, 10)}
+        />
+      </div>
 
       {curve.length >= 2 && (
-        <div className="glass-card rounded-xl p-4">
+        <div className="glass-card rounded-xl p-4 lg:col-span-12">
           <Sparkline points={curve} />
         </div>
       )}
 
-      <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-2 lg:col-span-12">
         <h2 className="text-sm font-semibold">{t("historyTitle")}</h2>
       <HistoryList
         bets={items}

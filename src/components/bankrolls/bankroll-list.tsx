@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Plus, PencilSimple, Wallet, LockKey, Crown } from "@phosphor-icons/react";
@@ -23,13 +23,28 @@ export type BankrollListItem = BankrollFormTarget & {
 export function BankrollList({
   bankrolls,
   currency,
+  initialCreateOpen = false,
 }: {
   bankrolls: BankrollListItem[];
   currency: Currency;
+  initialCreateOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialCreateOpen);
   const locale = useLocale();
   const t = useTranslations("bankrolls");
+
+  useEffect(() => {
+    if (initialCreateOpen) {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("create");
+      const query = params.toString();
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`
+      );
+    }
+  }, [initialCreateOpen]);
 
   const openCreate = () => {
     setOpen(true);
@@ -39,7 +54,7 @@ export function BankrollList({
     <div className="flex flex-col gap-4">
       <Button
         onClick={openCreate}
-        className="min-h-touch w-full rounded-lg text-sm font-semibold animate-fade-in-up"
+        className="min-h-touch w-full rounded-lg text-sm font-semibold animate-fade-in-up sm:w-auto"
       >
         <Plus size={18} weight="bold" aria-hidden />
         {t("newBankroll")}
@@ -51,7 +66,7 @@ export function BankrollList({
           <p className="text-sm text-muted-foreground">{t("emptyState")}</p>
         </div>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {bankrolls.map((br, i) => (
             <li
               key={br.id}

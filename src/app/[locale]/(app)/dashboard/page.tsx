@@ -17,18 +17,22 @@ import { PerformancePanel } from "@/components/dashboard/performance-panel";
 import { OnboardingCard } from "@/components/dashboard/onboarding-card";
 import { CapitalFlowCard } from "@/components/dashboard/capital-flow-card";
 import { DiscordCommunityCard } from "@/components/dashboard/discord-community-card";
+import { getTranslations } from "next-intl/server";
+import { cn } from "@/lib/utils";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
   index,
   children,
+  className,
 }: {
   index: number;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div
-      className="animate-fade-in-up"
+      className={cn("animate-fade-in-up", className)}
       style={{ animationDelay: `${index * 70}ms` }}
     >
       {children}
@@ -71,7 +75,10 @@ export default async function DashboardPage() {
     throw error;
   }
   const plan = dbUser?.plan ?? "FREE";
-  const currency = await getServerCurrency();
+  const [currency, t] = await Promise.all([
+    getServerCurrency(),
+    getTranslations("dashboard"),
+  ]);
   const quota = await getMonthlyQuotaStatus(user.id, plan);
 
   // Après le passage au Freemium, les bankrolls verrouillées ne doivent plus
@@ -140,21 +147,22 @@ export default async function DashboardPage() {
 
   if (bankrolls.length === 0) {
     return (
-      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center py-8 animate-fade-in-up">
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center py-8 animate-fade-in-up">
         <OnboardingCard hasBankroll={false} hasBet={false} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 xl:grid xl:grid-cols-12 xl:items-start">
+      <h1 className="sr-only">{t("title")}</h1>
       {bets.length === 0 && (
-        <Reveal index={0}>
+        <Reveal index={0} className="xl:col-span-12">
           <OnboardingCard hasBankroll hasBet={false} />
         </Reveal>
       )}
 
-      <Reveal index={bets.length === 0 ? 1 : 0}>
+      <Reveal index={bets.length === 0 ? 1 : 0} className="xl:col-span-8">
         <PerformancePanel
           points={performancePoints}
           balance={totalBalance}
@@ -163,12 +171,12 @@ export default async function DashboardPage() {
       </Reveal>
 
       {bets.length > 0 && (
-        <Reveal index={1}>
+        <Reveal index={1} className="xl:col-span-4">
           <DiscordCommunityCard />
         </Reveal>
       )}
 
-      <Reveal index={2}>
+      <Reveal index={2} className="xl:col-span-8">
         <CapitalFlowCard
           deposits={totalDeposits}
           withdrawals={totalWithdrawals}
@@ -178,7 +186,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={3}>
+      <Reveal index={3} className="xl:col-span-4">
         <KpiRow
           profit={totalProfit}
           roi={roi}
@@ -188,7 +196,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={4}>
+      <Reveal index={4} className="xl:col-span-4">
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -196,7 +204,7 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={5}>
+      <Reveal index={5} className="xl:col-span-4">
         <QuotaCard
           plan={plan}
           scansUsed={quota.used}
@@ -207,11 +215,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={6}>
+      <Reveal index={6} className="xl:col-span-5">
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={7}>
+      <Reveal index={7} className="xl:col-span-7">
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>

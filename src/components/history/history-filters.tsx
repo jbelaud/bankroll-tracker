@@ -53,8 +53,8 @@ export function HistoryFilters({
   ];
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="relative">
+    <div className="flex flex-col gap-2 lg:grid lg:grid-cols-[minmax(16rem,1.6fr)_minmax(20rem,2fr)_minmax(12rem,1fr)] lg:items-center lg:gap-3">
+      <div className="relative lg:col-span-1">
         <MagnifyingGlass size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
         <input
           type="search"
@@ -70,7 +70,7 @@ export function HistoryFilters({
         )}
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-4 gap-1.5 lg:col-span-1">
         {quickResults.map((item) => (
           <button
             key={item.value ?? "all"}
@@ -87,7 +87,7 @@ export function HistoryFilters({
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2 lg:col-span-1">
         <Select
           value={sport ?? ALL}
           onValueChange={(v) => onSportChange(v === ALL ? null : v)}
@@ -138,7 +138,7 @@ export function HistoryFilters({
       </div>
 
       {hasFilters && (
-        <button type="button" onClick={onClear} className="self-end text-xs font-semibold text-primary underline underline-offset-2">
+        <button type="button" onClick={onClear} className="self-end text-xs font-semibold text-primary underline underline-offset-2 lg:col-span-3 lg:justify-self-end">
           {t("clearAll")}
         </button>
       )}

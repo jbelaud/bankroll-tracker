@@ -32,10 +32,16 @@
   "nav": {
     "ariaLabel": "Main navigation",
     "home": "Home",
+    "history": "History",
     "bankrolls": "Bankrolls",
     "scanner": "Scan",
     "stats": "Stats",
-    "account": "Account"
+    "account": "Account",
+    "groups": {
+      "tracking": "Tracking",
+      "analysis": "Analysis",
+      "manage": "Manage"
+    }
   },
 
   "footer": {
@@ -106,6 +112,7 @@
   },
 
   "dashboard": {
+    "title": "Dashboard",
     "welcomeTitle": "Welcome to BetTrack",
     "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
     "onboarding": {
@@ -291,6 +298,11 @@
       "taxonomyMismatchWarning": "Some sports and bet types do not match. Check them before importing: they were set to “Other” to avoid saving inconsistent data.",
       "bankrollLabel": "Import into this bankroll",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
+      "qualityOffer": {
+        "title": "This bookmaker has not yet been fully tested. You can help BetTrack improve compatibility.",
+        "consent": "Share this scan with BetTrack to help improve compatibility for this bookmaker.",
+        "details": "Only authorized BetTrack administrators can access the screenshot, solely for this purpose. It may contain a reference, balance or username; you can delete it at any time."
+      },
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
       "importing": "Importing…",
       "noneToImport": "No bets to import",
@@ -491,6 +503,20 @@
     "summary": {
       "bets": "{count, plural, one {# bet shown} other {# bets shown}}"
     },
+    "table": {
+      "select": "Select",
+      "date": "Date",
+      "event": "Event",
+      "sport": "Sport",
+      "bankroll": "Bankroll",
+      "stake": "Stake",
+      "odds": "Odds",
+      "result": "Result",
+      "profit": "P&L",
+      "actions": "Actions",
+      "editAriaLabel": "Edit this bet's result",
+      "deleteAriaLabel": "Delete this bet"
+    },
     "accordion": {
       "bets": "{count, plural, one {# bet} other {# bets}}",
       "week": "Week of {start} to {end}"
@@ -560,6 +586,11 @@
       "title": "My data",
       "exportJson": "Export everything (JSON)",
       "exportCsv": "Export bets (CSV)"
+    },
+    "qualityReports": {
+      "title": "Scan quality shares",
+      "description": "You can immediately delete a shared scan and its private screenshot.",
+      "delete": "Delete"
     },
     "plan": {
       "title": "Subscription",
