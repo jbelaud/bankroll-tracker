@@ -84,7 +84,24 @@
       "or": "or",
       "google": "Continue with Google",
       "hasAccount": "Already have an account?",
-      "loginLink": "Sign in"
+      "loginLink": "Sign in",
+      "freemium": {
+        "betaEyebrow": "BetTrack beta · free access",
+        "standardEyebrow": "Freemium account",
+        "betaDescription": "Create your account for free: the beta includes expanded limits, with no card required.",
+        "standardDescription": "Create your account for free and start tracking your bets without manual entry.",
+        "betaBenefitBankroll": "4 active bankrolls included during the beta",
+        "standardBenefitBankroll": "2 active bankrolls with the Freemium account",
+        "betaBenefitScans": "50 AI scans included per 30-day period",
+        "standardBenefitScans": "10 AI scans included each month",
+        "benefitFeatures": "History, statistics and corrections before every import",
+        "noCard": "No card is required to create your account.",
+        "preview": {
+          "bets": "Bets",
+          "roi": "ROI",
+          "profit": "Profit"
+        }
+      }
     }
   },
 

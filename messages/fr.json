@@ -84,7 +84,24 @@
       "or": "ou",
       "google": "Continuer avec Google",
       "hasAccount": "Déjà un compte ?",
-      "loginLink": "Se connecter"
+      "loginLink": "Se connecter",
+      "freemium": {
+        "betaEyebrow": "Bêta BetTrack · accès gratuit",
+        "standardEyebrow": "Compte Freemium",
+        "betaDescription": "Crée ton compte gratuitement : la bêta inclut des capacités élargies, sans carte bancaire.",
+        "standardDescription": "Crée ton compte gratuitement et commence à suivre tes paris sans ressaisie manuelle.",
+        "betaBenefitBankroll": "4 bankrolls actives incluses pendant la bêta",
+        "standardBenefitBankroll": "2 bankrolls actives avec le compte Freemium",
+        "betaBenefitScans": "50 scans IA inclus par période de 30 jours",
+        "standardBenefitScans": "10 scans IA inclus chaque mois",
+        "benefitFeatures": "Historique, statistiques et correction avant chaque import",
+        "noCard": "Aucune carte bancaire n’est demandée pour créer ton compte.",
+        "preview": {
+          "bets": "Paris",
+          "roi": "ROI",
+          "profit": "Bénéfice"
+        }
+      }
     }
   },
 
