@@ -22,7 +22,7 @@ export function GET() {
     "## Important facts",
     "- BetTrack does not place bets and does not provide betting advice or profit guarantees.",
     "- Users review and can correct extracted information before saving it.",
-    "- Validated screenshot-import profiles are Winamax, Betclic, Unibet and Bet365.",
+    "- Validated screenshot-import profiles are Winamax, Betclic, Unibet, Bet365 and PEC.bet.",
     "- BetTrack does not request bookmaker login credentials.",
   ].join("\n");
 
