@@ -3,7 +3,7 @@ import { Lightning, Gift, Radio } from "@phosphor-icons/react/dist/ssr";
 import { listAllBets } from "@/lib/actions/bets";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { currencySymbol } from "@/lib/format";
-import { computeProfit } from "@/lib/profit";
+import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { prisma } from "@/lib/prisma";
@@ -71,11 +71,11 @@ export default async function StatsPage({
   const bets = allBets.filter((bet) => {
     const day = bet.date.toISOString().slice(0, 10);
     const text = `${bet.description ?? ""} ${bet.eventResult ?? ""}`.toLowerCase();
-    return (!from || day >= from) && (!to || day <= to) && (!q || text.includes(q)) && (!bankroll || bet.bankrollId === bankroll) && (!sportFilter || bet.sport === sportFilter) && (!typeFilter || bet.betType === typeFilter) && (!resultFilter || bet.result === resultFilter) && (!live || String(bet.live) === live) && (!freebet || String(bet.freebet) === freebet) && (minStake === null || bet.stake >= minStake) && (maxStake === null || bet.stake <= maxStake) && (minOdds === null || bet.odds >= minOdds) && (maxOdds === null || bet.odds <= maxOdds);
+    return (!from || day >= from) && (!to || day <= to) && (!q || text.includes(q)) && (!bankroll || bet.bankrollId === bankroll) && (!sportFilter || bet.sport === sportFilter) && (!typeFilter || bet.betType === typeFilter) && (!resultFilter || bet.result === resultFilter) && (!live || String(bet.live) === live) && (!freebet || String(bet.freebet) === freebet) && (minStake === null || bet.stake >= minStake) && (maxStake === null || bet.stake <= maxStake) && (minOdds === null || (bet.odds !== null && bet.odds >= minOdds)) && (maxOdds === null || (bet.odds !== null && bet.odds <= maxOdds));
   });
   const stats = computeGlobalStats(bets);
 
-  const settledCount = bets.filter((b) => b.result !== "EN_ATTENTE").length;
+  const settledCount = bets.filter((b) => countsTowardPerformance(b.result)).length;
 
   const currency = await getServerCurrency();
   const symbol = currencySymbol(currency);
@@ -107,7 +107,7 @@ export default async function StatsPage({
 
   const daily = Object.values(
     bets
-      .filter((bet) => bet.result !== "EN_ATTENTE")
+      .filter((bet) => countsTowardPerformance(bet.result))
       .reduce<Record<string, { date: string; profit: number; count: number }>>((map, bet) => {
         const date = bet.date.toISOString().slice(0, 10);
         map[date] ??= { date, profit: 0, count: 0 };

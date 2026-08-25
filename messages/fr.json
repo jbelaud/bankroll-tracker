@@ -290,7 +290,7 @@
       "importInto": "Importer dans",
       "scanButton": "Lancer le scan OCR",
       "hint": "Prends ton ticket en photo, l'IA extrait les paris automatiquement.",
-      "gallery": "Depuis la galerie (5 captures max)",
+      "gallery": "Depuis la galerie (10 captures max)",
       "galleryLimit": "Sélectionne au maximum {count} captures à la fois.",
       "manualEntry": "Saisir un pari manuellement",
       "tips": {
@@ -357,6 +357,7 @@
       "discordTitle": "Aide-nous à améliorer BetTrack",
       "discordDescription": "Rejoins le Discord bêta pour partager tes retours et tes captures de bookmakers, après avoir masqué toute donnée personnelle.",
       "joinDiscord": "Rejoindre le Discord",
+      "scanAgainCta": "Scanner d’autres captures",
       "dashboardCta": "Accéder à mon tableau de bord"
     },
     "error": {

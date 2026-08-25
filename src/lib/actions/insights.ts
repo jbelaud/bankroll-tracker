@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
-import { computeProfit, realStake } from "@/lib/profit";
+import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import { computeGlobalStats, groupStats, bucketStats, ODDS_BUCKETS, oddsBucket } from "@/lib/stats";
 import { buildInsightsPrompt, parseInsightResult } from "@/lib/insights/insights-prompt";
 import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
@@ -53,7 +53,7 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
   // qui applique le même principe pour les paris détectés par l'IA).
   const bets = (await prisma.bet.findMany({ where: { bankroll: { userId: user.id } } }))
     .filter((bet) => activeBankrollIds.has(bet.bankrollId));
-  const settled = bets.filter((b) => b.result !== "EN_ATTENTE");
+  const settled = bets.filter((b) => countsTowardPerformance(b.result));
   const settledCount = settled.length;
   if (settledCount < 3) {
     return { error: t("errorGeneric") };

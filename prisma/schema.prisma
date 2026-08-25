@@ -200,7 +200,7 @@ model Bet {
   eventResult String? // score/résultat de l'événement, distinct de la sélection jouée
 
   stake      Float
-  odds       Float
+  odds       Float?    // inconnue uniquement pour un pari remboursé sans cote visible
 
   boosted      Boolean @default(false)
   originalOdds Float?  // cote avant boost, si boosted=true

@@ -26,8 +26,11 @@ export async function importBets(
     const t = await getTranslations({ locale, namespace: "errors" });
     return { error: t("noBetsToImport") };
   }
-  if (bets.some((bet) => !bet.date || bet.stake === null || bet.odds === null)) {
-    return { error: "La date, la mise et la cote de chaque pari doivent être renseignées avant l'import." };
+  if (bets.some((bet) => !bet.date || bet.stake === null || (bet.odds === null && bet.result !== "REMBOURSE"))) {
+    return {
+      error:
+        "La date et la mise doivent être renseignées. La cote est obligatoire, sauf pour un pari remboursé sans cote visible.",
+    };
   }
 
   let existingBets = 0;
@@ -42,7 +45,7 @@ export async function importBets(
         bet.betType,
         bet.description,
         bet.stake!,
-        bet.odds!,
+        bet.odds,
         bet.boosted,
         bet.originalOdds,
         bet.freebet,

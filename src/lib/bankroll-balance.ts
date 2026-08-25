@@ -1,5 +1,5 @@
 import type { Bankroll, BankrollMovement, Bet } from "@prisma/client";
-import { computeProfit } from "@/lib/profit";
+import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 
 export type BankrollCapitalSummary = {
   initial: number;
@@ -27,7 +27,7 @@ export function summarizeBankrollCapital(
     .filter((movement) => movement.bankrollId === bankroll.id && movement.type === "WITHDRAWAL")
     .reduce((sum, movement) => sum + movement.amount, 0);
   const profit = bets
-    .filter((bet) => bet.bankrollId === bankroll.id && bet.result !== "EN_ATTENTE")
+    .filter((bet) => bet.bankrollId === bankroll.id && countsTowardPerformance(bet.result))
     .reduce((sum, bet) => sum + computeProfit(bet), 0);
   const netFunding = bankroll.initial + deposits - withdrawals;
 

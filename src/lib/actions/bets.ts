@@ -57,7 +57,7 @@ export async function createBet(
   betType: string,
   description: string,
   stake: number,
-  odds: number,
+  odds: number | null,
   boosted: boolean,
   originalOdds: number | null,
   freebet: boolean,
@@ -78,11 +78,16 @@ export async function createBet(
   if (!Number.isFinite(stake) || stake <= 0) {
     throw new Error((await getErrorsT())("stakePositive"));
   }
-  if (!Number.isFinite(odds) || odds <= 0) {
-    throw new Error((await getErrorsT())("oddsPositive"));
-  }
   if (!isBetResult(result)) {
     throw new Error((await getErrorsT())("invalidResult"));
+  }
+  // Une cote inconnue est acceptable seulement pour un ticket intégralement
+  // remboursé : elle reste alors null, au lieu d'inventer une cote à 1.
+  if (odds === null && result !== "REMBOURSE") {
+    throw new Error((await getErrorsT())("oddsPositive"));
+  }
+  if (odds !== null && (!Number.isFinite(odds) || odds <= 0)) {
+    throw new Error((await getErrorsT())("oddsPositive"));
   }
   if (normalizedTaxonomy.taxonomyMismatch) {
     throw new Error("Le type de pari ne correspond pas au sport sélectionné.");

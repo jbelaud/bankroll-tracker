@@ -3,7 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
 import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
-import { computeProfit, realStake } from "@/lib/profit";
+import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import { movementDelta } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
   // Même sémantique que le Dashboard de l'artifact : seuls les paris
   // réglés comptent dans le solde et les stats.
   const settled = bets
-    .filter((b) => b.result !== "EN_ATTENTE")
+    .filter((b) => countsTowardPerformance(b.result))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const totalInitial = bankrolls.reduce((s, br) => s + br.initial, 0);

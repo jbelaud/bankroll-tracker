@@ -11,13 +11,20 @@ import type { BetResult } from "@prisma/client";
 
 type BetLike = {
   stake: number;
-  odds: number;
+  odds: number | null;
   result: BetResult;
   freebet: boolean;
   boosted: boolean;
   originalOdds: number | null;
   cashOutAmount: number | null;
 };
+
+// Un remboursement reste dans l'historique mais ne correspond ni à un gain,
+// ni à une perte, ni à une mise réellement engagée pour les indicateurs de
+// performance. Un cash-out, lui, est bien une issue financière.
+export function countsTowardPerformance(result: BetResult): boolean {
+  return result === "GAGNE" || result === "PERDU" || result === "CASHE";
+}
 
 export function computeProfit(bet: BetLike): number {
   const stake = Number(bet.stake) || 0;

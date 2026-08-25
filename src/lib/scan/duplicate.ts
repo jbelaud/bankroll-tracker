@@ -6,7 +6,7 @@
 type DupCandidate = {
   date: string;
   stake: number;
-  odds: number;
+  odds: number | null;
   description: string;
 };
 
@@ -28,6 +28,7 @@ export function looksLikeParsedDuplicate(
   return otherBets.some((o) => {
     if (o.date !== bet.date) return false;
     if (Math.abs((Number(o.stake) || 0) - (Number(bet.stake) || 0)) > 0.01) return false;
+    if (o.odds === null || bet.odds === null) return false;
     if (Math.abs((Number(o.odds) || 0) - (Number(bet.odds) || 0)) > 0.01) return false;
     const a = (o.description || "").toString().trim().toLowerCase();
     const b = (bet.description || "").toString().trim().toLowerCase();

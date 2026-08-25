@@ -54,7 +54,8 @@ export function fmtDateWithYear(d: Date, locale: string): string {
 }
 
 // Cote (nombre décimal simple, pas une devise) — même logique de ponctuation.
-export function fmtOdds(n: number, locale: string): string {
+export function fmtOdds(n: number | null, locale: string): string {
+  if (n === null) return "—";
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

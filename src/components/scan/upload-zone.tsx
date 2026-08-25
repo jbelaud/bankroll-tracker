@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import type { BankrollOption } from "./scan-flow";
 
-const MAX_GALLERY_IMAGES = 5;
+const MAX_GALLERY_IMAGES = 10;
 
 export function UploadZone({
   bankrolls,

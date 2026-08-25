@@ -290,7 +290,7 @@
       "importInto": "Import into",
       "scanButton": "Start OCR Scan",
       "hint": "Take a photo of your ticket, the AI extracts the bets automatically.",
-      "gallery": "From gallery (max 5 screenshots)",
+      "gallery": "From gallery (max 10 screenshots)",
       "galleryLimit": "Select no more than {count} screenshots at a time.",
       "manualEntry": "Enter a bet manually",
       "tips": {
@@ -357,6 +357,7 @@
       "discordTitle": "Help us improve BetTrack",
       "discordDescription": "Join the beta Discord to share feedback and bookmaker screenshots, after hiding any personal data.",
       "joinDiscord": "Join Discord",
+      "scanAgainCta": "Scan more screenshots",
       "dashboardCta": "Go to my dashboard"
     },
     "error": {

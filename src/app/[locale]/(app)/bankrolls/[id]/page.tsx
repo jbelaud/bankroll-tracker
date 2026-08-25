@@ -4,7 +4,7 @@ import { listBankrolls, deleteBankroll } from "@/lib/actions/bankrolls";
 import { listBets } from "@/lib/actions/bets";
 import { listBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { movementDelta, summarizeBankrollCapital } from "@/lib/bankroll-balance";
-import { computeProfit } from "@/lib/profit";
+import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { BankrollDetailHeader } from "@/components/bankrolls/bankroll-detail-header";
 import { BankrollDetailActions } from "@/components/bankrolls/bankroll-detail-actions";
@@ -57,7 +57,7 @@ export default async function BankrollDetailPage({
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
   // le solde ; la courbe part du capital initial puis cumule pari par pari.
   const settled = bets
-    .filter((b) => b.result !== "EN_ATTENTE")
+    .filter((b) => countsTowardPerformance(b.result))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
   const capital = summarizeBankrollCapital(bankroll, bets, movements);
   const { profit, balance } = capital;

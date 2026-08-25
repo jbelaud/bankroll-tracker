@@ -184,7 +184,16 @@ export function ScanFlow({
 
         <Button
           type="button"
-          variant={flow.firstImport ? "outline" : "default"}
+          variant="outline"
+          onClick={restart}
+          className="min-h-touch w-full rounded-lg text-sm font-semibold"
+        >
+          {tComplete("scanAgainCta")}
+        </Button>
+
+        <Button
+          type="button"
+          variant="default"
           onClick={() => router.push("/dashboard")}
           className="min-h-touch w-full rounded-lg text-sm font-semibold"
         >
