@@ -25,6 +25,21 @@ function findExistingLabel(values: string[], candidate: string): string | undefi
   return values.find((value) => key(value) === candidateKey);
 }
 
+// Les fournisseurs OCR emploient parfois le nom du sport, parfois celui de
+// la discipline ou de la promotion. On les ramène à une seule taxonomie pour
+// que les statistiques et filtres ne fragmentent pas le MMA.
+const STANDARD_SPORT_ALIASES: Record<string, string> = {
+  "arts martiaux mixtes": "MMA",
+  "mixed martial arts": "MMA",
+  ufc: "MMA",
+};
+
+function normalizeStandardSport(taxonomy: Taxonomy, value: string): string {
+  const known = findExistingLabel(Object.keys(taxonomy), value);
+  if (known) return known;
+  return STANDARD_SPORT_ALIASES[key(value)] ?? value;
+}
+
 /** Fusionne la taxonomie standard et les ajouts privés d'un utilisateur. */
 export function mergeTaxonomy(
   entries: ReadonlyArray<{ sport: string; betType: string }> = []
@@ -83,7 +98,7 @@ export function normalizeTaxonomyPair(
   rawBetType: string
 ): { sport: string; betType: string; taxonomyMismatch: boolean } {
   const cleanedSport = cleanTaxonomyLabel(rawSport) ?? "Autre sport";
-  const sport = findExistingLabel(Object.keys(taxonomy), cleanedSport) ?? cleanedSport;
+  const sport = normalizeStandardSport(taxonomy, cleanedSport);
   const cleanedBetType = cleanTaxonomyLabel(rawBetType) ?? "Autre";
   const availableTypes = taxonomy[sport] ?? [];
   const betType = findExistingLabel(availableTypes, cleanedBetType) ?? cleanedBetType;

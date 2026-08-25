@@ -24,6 +24,13 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("Ce statut final explicite est prioritaire sur le statut d'une sélection individuelle.");
   });
 
+  it("classifies a same-sport accumulator with the shared sport taxonomy", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain('un combiné de tennis');
+    expect(prompt).toContain('utilise "betType": "Combiné"');
+    expect(prompt).toContain('"sport": "Autre sport", "betType": "Autre"');
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });

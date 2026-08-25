@@ -31,10 +31,11 @@ export const SPORTS: Record<string, string[]> = {
     "Combiné",
     "Autre",
   ],
-  Cyclisme: ["Top 1", "Top 3", "Top 10", "Vainqueur d'étape", "Classement général", "Autre"],
-  Tennis: ["Vainqueur du match", "Total de jeux", "Score exact (sets)", "Vainqueur du set", "Autre"],
-  Basketball: ["Vainqueur", "Total points", "Handicap", "Autre"],
-  Rugby: ["Vainqueur", "Total points", "Handicap", "Autre"],
+  Cyclisme: ["Top 1", "Top 3", "Top 10", "Vainqueur d'étape", "Classement général", "Combiné", "Autre"],
+  Tennis: ["Vainqueur du match", "Total de jeux", "Score exact (sets)", "Vainqueur du set", "Combiné", "Autre"],
+  Basketball: ["Vainqueur", "Total points", "Handicap", "Combiné", "Autre"],
+  Rugby: ["Vainqueur", "Total points", "Handicap", "Combiné", "Autre"],
+  MMA: ["Vainqueur du combat", "Méthode de victoire", "Nombre de rounds", "Décision", "Handicap", "Combiné", "Autre"],
   "Autre sport": ["Autre"],
 };
 

@@ -12,4 +12,15 @@ describe("taxonomie sport / type de pari", () => {
   it("retombe sur la taxonomie sûre pour un sport inconnu", () => {
     expect(getBetTypesForSport("Sport inconnu")).toEqual(["Autre"]);
   });
+
+  it("propose une taxonomie MMA explicite", () => {
+    expect(getBetTypesForSport("MMA")).toContain("Vainqueur du combat");
+    expect(isCompatibleSportBetType("MMA", "Méthode de victoire")).toBe(true);
+  });
+
+  it("autorise un combiné dans chaque sport courant", () => {
+    for (const sport of ["Football", "Cyclisme", "Tennis", "Basketball", "Rugby", "MMA"]) {
+      expect(isCompatibleSportBetType(sport, "Combiné")).toBe(true);
+    }
+  });
 });

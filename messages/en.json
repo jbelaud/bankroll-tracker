@@ -713,6 +713,7 @@
     "Tennis": "Tennis",
     "Basketball": "Basketball",
     "Rugby": "Rugby",
+    "MMA": "MMA",
     "Autre sport": "Other sport"
   },
 
@@ -752,6 +753,10 @@
     "Vainqueur du set": "Set Winner",
     "Vainqueur": "Winner",
     "Total points": "Total Points",
+    "Vainqueur du combat": "Fight Winner",
+    "Méthode de victoire": "Method of Victory",
+    "Nombre de rounds": "Number of Rounds",
+    "Décision": "Decision",
     "Autre": "Other"
   },
 

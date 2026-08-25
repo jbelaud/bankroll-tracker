@@ -29,4 +29,14 @@ describe("taxonomie personnelle", () => {
       taxonomyMismatch: true,
     });
   });
+
+  it("normalise les synonymes MMA proposés par l'OCR", () => {
+    const taxonomy = mergeTaxonomy();
+    expect(normalizeTaxonomyPair(taxonomy, "Arts martiaux mixtes", "Méthode de victoire")).toEqual({
+      sport: "MMA",
+      betType: "Méthode de victoire",
+      taxonomyMismatch: false,
+    });
+    expect(normalizeTaxonomyPair(taxonomy, "UFC", "Vainqueur du combat").sport).toBe("MMA");
+  });
 });
