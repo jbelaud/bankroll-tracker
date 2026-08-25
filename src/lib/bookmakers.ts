@@ -1,5 +1,5 @@
 export const KNOWN_BOOKMAKERS = [
-  "Winamax", "Betclic", "Unibet", "Bet365", "Betify", "Sportsbet", "Stake", "PMU", "Parions Sport",
+  "Winamax", "Betclic", "Unibet", "Bet365", "1xBet", "Betify", "Sportsbet", "Stake", "PMU", "Parions Sport",
   "Bwin", "Zebet", "NetBet", "PokerStars Sports", "Polymarket", "PEC.bet", "Autre",
 ] as const;
 
@@ -10,6 +10,7 @@ export function normalizeBookmaker(value: string): string {
   const normalized = value.trim().replace(/\s+/g, " ");
   const aliasKey = normalized.toLocaleLowerCase("fr").replace(/[.\s]/g, "");
   if (aliasKey === "pecbet") return "PEC.bet";
+  if (aliasKey === "1xbet") return "1xBet";
   return normalized;
 }
 

@@ -18,6 +18,14 @@ describe("scan response bookmaker detection", () => {
     });
   });
 
+  it("normalizes a visually detected 1xBet alias without changing its confidence", () => {
+    expect(parseScanAnalysis('{"detectedBookmaker":"1x bet","detectionConfidence":0.96,"bets":[]}')).toEqual({
+      detectedBookmaker: "1xBet",
+      detectionConfidence: 0.96,
+      bets: [],
+    });
+  });
+
   it("removes a bookmaker guess when confidence is insufficient", () => {
     expect(parseScanAnalysis('{"detectedBookmaker":"Unibet","detectionConfidence":0.5,"bets":[]}')).toEqual({
       detectedBookmaker: null,

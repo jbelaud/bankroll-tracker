@@ -43,6 +43,8 @@ describe("scan quality consent and ownership", () => {
     expect(bookmakerKind("Bet365")).toBe("tested");
     expect(bookmakerKind("pecbet")).toBe("tested");
     expect(normalizeBookmaker(" pec.bet ")).toBe("PEC.bet");
+    expect(bookmakerKind("1x bet")).toBe("untested");
+    expect(normalizeBookmaker(" 1xbet ")).toBe("1xBet");
     expect(bookmakerKind("Local Bookmaker")).toBe("custom");
     expect(extensionForMime("image/jpeg")).toBe("jpg");
   });
