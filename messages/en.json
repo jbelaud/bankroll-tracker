@@ -36,6 +36,7 @@
     "bankrolls": "Bankrolls",
     "scanner": "Scan",
     "scannerDesktop": "OCR Scan",
+    "fileImport": "Import history",
     "stats": "Stats",
     "referrals": "Referrals",
     "account": "Account",
@@ -299,6 +300,11 @@
       "gallery": "From gallery (max 10 screenshots)",
       "galleryLimit": "Select no more than {count} screenshots at a time.",
       "manualEntry": "Enter a bet manually",
+      "fileImport": {
+        "eyebrow": "Migration",
+        "title": "Import an existing history",
+        "description": "Bring your bets over from Bet Analytics or another platform using a CSV, JSON, TSV or TXT file."
+      },
       "tips": {
         "ariaLabel": "Tips for a successful scan",
         "eyebrow": "Scan tip",
@@ -392,6 +398,55 @@
       "liveLabel": "Live",
       "submit": "Add bet",
       "submitting": "Adding…"
+    }
+  },
+
+  "fileImport": {
+    "title": "Import history",
+    "description": "Move your previous bets from Bet Analytics, a bookmaker or another app in one go.",
+    "bankrollLabel": "Import into this bankroll",
+    "noBankroll": {
+      "title": "No bankroll yet",
+      "description": "Imported history must be linked to a bankroll: create one first."
+    },
+    "drop": {
+      "title": "Drop your history file here",
+      "description": "Kalivoa automatically recognizes common English and French columns, even when they are in a different order.",
+      "choose": "Choose a file",
+      "formatsAriaLabel": "Accepted formats",
+      "limit": "CSV, JSON, TSV or TXT · maximum 10 MB and 5,000 bets"
+    },
+    "errors": {
+      "tooLarge": "This file is larger than the 10 MB limit.",
+      "read": "This file could not be read.",
+      "import": "The import could not be completed. Try again in a few moments."
+    },
+    "preview": {
+      "columns": "{count, plural, one {# column detected} other {# columns detected}}",
+      "changeFile": "Change file",
+      "valid": "Bets ready to import",
+      "invalid": "Rows skipped",
+      "warnings": "Rows to review",
+      "firstRows": "Previewing the first {count} rows out of {total}.",
+      "invalidSkipped": "{count, plural, one {# incomplete row will be skipped.} other {# incomplete rows will be skipped.}} The other bets can still be imported normally.",
+      "import": "{count, plural, one {Import # bet} other {Import # bets}}",
+      "importing": "Importing…"
+    },
+    "table": {
+      "row": "Row",
+      "date": "Date",
+      "bet": "Bet",
+      "stake": "Stake",
+      "odds": "Odds",
+      "status": "Status",
+      "ready": "Ready"
+    },
+    "complete": {
+      "title": "History imported!",
+      "description": "{count, plural, =0 {No new bet was added.} one {# bet was added to your bankroll.} other {# bets were added to your bankroll.}}",
+      "duplicates": "{count, plural, one {# duplicate was detected and skipped.} other {# duplicates were detected and skipped.}}",
+      "another": "Import another file",
+      "history": "View my history"
     }
   },
 

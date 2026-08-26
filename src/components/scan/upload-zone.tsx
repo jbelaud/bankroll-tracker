@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Scan, Images, PencilSimpleLine, Sparkle, FrameCorners, ListChecks } from "@phosphor-icons/react";
+import { Scan, Images, PencilSimpleLine, Sparkle, FrameCorners, ListChecks, FileArrowUp, ArrowRight } from "@phosphor-icons/react";
 import {
   Select,
   SelectContent,
@@ -129,6 +129,21 @@ export function UploadZone({
         <p className="max-w-56 text-center text-xs text-muted-foreground">
           {t("hint")}
         </p>
+
+        <Link
+          href="/import-history"
+          className="group flex w-full max-w-xl items-center gap-3 rounded-2xl border border-primary/30 bg-background p-4 text-left shadow-sm transition-colors hover:bg-primary/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+            <FileArrowUp size={23} weight="duotone" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-primary">{t("fileImport.eyebrow")}</span>
+            <span className="mt-0.5 block text-sm font-semibold">{t("fileImport.title")}</span>
+            <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{t("fileImport.description")}</span>
+          </span>
+          <ArrowRight size={18} className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden />
+        </Link>
 
         <section
           aria-label={t("tips.ariaLabel")}

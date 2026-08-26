@@ -188,6 +188,7 @@ enum BetEntryMethod {
   UNKNOWN
   MANUAL
   SCAN
+  FILE
 }
 
 // ------------------------------------------------------------

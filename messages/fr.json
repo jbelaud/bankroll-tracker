@@ -36,6 +36,7 @@
     "bankrolls": "Bankrolls",
     "scanner": "Scan",
     "scannerDesktop": "Scan OCR",
+    "fileImport": "Importer un historique",
     "stats": "Stats",
     "referrals": "Parrainage",
     "account": "Compte",
@@ -299,6 +300,11 @@
       "gallery": "Depuis la galerie (10 captures max)",
       "galleryLimit": "Sélectionne au maximum {count} captures à la fois.",
       "manualEntry": "Saisir un pari manuellement",
+      "fileImport": {
+        "eyebrow": "Migration",
+        "title": "Importer un historique existant",
+        "description": "Récupère tes paris depuis Bet Analytics ou une autre plateforme avec un fichier CSV, JSON, TSV ou TXT."
+      },
       "tips": {
         "ariaLabel": "Conseils pour réussir le scan",
         "eyebrow": "Astuce scan",
@@ -392,6 +398,55 @@
       "liveLabel": "En direct",
       "submit": "Ajouter le pari",
       "submitting": "Ajout en cours…"
+    }
+  },
+
+  "fileImport": {
+    "title": "Importer un historique",
+    "description": "Transfère en une fois tes anciens paris depuis Bet Analytics, un bookmaker ou une autre application.",
+    "bankrollLabel": "Importer dans cette bankroll",
+    "noBankroll": {
+      "title": "Pas encore de bankroll",
+      "description": "L’historique importé doit être rattaché à une bankroll : crée-la d’abord."
+    },
+    "drop": {
+      "title": "Dépose ton fichier d’historique",
+      "description": "Kalivoa reconnaît automatiquement les colonnes courantes en français et en anglais, même si elles sont dans un ordre différent.",
+      "choose": "Choisir un fichier",
+      "formatsAriaLabel": "Formats acceptés",
+      "limit": "CSV, JSON, TSV ou TXT · 10 Mo et 5 000 paris maximum"
+    },
+    "errors": {
+      "tooLarge": "Ce fichier dépasse la limite de 10 Mo.",
+      "read": "Impossible de lire ce fichier.",
+      "import": "L’import n’a pas pu être terminé. Réessaie dans quelques instants."
+    },
+    "preview": {
+      "columns": "{count, plural, one {# colonne détectée} other {# colonnes détectées}}",
+      "changeFile": "Changer de fichier",
+      "valid": "Paris prêts à importer",
+      "invalid": "Lignes ignorées",
+      "warnings": "Lignes à vérifier",
+      "firstRows": "Aperçu des {count} premières lignes sur {total}.",
+      "invalidSkipped": "{count, plural, one {# ligne incomplète sera ignorée.} other {# lignes incomplètes seront ignorées.}} Les autres paris peuvent être importés normalement.",
+      "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
+      "importing": "Import en cours…"
+    },
+    "table": {
+      "row": "Ligne",
+      "date": "Date",
+      "bet": "Pari",
+      "stake": "Mise",
+      "odds": "Cote",
+      "status": "État",
+      "ready": "Prêt"
+    },
+    "complete": {
+      "title": "Historique importé !",
+      "description": "{count, plural, =0 {Aucun nouveau pari n’a été ajouté.} one {# pari a été ajouté à ta bankroll.} other {# paris ont été ajoutés à ta bankroll.}}",
+      "duplicates": "{count, plural, one {# doublon a été détecté et ignoré.} other {# doublons ont été détectés et ignorés.}}",
+      "another": "Importer un autre fichier",
+      "history": "Voir mon historique"
     }
   },
 

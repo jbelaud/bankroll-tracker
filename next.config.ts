@@ -23,6 +23,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   experimental: {
     globalNotFound: true,
+    serverActions: {
+      bodySizeLimit: "12mb",
+    },
   },
   async redirects() {
     return [

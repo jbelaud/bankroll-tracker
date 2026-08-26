@@ -11,6 +11,7 @@ import {
   ListBullets,
   UserCircle,
   UsersThree,
+  FileArrowUp,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", key: "home", icon: House },
   { href: "/history", key: "history", icon: ListBullets },
   { href: "/scan", key: "scanner", desktopKey: "scannerDesktop", icon: Scan, primary: true },
+  { href: "/import-history", key: "fileImport", icon: FileArrowUp },
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
   { href: "/referrals", key: "referrals", icon: UsersThree },
@@ -29,9 +31,9 @@ const NAV_ITEMS = [
 ] as const;
 
 const DESKTOP_NAV_GROUPS = [
-  { key: "tracking", items: NAV_ITEMS.slice(0, 3) },
-  { key: "analysis", items: NAV_ITEMS.slice(3, 4) },
-  { key: "manage", items: NAV_ITEMS.slice(4) },
+  { key: "tracking", items: NAV_ITEMS.slice(0, 4) },
+  { key: "analysis", items: NAV_ITEMS.slice(4, 5) },
+  { key: "manage", items: NAV_ITEMS.slice(5) },
 ] as const;
 
 // Le Scan est l'action principale sur mobile : il doit rester au centre de la
