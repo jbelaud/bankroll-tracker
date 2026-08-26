@@ -21,7 +21,7 @@ describe("scanTickets", () => {
 
     const result = await scanTickets([duplicate, fresh], "bankroll-1", (done) => progress.push(done));
 
-    expect(result.skippedDuplicateFiles).toEqual(["deja-analyse.jpg"]);
+    expect(result.skippedDuplicateFiles).toEqual(["deja-analyse.jpg — Cette capture a déjà été analysée."]);
     expect(result.scans).toHaveLength(1);
     expect(result.scans[0].sourceFileIndex).toBe(1);
     expect(result.bets[0].sourceScanIndex).toBe(1);

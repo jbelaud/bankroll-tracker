@@ -407,6 +407,8 @@
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
     "duplicateScan": "This screenshot has already been analyzed. It cannot count twice.",
+    "duplicateScanImported": "This screenshot has already been imported ({count} bet(s)). It cannot count twice.",
+    "duplicateScanPending": "This screenshot was analyzed but has not been imported yet. Resume it in “Pending imports”.",
     "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "forbiddenOrigin": "Origin not allowed."
   },

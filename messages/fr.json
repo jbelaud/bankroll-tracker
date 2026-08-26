@@ -407,6 +407,8 @@
     "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
     "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Reviens le mois prochain.",
     "duplicateScan": "Cette capture a déjà été analysée. Elle ne compte pas deux fois.",
+    "duplicateScanImported": "Cette capture a déjà été importée ({count} pari(s)). Elle ne compte pas deux fois.",
+    "duplicateScanPending": "Cette capture a été analysée, mais pas encore importée. Reprends-la dans « Imports en attente ».",
     "bankrollLocked": "Cette bankroll est verrouillée avec le forfait Freemium. Passe à Premium pour y accéder.",
     "forbiddenOrigin": "Origine non autorisée."
   },

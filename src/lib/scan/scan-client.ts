@@ -36,11 +36,12 @@ export async function scanTickets(
     const res = await fetch("/api/scan", { method: "POST", body: form });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      // Une capture déjà importée ne doit pas empêcher l'analyse des autres
-      // fichiers du même lot. Son nom reste uniquement côté navigateur afin
-      // de pouvoir l'indiquer clairement dans la revue.
+      // Une capture déjà importée ou avec une revue en attente ne doit pas
+      // empêcher l'analyse des autres fichiers du lot. Le serveur précise
+      // explicitement laquelle des deux situations s'applique.
       if (res.status === 409) {
-        skippedDuplicateFiles.push(images[i].name);
+        const reason = typeof data.error === "string" ? data.error : "Capture déjà analysée.";
+        skippedDuplicateFiles.push(`${images[i].name} — ${reason}`);
         onProgress?.(i + 1, total);
         continue;
       }

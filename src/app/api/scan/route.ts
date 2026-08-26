@@ -132,10 +132,43 @@ export async function POST(request: NextRequest) {
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true },
+    select: { id: true, betsImported: true },
   });
+  // Une analyse ne devient un doublon bloquant que lorsque ses paris ont
+  // réellement été importés. Un brouillon peut être repris ; une ancienne
+  // analyse sans import ni brouillon est libérée pour que l'utilisateur puisse
+  // l'analyser de nouveau, sans créer une seconde récompense de parrainage.
+  let isRescanAfterUnimportedAnalysis = false;
   if (duplicateScan) {
-    return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
+    if (duplicateScan.betsImported > 0) {
+      return NextResponse.json(
+        { error: t("duplicateScanImported", { count: duplicateScan.betsImported }) },
+        { status: 409 }
+      );
+    }
+
+    const drafts = await prisma.scanDraft.findMany({
+      where: { userId: user.id },
+      select: { payload: true },
+      take: 20,
+    });
+    const hasPendingDraft = drafts.some(({ payload }) => {
+      const scans = (payload as { scans?: unknown }).scans;
+      return Array.isArray(scans) && scans.some(
+        (scan) => typeof scan === "object" && scan !== null && (scan as { usageId?: unknown }).usageId === duplicateScan.id
+      );
+    });
+    if (hasPendingDraft) {
+      return NextResponse.json({ error: t("duplicateScanPending") }, { status: 409 });
+    }
+
+    // On garde la ligne de coût historique, mais son hash est libéré : aucun
+    // import n'a eu lieu et l'utilisateur n'a plus de brouillon à reprendre.
+    await prisma.scanUsage.update({
+      where: { id: duplicateScan.id },
+      data: { sourceHash: null },
+    });
+    isRescanAfterUnimportedAnalysis = true;
   }
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
@@ -321,7 +354,7 @@ export async function POST(request: NextRequest) {
     return bet;
   });
 
-  const referralEligible = hasValidReferralScan(bets);
+  const referralEligible = !isRescanAfterUnimportedAnalysis && hasValidReferralScan(bets);
   let scanUsage;
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
