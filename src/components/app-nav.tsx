@@ -108,7 +108,7 @@ export function AppNav({
         aria-label={t("ariaLabel")}
         className="fixed inset-x-0 bottom-[var(--rg-footer-h)] z-50 glass-card border-x-0 border-b-0 lg:hidden"
       >
-        <ul className="grid grid-cols-5 items-end">
+        <ul className="relative grid grid-cols-5 items-end">
           {MOBILE_NAV_ITEMS.map(({ href, key, icon: Icon, ...item }) => {
           const label = t(key);
           const active = pathname.startsWith(href);
@@ -121,7 +121,7 @@ export function AppNav({
                   href={href}
                   aria-label={label}
                   aria-current={active ? "page" : undefined}
-                  className="relative -top-5 flex size-14 min-h-touch min-w-touch items-center justify-center rounded-full bg-primary text-primary-foreground animate-pulse-glow transition-transform active:scale-95"
+                  className="absolute left-1/2 top-0 flex size-14 min-h-touch min-w-touch -translate-x-1/2 -translate-y-5 items-center justify-center rounded-full bg-primary text-primary-foreground animate-pulse-glow transition-transform active:scale-95"
                 >
                   <Icon size={26} weight="bold" />
                 </Link>
