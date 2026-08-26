@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BetTrack",
-    short_name: "BetTrack",
+    name: "Kalivoa",
+    short_name: "Kalivoa",
     description: "Sports-betting bankroll tracking with screenshot import.",
     start_url: "/fr",
     display: "standalone",
@@ -11,9 +11,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0b0d12",
     icons: [
       {
-        src: "/favicon.ico",
-        sizes: "any",
-        type: "image/x-icon",
+        src: "/kalivoa-icon.svg",
+        sizes: "64x64",
+        type: "image/svg+xml",
       },
     ],
   };

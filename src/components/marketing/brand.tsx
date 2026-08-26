@@ -17,7 +17,7 @@ export function Brand({
         <ChartLineUp size={18} weight="bold" />
       </span>
       <span className={cn("text-lg", compact && "text-base")}>
-        Bet<span className="text-primary">Track</span>
+        Kali<span className="text-primary">voa</span>
       </span>
     </span>
   );

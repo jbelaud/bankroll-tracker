@@ -9,6 +9,7 @@ import { requireUser } from "@/lib/auth";
 import { normalizeBookmaker } from "@/lib/bookmakers";
 import { activeBankrollLimit, isBankrollLocked } from "@/lib/billing/bankroll-limits";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
+import { recordGrowthEventSafely } from "@/lib/growth/events";
 
 export async function createBankroll(
   name: string,
@@ -39,7 +40,7 @@ export async function createBankroll(
     throw new Error(t("initialCapitalPositive"));
   }
 
-  return prisma.bankroll.create({
+  const bankroll = await prisma.bankroll.create({
     data: {
       userId: user.id,
       name: name.trim() || normalizedBookmaker,
@@ -47,6 +48,12 @@ export async function createBankroll(
       initial,
     },
   });
+  await recordGrowthEventSafely({
+    name: "bankroll_created",
+    userId: user.id,
+    properties: { bookmaker: normalizedBookmaker },
+  });
+  return bankroll;
 }
 
 export async function updateBankroll(
@@ -92,13 +99,17 @@ export async function updateBankroll(
 export async function listBankrolls() {
   const user = await requireUser();
 
-  const [dbUser, bankrollsByAge] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: user.id }, select: { plan: true } }),
-    prisma.bankroll.findMany({
+  // Cette action alimente les écrans les plus fréquents. Avec le pooler
+  // transactionnel Supabase, des lectures parallèles peuvent inutilement
+  // saturer la connexion Prisma limitée par instance.
+  const dbUser = await prisma.user.findUniqueOrThrow({
+    where: { id: user.id },
+    select: { plan: true },
+  });
+  const bankrollsByAge = await prisma.bankroll.findMany({
     where: { userId: user.id },
-      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-    }),
-  ]);
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+  });
 
   return bankrollsByAge
     .map((bankroll, index) => ({

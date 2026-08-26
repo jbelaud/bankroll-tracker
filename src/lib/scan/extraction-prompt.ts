@@ -12,7 +12,7 @@ export function buildExtractionPrompt(
   return `Tu es un extracteur de tickets de paris sportifs. On te donne une ou plusieurs captures d'écran d'une application de paris sportifs (Winamax, Betclic, Unibet, PMU, ParionsSport, ou autre). Chaque capture peut contenir PLUSIEURS tickets de paris empilés.
 
 Contexte fourni par l'utilisateur : la bankroll sélectionnée utilise ${context?.bookmaker ?? "un bookmaker inconnu"}. C'est un indice, pas une certitude : ne l'affirme jamais si la capture ne le confirme pas et continue l'extraction même si elle vient d'un autre bookmaker.
-${context?.bookmakerRules ? `Règles validées par l'équipe BetTrack pour ${context.bookmaker} :\n${context.bookmakerRules}\nCes règles ne sont applicables que si les éléments visuels confirment ${context.bookmaker}. Si la capture montre un autre bookmaker ou si l'identification est incertaine, ignore ces règles et signale l'identification réelle ou null.\n` : ""}
+${context?.bookmakerRules ? `Règles validées par l'équipe Kalivoa pour ${context.bookmaker} :\n${context.bookmakerRules}\nCes règles ne sont applicables que si les éléments visuels confirment ${context.bookmaker}. Si la capture montre un autre bookmaker ou si l'identification est incertaine, ignore ces règles et signale l'identification réelle ou null.\n` : ""}
 
 Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte avant ou après, sans balises markdown :
 {
@@ -20,7 +20,7 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte avant ou après,
   "detectionConfidence": nombre entre 0 et 1, ou null si detectedBookmaker est null,
   "bets": [objets de pari]
 }
-Identifie le bookmaker uniquement à partir d'indices visibles (logo, palette, structure du ticket, libellés). Ne déduis jamais le bookmaker depuis la bankroll fournie. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
+Identifie le bookmaker uniquement à partir d'indices visibles. Règle de sécurité : n'indique un bookmaker que si son nom, son logo ou une marque textuelle propre à ce bookmaker est lisible sur la capture. La palette, la mise en page, la couleur des cotes, les statuts « Gagné » / « Perdu » ou la structure générale d'un ticket ne suffisent jamais à identifier un bookmaker. Ne déduis jamais le bookmaker depuis la bankroll fournie. Si le nom ou logo n'est pas lisible, retourne null pour les deux champs — même si un bookmaker est plausible. Cette prudence est particulièrement obligatoire avant de signaler un bookmaker différent de la bankroll sélectionnée. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
 
 Schéma attendu pour chaque pari :
 {

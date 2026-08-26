@@ -1,10 +1,10 @@
-# BetTrack — tarification et offres de lancement
+# Kalivoa — tarification et offres de lancement
 
-Document de référence pour le lancement de BetTrack. Les limites techniques seront implémentées une fois l'application terminée et les coûts réels mesurés dans l'administration.
+Document de référence pour le lancement de Kalivoa. Les limites techniques seront implémentées une fois l'application terminée et les coûts réels mesurés dans l'administration.
 
 ## Principes
 
-- L'utilisateur doit pouvoir tester réellement BetTrack avant de payer.
+- L'utilisateur doit pouvoir tester réellement Kalivoa avant de payer.
 - Les limitations portent sur les scans IA, jamais sur la saisie manuelle.
 - Les quotas sont mensuels, car l'import de tickets se fait souvent en lots.
 - Les gros imports bénéficient d'un crédit initial à l'abonnement.
@@ -85,4 +85,4 @@ Sources : [tarification Claude](https://platform.claude.com/docs/en/about-claude
 
 ## Décision actuelle
 
-La priorité est de terminer et fiabiliser BetTrack pour le proposer rapidement à des parieurs. La logique commerciale détaillée dans ce document sera implémentée après la finalisation des fonctionnalités essentielles et une première phase de test utilisateur.
+La priorité est de terminer et fiabiliser Kalivoa pour le proposer rapidement à des parieurs. La logique commerciale détaillée dans ce document sera implémentée après la finalisation des fonctionnalités essentielles et une première phase de test utilisateur.

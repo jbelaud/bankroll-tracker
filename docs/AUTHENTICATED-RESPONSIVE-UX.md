@@ -1,4 +1,4 @@
-# BetTrack — UX responsive authentifiée
+# Kalivoa — UX responsive authentifiée
 
 Dernière mise à jour : 23 août 2026.
 

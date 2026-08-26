@@ -1,6 +1,6 @@
 "use server";
 
-import type { BetResult } from "@prisma/client";
+import type { BetEntryMethod, BetResult } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
@@ -66,7 +66,8 @@ export async function createBet(
   cashOutAmount: number | null,
   ticketRef: string | null,
   date: Date,
-  eventResult: string | null = null
+  eventResult: string | null = null,
+  source: { entryMethod?: BetEntryMethod; scanUsageId?: string | null } = {}
 ) {
   const user = await requireUser();
   await getOwnedBankroll(bankrollId, user.id);
@@ -110,6 +111,8 @@ export async function createBet(
       cashOutAmount: result === "CASHE" ? cashOutAmount : null,
       ticketRef: ticketRef?.trim() || null,
       date,
+      entryMethod: source.entryMethod ?? "MANUAL",
+      scanUsageId: source.scanUsageId ?? null,
     },
   });
   await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
@@ -236,6 +239,68 @@ export async function updateBetResult(
       cashOutAmount: result === "CASHE" ? cashOutAmount : null,
     },
   });
+  revalidateBetViews();
+  return updated;
+}
+
+export type UpdateBetInput = {
+  sport: string;
+  betType: string;
+  description: string;
+  eventResult: string;
+  date: string;
+  stake: number;
+  odds: number | null;
+  result: BetResult;
+  cashOutAmount: number | null;
+  boosted: boolean;
+  originalOdds: number | null;
+  freebet: boolean;
+  live: boolean;
+};
+
+// Édition complète depuis l'historique. Les mêmes contrôles que l'import et
+// la saisie manuelle s'appliquent ici afin qu'une correction ne puisse pas
+// créer un pari incohérent ou contourner l'accès à une bankroll.
+export async function updateBet(betId: string, input: UpdateBetInput) {
+  const user = await requireUser();
+  const existing = await getOwnedBet(betId, user.id);
+  const t = await getErrorsT();
+  const date = new Date(`${input.date}T12:00:00.000Z`);
+  const taxonomy = await getUserTaxonomy(user.id, false);
+  const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, input.sport, input.betType);
+
+  if (Number.isNaN(date.getTime())) throw new Error(t("invalidDate"));
+  if (!Number.isFinite(input.stake) || input.stake <= 0) throw new Error(t("stakePositive"));
+  if (!isBetResult(input.result)) throw new Error(t("invalidResult"));
+  if (input.odds === null && input.result !== "REMBOURSE") throw new Error(t("oddsPositive"));
+  if (input.odds !== null && (!Number.isFinite(input.odds) || input.odds <= 0)) throw new Error(t("oddsPositive"));
+  if (input.result === "CASHE" && (!Number.isFinite(input.cashOutAmount) || (input.cashOutAmount as number) < 0)) {
+    throw new Error(t("cashoutAmountPositive"));
+  }
+  if (normalizedTaxonomy.taxonomyMismatch) {
+    throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
+  }
+
+  const updated = await prisma.bet.update({
+    where: { id: existing.id },
+    data: {
+      sport: normalizedTaxonomy.sport,
+      betType: normalizedTaxonomy.betType,
+      description: input.description.trim() || null,
+      eventResult: input.eventResult.trim() || null,
+      date,
+      stake: input.stake,
+      odds: input.odds,
+      result: input.result,
+      cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+      boosted: input.boosted,
+      originalOdds: input.boosted ? input.originalOdds : null,
+      freebet: input.freebet,
+      live: input.live,
+    },
+  });
+  await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
   revalidateBetViews();
   return updated;
 }

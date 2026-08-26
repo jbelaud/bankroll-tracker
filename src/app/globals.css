@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   BetTrack — Design tokens
+   Kalivoa — Design tokens
    App dark-only : la palette vit dans :root (et .dark reprend
    les mêmes valeurs pour rester compatible avec les composants
    shadcn qui ciblent la classe dark).
@@ -56,7 +56,7 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* --- Tokens spécifiques BetTrack --- */
+  /* --- Tokens spécifiques Kalivoa --- */
   --color-profit: var(--profit);
   --color-profit-muted: var(--profit-muted);
   --color-loss: var(--loss);
@@ -176,7 +176,7 @@
   --sidebar-border: oklch(1 0 0 / 9%);
   --sidebar-ring: oklch(0.72 0.14 250 / 60%);
 
-  /* --- BetTrack --- */
+  /* --- Kalivoa --- */
   /* Vert néon profit (≈ #2EE8A5) — AA sur fond obsidienne */
   --profit: oklch(0.82 0.17 165);
   --profit-muted: oklch(0.82 0.17 165 / 12%);

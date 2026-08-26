@@ -3,7 +3,7 @@ import type { ParsedBet } from "@/lib/scan/types";
 
 export const QUALITY_BUCKET = "scan-quality-reports";
 export const QUALITY_RETENTION_DAYS = 30;
-export const SCAN_PROMPT_VERSION = "2026-08-11";
+export const SCAN_PROMPT_VERSION = "2026-08-24-bookmaker-evidence-v1";
 export const MAX_QUALITY_REPORTS_PER_WEEK = 20;
 export const QUALITY_ALLOWED_MEDIA = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 export const QUALITY_ISSUE_TYPES = ["INCORRECT", "INCOMPLETE", "OTHER"] as const;

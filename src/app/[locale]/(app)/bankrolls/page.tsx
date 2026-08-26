@@ -12,10 +12,17 @@ import {
 export default async function BankrollsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ create?: string | string[] }>;
+  searchParams: Promise<{ create?: string | string[]; next?: string | string[] }>;
 }) {
-  const { create } = await searchParams;
-  const [bankrolls, bets, movements] = await Promise.all([listBankrolls(), listAllBets(), listAllBankrollMovements()]);
+  const { create, next } = await searchParams;
+  // Seul le retour vers le Scan est autorisé : ne jamais transformer ce
+  // paramètre d'onboarding en redirection ouverte.
+  const returnTo = next === "/scan" ? "/scan" : undefined;
+  // Même contrainte que le Dashboard : ne pas mettre en concurrence plusieurs
+  // lectures Prisma sur l'unique connexion du pooler par instance serverless.
+  const bankrolls = await listBankrolls();
+  const bets = await listAllBets();
+  const movements = await listAllBankrollMovements();
   const summaries = summarizeBankrolls(bankrolls, bets, movements);
 
   const items: BankrollListItem[] = bankrolls.map((br) => {
@@ -46,6 +53,7 @@ export default async function BankrollsPage({
         bankrolls={items}
         currency={currency}
         initialCreateOpen={create === "1"}
+        returnTo={returnTo}
       />
     </div>
   );

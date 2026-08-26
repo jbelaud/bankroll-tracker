@@ -14,6 +14,8 @@ import { BankrollCapitalStats } from "@/components/bankrolls/bankroll-capital-st
 import { BankrollMovementPanel } from "@/components/bankrolls/bankroll-movement-panel";
 import { Link } from "@/i18n/navigation";
 import { LockKey } from "@phosphor-icons/react/dist/ssr";
+import { requireUser } from "@/lib/auth";
+import { getUserTaxonomy } from "@/lib/taxonomy";
 
 export default async function BankrollDetailPage({
   params,
@@ -21,6 +23,7 @@ export default async function BankrollDetailPage({
   params: Promise<{ id: string; locale: string }>;
 }) {
   const { id, locale } = await params;
+  const user = await requireUser();
 
   // Scopé à l'utilisateur connecté : une bankroll d'un autre compte = 404.
   const bankrolls = await listBankrolls();
@@ -53,6 +56,7 @@ export default async function BankrollDetailPage({
   // après déplacement d'un pari (P2024). Les séquencer garde le rendu fiable.
   const bets = await listBets(id);
   const movements = await listBankrollMovements(id);
+  const taxonomy = await getUserTaxonomy(user.id);
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
   // le solde ; la courbe part du capital initial puis cumule pari par pari.
@@ -155,6 +159,7 @@ export default async function BankrollDetailPage({
         bankrollOptions={bankrolls.filter((item) => !item.locked).map((item) => ({ id: item.id, name: item.name }))}
         scopedToBankroll
         currency={currency}
+        taxonomy={taxonomy}
       />
       </section>
     </div>

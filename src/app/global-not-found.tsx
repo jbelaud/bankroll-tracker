@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "404 — BetTrack",
+  title: "404 — Kalivoa",
   robots: {
     index: false,
     follow: false,
@@ -17,7 +17,7 @@ export default async function GlobalNotFound() {
   const description = isEnglish
     ? "It may have moved or the address may be incomplete."
     : "Elle a peut-être été déplacée ou l’adresse est incomplète.";
-  const homeLabel = isEnglish ? "Back to BetTrack" : "Retour à BetTrack";
+  const homeLabel = isEnglish ? "Back to Kalivoa" : "Retour à Kalivoa";
   const homeHref = isEnglish ? "/en" : "/fr";
 
   return (

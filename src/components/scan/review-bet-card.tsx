@@ -277,6 +277,16 @@ export function ReviewBetCard({
         </div>
       </div>
 
+      <label className="flex min-h-touch items-center gap-2 rounded-lg border border-input px-3 py-2 text-sm">
+        <input
+          type="checkbox"
+          checked={bet.freebet}
+          onChange={(event) => onPatch({ freebet: event.target.checked })}
+          className="size-4 rounded border-input"
+        />
+        {t("freebetLabel")}
+      </label>
+
       {bet.result === "CASHE" && (
         <div className="flex flex-col gap-1">
           <Label htmlFor={uid("cashout")} className="text-xs">

@@ -6,13 +6,19 @@ import { getServerCurrency } from "@/lib/get-server-currency";
 import { ScanFlow } from "@/components/scan/scan-flow";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
+import { listPendingScanDrafts } from "@/lib/actions/scan-drafts";
 
 export default async function ScanPage() {
   const user = await requireUser();
-  const [bankrolls, taxonomy] = await Promise.all([listBankrolls(), getUserTaxonomy(user.id)]);
+  const [bankrolls, taxonomy, pendingDrafts, t, tCommon, currency] = await Promise.all([
+    listBankrolls(),
+    getUserTaxonomy(user.id),
+    listPendingScanDrafts(),
+    getTranslations("scan"),
+    getTranslations("common"),
+    getServerCurrency(),
+  ]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
-  const t = await getTranslations("scan");
-  const tCommon = await getTranslations("common");
 
   if (activeBankrolls.length === 0) {
     return (
@@ -27,7 +33,7 @@ export default async function ScanPage() {
           </p>
         </div>
         <Link
-          href="/bankrolls"
+          href="/bankrolls?create=1&next=/scan"
           className="flex min-h-touch items-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-95"
         >
           {tCommon("createBankrollCta")}
@@ -35,8 +41,6 @@ export default async function ScanPage() {
       </div>
     );
   }
-
-  const currency = await getServerCurrency();
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -49,6 +53,7 @@ export default async function ScanPage() {
         }))}
         currency={currency}
         taxonomy={taxonomy}
+        pendingDrafts={pendingDrafts}
       />
     </div>
   );

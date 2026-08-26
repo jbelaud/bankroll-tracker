@@ -24,6 +24,7 @@ import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
+import { recordGrowthEventSafely } from "@/lib/growth/events";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -60,6 +61,7 @@ function isoDateOrNull(value: unknown): string | null {
 }
 
 export async function POST(request: NextRequest) {
+  const scanStartedAt = Date.now();
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "scanApi" });
 
@@ -188,6 +190,25 @@ export async function POST(request: NextRequest) {
 
   } catch (e) {
     await releaseQuota();
+    await prisma.scanUsage.create({
+      data: {
+        userId: user.id,
+        model: scanModel,
+        plan: dbUser.plan,
+        inputTokens: scanInputTokens,
+        outputTokens: scanOutputTokens,
+        costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
+        outcome: "TECHNICAL_FAILURE",
+        selectedBookmaker: normalizedBookmaker,
+        promptVersion: SCAN_PROMPT_VERSION,
+        durationMs: Date.now() - scanStartedAt,
+      },
+    }).catch((telemetryError) => console.error("[scan] échec télémétrie technique", telemetryError));
+    await recordGrowthEventSafely({
+      name: "scan_failed",
+      userId: user.id,
+      properties: { bookmaker: normalizedBookmaker, scan_duration_ms: Date.now() - scanStartedAt },
+    });
     console.error("[scan] extraction échouée", e);
     return NextResponse.json({ error: t("analysisFailed") }, { status: 502 });
   }
@@ -195,8 +216,9 @@ export async function POST(request: NextRequest) {
   if (rawBets.length === 0) {
     // Conserve la télémétrie de l'analyse (comme avant le parrainage), mais
     // marque explicitement ce scan vide comme non éligible à toute récompense.
+    let emptyScanUsage: { id: string };
     try {
-      await prisma.scanUsage.create({
+      emptyScanUsage = await prisma.scanUsage.create({
         data: {
           userId: user.id,
           model: scanModel,
@@ -206,7 +228,15 @@ export async function POST(request: NextRequest) {
           costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
           sourceHash,
           referralEligible: false,
+          outcome: "EMPTY",
+          selectedBookmaker: normalizedBookmaker,
+          detectedBookmaker,
+          detectionConfidence,
+          promptVersion: SCAN_PROMPT_VERSION,
+          durationMs: Date.now() - scanStartedAt,
+          betsDetected: 0,
         },
+        select: { id: true },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -216,7 +246,27 @@ export async function POST(request: NextRequest) {
       throw error;
     }
     await releaseQuota();
-    return NextResponse.json({ error: t("noBetsFound") }, { status: 422 });
+    await recordGrowthEventSafely({
+      name: "scan_empty",
+      userId: user.id,
+      properties: { bookmaker: normalizedBookmaker, scan_duration_ms: Date.now() - scanStartedAt },
+    });
+    // Un résultat vide est un résultat métier, pas une panne technique. Le
+    // client peut ainsi proposer un partage volontaire sans relancer l'OCR.
+    return NextResponse.json({
+      bets: [],
+      scan: {
+        usageId: emptyScanUsage.id,
+        rawExtraction,
+        model: scanModel,
+        promptVersion: SCAN_PROMPT_VERSION,
+        supportStatus,
+        detectedBookmaker,
+        detectionConfidence,
+        earnedReferralScans: 0,
+        outcome: "EMPTY",
+      },
+    });
   }
 
   // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
@@ -287,6 +337,13 @@ export async function POST(request: NextRequest) {
         costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
         sourceHash,
         referralEligible,
+        outcome: "READY",
+        selectedBookmaker: normalizedBookmaker,
+        detectedBookmaker,
+        detectionConfidence,
+        promptVersion: SCAN_PROMPT_VERSION,
+        durationMs: Date.now() - scanStartedAt,
+        betsDetected: bets.length,
       },
       select: { id: true },
     });
@@ -303,9 +360,22 @@ export async function POST(request: NextRequest) {
     : { earnedReferralScans: 0 };
 
   quotaReserved = false;
+  await recordGrowthEventSafely({
+    name: "scan_result_ready",
+    userId: user.id,
+    properties: {
+      bookmaker: normalizedBookmaker,
+      detected_bookmaker: detectedBookmaker,
+      screenshots_count: 1,
+      bets_detected: bets.length,
+      scan_duration_ms: Date.now() - scanStartedAt,
+      parser_version: SCAN_PROMPT_VERSION,
+    },
+  });
   return NextResponse.json({
     bets,
     scan: {
+      usageId: scanUsage.id,
       rawExtraction,
       model: scanModel,
       promptVersion: SCAN_PROMPT_VERSION,

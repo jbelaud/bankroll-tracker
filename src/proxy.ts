@@ -13,6 +13,13 @@ const PROTECTED_ROUTES = [
   "/referrals",
 ];
 const AUTH_ROUTES = ["/login", "/signup"];
+const CANONICAL_HOST = "kalivoa.com";
+const REDIRECT_TO_CANONICAL_HOSTS = new Set([
+  "bettrack-mvp.vercel.app",
+  "kalivoa.fr",
+  "www.kalivoa.fr",
+  "www.kalivoa.com",
+]);
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -28,6 +35,19 @@ function detectLocale(pathname: string): string {
 }
 
 export async function proxy(request: NextRequest) {
+  // La redirection est faite dans l'application comme filet de sécurité : la
+  // configuration Vercel doit aussi déclarer ces redirections au niveau du
+  // domaine. Le chemin et les paramètres sont conservés, y compris après un
+  // lien envoyé par e-mail ou un retour OAuth.
+  const host = request.headers.get("host")?.toLowerCase().split(":")[0];
+  if (host && REDIRECT_TO_CANONICAL_HOSTS.has(host)) {
+    const canonicalUrl = request.nextUrl.clone();
+    canonicalUrl.protocol = "https:";
+    canonicalUrl.host = CANONICAL_HOST;
+    canonicalUrl.port = "";
+    return NextResponse.redirect(canonicalUrl, 308);
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV !== "production";
   // L'app ne parle qu'à son propre projet Supabase. Ne pas autoriser tous les
@@ -120,5 +140,5 @@ export const config = {
   // /api et /auth restent hors i18n (route API + callback OAuth fixe) —
   // next-intl ne doit jamais essayer de les préfixer. Les fichiers SEO
   // racine restent eux aussi sans locale pour respecter leurs conventions.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api|auth|robots.txt|sitemap.xml|llms.txt|manifest.webmanifest).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.svg|kalivoa-icon.svg|api|auth|robots.txt|sitemap.xml|llms.txt|manifest.webmanifest).*)"],
 };

@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import type { Currency } from "@prisma/client";
 import {
   Drawer,
@@ -53,14 +54,17 @@ export function BankrollFormDrawer({
   onOpenChange,
   bankroll,
   currency,
+  returnTo,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   bankroll?: BankrollFormTarget; // absent = création
   currency: Currency;
+  returnTo?: "/scan";
 }) {
   const isEdit = !!bankroll;
   const t = useTranslations("bankrolls.drawer");
+  const router = useRouter();
   const [state, action, pending] = useActionState(
     isEdit ? updateBankrollForm : createBankrollForm,
     undefined
@@ -71,8 +75,11 @@ export function BankrollFormDrawer({
   );
 
   useEffect(() => {
-    if (state?.success) onOpenChange(false);
-  }, [state, onOpenChange]);
+    if (state?.success) {
+      onOpenChange(false);
+      if (returnTo) router.push(returnTo);
+    }
+  }, [state, onOpenChange, returnTo, router]);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
@@ -160,8 +167,8 @@ export function BankrollFormDrawer({
               min="0"
               inputMode="decimal"
               required
-              placeholder="100.00"
-              defaultValue={bankroll ? String(bankroll.initial) : ""}
+              placeholder="0.00"
+              defaultValue={bankroll ? String(bankroll.initial) : "0"}
               className="num min-h-touch rounded-lg px-3 text-sm"
             />
             {isEdit && (

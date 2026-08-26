@@ -4,9 +4,12 @@ import { listBankrolls } from "@/lib/actions/bankrolls";
 import { computeProfit } from "@/lib/profit";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
+import { requireUser } from "@/lib/auth";
+import { getUserTaxonomy } from "@/lib/taxonomy";
 
 export default async function HistoryPage() {
-  const [bets, bankrolls] = await Promise.all([listAllBets(), listBankrolls()]);
+  const user = await requireUser();
+  const [bets, bankrolls, taxonomy] = await Promise.all([listAllBets(), listBankrolls(), getUserTaxonomy(user.id)]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const activeBets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
@@ -40,7 +43,7 @@ export default async function HistoryPage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
-      <HistoryList bets={items} bankrollOptions={bankrollOptions} currency={currency} />
+      <HistoryList bets={items} bankrollOptions={bankrollOptions} currency={currency} taxonomy={taxonomy} />
     </div>
   );
 }

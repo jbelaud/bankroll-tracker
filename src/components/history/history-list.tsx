@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { HistoryFilters } from "./history-filters";
 import { HistoryBetItem } from "./history-bet-item";
 import { DeleteBetsDrawer } from "./delete-bets-drawer";
-import { EditResultSheet } from "./edit-result-sheet";
+import { EditBetSheet } from "./edit-bet-sheet";
+import type { Taxonomy } from "@/lib/taxonomy";
 import { MoveBetsDrawer } from "./move-bets-drawer";
 
 export type HistoryBetItemData = {
@@ -42,6 +43,7 @@ export function HistoryList({
   bankrollOptions,
   scopedToBankroll = false,
   currency,
+  taxonomy,
 }: {
   bets: HistoryBetItemData[];
   // Omis quand scopedToBankroll est vrai (écran Détail bankroll) : pas de
@@ -49,6 +51,7 @@ export function HistoryList({
   bankrollOptions?: { id: string; name: string }[];
   scopedToBankroll?: boolean;
   currency: Currency;
+  taxonomy: Taxonomy;
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -161,11 +164,11 @@ export function HistoryList({
     router.refresh();
   };
 
-  const handleSaved = (betId: string, result: BetResult, cashOutAmount: number | null) => {
+  const handleSaved = (updatedBet: HistoryBetItemData) => {
     setBets((prev) =>
       prev.map((b) => {
-        if (b.id !== betId) return b;
-        const updated = { ...b, result, cashOutAmount };
+        if (b.id !== updatedBet.id) return b;
+        const updated = { ...b, ...updatedBet };
         return { ...updated, profit: computeProfit(updated) };
       })
     );
@@ -391,13 +394,14 @@ export function HistoryList({
         onConfirm={handleConfirmMove}
       />
 
-      <EditResultSheet
+      <EditBetSheet
         key={editTarget?.id ?? "none"}
         bet={editTarget}
         open={editTarget !== null}
         onOpenChange={(open) => !open && setEditTarget(null)}
         onSaved={handleSaved}
         currency={currency}
+        taxonomy={taxonomy}
       />
     </div>
   );

@@ -25,7 +25,10 @@ export type GroupStat = {
 
 export function groupStats(bets: Bet[], keyFn: (b: Bet) => string): GroupStat[] {
   const map: Record<string, GroupStat> = {};
-  bets.filter((b) => countsTowardPerformance(b.result)).forEach((b) => {
+  // Les freebets sont suivis dans leur indicateur dédié : ils rapportent
+  // éventuellement de l'argent réel, mais n'ont jamais de mise engagée et
+  // ne doivent donc pas fausser ROI, mise moyenne ou taux par sport/type.
+  bets.filter((b) => countsTowardPerformance(b.result) && !b.freebet).forEach((b) => {
     const key = keyFn(b);
     if (!map[key]) {
       map[key] = { name: key, profit: 0, staked: 0, count: 0, won: 0, settled: 0, oddsSum: 0, avgOdds: 0 };
@@ -90,7 +93,7 @@ export function bucketStats(
   labels.forEach((l) => {
     map[l] = { name: l, count: 0, profit: 0, staked: 0, won: 0, settled: 0, oddsSum: 0, avgOdds: 0 };
   });
-  bets.filter((b) => countsTowardPerformance(b.result)).forEach((b) => {
+  bets.filter((b) => countsTowardPerformance(b.result) && !b.freebet).forEach((b) => {
     const label = bucketFn(b);
     if (!map[label]) return;
     map[label].count += 1;
@@ -133,17 +136,18 @@ export function computeGlobalStats(bets: Bet[]): GlobalStats {
   const performanceBets = bets
     .filter((b) => countsTowardPerformance(b.result))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  const totalStaked = performanceBets.reduce((s, b) => s + realStake(b), 0);
-  const avgOdds = performanceBets.length > 0 ? performanceBets.reduce((s, b) => s + (Number(b.odds) || 0), 0) / performanceBets.length : 0;
+  const cashPerformanceBets = performanceBets.filter((b) => !b.freebet);
+  const totalStaked = cashPerformanceBets.reduce((s, b) => s + realStake(b), 0);
+  const avgOdds = cashPerformanceBets.length > 0 ? cashPerformanceBets.reduce((s, b) => s + (Number(b.odds) || 0), 0) / cashPerformanceBets.length : 0;
   const avgOddsWeighted =
     totalStaked > 0
-      ? performanceBets.reduce((s, b) => s + (Number(b.odds) || 0) * realStake(b), 0) / totalStaked
+      ? cashPerformanceBets.reduce((s, b) => s + (Number(b.odds) || 0) * realStake(b), 0) / totalStaked
       : 0;
-  const avgStake = performanceBets.length > 0 ? performanceBets.reduce((s, b) => s + realStake(b), 0) / performanceBets.length : 0;
+  const avgStake = cashPerformanceBets.length > 0 ? cashPerformanceBets.reduce((s, b) => s + realStake(b), 0) / cashPerformanceBets.length : 0;
 
   let biggestWin: Bet | null = null;
   let biggestLoss: Bet | null = null;
-  performanceBets.forEach((b) => {
+  cashPerformanceBets.forEach((b) => {
     const p = computeProfit(b);
     if (p > 0 && (!biggestWin || p > computeProfit(biggestWin))) biggestWin = b;
     if (p < 0 && (!biggestLoss || p < computeProfit(biggestLoss))) biggestLoss = b;
@@ -176,7 +180,7 @@ export function computeGlobalStats(bets: Bet[]): GlobalStats {
   let worstLossStreak = 0;
   let runWin = 0;
   let runLoss = 0;
-  performanceBets.forEach((b) => {
+  cashPerformanceBets.forEach((b) => {
     if (b.result === "GAGNE") {
       runWin += 1;
       runLoss = 0;

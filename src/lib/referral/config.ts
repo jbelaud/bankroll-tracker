@@ -3,7 +3,10 @@
  * payantes pourront ajouter leurs propres types sans modifier ce contrat.
  */
 export const BETA_REFERRAL_CONFIG = Object.freeze({
-  enabled: process.env.BETA_REFERRAL_ENABLED !== "false",
+  // Pause sûre par défaut : une réactivation doit être explicite dans
+  // l'environnement de déploiement. Les relations et crédits existants ne
+  // sont ni modifiés ni supprimés par ce drapeau.
+  enabled: process.env.BETA_REFERRAL_ENABLED === "true",
   referredUserFirstValidScanReward: 10,
   referrerFirstValidScanReward: 10,
   referrerFifthValidScanReward: 10,

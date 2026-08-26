@@ -8,6 +8,7 @@ import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { createClient } from "@/lib/supabase/server";
 import { isBetaInviteTokenValid, redeemBetaInvite } from "@/lib/beta/program";
 import { authErrorKey } from "@/lib/auth/error-mapping";
+import { recordGrowthEventSafely } from "@/lib/growth/events";
 import {
   attachStoredReferralToNewUser,
   storeReferralContext,
@@ -38,11 +39,44 @@ async function getOrigin() {
   return `${proto}://${host}`;
 }
 
-function getAuthCallbackUrl(origin: string, locale: string, invite?: string) {
+type GrowthAttribution = {
+  anonymousId: string;
+  acquisitionSource: string;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+};
+
+function growthAttributionFromForm(formData: FormData): GrowthAttribution {
+  const read = (key: string) => String(formData.get(key) ?? "").slice(0, 120);
+  return {
+    anonymousId: read("growthAnonymousId"),
+    acquisitionSource: read("acquisitionSource"),
+    utmSource: read("utmSource"),
+    utmMedium: read("utmMedium"),
+    utmCampaign: read("utmCampaign"),
+  };
+}
+
+function getAuthCallbackUrl(origin: string, locale: string, invite?: string, growth?: GrowthAttribution) {
   const callbackUrl = new URL("/auth/callback", origin);
   callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
   if (invite) callbackUrl.searchParams.set("invite", invite);
+  if (growth?.anonymousId) callbackUrl.searchParams.set("growthAnonymousId", growth.anonymousId);
+  if (growth?.acquisitionSource) callbackUrl.searchParams.set("acquisitionSource", growth.acquisitionSource);
+  if (growth?.utmSource) callbackUrl.searchParams.set("utmSource", growth.utmSource);
+  if (growth?.utmMedium) callbackUrl.searchParams.set("utmMedium", growth.utmMedium);
+  if (growth?.utmCampaign) callbackUrl.searchParams.set("utmCampaign", growth.utmCampaign);
   return callbackUrl.toString();
+}
+
+function signupProperties(growth: GrowthAttribution) {
+  return {
+    acquisition_source: growth.acquisitionSource || "direct",
+    utm_source: growth.utmSource || null,
+    utm_medium: growth.utmMedium || null,
+    utm_campaign: growth.utmCampaign || null,
+  };
 }
 
 export async function signIn(
@@ -75,6 +109,7 @@ export async function signUp(
   const password = String(formData.get("password") ?? "");
   const invite = String(formData.get("invite") ?? "") || null;
   const referral = String(formData.get("referral") ?? "") || null;
+  const growth = growthAttributionFromForm(formData);
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "auth.signup" });
   const tErrors = await getTranslations({ locale, namespace: "auth.errors" });
@@ -95,7 +130,7 @@ export async function signUp(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined) },
+    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined, growth) },
   });
 
   if (error) {
@@ -107,7 +142,15 @@ export async function signUp(
     return { message: t("confirmEmailMessage") };
   }
   if (data.user && invite) await redeemBetaInvite(invite, data.user);
-  if (data.user) await attachStoredReferralToNewUser(data.user.id);
+  if (data.user) {
+    await attachStoredReferralToNewUser(data.user.id);
+    await recordGrowthEventSafely({
+      name: "signup_completed",
+      userId: data.user.id,
+      anonymousId: growth.anonymousId || null,
+      properties: signupProperties(growth),
+    });
+  }
 
   redirectToLocalized({ href: "/dashboard", locale });
 }
@@ -118,12 +161,13 @@ export async function signInWithGoogle(formData: FormData) {
   const locale = await getLocale();
   const invite = String(formData.get("invite") ?? "") || null;
   const referral = String(formData.get("referral") ?? "") || null;
+  const growth = growthAttributionFromForm(formData);
 
   await storeReferralContext(referral);
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined) },
+    options: { redirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined, growth) },
   });
 
   const url = data?.url;

@@ -1,4 +1,4 @@
-# Checklist SEO et GEO — BetTrack
+# Checklist SEO et GEO — Kalivoa
 
 ## Ce qui est implémenté
 
@@ -12,7 +12,7 @@
 - Les aperçus Vercel ne sont pas indexables : leur robots.txt interdit le crawl et leur sitemap est vide.
 - OAI-SearchBot est explicitement autorisé sur le contenu public en production, avec les routes privées exclues.
 - GPTBot est explicitement bloqué. Cette décision sépare la découverte par ChatGPT Search de l’entraînement ou de la collecte par GPTBot ; elle peut être revue par le propriétaire du produit.
-- /llms.txt décrit BetTrack et pointe vers les pages publiques canoniques. C’est un complément expérimental, pas un remplacement du HTML, du sitemap ou des données structurées.
+- /llms.txt décrit Kalivoa et pointe vers les pages publiques canoniques. C’est un complément expérimental, pas un remplacement du HTML, du sitemap ou des données structurées.
 
 ## Avant la production
 

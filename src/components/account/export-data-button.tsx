@@ -28,7 +28,7 @@ export function ExportDataButton() {
     setLoading("json");
     try {
       const data = await exportUserData();
-      downloadBlob(JSON.stringify(data, null, 2), "application/json", `bettrack-export-${today}.json`);
+      downloadBlob(JSON.stringify(data, null, 2), "application/json", `kalivoa-export-${today}.json`);
     } finally {
       setLoading(null);
     }
@@ -38,7 +38,7 @@ export function ExportDataButton() {
     setLoading("csv");
     try {
       const data = await exportUserData();
-      downloadBlob(betsToCsv(data.bets), "text/csv", `bettrack-bets-${today}.csv`);
+      downloadBlob(betsToCsv(data.bets), "text/csv", `kalivoa-bets-${today}.csv`);
     } finally {
       setLoading(null);
     }

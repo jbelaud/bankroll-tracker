@@ -23,14 +23,14 @@ export async function HomeJsonLd({ locale }: { locale: Locale }) {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "BetTrack",
+      name: "Kalivoa",
       url: homeUrl,
       description: t("structured.organizationDescription"),
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "BetTrack",
+      name: "Kalivoa",
       url: homeUrl,
       inLanguage: locale,
       description: t("structured.websiteDescription"),
@@ -38,7 +38,7 @@ export async function HomeJsonLd({ locale }: { locale: Locale }) {
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: "BetTrack",
+      name: "Kalivoa",
       applicationCategory: "SportsApplication",
       url: homeUrl,
       inLanguage: locale,

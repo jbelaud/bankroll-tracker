@@ -1,12 +1,13 @@
 "use client";
 
-import { Suspense, useActionState } from "react";
+import { Suspense, useActionState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { CheckCircle, LockSimple, Sparkle } from "@phosphor-icons/react";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Brand } from "@/components/marketing/brand";
 import { signInWithGoogle, signUp } from "@/app/auth/actions";
+import { getAcquisitionContext, trackPublicGrowthEvent } from "@/lib/growth/client";
 
 export function SignupForm({ betaPhaseActive }: { betaPhaseActive: boolean }) {
   return (
@@ -24,6 +25,20 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
   const referral = useSearchParams().get("ref") ?? "";
   const signupEmailRateLimited = Boolean(state && "errorCode" in state && state.errorCode === "signupEmailRateLimited");
   const offer = betaPhaseActive ? "beta" : "standard";
+
+  const trackSignupStart = (event: FormEvent<HTMLFormElement>) => {
+    const acquisition = getAcquisitionContext();
+    const set = (name: string, value: string) => {
+      const input = event.currentTarget.elements.namedItem(name);
+      if (input instanceof HTMLInputElement) input.value = value;
+    };
+    set("growthAnonymousId", acquisition.anonymousId);
+    set("acquisitionSource", acquisition.acquisitionSource);
+    set("utmSource", acquisition.utmSource);
+    set("utmMedium", acquisition.utmMedium);
+    set("utmCampaign", acquisition.utmCampaign);
+    void trackPublicGrowthEvent("signup_started", { language: document.documentElement.lang || "fr" });
+  };
 
   return (
     <div className="relative isolate min-h-[100dvh] overflow-hidden bg-background px-4 py-5 sm:px-6 sm:py-7">
@@ -53,9 +68,10 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
           <h1 className="mt-4 text-2xl font-semibold tracking-[-0.03em] text-foreground">{t("title")}</h1>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{t(`freemium.${offer}Description`)}</p>
 
-          <form action={signInWithGoogle} className="mt-6">
+          <form action={signInWithGoogle} onSubmit={trackSignupStart} className="mt-6">
             <input type="hidden" name="invite" value={invite} />
             <input type="hidden" name="referral" value={referral} />
+            <AcquisitionFields />
             <button type="submit" className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition hover:border-primary/50 hover:bg-muted">
               <GoogleMark />{t("google")}
             </button>
@@ -63,9 +79,10 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
 
           <div className="my-6 flex items-center gap-3" aria-hidden><div className="h-px flex-1 bg-border" /><span className="text-xs text-muted-foreground">{t("or")}</span><div className="h-px flex-1 bg-border" /></div>
 
-          <form action={action} className="space-y-4">
+          <form action={action} onSubmit={trackSignupStart} className="space-y-4">
             <input type="hidden" name="invite" value={invite} />
             <input type="hidden" name="referral" value={referral} />
+            <AcquisitionFields />
             <div>
               <label htmlFor="signup-email" className="mb-2 block text-sm font-medium text-foreground">{t("emailLabel")}</label>
               <input id="signup-email" type="email" name="email" autoComplete="email" required className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/15" />
@@ -92,11 +109,21 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
   );
 }
 
+function AcquisitionFields() {
+  return <>
+    <input type="hidden" name="growthAnonymousId" defaultValue="" />
+    <input type="hidden" name="acquisitionSource" defaultValue="" />
+    <input type="hidden" name="utmSource" defaultValue="" />
+    <input type="hidden" name="utmMedium" defaultValue="" />
+    <input type="hidden" name="utmCampaign" defaultValue="" />
+  </>;
+}
+
 function SignupPreview() {
   const t = useTranslations("auth.signup");
   return (
     <div className="overflow-hidden rounded-[1.75rem] border border-primary/20 bg-[linear-gradient(135deg,oklch(0.27_0.04_260),oklch(0.19_0.025_255))] p-4 shadow-[0_24px_80px_oklch(0.05_0.02_260_/_30%)] sm:p-5">
-      <div className="flex items-center gap-1.5 border-b border-white/10 pb-3"><span className="size-2 rounded-full bg-loss/80" /><span className="size-2 rounded-full bg-warning/80" /><span className="size-2 rounded-full bg-profit/80" /><span className="ml-2 text-[10px] text-muted-foreground">bettrack.app</span></div>
+      <div className="flex items-center gap-1.5 border-b border-white/10 pb-3"><span className="size-2 rounded-full bg-loss/80" /><span className="size-2 rounded-full bg-warning/80" /><span className="size-2 rounded-full bg-profit/80" /><span className="ml-2 text-[10px] text-muted-foreground">Kalivoa</span></div>
       <div className="grid grid-cols-3 gap-2 pt-4"><PreviewMetric label={t("freemium.preview.bets")} value="24" /><PreviewMetric label={t("freemium.preview.roi")} value="+12,4 %" positive /><PreviewMetric label={t("freemium.preview.profit")} value="+84,70 €" positive /></div>
       <div className="mt-3 rounded-xl border border-white/10 bg-background/30 p-3"><div className="flex h-16 items-end gap-1.5" aria-hidden>{[24, 31, 27, 41, 37, 52, 47, 63, 58, 71, 76, 88].map((height, index) => <span key={index} className="flex-1 rounded-t-sm bg-primary/70" style={{ height: `${height}%` }} />)}</div></div>
       <div className="mt-3 space-y-2"><PreviewBet name="Football · Résultat du match" value="+12,50 €" /><PreviewBet name="Tennis · Vainqueur" value="+8,20 €" /></div>

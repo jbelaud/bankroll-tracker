@@ -72,7 +72,7 @@ function LoginForm() {
         </section>
 
         <section className="w-full rounded-[1.75rem] border border-border bg-card/90 p-5 shadow-[0_24px_80px_oklch(0.05_0.02_260_/_36%)] backdrop-blur sm:p-7">
-          <p className="text-sm font-medium text-primary">BetTrack</p>
+          <p className="text-sm font-medium text-primary">Kalivoa</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-foreground">{t("title")}</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("subtitle")}</p>
 

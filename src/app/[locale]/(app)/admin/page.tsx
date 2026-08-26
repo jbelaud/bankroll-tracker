@@ -8,6 +8,7 @@ import type { ParsedBet } from "@/lib/scan/types";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
 import { ReferralManager } from "@/components/admin/referral-manager";
+import { ScanMeasurementTable } from "@/components/admin/scan-measurement-table";
 
 const PERIODS = ["day", "month", "year", "all"] as const;
 type Period = (typeof PERIODS)[number];
@@ -62,7 +63,7 @@ async function listStripeTransactions(range: DateRange): Promise<StripeTransacti
   let hasMore = true;
 
   // Une pagination bornée empêche la page d'admin de devenir lente à très grande échelle.
-  // Lorsque BetTrack atteindra ce volume, ces données devront être synchronisées dans Postgres.
+  // Lorsque Kalivoa atteindra ce volume, ces données devront être synchronisées dans Postgres.
   while (hasMore && transactions.length < 1_000) {
     const page = await stripe.balanceTransactions.list({
       limit: 100,
@@ -97,7 +98,7 @@ export default async function AdminPage({
   const range = rangeFor(period);
   const createdAt = range.start ? { gte: range.start, lte: range.end } : undefined;
 
-  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, stripeTransactions, feedbackCount, recentFeedback, qualityCounts, qualityReports, bookmakerProfiles] =
+  const [planCounts, signups, bankrollUsers, activeUsers, bankrollsCreated, betsCreated, settledBets, scanUsage, scanUsers, scans, stripeTransactions, feedbackCount, recentFeedback, qualityCounts, qualityReports, bookmakerProfiles, scanMeasurements] =
     await Promise.all([
       prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
       prisma.user.count({ where: { createdAt } }),
@@ -142,9 +143,13 @@ export default async function AdminPage({
         select: { bookmaker: true, supportStatus: true, rules: true, examples: true, version: true, updatedAt: true },
         orderBy: { bookmaker: "asc" },
       }),
+      prisma.scanUsage.findMany({
+        where: { createdAt, outcome: { not: null } },
+        select: { selectedBookmaker: true, outcome: true, betsDetected: true, betsImported: true, fieldsCorrectedCount: true },
+      }),
     ]);
 
-  let queueReports = qualityReports.map((report) => {
+  const queueReports = qualityReports.map((report) => {
     const finalExtraction = Array.isArray(report.finalExtraction) ? report.finalExtraction as ParsedBet[] : [];
     const summary = correctionSummary(report.rawExtraction, finalExtraction);
 
@@ -155,6 +160,27 @@ export default async function AdminPage({
       rawExtraction: report.rawExtraction, finalExtraction: report.finalExtraction,
     };
   });
+  const qualityByBookmaker = new Map<string, {
+    bookmaker: string; screenshots: number; betsDetected: number; importedWithoutCorrection: number; importedCorrected: number; empty: number; failures: number;
+  }>();
+  for (const scan of scanMeasurements) {
+    const bookmaker = scan.selectedBookmaker || "Inconnu";
+    const current = qualityByBookmaker.get(bookmaker) ?? {
+      bookmaker, screenshots: 0, betsDetected: 0, importedWithoutCorrection: 0, importedCorrected: 0, empty: 0, failures: 0,
+    };
+    current.screenshots++;
+    if (scan.outcome === "READY") {
+      current.betsDetected += scan.betsDetected ?? 0;
+      if (scan.betsImported > 0) {
+        if (scan.fieldsCorrectedCount > 0) current.importedCorrected += scan.betsImported;
+        else current.importedWithoutCorrection += scan.betsImported;
+      }
+    }
+    if (scan.outcome === "EMPTY") current.empty++;
+    if (scan.outcome === "TECHNICAL_FAILURE") current.failures++;
+    qualityByBookmaker.set(bookmaker, current);
+  }
+  const scanQualityRows = [...qualityByBookmaker.values()].sort((a, b) => b.screenshots - a.screenshots || a.bookmaker.localeCompare(b.bookmaker));
 
   const [betaUsage, betaUsageByUser, betaTesters, betaInvites, betaProgram] = await Promise.all([
     prisma.scanUsage.aggregate({ where: { createdAt, plan: "BETA_TESTER" }, _count: { _all: true }, _sum: { costUsd: true } }),
@@ -284,6 +310,8 @@ export default async function AdminPage({
         <h2 className="text-sm font-semibold">{t("usageSection")}</h2>
         <div className="grid grid-cols-2 gap-3">{cards.slice(8).map((card) => <MetricCard key={card.label} {...card} />)}</div>
       </section>
+
+      <ScanMeasurementTable rows={scanQualityRows} />
 
       <BetaTesterManager
         testers={betaTesters.map((tester) => ({

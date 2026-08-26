@@ -74,12 +74,14 @@ model User {
   bankrolls Bankroll[]
   insight   Insight?
   scanUsages ScanUsage[]
+  growthEvents GrowthEvent[]
   referredBy Referral? @relation("ReferredUser")
   referrals Referral[] @relation("Referrer")
   referralRewards ReferralReward[]
   feedbacks Feedback[]
   taxonomyEntries UserTaxonomyEntry[]
   scanQualityReports ScanQualityReport[]
+  scanDrafts ScanDraft[]
   redeemedBetaInvite BetaInvite?
   betaInviteRedemptions BetaInviteRedemption[]
 
@@ -140,6 +142,7 @@ model Bankroll {
   bets      Bet[]
   movements BankrollMovement[]
   scanQualityReports ScanQualityReport[]
+  scanDrafts ScanDraft[]
 
   @@index([userId])
   @@map("bankrolls")
@@ -178,6 +181,15 @@ enum BetResult {
   CASHE
 }
 
+// Provenance explicite des paris ajoutés après l'instrumentation P0.
+// Les lignes historiques restent UNKNOWN : il ne faut jamais les présenter
+// comme une saisie manuelle alors que cette information n'existait pas.
+enum BetEntryMethod {
+  UNKNOWN
+  MANUAL
+  SCAN
+}
+
 // ------------------------------------------------------------
 // Pari
 // ------------------------------------------------------------
@@ -213,8 +225,14 @@ model Bet {
 
   createdAt  DateTime  @default(now())
 
+  entryMethod BetEntryMethod @default(UNKNOWN)
+  scanUsageId String?
+  scanUsage   ScanUsage? @relation(fields: [scanUsageId], references: [id], onDelete: SetNull)
+
   @@index([bankrollId])
   @@index([ticketRef])
+  @@index([entryMethod, createdAt])
+  @@index([scanUsageId])
   @@map("bets")
 }
 
@@ -242,6 +260,12 @@ model UserTaxonomyEntry {
 // ------------------------------------------------------------
 // Les coûts sont figés au moment de l'appel : le tableau de bord admin reste
 // donc exact même si le tarif de Haiku change plus tard.
+enum ScanOutcome {
+  READY
+  EMPTY
+  TECHNICAL_FAILURE
+}
+
 model ScanUsage {
   id           String   @id @default(uuid())
   userId       String
@@ -257,12 +281,69 @@ model ScanUsage {
   sourceHash   String?
   referralEligible    Boolean   @default(false)
   referralProcessedAt DateTime?
+  // Champs P0 : uniquement des métadonnées agrégées, jamais la capture ou
+  // son texte OCR. outcome est null pour les scans historiques afin de ne pas
+  // fabriquer une mesure de qualité rétroactive.
+  outcome                 ScanOutcome?
+  selectedBookmaker       String?
+  detectedBookmaker       String?
+  detectionConfidence     Float?
+  promptVersion           String?
+  durationMs              Int?
+  betsDetected            Int?
+  betsImported            Int      @default(0)
+  betsExcluded            Int      @default(0)
+  fieldsCorrectedCount    Int      @default(0)
+  correctedFields         Json?
+  verificationCompletedAt DateTime?
   createdAt    DateTime @default(now())
+
+  bets Bet[]
 
   @@index([userId, createdAt])
   @@index([createdAt])
+  @@index([outcome, createdAt])
+  @@index([selectedBookmaker, outcome, createdAt])
   @@unique([userId, sourceHash])
   @@map("scan_usages")
+}
+
+// Brouillon de revue d'un import par capture. Il ne contient jamais l'image
+// source : uniquement les champs extraits/corrigés nécessaires pour reprendre
+// la validation sur un autre appareil ou après une navigation.
+// La table est exclusivement manipulée par des actions serveur authentifiées.
+model ScanDraft {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankrollId String
+  bankroll   Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  payload    Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, updatedAt])
+  @@index([bankrollId])
+  @@map("scan_drafts")
+}
+
+// Événements de parcours, séparés des données métier. Les propriétés sont
+// volontairement limitées à des compteurs, sources d'acquisition, appareil,
+// langue et versions techniques : jamais image, texte OCR, identifiant de
+// bookmaker ou montant individuel.
+model GrowthEvent {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  anonymousId String?
+  name        String
+  properties  Json?
+  createdAt   DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([userId, createdAt])
+  @@index([anonymousId, createdAt])
+  @@map("growth_events")
 }
 
 // Une relation directe, sans niveau supplémentaire : un filleul n'a qu'un

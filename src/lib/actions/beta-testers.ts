@@ -44,14 +44,10 @@ export async function createBetaCampaignInvite(maxRedemptionsInput?: number): Pr
 
   const token = randomBytes(BETA_INVITE_TOKEN_BYTES).toString("base64url");
   const expiresAt = new Date(Date.now() + BETA_INVITE_DURATION_DAYS * 24 * 60 * 60 * 1_000);
-  // Un seul lien partagé actif à la fois : en créer un nouveau invalide le précédent.
-  await prisma.$transaction(async (tx) => {
-    await tx.betaInvite.updateMany({
-      where: { email: null, revokedAt: null, expiresAt: { gt: new Date() } },
-      data: { revokedAt: new Date() },
-    });
-    await tx.betaInvite.create({ data: { tokenHash: hashBetaInviteToken(token), expiresAt, maxRedemptions } });
-  });
+  // Chaque lien porte sa propre limite et peut rester actif en parallèle des
+  // précédents. Cela permet de comparer plusieurs sources d'acquisition sans
+  // invalider une invitation individuelle encore en circulation.
+  await prisma.betaInvite.create({ data: { tokenHash: hashBetaInviteToken(token), expiresAt, maxRedemptions } });
   revalidateBetaViews();
 
   return { url: `${await inviteBaseUrl()}/${await getServerLocale()}/signup?invite=${encodeURIComponent(token)}`, maxRedemptions };

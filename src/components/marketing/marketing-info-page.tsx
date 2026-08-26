@@ -46,7 +46,7 @@ export async function MarketingInfoPage({
       {
         "@type": "ListItem",
         position: 1,
-        name: "BetTrack",
+        name: "Kalivoa",
         item: getSiteUrlForPath(homeHref),
       },
       {

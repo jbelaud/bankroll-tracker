@@ -24,10 +24,12 @@ export function BankrollList({
   bankrolls,
   currency,
   initialCreateOpen = false,
+  returnTo,
 }: {
   bankrolls: BankrollListItem[];
   currency: Currency;
   initialCreateOpen?: boolean;
+  returnTo?: "/scan";
 }) {
   const [open, setOpen] = useState(initialCreateOpen);
   const locale = useLocale();
@@ -152,6 +154,7 @@ export function BankrollList({
         open={open}
         onOpenChange={setOpen}
         currency={currency}
+        returnTo={returnTo}
       />
     </div>
   );

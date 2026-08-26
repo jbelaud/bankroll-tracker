@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { Warning, Lightbulb, ArrowCounterClockwise } from "@phosphor-icons/react";
@@ -17,11 +17,13 @@ import {
 import { ReviewBetCard } from "./review-bet-card";
 import type { Taxonomy } from "@/lib/taxonomy";
 import type { BankrollOption } from "./scan-flow";
+import { trackPublicGrowthEvent } from "@/lib/growth/client";
 
 export function ReviewList({
   initialBets,
   importing,
   error,
+  skippedDuplicateFiles,
   onConfirm,
   onRestart,
   bankrolls,
@@ -31,10 +33,13 @@ export function ReviewList({
   showQualityOffer,
   currency,
   taxonomy,
+  initialExcludedIndexes = [],
+  onReviewChange,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
   error: string;
+  skippedDuplicateFiles: string[];
   onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string) => void;
   onRestart: () => void;
   bankrolls: BankrollOption[];
@@ -44,13 +49,32 @@ export function ReviewList({
   showQualityOffer: boolean;
   currency: Currency;
   taxonomy: Taxonomy;
+  initialExcludedIndexes?: number[];
+  onReviewChange?: (bets: ParsedBet[], excludedIndexes: number[], bankrollId: string) => void;
 }) {
   const [bets, setBets] = useState(initialBets);
-  const [excluded, setExcluded] = useState<Set<number>>(new Set());
+  const [excluded, setExcluded] = useState<Set<number>>(() => new Set(initialExcludedIndexes));
   const [shareQuality, setShareQuality] = useState(false);
   const [qualityIssueType, setQualityIssueType] = useState("INCORRECT");
   const [qualityIssueDetails, setQualityIssueDetails] = useState("");
+  const duplicateWarningTracked = useRef(false);
+  const bookmakerMismatchTracked = useRef(false);
+  const reviewChangeRef = useRef(onReviewChange);
   const t = useTranslations("scan.review");
+
+  useEffect(() => {
+    reviewChangeRef.current = onReviewChange;
+  }, [onReviewChange]);
+
+  // La revue est durable : toute correction, exclusion ou sélection de
+  // bankroll est sauvegardée après une courte pause, sans les images source.
+  useEffect(() => {
+    if (!reviewChangeRef.current) return;
+    const timer = window.setTimeout(() => {
+      reviewChangeRef.current?.(bets, Array.from(excluded), bankrollId);
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [bets, excluded, bankrollId]);
 
   const patchBet = (index: number, patch: Partial<ParsedBet>) =>
     setBets((prev) =>
@@ -82,6 +106,18 @@ export function ReviewList({
           normalizeBookmaker(selectedBankroll.bookmaker).toLocaleLowerCase("fr")
       )
   );
+  useEffect(() => {
+    if (duplicateCount > 0 && !duplicateWarningTracked.current) {
+      duplicateWarningTracked.current = true;
+      void trackPublicGrowthEvent("duplicate_warning_shown", { bets_detected: initialBets.length });
+    }
+  }, [duplicateCount, initialBets.length]);
+  useEffect(() => {
+    if (bookmakerMismatch && !bookmakerMismatchTracked.current) {
+      bookmakerMismatchTracked.current = true;
+      void trackPublicGrowthEvent("bookmaker_mismatch_warning_shown", { detected_bookmakers_count: detectedBookmakers.length });
+    }
+  }, [bookmakerMismatch, detectedBookmakers.length]);
   // Inclut immédiatement les valeurs proposées par le scan : l'utilisateur
   // peut donc les corriger/valider avant qu'elles soient sauvegardées.
   const reviewTaxonomy = useMemo(() => {
@@ -117,6 +153,12 @@ export function ReviewList({
         <p className="flex items-start gap-1.5 text-xs text-warning lg:col-span-12">
           <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           {t("duplicateWarning")}
+        </p>
+      )}
+      {skippedDuplicateFiles.length > 0 && (
+        <p role="status" className="flex items-start gap-1.5 text-xs text-muted-foreground lg:col-span-12">
+          <Warning size={14} weight="fill" className="mt-0.5 shrink-0 text-warning" aria-hidden />
+          {t("duplicateScanSkipped", { files: skippedDuplicateFiles.join(", ") })}
         </p>
       )}
       {suggestedCount > 0 && (

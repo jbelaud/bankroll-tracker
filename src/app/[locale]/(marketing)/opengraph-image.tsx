@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "BetTrack — Betting-slip screenshots turned into bankroll history";
+export const alt = "Kalivoa — Betting-slip screenshots turned into bankroll history";
 export const size = {
   width: 1200,
   height: 630,
@@ -25,7 +25,7 @@ export default function OpenGraphImage() {
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 34, fontWeight: 700 }}>
             <div style={{ display: "flex", width: 54, height: 54, borderRadius: 16, background: "#75a7ff", color: "#0b0d12", alignItems: "center", justifyContent: "center" }}>↗</div>
-            <span>Bet<span style={{ color: "#75a7ff" }}>Track</span></span>
+            <span>Kali<span style={{ color: "#75a7ff" }}>voa</span></span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", maxWidth: 850 }}>
             <span style={{ color: "#75a7ff", fontSize: 24, fontWeight: 700, letterSpacing: 3 }}>BETTING-SLIP SCREENSHOT IMPORT</span>

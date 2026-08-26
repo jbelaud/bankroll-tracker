@@ -52,7 +52,7 @@
     "freemium": "Freemium",
     "freemiumDetail": "No expiry date",
     "beta": "Beta access",
-    "betaDetail": "End date set by BetTrack",
+    "betaDetail": "End date set by Kalivoa",
     "betaPremium": "Beta Premium",
     "premium": "Premium",
     "periodEnd": "Billing date: {date}",
@@ -107,7 +107,7 @@
       "hasAccount": "Already have an account?",
       "loginLink": "Sign in",
       "freemium": {
-        "betaEyebrow": "BetTrack beta · free access",
+        "betaEyebrow": "Kalivoa beta · free access",
         "standardEyebrow": "Freemium account",
         "betaDescription": "Create your account for free: the beta includes expanded limits, with no card required.",
         "standardDescription": "Create your account for free and start tracking your bets without manual entry.",
@@ -128,20 +128,20 @@
 
   "dashboard": {
     "title": "Dashboard",
-    "welcomeTitle": "Welcome to BetTrack",
+    "welcomeTitle": "Welcome to Kalivoa",
     "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
     "onboarding": {
-      "ariaLabel": "Getting started with BetTrack",
+      "ariaLabel": "Getting started with Kalivoa",
       "eyebrow": "Get started",
       "title": "Build your betting tracker",
       "description": "Three simple steps to start tracking your bankroll and performance.",
       "secondTitle": "Your bankroll is ready",
-      "secondDescription": "Import your first ticket and BetTrack will organize your results automatically.",
+      "secondDescription": "Import your first ticket and Kalivoa will organize your results automatically.",
       "stepLabel": "Step {count}",
       "bankrollCta": "Create my bankroll",
       "scanCta": "Import my first ticket",
       "discord": {
-        "title": "Join the BetTrack Discord",
+        "title": "Join the Kalivoa Discord",
         "description": "Share your screenshots and feedback with the beta community."
       },
       "steps": {
@@ -152,7 +152,7 @@
     },
     "community": {
       "title": "Discord community",
-      "description": "Share bookmaker screenshots and feedback to help improve BetTrack.",
+      "description": "Share bookmaker screenshots and feedback to help improve Kalivoa.",
       "join": "Join"
     },
     "quota": {
@@ -286,6 +286,12 @@
       "title": "No bankroll yet",
       "description": "Scanning imports your bets into a bankroll: create one first."
     },
+    "pending": {
+      "title": "Pending imports",
+      "description": "Resume an already analysed review without uploading the screenshots again.",
+      "betCount": "{count, plural, one {# bet to review} other {# bets to review}}",
+      "resume": "Resume"
+    },
     "upload": {
       "importInto": "Import into",
       "scanButton": "Start OCR Scan",
@@ -311,14 +317,15 @@
       "title": "Bets detected ({count})",
       "restart": "Start over",
       "duplicateWarning": "Bets outlined in orange: no reference on the ticket, but date/stake/odds/description match a bet you already have — check it isn't a duplicate before confirming.",
+      "duplicateScanSkipped": "Already analyzed screenshot skipped: {files}. The other screenshots in this batch were analyzed.",
       "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
       "taxonomyMismatchWarning": "Some sports and bet types do not match. Check them before importing: they were set to “Other” to avoid saving inconsistent data.",
       "bankrollLabel": "Import into this bankroll",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "qualityOffer": {
         "title": "Was there a problem with this scan?",
-        "consent": "Send this scan to BetTrack so we can fix the issue.",
-        "details": "The screenshot and your report will be sent to the BetTrack team's private Discord channel. It may contain a reference, balance or username; only share it if you agree.",
+        "consent": "Send this scan to Kalivoa so we can fix the issue.",
+        "details": "The screenshot and your report will be sent to the Kalivoa team's private Discord channel. It may contain a reference, balance or username; only share it if you agree.",
         "issueTypeLabel": "What is the issue?",
         "issueTypes": {
           "incorrect": "Incorrect information",
@@ -346,7 +353,8 @@
         "stakeLabel": "Stake ({currency})",
         "oddsLabel": "Odds",
         "resultLabel": "Result",
-        "cashoutLabel": "Cashed out amount ({currency})"
+        "cashoutLabel": "Cashed out amount ({currency})",
+        "freebetLabel": "Freebet (stake not committed)"
       }
     },
     "complete": {
@@ -354,11 +362,22 @@
       "description": "{count, plural, one {# bet was added to your bankroll.} other {# bets were added to your bankroll.}}",
       "firstTitle": "Your first scan is complete!",
       "firstDescription": "{count, plural, one {# bet is now recorded in your bankroll.} other {# bets are now recorded in your bankroll.}}",
-      "discordTitle": "Help us improve BetTrack",
+      "discordTitle": "Help us improve Kalivoa",
       "discordDescription": "Join the beta Discord to share feedback and bookmaker screenshots, after hiding any personal data.",
       "joinDiscord": "Join Discord",
       "scanAgainCta": "Scan more screenshots",
       "dashboardCta": "Go to my dashboard"
+    },
+    "empty": {
+      "title": "No bets found",
+      "description": "Kalivoa Scan could not find an importable bet in this screenshot. Try a clearer screenshot or a full ticket.",
+      "privacy": "You can voluntarily share this ticket to improve Kalivoa Scan. The screenshot is stored temporarily for 30 days, available to the authorized team and sent to the private Discord channel. It may contain a username, balance or reference.",
+      "share": "Share this ticket to improve Kalivoa Scan",
+      "sharing": "Sharing…",
+      "shared": "Thank you, the ticket was sent to the Kalivoa team.",
+      "retry": "Try another screenshot",
+      "duplicateTitle": "Screenshot already analyzed",
+      "duplicateDescription": "{files} was already analyzed. It was neither charged nor processed a second time."
     },
     "error": {
       "analysisFailed": "Analysis failed."
@@ -546,7 +565,7 @@
       "result": "Result",
       "profit": "P&L",
       "actions": "Actions",
-      "editAriaLabel": "Edit this bet's result",
+      "editAriaLabel": "Edit this bet",
       "deleteAriaLabel": "Delete this bet"
     },
     "accordion": {
@@ -587,12 +606,32 @@
       "resultLabel": "Result",
       "cashoutLabel": "Cashed out amount ({currency})",
       "saving": "Saving…"
+    },
+    "editBet": {
+      "title": "Edit bet",
+      "description": "Correct all the bet details. Statistics will be recalculated.",
+      "sport": "Sport",
+      "betType": "Bet type",
+      "descriptionLabel": "Description",
+      "eventResultLabel": "Event result",
+      "date": "Date",
+      "stake": "Stake ({currency})",
+      "odds": "Odds",
+      "result": "Result",
+      "cashout": "Cashed out amount ({currency})",
+      "freebet": "Freebet (stake not committed)",
+      "live": "Live bet",
+      "boosted": "Boosted odds",
+      "originalOdds": "Odds before boost",
+      "saving": "Saving…"
     }
   },
 
   "referral": {
     "title": "Refer friends, earn OCR scans",
-    "description": "Invite friends to test BetTrack during the beta. Your friend gets 10 OCR scans after their first valid scan, and you can earn up to 20 lifetime OCR scans for every active referral.",
+    "description": "Invite friends to test Kalivoa during the beta. Your friend gets 10 OCR scans after their first valid scan, and you can earn up to 20 lifetime OCR scans for every active referral.",
+    "pausedTitle": "Referrals are temporarily paused",
+    "pausedDescription": "No new rewards are granted during P0. Existing referral relationships, progress and earned scan credits are preserved.",
     "benefits": {
       "first": "+10 scans after their first valid scan",
       "second": "+10 more scans after their 5th scan",
@@ -606,7 +645,7 @@
     "share": "Share",
     "shareDiscord": "Copy for Discord",
     "shareNative": "Share with…",
-    "shareText": "Try BetTrack with my referral link!",
+    "shareText": "Try Kalivoa with my referral link!",
     "stats": {
       "invited": "Friends signed up",
       "active": "Active referrals",
@@ -871,6 +910,7 @@
     "initialCapitalPositive": "Starting capital must be a positive number.",
     "stakePositive": "Stake must be a positive number.",
     "oddsPositive": "Odds must be a positive number.",
+    "invalidDate": "The bet date is invalid.",
     "invalidResult": "Invalid result.",
     "betNotFound": "Bet not found.",
     "cashoutAmountPositive": "Cashed out amount must be a positive number.",
@@ -895,7 +935,7 @@
 
   "marketing": {
     "header": {
-      "homeAriaLabel": "BetTrack home",
+      "homeAriaLabel": "Kalivoa home",
       "navAriaLabel": "Website navigation",
       "languageAriaLabel": "Switch language to French",
       "menuAriaLabel": "Open menu",
@@ -905,7 +945,7 @@
       "pricing": "Pricing",
       "faq": "FAQ",
       "login": "Log in",
-      "cta": "Try BetTrack"
+      "cta": "Try Kalivoa"
     },
     "footer": {
       "description": "An independent tool to import, organize and analyze your sports-betting history.",
@@ -927,18 +967,18 @@
       "terms": "Terms of use",
       "legal": "Legal notice",
       "sales": "Terms of sale",
-      "copyright": "© {year} BetTrack. All rights reserved.",
-      "responsibleNotice": "Adults only. BetTrack helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
+      "copyright": "© {year} Kalivoa. All rights reserved.",
+      "responsibleNotice": "Adults only. Kalivoa helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
     },
     "hero": {
-      "eyebrow": "Betting-slip OCR Scan*",
-      "title": "Scan betting slips into a usable bankroll history.",
-      "description": "Add one or more screenshots: BetTrack's OCR Scan reads and structures visible bet information. When a completed slip displays a status and its profile is validated, that status can be proposed too. You have the final say before import.",
-      "ocrNote": "* OCR means optical character recognition: BetTrack reads the visible elements in your screenshots to prepare bets for review.",
+      "eyebrow": "Kalivoa Scan · screenshot import",
+      "title": "Your bets. Your stats. Zero manual entry.",
+      "description": "Add one or more screenshots: Kalivoa Scan reads and structures the visible information. You always review the proposed bets before they are imported into your history.",
+      "ocrNote": "* OCR means optical character recognition: Kalivoa reads the visible elements in your screenshots to prepare bets for review.",
       "primaryCta": "Start my OCR Scan",
       "secondaryCta": "See the demo",
       "reassuranceOne": "Multiple screenshots and visible slips in one workflow.",
-      "reassuranceTwo": "Reading profiles validated bookmaker by bookmaker."
+      "reassuranceTwo": "A mandatory review before every import."
     },
     "trust": {
       "trustOne": "No bookmaker-account access required",
@@ -968,7 +1008,7 @@
       }
     },
     "solution": {
-      "title": "BetTrack turns betting-slip screenshots into structured history.",
+      "title": "Kalivoa turns betting-slip screenshots into structured history.",
       "description": "It prepares the visible data: date, sport, bet type, selection, stake and odds — plus an event result or bet status when readable. You validate what is correct before your history and statistics are updated."
     },
     "steps": {
@@ -993,7 +1033,7 @@
     "features": {
       "eyebrow": "Verified features",
       "title": "An OCR ticket scanner built for tracking, not generic text extraction.",
-      "description": "BetTrack uses OCR Scan to read and organize visible ticket information for your betting tracker.",
+      "description": "Kalivoa uses OCR Scan to read and organize visible ticket information for your betting tracker.",
       "more": "Explore features",
       "items": {
         "import": {
@@ -1023,11 +1063,11 @@
       }
     },
     "bookmakers": {
-      "eyebrow": "Validated import profiles",
-      "title": "Tested betting slips for more reliable reading.",
-      "description": "Validated profiles currently cover Winamax, Betclic, Unibet and Bet365. Other bookmakers can be added to a bankroll, but their screenshot reading is not presented as validated.",
+      "eyebrow": "Bookmaker compatibility",
+      "title": "Tickets read with the visible context of each bookmaker.",
+      "description": "Kalivoa Scan compatibility depends on the ticket, its readability and its bookmaker. Specific rules are applied only when a bookmaker is clearly identified; you always review the result before import.",
       "more": "See compatibility details",
-      "independence": "BetTrack is independent and is not affiliated with any bookmaker displayed."
+      "independence": "Kalivoa is independent and is not affiliated with any bookmaker displayed."
     },
     "pricing": {
       "eyebrow": "Transparent pricing",
@@ -1039,40 +1079,40 @@
     },
     "faq": {
       "eyebrow": "Frequently asked questions",
-      "title": "Straight answers about BetTrack.",
+      "title": "Straight answers about Kalivoa.",
       "description": "The answers below reflect functionality currently available in the app.",
       "more": "View the full FAQ",
       "items": {
         "what": {
-          "question": "What is BetTrack?",
-          "answer": "BetTrack is a personal bankroll tracking and analysis tool for sports betting. It helps organize betting history; it does not place bets or provide betting advice."
+          "question": "What is Kalivoa?",
+          "answer": "Kalivoa is a personal bankroll tracking and analysis tool for sports betting. It helps organize betting history; it does not place bets or provide betting advice."
         },
         "import": {
           "question": "How does screenshot import work?",
-          "answer": "You add one or more betting-slip screenshots. BetTrack extracts visible information, then presents it for review and correction before saving."
+          "answer": "You add one or more betting-slip screenshots. Kalivoa extracts visible information, then presents it for review and correction before saving."
         },
         "completed": {
           "question": "Can I import a ticket that is already settled?",
-          "answer": "Yes. If a visible ticket displays a completed status, BetTrack can propose it for review with its available details, such as an event result when it is readable. You confirm or correct it before saving."
+          "answer": "Yes. If a visible ticket displays a completed status, Kalivoa can propose it for review with its available details, such as an event result when it is readable. You confirm or correct it before saving."
         },
         "bookmakers": {
           "question": "Which bookmakers are supported?",
-          "answer": "The currently validated import profiles are Winamax, Betclic, Unibet and Bet365. You can also create bankrolls for other bookmakers, without the same validated-import promise."
+          "answer": "Kalivoa Scan compatibility depends on the bookmaker, ticket format and readability. Bookmaker pages show the validation status during beta. You can create bankrolls for other bookmakers without a promise of identical import compatibility."
         },
         "review": {
           "question": "Can I correct extracted information?",
           "answer": "Yes. Every extracted bet goes through a review step, where you can correct details before saving."
         },
         "credentials": {
-          "question": "Does BetTrack require bookmaker login details?",
-          "answer": "No. Import uses screenshots you choose to send. BetTrack does not ask you to connect your bookmaker account."
+          "question": "Does Kalivoa require bookmaker login details?",
+          "answer": "No. Import uses screenshots you choose to send. Kalivoa does not ask you to connect your bookmaker account."
         },
         "stats": {
           "question": "Which statistics are available?",
           "answer": "The app displays bankroll balance, profit, ROI, win rate and breakdowns by period, sport, bet type and bookmaker."
         },
         "mobile": {
-          "question": "Is BetTrack available on mobile?",
+          "question": "Is Kalivoa available on mobile?",
           "answer": "Yes. The interface is designed for mobile use, including adding screenshots and reviewing your tracking."
         },
         "pricing": {
@@ -1083,11 +1123,11 @@
     },
     "finalCta": {
       "title": "Start with your screenshots. Keep the history you can actually use.",
-      "description": "Create your BetTrack space to review visible tickets, complete them when needed and follow your bankroll over time.",
+      "description": "Create your Kalivoa space to review visible tickets, complete them when needed and follow your bankroll over time.",
       "cta": "Create my tracking space"
     },
     "preview": {
-      "appName": "BetTrack",
+      "appName": "Kalivoa",
       "label": "Product workflow demo",
       "uploadLabel": "1. Add",
       "uploadTitle": "Your betting-slip screenshots",
@@ -1112,62 +1152,62 @@
       "caption": "Illustration of the workflow. Imported details always depend on what is visibly readable on each ticket."
     },
     "structured": {
-      "organizationDescription": "BetTrack is a bankroll tracking tool with structured betting-slip screenshot import.",
+      "organizationDescription": "Kalivoa is a bankroll tracking tool with structured betting-slip screenshot import.",
       "websiteDescription": "Turn visible betting-slip information from screenshots into reviewed history and bankroll statistics.",
       "applicationDescription": "Web application for bankroll tracking and sports-betting analysis, with structured screenshot import and a mandatory review step."
     },
     "meta": {
       "home": {
-        "title": "BetTrack — OCR betting-slip scan and bankroll tracking",
+        "title": "Kalivoa — OCR betting-slip scan and bankroll tracking",
         "description": "Use OCR to scan one or more betting-slip screenshots, review structured bets and track your bankroll without manual entry."
       },
       "features": {
         "title": "Screenshot import and bankroll tracking features",
-        "description": "Explore structured betting-slip import, review, bankroll history and statistics in BetTrack."
+        "description": "Explore structured betting-slip import, review, bankroll history and statistics in Kalivoa."
       },
       "import": {
         "title": "Turn betting-slip screenshots into history",
-        "description": "Learn how BetTrack structures visible ticket details and lets you review them before updating history."
+        "description": "Learn how Kalivoa structures visible ticket details and lets you review them before updating history."
       },
       "bankroll": {
         "title": "Sports-betting bankroll tracking",
-        "description": "Organize betting history and view bankroll, profit and ROI indicators with BetTrack."
+        "description": "Organize betting history and view bankroll, profit and ROI indicators with Kalivoa."
       },
       "pricing": {
-        "title": "BetTrack pricing and subscription",
-        "description": "BetTrack prices, limits and terms are shown transparently before payment."
+        "title": "Kalivoa pricing and subscription",
+        "description": "Kalivoa prices, limits and terms are shown transparently before payment."
       },
       "bookmakers": {
-        "title": "Bookmaker profiles validated for BetTrack import",
-        "description": "See which bookmaker reading profiles are validated for betting-slip screenshot import in BetTrack."
+        "title": "Bookmaker profiles validated for Kalivoa import",
+        "description": "See which bookmaker reading profiles are validated for betting-slip screenshot import in Kalivoa."
       },
       "faq": {
-        "title": "BetTrack FAQ",
+        "title": "Kalivoa FAQ",
         "description": "Answers to common questions about screenshot import, bookmakers, statistics and privacy."
       },
       "contact": {
-        "title": "Contact BetTrack",
-        "description": "Learn about the feedback channel available to BetTrack users."
+        "title": "Contact Kalivoa",
+        "description": "Learn about the feedback channel available to Kalivoa users."
       },
       "legal": {
-        "title": "BetTrack legal notice",
-        "description": "Status of BetTrack publisher information."
+        "title": "Kalivoa legal notice",
+        "description": "Status of Kalivoa publisher information."
       },
       "sales": {
-        "title": "BetTrack terms of sale",
-        "description": "Status of BetTrack subscription and sales terms."
+        "title": "Kalivoa terms of sale",
+        "description": "Status of Kalivoa subscription and sales terms."
       }
     },
     "info": {
       "breadcrumbAriaLabel": "Breadcrumb",
       "home": "Home",
-      "cta": "Try BetTrack"
+      "cta": "Try Kalivoa"
     },
     "pages": {
       "features": {
-        "eyebrow": "BetTrack features",
+        "eyebrow": "Kalivoa features",
         "title": "From betting-slip screenshot to usable bankroll history.",
-        "description": "BetTrack brings together structured reading of visible tickets, review and useful indicators for bankroll tracking.",
+        "description": "Kalivoa brings together structured reading of visible tickets, review and useful indicators for bankroll tracking.",
         "sectionTitle": "A controlled path from screenshot to history",
         "intro": "Import speeds up visible-ticket entry, while the final validation always stays with the user.",
         "points": {
@@ -1175,17 +1215,17 @@
           "two": { "title": "Organized history", "description": "Keep bets, bankrolls and capital movements in the same place." },
           "three": { "title": "Performance reading", "description": "Review profit, ROI and breakdowns from saved bets." }
         },
-        "notice": { "title": "No performance promise", "description": "BetTrack measures and organizes data. It does not recommend betting or guarantee any outcome." }
+        "notice": { "title": "No performance promise", "description": "Kalivoa measures and organizes data. It does not recommend betting or guarantee any outcome." }
       },
       "import": {
         "eyebrow": "Betting-slip screenshot reading",
         "title": "Your screenshots become bets ready to join your history.",
-        "description": "Add one or more screenshots: BetTrack structures visible slips and presents them before import.",
+        "description": "Add one or more screenshots: Kalivoa structures visible slips and presents them before import.",
         "sectionTitle": "Ticket-aware reading, with essential review.",
         "intro": "Extraction proposes what is genuinely visible: date, sport, bet type, selection, stake, odds and, when readable, event result and bet status. Everything stays editable.",
         "points": {
           "one": { "title": "One or several screenshots", "description": "Select multiple images and group visible slips into the same review." },
-          "two": { "title": "Visible slips and statuses", "description": "When a settled ticket shows its status and a bookmaker profile is validated, BetTrack can propose it for review." },
+          "two": { "title": "Visible slips and statuses", "description": "When a settled ticket shows its status and a bookmaker profile is validated, Kalivoa can propose it for review." },
           "three": { "title": "Correction before saving", "description": "Adjust bankroll, fields, event result or status before updating history." }
         },
         "notice": { "title": "A screenshot is not recognized?", "description": "You can still complete or enter a bet manually. Ordinary images are not retained after analysis." }
@@ -1195,7 +1235,7 @@
         "title": "Understand betting history through grouped data.",
         "description": "Find bankrolls, capital movements, bets and statistics in the same application.",
         "sectionTitle": "Indicators built from your betting history",
-        "intro": "BetTrack calculates indicators from saved bets and bankroll movements, without mixing the two.",
+        "intro": "Kalivoa calculates indicators from saved bets and bankroll movements, without mixing the two.",
         "points": {
           "one": { "title": "Balance and evolution", "description": "View bankroll evolution from capital and settled bets." },
           "two": { "title": "Profit and ROI", "description": "Check indicators calculated for bets saved in your tracking." },
@@ -1204,7 +1244,7 @@
         "notice": { "title": "A tool for perspective", "description": "Indicators help understand past activity. They do not predict gains or recommend a stake." }
       },
       "pricing": {
-        "eyebrow": "BetTrack pricing",
+        "eyebrow": "Kalivoa pricing",
         "title": "No unapproved price is presented as a public offer.",
         "description": "The repository contains billing configuration, but its public launch plan and prices still need confirmation.",
         "sectionTitle": "What will be shown before payment",
@@ -1225,13 +1265,13 @@
         "points": {
           "one": { "title": "Validated profiles", "description": "Winamax, Betclic, Unibet and Bet365 are the currently tested reading profiles." },
           "two": { "title": "Always review", "description": "Even with a validated profile, extracted data is presented for review before it is saved." },
-          "three": { "title": "Independent service", "description": "BetTrack is not affiliated with any bookmaker and does not place a stake." }
+          "three": { "title": "Independent service", "description": "Kalivoa is not affiliated with any bookmaker and does not place a stake." }
         },
         "notice": { "title": "Controlled evolution", "description": "Other bookmakers can be added to a bankroll. Their screenshot reading is not advertised as validated before dedicated checks." }
       },
       "contact": {
         "eyebrow": "Contact and feedback",
-        "title": "The current feedback channel is available from a BetTrack account.",
+        "title": "The current feedback channel is available from a Kalivoa account.",
         "description": "The app includes an authenticated beta-feedback form for problems, ideas and other requests.",
         "sectionTitle": "How to send feedback",
         "intro": "After logging in, use the app feedback form. The current page context is added to make the request easier to handle.",
@@ -1253,7 +1293,7 @@
           "two": { "title": "Contact details", "description": "Address, contact email and other required details to provide." },
           "three": { "title": "Hosting", "description": "Hosting information to validate and publish." }
         },
-        "notice": { "title": "Publication to complete", "description": "These details must be approved by the legal owner before commercial opening. BetTrack does not invent missing legal content." }
+        "notice": { "title": "Publication to complete", "description": "These details must be approved by the legal owner before commercial opening. Kalivoa does not invent missing legal content." }
       },
       "sales": {
         "eyebrow": "Terms of sale",

@@ -43,7 +43,7 @@ export function marketingMetadata({
       type: "website",
       locale: ogLocale[locale],
       url: getSiteUrlForPath(localizedPath),
-      siteName: "BetTrack",
+      siteName: "Kalivoa",
       title,
       description,
     },

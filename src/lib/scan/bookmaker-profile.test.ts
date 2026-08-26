@@ -15,6 +15,8 @@ describe("bookmaker scan profile rules", () => {
   it("does not let the bankroll context force a bookmaker detection", () => {
     const prompt = buildExtractionPrompt(undefined, { bookmaker: "Betclic", bookmakerRules: null });
     expect(prompt).toContain("Ne déduis jamais le bookmaker depuis la bankroll fournie.");
+    expect(prompt).toContain("nom, son logo ou une marque textuelle propre à ce bookmaker");
+    expect(prompt).toContain("La palette, la mise en page, la couleur des cotes");
   });
 
   it("keeps an available cashout offer as a pending bet", () => {

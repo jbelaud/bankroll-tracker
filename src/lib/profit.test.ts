@@ -22,6 +22,7 @@ describe("profit calculations", () => {
   it("handles freebets and cash-outs using the capital actually at risk", () => {
     expect(realStake({ ...baseBet, freebet: true })).toBe(0);
     expect(computeProfit({ ...baseBet, freebet: true, result: "PERDU" })).toBe(0);
+    expect(computeProfit({ ...baseBet, freebet: true, result: "GAGNE", odds: 7.35, stake: 5 })).toBeCloseTo(31.75);
     expect(computeProfit({ ...baseBet, result: "CASHE", cashOutAmount: 7.5 })).toBe(-2.5);
   });
 

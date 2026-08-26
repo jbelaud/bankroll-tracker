@@ -34,7 +34,14 @@ const DESKTOP_NAV_GROUPS = [
   { key: "manage", items: NAV_ITEMS.slice(4) },
 ] as const;
 
-const MOBILE_NAV_ITEMS = NAV_ITEMS.filter((item) => item.key !== "history" && item.key !== "referrals");
+// Le Scan est l'action principale sur mobile : il doit rester au centre de la
+// barre à cinq entrées, pas simplement conserver son ordre desktop.
+const MOBILE_NAV_ORDER = ["home", "stats", "scanner", "bankrolls", "account"] as const;
+const MOBILE_NAV_ITEMS = MOBILE_NAV_ORDER.map((key) => {
+  const item = NAV_ITEMS.find((candidate) => candidate.key === key);
+  if (!item) throw new Error(`Entrée de navigation mobile introuvable : ${key}`);
+  return item;
+});
 
 export function AppNav({
   plan,
@@ -50,7 +57,7 @@ export function AppNav({
     <>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-sidebar/95 pb-[var(--rg-footer-h)] backdrop-blur-xl lg:flex">
         <div className="flex min-h-20 items-center border-b border-border px-5">
-          <Link href="/dashboard" aria-label="BetTrack">
+          <Link href="/dashboard" aria-label="Kalivoa">
             <Brand compact />
           </Link>
         </div>
@@ -153,7 +160,7 @@ export function AppTopBar() {
   const currentItem = NAV_ITEMS.find((item) => pathname.startsWith(item.href));
   const currentLabel = currentItem
     ? t("desktopKey" in currentItem ? currentItem.desktopKey : currentItem.key)
-    : "BetTrack";
+    : "Kalivoa";
 
   return (
     <header className="sticky top-0 z-30 hidden h-20 items-center justify-between border-b border-border bg-background/88 px-6 backdrop-blur-xl lg:flex xl:px-8">

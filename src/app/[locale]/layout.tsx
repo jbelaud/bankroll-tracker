@@ -20,14 +20,14 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: siteMetadataBase,
-  applicationName: "BetTrack",
+  applicationName: "Kalivoa",
   title: {
-    default: "BetTrack",
-    template: "%s | BetTrack",
+    default: "Kalivoa",
+    template: "%s | Kalivoa",
   },
   description: "Sports-betting bankroll tracking",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/kalivoa-icon.svg",
   },
 };
 

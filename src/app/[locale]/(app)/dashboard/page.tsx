@@ -48,13 +48,20 @@ export default async function DashboardPage() {
   let betaProgram;
   let movements;
   try {
-    [bankrolls, bets, dbUser, betaProgram, movements] = await Promise.all([
-      listBankrolls(),
-      listAllBets(),
-      prisma.user.findUnique({ where: { id: user.id } }),
-      prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
-      listAllBankrollMovements(),
-    ]);
+    // La base de production passe par le pooler Supabase avec une connexion
+    // Prisma par instance serverless. Ces lectures indépendantes étaient
+    // auparavant lancées en parallèle : sous charge, leur file d'attente
+    // pouvait dépasser le pool_timeout et empêcher l'affichage du Dashboard.
+    // Les garder séquentielles privilégie ici la disponibilité du parcours
+    // bêta à quelques millisecondes de parallélisme théorique.
+    bankrolls = await listBankrolls();
+    bets = await listAllBets();
+    dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    betaProgram = await prisma.betaProgram.findUnique({
+      where: { id: "global" },
+      select: { phase: true },
+    });
+    movements = await listAllBankrollMovements();
   } catch (error) {
     const databaseUrl = process.env.DATABASE_URL;
     const databaseHost = databaseUrl

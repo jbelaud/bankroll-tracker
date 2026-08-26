@@ -38,7 +38,7 @@ export async function sendQualityReportToDiscord({
   }
 
   const payload = {
-    username: "BetTrack · Scan bêta",
+    username: "Kalivoa · Scan bêta",
     embeds: [{
       title: "Nouveau signalement de scan",
       color: 0x5865F2,

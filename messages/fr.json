@@ -52,7 +52,7 @@
     "freemium": "Freemium",
     "freemiumDetail": "Sans date d’expiration",
     "beta": "Accès bêta",
-    "betaDetail": "Fin définie par BetTrack",
+    "betaDetail": "Fin définie par Kalivoa",
     "betaPremium": "Premium bêta",
     "premium": "Premium",
     "periodEnd": "Échéance : {date}",
@@ -107,7 +107,7 @@
       "hasAccount": "Déjà un compte ?",
       "loginLink": "Se connecter",
       "freemium": {
-        "betaEyebrow": "Bêta BetTrack · accès gratuit",
+        "betaEyebrow": "Bêta Kalivoa · accès gratuit",
         "standardEyebrow": "Compte Freemium",
         "betaDescription": "Crée ton compte gratuitement : la bêta inclut des capacités élargies, sans carte bancaire.",
         "standardDescription": "Crée ton compte gratuitement et commence à suivre tes paris sans ressaisie manuelle.",
@@ -128,20 +128,20 @@
 
   "dashboard": {
     "title": "Tableau de bord",
-    "welcomeTitle": "Bienvenue sur BetTrack",
+    "welcomeTitle": "Bienvenue sur Kalivoa",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
     "onboarding": {
-      "ariaLabel": "Premiers pas sur BetTrack",
+      "ariaLabel": "Premiers pas sur Kalivoa",
       "eyebrow": "Bien démarrer",
       "title": "Construis ton suivi de paris",
       "description": "Trois étapes simples pour commencer à suivre ta bankroll et tes performances.",
       "secondTitle": "Ta bankroll est prête",
-      "secondDescription": "Importe ton premier ticket : BetTrack organisera ensuite tes résultats automatiquement.",
+      "secondDescription": "Importe ton premier ticket : Kalivoa organisera ensuite tes résultats automatiquement.",
       "stepLabel": "Étape {count}",
       "bankrollCta": "Créer ma bankroll",
       "scanCta": "Importer mon premier ticket",
       "discord": {
-        "title": "Rejoindre le Discord BetTrack",
+        "title": "Rejoindre le Discord Kalivoa",
         "description": "Partage tes captures et tes retours avec la communauté bêta."
       },
       "steps": {
@@ -152,7 +152,7 @@
     },
     "community": {
       "title": "Communauté Discord",
-      "description": "Partage tes captures de bookmakers et tes retours pour améliorer BetTrack.",
+      "description": "Partage tes captures de bookmakers et tes retours pour améliorer Kalivoa.",
       "join": "Rejoindre"
     },
     "quota": {
@@ -286,6 +286,12 @@
       "title": "Pas encore de bankroll",
       "description": "Le scan importe tes paris dans une bankroll : crée-la d'abord."
     },
+    "pending": {
+      "title": "Imports en attente",
+      "description": "Reprends une vérification déjà analysée, sans renvoyer les captures.",
+      "betCount": "{count, plural, one {# pari à vérifier} other {# paris à vérifier}}",
+      "resume": "Reprendre"
+    },
     "upload": {
       "importInto": "Importer dans",
       "scanButton": "Lancer le scan OCR",
@@ -311,14 +317,15 @@
       "title": "Paris détectés ({count})",
       "restart": "Recommencer",
       "duplicateWarning": "Paris entourés en orange : pas de référence sur le ticket, mais date/mise/cote/description identiques à un pari déjà connu — vérifie qu'il ne s'agit pas d'un doublon avant de confirmer.",
+      "duplicateScanSkipped": "Capture déjà analysée et ignorée : {files}. Les autres captures du lot ont bien été analysées.",
       "suggestedWarning": "Certains paris n'ont pas de type existant qui correspond bien — repère le préfixe « [Type suggéré…] » dans leur description.",
       "taxonomyMismatchWarning": "Certains sports et types de pari ne concordent pas. Vérifie-les avant l'import : ils ont été mis sur « Autre » pour ne pas enregistrer de donnée incohérente.",
       "bankrollLabel": "Importer dans cette bankroll",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "qualityOffer": {
         "title": "Un problème avec ce scan ?",
-        "consent": "Envoyer ce scan à BetTrack pour nous aider à corriger le problème.",
-        "details": "La capture et votre signalement seront envoyés dans le canal Discord privé de l'équipe BetTrack. Elle peut contenir une référence, un solde ou un pseudo ; ne partagez que si vous l'acceptez.",
+        "consent": "Envoyer ce scan à Kalivoa pour nous aider à corriger le problème.",
+        "details": "La capture et votre signalement seront envoyés dans le canal Discord privé de l'équipe Kalivoa. Elle peut contenir une référence, un solde ou un pseudo ; ne partagez que si vous l'acceptez.",
         "issueTypeLabel": "Quel est le problème ?",
         "issueTypes": {
           "incorrect": "Informations incorrectes",
@@ -346,7 +353,8 @@
         "stakeLabel": "Mise ({currency})",
         "oddsLabel": "Cote",
         "resultLabel": "Résultat",
-        "cashoutLabel": "Montant encaissé ({currency})"
+        "cashoutLabel": "Montant encaissé ({currency})",
+        "freebetLabel": "Freebet (mise non engagée)"
       }
     },
     "complete": {
@@ -354,11 +362,22 @@
       "description": "{count, plural, one {# pari a été ajouté à ta bankroll.} other {# paris ont été ajoutés à ta bankroll.}}",
       "firstTitle": "Ton premier scan est terminé !",
       "firstDescription": "{count, plural, one {# pari est maintenant enregistré dans ta bankroll.} other {# paris sont maintenant enregistrés dans ta bankroll.}}",
-      "discordTitle": "Aide-nous à améliorer BetTrack",
+      "discordTitle": "Aide-nous à améliorer Kalivoa",
       "discordDescription": "Rejoins le Discord bêta pour partager tes retours et tes captures de bookmakers, après avoir masqué toute donnée personnelle.",
       "joinDiscord": "Rejoindre le Discord",
       "scanAgainCta": "Scanner d’autres captures",
       "dashboardCta": "Accéder à mon tableau de bord"
+    },
+    "empty": {
+      "title": "Aucun pari trouvé",
+      "description": "Kalivoa Scan n’a trouvé aucun pari exploitable sur cette capture. Essaie une capture plus nette ou un ticket complet.",
+      "privacy": "Tu peux partager volontairement ce ticket pour améliorer Kalivoa Scan. La capture est conservée temporairement pendant 30 jours, accessible à l’équipe autorisée et envoyée dans le canal Discord privé. Elle peut contenir un pseudo, un solde ou une référence.",
+      "share": "Partager ce ticket pour améliorer Kalivoa Scan",
+      "sharing": "Partage en cours…",
+      "shared": "Merci, le ticket a été transmis à l’équipe Kalivoa.",
+      "retry": "Essayer une autre capture",
+      "duplicateTitle": "Capture déjà analysée",
+      "duplicateDescription": "{files} a déjà été analysée. Elle n’a pas été facturée ni traitée une seconde fois."
     },
     "error": {
       "analysisFailed": "L'analyse a échoué."
@@ -546,7 +565,7 @@
       "result": "Résultat",
       "profit": "P&L",
       "actions": "Actions",
-      "editAriaLabel": "Modifier le résultat de ce pari",
+      "editAriaLabel": "Modifier ce pari",
       "deleteAriaLabel": "Supprimer ce pari"
     },
     "accordion": {
@@ -587,12 +606,32 @@
       "resultLabel": "Résultat",
       "cashoutLabel": "Montant encaissé ({currency})",
       "saving": "Enregistrement…"
+    },
+    "editBet": {
+      "title": "Modifier le pari",
+      "description": "Corrige toutes les informations de ce pari. Les statistiques seront recalculées.",
+      "sport": "Sport",
+      "betType": "Type de pari",
+      "descriptionLabel": "Description",
+      "eventResultLabel": "Résultat de l'événement",
+      "date": "Date",
+      "stake": "Mise ({currency})",
+      "odds": "Cote",
+      "result": "Résultat",
+      "cashout": "Montant encaissé ({currency})",
+      "freebet": "Freebet (mise non engagée)",
+      "live": "Pari en direct",
+      "boosted": "Cote boostée",
+      "originalOdds": "Cote avant boost",
+      "saving": "Enregistrement…"
     }
   },
 
   "referral": {
     "title": "Parraine tes amis, gagne des scans OCR",
-    "description": "Invite tes amis à tester BetTrack pendant la bêta. Ton ami reçoit 10 scans OCR après son premier scan valide, et tu peux gagner jusqu’à 20 scans OCR à vie pour chaque filleul actif.",
+    "description": "Invite tes amis à tester Kalivoa pendant la bêta. Ton ami reçoit 10 scans OCR après son premier scan valide, et tu peux gagner jusqu’à 20 scans OCR à vie pour chaque filleul actif.",
+    "pausedTitle": "Parrainage temporairement en pause",
+    "pausedDescription": "Aucune nouvelle récompense n’est attribuée pendant le P0. Tes relations de parrainage, ta progression et les scans déjà gagnés sont conservés.",
     "benefits": {
       "first": "+10 scans après son premier scan valide",
       "second": "+10 scans supplémentaires après son 5e scan",
@@ -606,7 +645,7 @@
     "share": "Partager",
     "shareDiscord": "Copier pour Discord",
     "shareNative": "Partager avec…",
-    "shareText": "Teste BetTrack avec mon lien de parrainage !",
+    "shareText": "Teste Kalivoa avec mon lien de parrainage !",
     "stats": {
       "invited": "Amis inscrits",
       "active": "Filleuls actifs",
@@ -871,6 +910,7 @@
     "initialCapitalPositive": "Le capital de départ doit être un nombre positif.",
     "stakePositive": "La mise doit être un nombre positif.",
     "oddsPositive": "La cote doit être un nombre positif.",
+    "invalidDate": "La date du pari est invalide.",
     "invalidResult": "Résultat invalide.",
     "betNotFound": "Pari introuvable.",
     "cashoutAmountPositive": "Le montant encaissé doit être un nombre positif.",
@@ -895,7 +935,7 @@
 
   "marketing": {
     "header": {
-      "homeAriaLabel": "Accueil BetTrack",
+      "homeAriaLabel": "Accueil Kalivoa",
       "navAriaLabel": "Navigation du site",
       "languageAriaLabel": "Passer la langue en anglais",
       "menuAriaLabel": "Ouvrir le menu",
@@ -905,7 +945,7 @@
       "pricing": "Tarifs",
       "faq": "FAQ",
       "login": "Se connecter",
-      "cta": "Essayer BetTrack"
+      "cta": "Essayer Kalivoa"
     },
     "footer": {
       "description": "Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs.",
@@ -927,18 +967,18 @@
       "terms": "Conditions d’utilisation",
       "legal": "Mentions légales",
       "sales": "Conditions de vente",
-      "copyright": "© {year} BetTrack. Tous droits réservés.",
-      "responsibleNotice": "Réservé aux adultes. BetTrack aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+      "copyright": "© {year} Kalivoa. Tous droits réservés.",
+      "responsibleNotice": "Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
     },
     "hero": {
-      "eyebrow": "Scan OCR* de tickets de pari",
-      "title": "Scannez vos tickets de pari pour alimenter votre historique.",
-      "description": "Ajoutez une ou plusieurs captures : le Scan OCR de BetTrack lit et structure les informations visibles. Lorsqu’un ticket terminé l’affiche et que son profil est validé, son statut peut aussi être proposé. Vous gardez le dernier mot avant l’import.",
-      "ocrNote": "* OCR signifie reconnaissance optique de caractères : BetTrack lit les éléments visibles sur vos captures pour préparer les paris à vérifier.",
+      "eyebrow": "Kalivoa Scan · import par capture",
+      "title": "Tes paris. Tes stats. Zéro saisie.",
+      "description": "Ajoute une ou plusieurs captures : Kalivoa Scan lit et structure les informations visibles. Tu vérifies toujours les paris proposés avant leur import dans ton historique.",
+      "ocrNote": "* OCR signifie reconnaissance optique de caractères : Kalivoa lit les éléments visibles sur vos captures pour préparer les paris à vérifier.",
       "primaryCta": "Lancer mon Scan OCR",
       "secondaryCta": "Voir la démonstration",
       "reassuranceOne": "Plusieurs captures et tickets visibles dans un même parcours.",
-      "reassuranceTwo": "Profils de lecture validés bookmaker par bookmaker."
+      "reassuranceTwo": "Une vérification obligatoire avant chaque import."
     },
     "trust": {
       "trustOne": "Aucun accès à votre compte bookmaker",
@@ -948,7 +988,7 @@
     "problem": {
       "eyebrow": "Le problème",
       "title": "Vos tickets contiennent déjà les données dont votre historique a besoin.",
-      "description": "Date, sport, marché, mise, cote et statut : les ressaisir ticket après ticket fait perdre du temps et crée des oublis. BetTrack les prépare à partir de vos captures.",
+      "description": "Date, sport, marché, mise, cote et statut : les ressaisir ticket après ticket fait perdre du temps et crée des oublis. Kalivoa les prépare à partir de vos captures.",
       "items": {
         "manual": {
           "number": "01",
@@ -968,7 +1008,7 @@
       }
     },
     "solution": {
-      "title": "BetTrack transforme les informations visibles en paris structurés.",
+      "title": "Kalivoa transforme les informations visibles en paris structurés.",
       "description": "La lecture est pensée pour les tickets de paris : elle prépare notamment la date, le sport, la sélection, la mise, la cote, le statut et le résultat de l’événement lorsqu’ils sont lisibles. Vous validez ensuite ce qui rejoint votre historique."
     },
     "steps": {
@@ -993,7 +1033,7 @@
     "features": {
       "eyebrow": "Fonctionnalités vérifiées",
       "title": "Un Scan OCR de tickets conçu pour le suivi, pas un simple lecteur de texte.",
-      "description": "BetTrack utilise le Scan OCR pour lire puis organiser les informations visibles d’un ticket afin de les rendre utilisables dans votre suivi.",
+      "description": "Kalivoa utilise le Scan OCR pour lire puis organiser les informations visibles d’un ticket afin de les rendre utilisables dans votre suivi.",
       "more": "Explorer les fonctionnalités",
       "items": {
         "import": {
@@ -1023,11 +1063,11 @@
       }
     },
     "bookmakers": {
-      "eyebrow": "Profils d’import validés",
-      "title": "Des profils validés pour lire les tickets avec plus de contexte.",
-      "description": "Winamax, Betclic, Unibet et Bet365 disposent de profils de lecture validés. Les règles propres à un bookmaker ne sont appliquées que lorsque son ticket est visuellement identifié.",
+      "eyebrow": "Compatibilité bookmaker",
+      "title": "Des tickets lus avec le contexte visible de chaque bookmaker.",
+      "description": "La compatibilité de Kalivoa Scan dépend du ticket, de sa lisibilité et de son bookmaker. Les règles spécifiques ne sont appliquées que lorsqu’un bookmaker est clairement identifié ; tu vérifies toujours le résultat avant l’import.",
       "more": "Voir le détail de la compatibilité",
-      "independence": "BetTrack est indépendant et n’est affilié à aucun des bookmakers affichés."
+      "independence": "Kalivoa est indépendant et n’est affilié à aucun des bookmakers affichés."
     },
     "pricing": {
       "eyebrow": "Tarification transparente",
@@ -1039,40 +1079,40 @@
     },
     "faq": {
       "eyebrow": "Questions fréquentes",
-      "title": "Des réponses directes sur BetTrack.",
+      "title": "Des réponses directes sur Kalivoa.",
       "description": "Les réponses ci-dessous correspondent aux fonctionnalités actuellement présentes dans l’application.",
       "more": "Voir toute la FAQ",
       "items": {
         "what": {
-          "question": "Qu’est-ce que BetTrack ?",
-          "answer": "BetTrack est un outil personnel de suivi et d’analyse de bankroll pour les paris sportifs. Il aide à organiser un historique de paris ; il ne place pas de pari et ne fournit pas de conseil de pari."
+          "question": "Qu’est-ce que Kalivoa ?",
+          "answer": "Kalivoa est un outil personnel de suivi et d’analyse de bankroll pour les paris sportifs. Il aide à organiser un historique de paris ; il ne place pas de pari et ne fournit pas de conseil de pari."
         },
         "import": {
           "question": "Comment fonctionne l’import par capture d’écran ?",
-          "answer": "Vous ajoutez une ou plusieurs captures de tickets. BetTrack prépare les informations visibles sous forme de paris structurés, puis vous les présente pour revue et correction avant l’enregistrement."
+          "answer": "Vous ajoutez une ou plusieurs captures de tickets. Kalivoa prépare les informations visibles sous forme de paris structurés, puis vous les présente pour revue et correction avant l’enregistrement."
         },
         "completed": {
-          "question": "BetTrack peut-il importer un ticket déjà gagné ou perdu ?",
-          "answer": "Oui, lorsqu’un ticket terminé affiche clairement son statut et que la lecture du bookmaker concerné le prend en charge. BetTrack peut alors proposer gagné, perdu, remboursé ou cashé, ainsi que le résultat de l’événement s’il est visible. Vous vérifiez toujours avant l’import."
+          "question": "Kalivoa peut-il importer un ticket déjà gagné ou perdu ?",
+          "answer": "Oui, lorsqu’un ticket terminé affiche clairement son statut et que la lecture du bookmaker concerné le prend en charge. Kalivoa peut alors proposer gagné, perdu, remboursé ou cashé, ainsi que le résultat de l’événement s’il est visible. Vous vérifiez toujours avant l’import."
         },
         "bookmakers": {
           "question": "Quels bookmakers sont pris en charge ?",
-          "answer": "Les profils d’import actuellement validés sont Winamax, Betclic, Unibet et Bet365. L’application permet aussi de créer des bankrolls avec d’autres bookmakers, sans promettre le même niveau de validation pour leur import."
+          "answer": "La compatibilité de Kalivoa Scan dépend du bookmaker, du format et de la lisibilité du ticket. Les pages bookmakers indiquent l’état de validation pendant la bêta. Vous pouvez créer une bankroll pour d’autres bookmakers, sans promesse de compatibilité identique pour leur import."
         },
         "review": {
           "question": "Puis-je corriger les informations extraites ?",
           "answer": "Oui. Chaque pari extrait passe par une étape de revue : vous pouvez corriger les données avant de les enregistrer."
         },
         "credentials": {
-          "question": "BetTrack demande-t-il mes identifiants de bookmaker ?",
-          "answer": "Non. L’import repose sur les captures que vous choisissez d’envoyer. BetTrack ne demande pas de connexion à votre compte bookmaker."
+          "question": "Kalivoa demande-t-il mes identifiants de bookmaker ?",
+          "answer": "Non. L’import repose sur les captures que vous choisissez d’envoyer. Kalivoa ne demande pas de connexion à votre compte bookmaker."
         },
         "stats": {
           "question": "Quelles statistiques sont disponibles ?",
           "answer": "L’application affiche notamment le solde, le profit, le ROI, le taux de réussite et des répartitions par période, sport, type de pari et bookmaker."
         },
         "mobile": {
-          "question": "BetTrack fonctionne-t-il sur mobile ?",
+          "question": "Kalivoa fonctionne-t-il sur mobile ?",
           "answer": "Oui. L’interface est conçue pour être utilisable sur mobile, notamment pour ajouter des captures et consulter son suivi."
         },
         "pricing": {
@@ -1083,11 +1123,11 @@
     },
     "finalCta": {
       "title": "Vos captures peuvent enfin nourrir un historique de bankroll utile.",
-      "description": "Créez votre espace BetTrack, importez vos tickets, validez les données et retrouvez-les dans votre suivi.",
+      "description": "Créez votre espace Kalivoa, importez vos tickets, validez les données et retrouvez-les dans votre suivi.",
       "cta": "Créer mon compte"
     },
     "preview": {
-      "appName": "BetTrack",
+      "appName": "Kalivoa",
       "label": "Démonstration du parcours",
       "uploadLabel": "1. Ajoutez",
       "uploadTitle": "Vos captures de tickets",
@@ -1111,62 +1151,62 @@
       "caption": "Illustration du parcours : la disponibilité des champs dépend de ce qui est lisible sur la capture et du profil bookmaker."
     },
     "structured": {
-      "organizationDescription": "BetTrack est un outil de suivi de bankroll et d’import de tickets pour les paris sportifs.",
+      "organizationDescription": "Kalivoa est un outil de suivi de bankroll et d’import de tickets pour les paris sportifs.",
       "websiteDescription": "Transformez des captures de tickets de pari en historique structuré, puis vérifiez-les avant de suivre votre bankroll.",
       "applicationDescription": "Application web de suivi de bankroll avec lecture structurée de tickets de pari par capture, profils bookmaker validés et étape de revue."
     },
     "meta": {
       "home": {
-        "title": "BetTrack — Scan OCR de tickets et suivi de bankroll",
+        "title": "Kalivoa — Scan OCR de tickets et suivi de bankroll",
         "description": "Scannez une ou plusieurs captures de tickets avec l’OCR, vérifiez les paris structurés et suivez votre bankroll sans ressaisie manuelle."
       },
       "features": {
         "title": "Fonctionnalités de suivi de bankroll",
-        "description": "Découvrez l’import par capture, la revue des paris, les bankrolls et les statistiques disponibles dans BetTrack."
+        "description": "Découvrez l’import par capture, la revue des paris, les bankrolls et les statistiques disponibles dans Kalivoa."
       },
       "import": {
         "title": "Importer des tickets de pari par capture",
-        "description": "Découvrez comment BetTrack structure les paris visibles, y compris le statut d’un ticket terminé lorsqu’il est pris en charge."
+        "description": "Découvrez comment Kalivoa structure les paris visibles, y compris le statut d’un ticket terminé lorsqu’il est pris en charge."
       },
       "bankroll": {
         "title": "Suivi de bankroll pour les paris sportifs",
-        "description": "Organisez votre historique de paris et consultez vos indicateurs de bankroll, profit et ROI avec BetTrack."
+        "description": "Organisez votre historique de paris et consultez vos indicateurs de bankroll, profit et ROI avec Kalivoa."
       },
       "pricing": {
-        "title": "Tarifs et abonnement BetTrack",
-        "description": "Les conditions, limites et prix de BetTrack sont affichés de façon transparente avant tout paiement."
+        "title": "Tarifs et abonnement Kalivoa",
+        "description": "Les conditions, limites et prix de Kalivoa sont affichés de façon transparente avant tout paiement."
       },
       "bookmakers": {
-        "title": "Profils bookmaker validés pour l’import BetTrack",
-        "description": "Découvrez pourquoi BetTrack valide ses profils de lecture bookmaker par bookmaker pour un import plus fiable."
+        "title": "Profils bookmaker validés pour l’import Kalivoa",
+        "description": "Découvrez pourquoi Kalivoa valide ses profils de lecture bookmaker par bookmaker pour un import plus fiable."
       },
       "faq": {
-        "title": "FAQ BetTrack",
+        "title": "FAQ Kalivoa",
         "description": "Réponses aux questions fréquentes sur l’import de captures, les bookmakers, les statistiques et la confidentialité."
       },
       "contact": {
-        "title": "Contacter BetTrack",
-        "description": "Découvrez le canal de retour disponible pour les utilisateurs de BetTrack."
+        "title": "Contacter Kalivoa",
+        "description": "Découvrez le canal de retour disponible pour les utilisateurs de Kalivoa."
       },
       "legal": {
-        "title": "Mentions légales BetTrack",
-        "description": "État des informations d’édition légales de BetTrack."
+        "title": "Mentions légales Kalivoa",
+        "description": "État des informations d’édition légales de Kalivoa."
       },
       "sales": {
-        "title": "Conditions de vente BetTrack",
-        "description": "État des conditions de vente et de souscription de BetTrack."
+        "title": "Conditions de vente Kalivoa",
+        "description": "État des conditions de vente et de souscription de Kalivoa."
       }
     },
     "info": {
       "breadcrumbAriaLabel": "Fil d’Ariane",
       "home": "Accueil",
-      "cta": "Essayer BetTrack"
+      "cta": "Essayer Kalivoa"
     },
     "pages": {
       "features": {
-        "eyebrow": "Fonctionnalités BetTrack",
+        "eyebrow": "Fonctionnalités Kalivoa",
         "title": "De la capture de ticket à un historique de bankroll exploitable.",
-        "description": "BetTrack réunit la lecture structurée de tickets visibles, leur revue et les indicateurs utiles au suivi d’une bankroll.",
+        "description": "Kalivoa réunit la lecture structurée de tickets visibles, leur revue et les indicateurs utiles au suivi d’une bankroll.",
         "sectionTitle": "Un parcours de contrôle, de la capture à l’historique",
         "intro": "L’import accélère la saisie des informations visibles ; la validation finale reste toujours entre les mains de l’utilisateur.",
         "points": {
@@ -1174,17 +1214,17 @@
           "two": { "title": "Historique organisé", "description": "Conservez paris, bankrolls et mouvements de capital au même endroit." },
           "three": { "title": "Lecture de la performance", "description": "Examinez profit, ROI et répartitions à partir des paris enregistrés." }
         },
-        "notice": { "title": "Pas de promesse de performance", "description": "BetTrack sert à mesurer et organiser des données. Il ne conseille pas de parier et ne garantit aucun résultat." }
+        "notice": { "title": "Pas de promesse de performance", "description": "Kalivoa sert à mesurer et organiser des données. Il ne conseille pas de parier et ne garantit aucun résultat." }
       },
       "import": {
         "eyebrow": "Lecture de tickets par capture",
         "title": "Vos captures deviennent des paris prêts à rejoindre votre historique.",
-        "description": "Ajoutez une ou plusieurs captures : BetTrack structure les tickets visibles et vous les soumet avant import.",
+        "description": "Ajoutez une ou plusieurs captures : Kalivoa structure les tickets visibles et vous les soumet avant import.",
         "sectionTitle": "Une lecture adaptée aux tickets, avec une validation indispensable.",
         "intro": "L’extraction propose les informations réellement visibles — date, sport, type, intitulé, mise, cote et, lorsqu’ils sont lisibles, résultat de l’événement et statut du pari. Tout reste modifiable.",
         "points": {
           "one": { "title": "Une ou plusieurs captures", "description": "Sélectionnez plusieurs images et regroupez les tickets visibles dans une même revue." },
-          "two": { "title": "Tickets et statuts affichés", "description": "Lorsqu’un ticket terminé affiche son statut et qu’un profil bookmaker est validé, BetTrack peut le proposer à la revue." },
+          "two": { "title": "Tickets et statuts affichés", "description": "Lorsqu’un ticket terminé affiche son statut et qu’un profil bookmaker est validé, Kalivoa peut le proposer à la revue." },
           "three": { "title": "Correction avant sauvegarde", "description": "Ajustez la bankroll, les champs, le résultat ou le statut avant de mettre l’historique à jour." }
         },
         "notice": { "title": "Une capture non reconnue ?", "description": "Vous gardez la possibilité de compléter ou de saisir un pari manuellement. Les images ordinaires ne sont pas conservées après l’analyse." }
@@ -1194,7 +1234,7 @@
         "title": "Comprendre son historique de paris avec des données regroupées.",
         "description": "Retrouvez vos bankrolls, mouvements de capital, paris et statistiques dans la même application.",
         "sectionTitle": "Des indicateurs construits à partir de votre historique",
-        "intro": "BetTrack calcule les indicateurs à partir des paris enregistrés et des mouvements de bankroll, sans les confondre.",
+        "intro": "Kalivoa calcule les indicateurs à partir des paris enregistrés et des mouvements de bankroll, sans les confondre.",
         "points": {
           "one": { "title": "Solde et évolution", "description": "Visualisez l’évolution de la bankroll à partir du capital et des paris réglés." },
           "two": { "title": "Profit et ROI", "description": "Consultez les indicateurs calculés pour les paris enregistrés dans votre suivi." },
@@ -1203,7 +1243,7 @@
         "notice": { "title": "Un outil de contrôle", "description": "Les indicateurs servent à mieux comprendre l’activité passée, pas à prédire des gains ou recommander une mise." }
       },
       "pricing": {
-        "eyebrow": "Tarifs BetTrack",
+        "eyebrow": "Tarifs Kalivoa",
         "title": "Aucun prix non validé ne sera affiché comme une offre publique.",
         "description": "Le dépôt contient une configuration de facturation, mais l’offre de lancement et ses prix publics restent à confirmer.",
         "sectionTitle": "Ce qui sera affiché avant paiement",
@@ -1224,13 +1264,13 @@
         "points": {
           "one": { "title": "Profils validés", "description": "Winamax, Betclic, Unibet et Bet365 sont les profils de lecture actuellement testés." },
           "two": { "title": "Révision systématique", "description": "Même avec un profil validé, les données extraites sont présentées pour contrôle avant l’enregistrement." },
-          "three": { "title": "Service indépendant", "description": "BetTrack n’est affilié à aucun bookmaker et ne place aucune mise." }
+          "three": { "title": "Service indépendant", "description": "Kalivoa n’est affilié à aucun bookmaker et ne place aucune mise." }
         },
         "notice": { "title": "Évolution contrôlée", "description": "D’autres bookmakers peuvent être ajoutés à une bankroll. Leur lecture par capture n’est pas annoncée comme validée avant des vérifications dédiées." }
       },
       "contact": {
         "eyebrow": "Contact et retours",
-        "title": "Le canal de retour actuel est disponible depuis un compte BetTrack.",
+        "title": "Le canal de retour actuel est disponible depuis un compte Kalivoa.",
         "description": "L’application propose un formulaire de retour bêta authentifié afin d’envoyer un problème, une idée ou une autre demande.",
         "sectionTitle": "Comment transmettre un retour",
         "intro": "Après connexion, utilisez le formulaire de retour de l’application. Le contexte de la page est ajouté afin d’aider au traitement de votre demande.",
@@ -1252,7 +1292,7 @@
           "two": { "title": "Coordonnées", "description": "Adresse, e-mail de contact et autres informations obligatoires à renseigner." },
           "three": { "title": "Hébergement", "description": "Informations d’hébergement à valider et publier." }
         },
-        "notice": { "title": "Publication à finaliser", "description": "Ces éléments doivent être validés par le responsable légal avant l’ouverture commerciale. Aucun contenu juridique absent n’est inventé par BetTrack." }
+        "notice": { "title": "Publication à finaliser", "description": "Ces éléments doivent être validés par le responsable légal avant l’ouverture commerciale. Aucun contenu juridique absent n’est inventé par Kalivoa." }
       },
       "sales": {
         "eyebrow": "Conditions de vente",

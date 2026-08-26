@@ -3,9 +3,9 @@ import { getSiteUrlForPath } from "@/lib/site";
 export function GET() {
   const site = getSiteUrlForPath();
   const content = [
-    "# BetTrack",
+    "# Kalivoa",
     "",
-    "> BetTrack is an independent sports-betting bankroll tracking web application. It imports betting-slip screenshots for user review before saving them to a private history.",
+    "> Kalivoa is an independent sports-betting bankroll tracking web application. It imports betting-slip screenshots for user review before saving them to a private history.",
     "",
     "## Canonical public pages",
     "- " + site + "fr",
@@ -20,10 +20,10 @@ export function GET() {
     "- " + getSiteUrlForPath("/en/faq"),
     "",
     "## Important facts",
-    "- BetTrack does not place bets and does not provide betting advice or profit guarantees.",
+    "- Kalivoa does not place bets and does not provide betting advice or profit guarantees.",
     "- Users review and can correct extracted information before saving it.",
     "- Validated screenshot-import profiles are Winamax, Betclic, Unibet, Bet365 and PEC.bet.",
-    "- BetTrack does not request bookmaker login credentials.",
+    "- Kalivoa does not request bookmaker login credentials.",
   ].join("\n");
 
   return new Response(content, {

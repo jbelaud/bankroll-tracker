@@ -1,4 +1,4 @@
-// Seed réutilisable des données de test BetTrack.
+// Seed réutilisable des données de test Kalivoa.
 // Remet les comptes de test dans un état propre et cohérent :
 //   - test1  → jeu de données riche (2 bankrolls, ~10 paris variés :
 //              tous les résultats, freebet, boosted, cashout, live,

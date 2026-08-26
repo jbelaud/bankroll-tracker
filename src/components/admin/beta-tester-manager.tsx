@@ -34,8 +34,9 @@ export function BetaTesterManager({
   const [error, setError] = useState("");
   const [latestInviteUrl, setLatestInviteUrl] = useState("");
   const formatCost = (amount: number) => new Intl.NumberFormat(locale, { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(amount);
-  const activeCampaign = invites.find((invite) => !invite.revokedAt && new Date(invite.expiresAt) > new Date() && invite.redemptionCount < invite.maxRedemptions);
-  const remainingPlaces = activeCampaign ? activeCampaign.maxRedemptions - activeCampaign.redemptionCount : 0;
+  const activeCampaigns = invites.filter((invite) => !invite.revokedAt && new Date(invite.expiresAt) > new Date() && invite.redemptionCount < invite.maxRedemptions);
+  const claimedPlaces = activeCampaigns.reduce((sum, invite) => sum + invite.redemptionCount, 0);
+  const remainingPlaces = activeCampaigns.reduce((sum, invite) => sum + invite.maxRedemptions - invite.redemptionCount, 0);
 
   const createCampaign = (event: FormEvent) => {
     event.preventDefault();
@@ -72,7 +73,7 @@ export function BetaTesterManager({
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-sm">
-        <p><strong className="num block text-lg">{activeCampaign ? `${activeCampaign.redemptionCount}/${activeCampaign.maxRedemptions}` : "—"}</strong> inscriptions via lien</p>
+        <p><strong className="num block text-lg">{activeCampaigns.length > 0 ? claimedPlaces : "—"}</strong> inscriptions via liens actifs</p>
         <p><strong className="num block text-lg">{remainingPlaces}</strong> places restantes</p>
         <p><strong className="num block text-lg">{scanCount}</strong> scans bêta</p>
         <p><strong className="num block text-lg">{formatCost(costUsd)}</strong> coût bêta</p>
@@ -84,10 +85,10 @@ export function BetaTesterManager({
             Limite d’inscriptions
             <input aria-label="Limite d’inscriptions du lien bêta" type="number" min={1} max={MAX_BETA_CAMPAIGN_MAX_REDEMPTIONS} value={maxRedemptions} onChange={(event) => setMaxRedemptions(Number(event.target.value))} className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm" />
           </label>
-          <Button type="submit" size="sm" disabled={pending}>Créer le lien partagé</Button>
+          <Button type="submit" size="sm" disabled={pending}>Créer un lien limité</Button>
         </form>
       )}
-      {betaPhaseActive && <p className="-mt-2 text-xs text-muted-foreground">Créer un nouveau lien désactive automatiquement le précédent. Il expire après 14 jours.</p>}
+      {betaPhaseActive && <p className="-mt-2 text-xs text-muted-foreground">Plusieurs liens peuvent rester actifs : crée un lien distinct et limité pour chaque source. Chaque lien expire après 14 jours.</p>}
       {latestInviteUrl && <div className="rounded-lg bg-muted p-2 text-xs"><p className="mb-1 font-medium">Lien créé — copie-le maintenant : seul son hash est conservé.</p><input aria-label="Lien bêta partagé" readOnly value={latestInviteUrl} onFocus={(event) => event.currentTarget.select()} className="w-full rounded border border-border bg-background p-2 font-mono text-[0.65rem]" /></div>}
       {error && <p role="alert" className="text-xs text-loss">{error}</p>}
 

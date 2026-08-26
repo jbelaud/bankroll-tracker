@@ -8,6 +8,7 @@ import {
   Lightning,
   Gift,
   Radio,
+  PencilSimple,
   TrashSimple,
   CheckCircle,
   Circle,
@@ -232,6 +233,17 @@ export function HistoryBetItem({
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-0.5">
+          <button
+            type="button"
+            aria-label={tCommon("edit")}
+            onClick={(event) => {
+              event.stopPropagation();
+              onRequestEdit(bet.id);
+            }}
+            className="-mr-2 flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <PencilSimple size={15} aria-hidden />
+          </button>
           <span className="num text-xs text-muted-foreground">
             {bet.result === "CASHE"
               ? t("cashedOut", { amount: fmtMoney(bet.cashOutAmount ?? 0, locale, currency) })

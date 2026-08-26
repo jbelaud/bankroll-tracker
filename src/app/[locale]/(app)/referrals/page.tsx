@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n/routing";
 import { requireUser } from "@/lib/auth";
 import { getReferralOverview } from "@/lib/referral/overview";
 import { ReferralDashboard } from "@/components/referral/referral-dashboard";
+import { BETA_REFERRAL_CONFIG } from "@/lib/referral/config";
 
 async function appOrigin(): Promise<string> {
   if (process.env.NEXT_PUBLIC_APP_URL) return new URL(process.env.NEXT_PUBLIC_APP_URL).origin;
@@ -18,5 +19,5 @@ export default async function ReferralsPage({ params }: { params: Promise<{ loca
   const link = new URL(`/${locale}/signup`, origin);
   link.searchParams.set("ref", overview.referralCode);
 
-  return <ReferralDashboard referralLink={link.toString()} {...overview} />;
+  return <ReferralDashboard referralLink={link.toString()} paused={!BETA_REFERRAL_CONFIG.enabled} {...overview} />;
 }

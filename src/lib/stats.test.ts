@@ -26,4 +26,17 @@ describe("performance statistics", () => {
     expect(stats.avgStake).toBe(10);
     expect(bySport).toMatchObject([{ name: "Football", count: 1, settled: 1, staked: 10 }]);
   });
+
+  it("keeps freebets out of cash-stake indicators while tracking their separate profit", () => {
+    const stats = computeGlobalStats([
+      bet({ id: "cash", result: "GAGNE", stake: 10, odds: 2 }),
+      bet({ id: "freebet", result: "GAGNE", stake: 5, odds: 7.35, freebet: true }),
+    ]);
+
+    expect(stats.totalStaked).toBe(10);
+    expect(stats.avgStake).toBe(10);
+    expect(stats.avgOdds).toBe(2);
+    expect(stats.freebetCount).toBe(1);
+    expect(stats.freebetProfit).toBeCloseTo(31.75);
+  });
 });

@@ -1,8 +1,10 @@
 import { AppNav, AppTopBar } from "@/components/app-nav";
 import { ResponsibleGamblingFooter } from "@/components/responsible-gambling-footer";
 import type { Metadata } from "next";
-import { requireUser } from "@/lib/auth";
+import { redirect } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   robots: {
@@ -13,8 +15,20 @@ export const metadata: Metadata = {
 
 export default async function AppLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const user = await requireUser();
+  params,
+}: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
+  const { locale: localeInput } = await params;
+  const locale = localeInput as Locale;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect({ href: "/login", locale });
+    return null;
+  }
+
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     select: { plan: true, subscriptionCurrentPeriodEnd: true },

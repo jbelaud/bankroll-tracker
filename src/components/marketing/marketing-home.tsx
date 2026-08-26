@@ -17,6 +17,7 @@ import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { HomeJsonLd } from "./home-json-ld";
+import { LandingViewTracker } from "@/components/growth/landing-view-tracker";
 
 type Icon = ComponentType<{ size?: number; weight?: "regular" | "bold" | "fill"; className?: string; "aria-hidden"?: boolean }>;
 
@@ -53,6 +54,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
 
   return (
     <>
+      <LandingViewTracker locale={locale} />
       <HomeJsonLd locale={locale} />
       <section className="marketing-hero">
         <div className="marketing-container grid items-center gap-12 py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(34rem,1.1fr)] lg:py-24">
