@@ -88,4 +88,75 @@ describe("parseBetsFileContent", () => {
     expect(parsed.rows[0].bet?.date).toBe("2026-09-08");
     expect(parsed.rows[0].warnings).toContain("Date ambiguë interprétée au format jour/mois/année");
   });
+
+  it("reconnaît Bet-Analytix et regroupe les sélections d'un combiné", () => {
+    const parsed = parseBetsFileContent("Export_Formatted_Bet-Analytix.csv", [
+      '"Date";"Type";"Sport";"Label";"Odds";"Stake";"State";"Bookmaker";"Tipster";"Category";"Competition";"BetType";"Closing";"EstimatedProbability";"Commission";"Bonus";"Live";"Freebet";"Cashout";"Eachway";"Comment"',
+      '"2021-10-01 11:18";"Combined";"";"COMBI SPECIALE";"2.221";"6.33";"W";"Winamax";"Notime-Pronostic";"";"";"";"";"";"";"";"";"";"";"";""',
+      '"";"";"Football";"LENS OU NUL";"1.170";"";"W";"Winamax";"";"";"";"";"";"";"";"";"";"";"";"";""',
+      '"";"";"Tennis";"VAINQUEUR MONFILS";"1.900";"";"W";"Winamax";"";"";"";"";"";"";"";"";"";"";"";"";""',
+      '"2021-09-30 14:32";"Simple";"Tennis";"VAINQUEUR MURRAY";"2.250";"1.09";"L";"Winamax";"Bestofpronos";"";"ATP";"";"";"";"";"";"Yes";"";"";"";"Test"',
+    ].join("\n"));
+
+    expect(parsed).toMatchObject({
+      sourceProfile: "BET_ANALYTIX",
+      sourceLabel: "Bet-Analytix",
+      detectedBookmakers: ["Winamax"],
+      groupedSelectionRows: 2,
+    });
+    expect(parsed.rows).toHaveLength(2);
+    expect(parsed.rows[0]).toMatchObject({
+      sourceRow: 2,
+      errors: [],
+      bet: {
+        date: "2021-10-01",
+        sport: "Multi-sport",
+        betType: "Combiné",
+        stake: 6.33,
+        odds: 2.221,
+        result: "GAGNE",
+        format: "COMBINE",
+        tipster: "Notime-Pronostic",
+        selections: [
+          expect.objectContaining({ sport: "Football", label: "LENS OU NUL", odds: 1.17, result: "GAGNE" }),
+          expect.objectContaining({ sport: "Tennis", label: "VAINQUEUR MONFILS", odds: 1.9, result: "GAGNE" }),
+        ],
+      },
+    });
+    expect(parsed.rows[0].bet?.description).toContain("Football — LENS OU NUL (1.170)");
+    expect(parsed.rows[0].bet?.description).toContain("Tennis — VAINQUEUR MONFILS (1.900)");
+    expect(parsed.rows[1].bet).toMatchObject({
+      betType: "Simple",
+      result: "PERDU",
+      live: true,
+    });
+    expect(parsed.rows[1].bet?.description).toContain("Compétition : ATP");
+    expect(parsed.rows[1].bet?.description).toContain("Tipster : Bestofpronos");
+    expect(parsed.rows[1].bet?.description).toContain("Commentaire : Test");
+  });
+
+  it("convertit les cotes américaines et fractionnaires", () => {
+    const american = parseBetsFileContent("american.csv", "date,stake,odds,result\n2026-08-20,10,-133,W");
+    const fractional = parseBetsFileContent("fractional.csv", "date,stake,odds,result\n2026-08-20,10,8/11,L");
+
+    expect(american.rows[0].bet?.odds).toBeCloseTo(1.7519, 4);
+    expect(american.rows[0].warnings).toContain("Cote américaine convertie en cote décimale");
+    expect(fractional.rows[0].bet?.odds).toBeCloseTo(1.7273, 4);
+    expect(fractional.rows[0].warnings).toContain("Cote fractionnaire convertie en cote décimale");
+  });
+
+  it("regroupe également les sélections des paris système Bet-Analytix", () => {
+    const parsed = parseBetsFileContent("system.csv", [
+      "Date;Type;Sport;Label;Odds;Stake;State;Bookmaker",
+      "2026-08-20 10:00;2/3;;Système du jour;2.4;15;P;Winamax",
+      ";;Football;Sélection A;1.2;;W;Winamax",
+      ";;Tennis;Sélection B;2.0;;L;Winamax",
+      ";;Basketball;Sélection C;1.8;;W;Winamax",
+    ].join("\n"));
+
+    expect(parsed.sourceProfile).toBe("BET_ANALYTIX");
+    expect(parsed.groupedSelectionRows).toBe(3);
+    expect(parsed.rows).toHaveLength(1);
+    expect(parsed.rows[0].bet).toMatchObject({ betType: "2/3", sport: "Multi-sport", format: "SYSTEME" });
+  });
 });

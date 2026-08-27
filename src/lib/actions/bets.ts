@@ -1,6 +1,6 @@
 "use server";
 
-import type { BetEntryMethod, BetResult } from "@prisma/client";
+import type { BetEntryMethod, BetFormat, BetResult } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
@@ -13,6 +13,11 @@ import {
   normalizeTaxonomyPair,
   saveUserTaxonomyEntry,
 } from "@/lib/taxonomy";
+import type { ParsedBetSelection } from "@/lib/scan/types";
+
+function normalizedTipsterName(value: string): string {
+  return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
+}
 
 // Revalidation commune : tous les écrans qui affichent des paris ou des
 // soldes dérivés (Dashboard, Bankrolls, Historique) doivent refléter le
@@ -67,7 +72,15 @@ export async function createBet(
   ticketRef: string | null,
   date: Date,
   eventResult: string | null = null,
-  source: { entryMethod?: BetEntryMethod; scanUsageId?: string | null } = {}
+  source: {
+    entryMethod?: BetEntryMethod;
+    scanUsageId?: string | null;
+    format?: BetFormat;
+    tipster?: string | null;
+    closingOdds?: number | null;
+    selections?: ParsedBetSelection[];
+    importBatchId?: string | null;
+  } = {}
 ) {
   const user = await requireUser();
   await getOwnedBankroll(bankrollId, user.id);
@@ -94,6 +107,14 @@ export async function createBet(
     throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
   }
 
+  const tipsterName = source.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null;
+  const tipster = tipsterName ? await prisma.tipster.upsert({
+    where: { userId_normalizedName: { userId: user.id, normalizedName: normalizedTipsterName(tipsterName).slice(0, 120) } },
+    update: {},
+    create: { userId: user.id, name: tipsterName, normalizedName: normalizedTipsterName(tipsterName).slice(0, 120) },
+    select: { id: true },
+  }) : null;
+
   const bet = await prisma.bet.create({
     data: {
       bankrollId,
@@ -112,9 +133,27 @@ export async function createBet(
       ticketRef: ticketRef?.trim() || null,
       date,
       entryMethod: source.entryMethod ?? "MANUAL",
+      format: source.format ?? "SIMPLE",
+      closingOdds: source.closingOdds ?? null,
+      importBatchId: source.importBatchId ?? null,
+      tipsterId: tipster?.id ?? null,
       scanUsageId: source.scanUsageId ?? null,
     },
   });
+  if (source.selections?.length) {
+    await prisma.betSelection.createMany({
+      data: source.selections.slice(0, 100).map((selection, position) => ({
+        betId: bet.id,
+        position,
+        sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || normalizedTaxonomy.sport,
+        competition: selection.competition?.normalize("NFKC").trim().slice(0, 255) || null,
+        betType: selection.betType?.normalize("NFKC").trim().slice(0, 255) || null,
+        label: selection.label.normalize("NFKC").trim().slice(0, 1_000) || `Sélection ${position + 1}`,
+        odds: Number.isFinite(selection.odds) && (selection.odds as number) > 0 ? selection.odds : null,
+        result: selection.result,
+      })),
+    });
+  }
   await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
   return bet;
 }
@@ -136,6 +175,10 @@ export async function listAllBets() {
 
   return prisma.bet.findMany({
     where: { bankroll: { userId: user.id } },
+    include: {
+      tipster: { select: { id: true, name: true } },
+      selections: { orderBy: { position: "asc" } },
+    },
     orderBy: { date: "desc" },
   });
 }

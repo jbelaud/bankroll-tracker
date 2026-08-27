@@ -57,6 +57,7 @@ export function HistoryBetItem({
   onRequestEdit: (id: string) => void;
   currency: Currency;
 }) {
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [translateX, setTranslateX] = useState(isOpen ? OPEN_TRANSLATE : 0);
   const [isSwiping, setIsSwiping] = useState(false);
   const gesture = useRef<{
@@ -226,6 +227,27 @@ export function HistoryBetItem({
           {bet.eventResult && (
             <span className="break-words text-xs text-muted-foreground">{bet.eventResult}</span>
           )}
+          {bet.tipster ? <span className="text-xs font-medium text-primary">{t("tipster", { name: bet.tipster.name })}</span> : null}
+          {(bet.selections?.length ?? 0) > 0 ? (
+            <button
+              type="button"
+              aria-expanded={detailsOpen}
+              onClick={(event) => { event.stopPropagation(); setDetailsOpen((open) => !open); }}
+              className="mt-1 w-fit text-left text-xs font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              {detailsOpen ? t("hideSelections") : t("showSelections", { count: bet.selections?.length ?? 0 })}
+            </button>
+          ) : null}
+          {detailsOpen ? (
+            <ol className="mt-1 flex flex-col gap-1 rounded-lg border border-border bg-muted/30 p-2 text-xs">
+              {(bet.selections ?? []).map((selection, index) => (
+                <li key={selection.id} className="flex items-start justify-between gap-2">
+                  <span><strong>{index + 1}. {selection.label}</strong><span className="block text-muted-foreground">{[selection.sport, selection.competition, selection.betType].filter(Boolean).join(" · ")}</span></span>
+                  {selection.odds ? <span className="num shrink-0">{fmtOdds(selection.odds, locale)}</span> : null}
+                </li>
+              ))}
+            </ol>
+          ) : null}
           <span className="text-xs text-muted-foreground">
             {fmtDateWithYear(bet.date, locale)}
             {showBankrollName && ` · ${bet.bankrollName}`}

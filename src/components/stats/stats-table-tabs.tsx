@@ -11,20 +11,23 @@ export function StatsTableTabs({
   sportTable,
   typeTable,
   bookmakerTable,
+  tipsterTable,
 }: {
   sportTable: ReactNode;
   typeTable: ReactNode;
   bookmakerTable: ReactNode;
+  tipsterTable: ReactNode;
 }) {
   const t = useTranslations("stats.tableTabs");
 
   return (
     <Tabs defaultValue="sport" className="flex flex-col gap-3">
-      <TabsList className="grid min-h-touch w-full grid-cols-3 gap-1 bg-transparent p-0">
+      <TabsList className="grid min-h-touch w-full grid-cols-4 gap-1 bg-transparent p-0">
         {[
           { value: "sport", label: t("sport") },
           { value: "type", label: t("type") },
           { value: "bookmaker", label: t("bookmaker") },
+          { value: "tipster", label: t("tipster") },
         ].map((tab) => (
           <TabsTrigger
             key={tab.value}
@@ -38,6 +41,7 @@ export function StatsTableTabs({
       <TabsContent value="sport">{sportTable}</TabsContent>
       <TabsContent value="type">{typeTable}</TabsContent>
       <TabsContent value="bookmaker">{bookmakerTable}</TabsContent>
+      <TabsContent value="tipster">{tipsterTable}</TabsContent>
     </Tabs>
   );
 }

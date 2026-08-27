@@ -360,7 +360,10 @@
         "oddsLabel": "Odds",
         "resultLabel": "Result",
         "cashoutLabel": "Cashed out amount ({currency})",
-        "freebetLabel": "Freebet (stake not committed)"
+        "freebetLabel": "Freebet (stake not committed)",
+        "selectionsDetected": "{count, plural, one {# selection detected} other {# selections detected}}",
+        "selectionsTitle": "Selection details",
+        "selectionLabel": "Selection {number} · {sport}"
       }
     },
     "complete": {
@@ -427,6 +430,10 @@
       "valid": "Bets ready to import",
       "invalid": "Rows skipped",
       "warnings": "Rows to review",
+      "betAnalytixDetected": "Bet-Analytix export recognized",
+      "betAnalytixDetails": "Statuses, bet types and odds are converted automatically. {count, plural, =0 {No separate selection row.} one {# selection row was grouped into its accumulator.} other {# selection rows were grouped into their accumulators.}}",
+      "bookmakerDetected": "Detected bookmaker: {bookmakers}.",
+      "bookmakerMismatch": "The selected bankroll belongs to {selected}: check this choice before importing.",
       "firstRows": "Previewing the first {count} rows out of {total}.",
       "invalidSkipped": "{count, plural, one {# incomplete row will be skipped.} other {# incomplete rows will be skipped.}} The other bets can still be imported normally.",
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
@@ -438,8 +445,22 @@
       "bet": "Bet",
       "stake": "Stake",
       "odds": "Odds",
+      "result": "Result",
       "status": "Status",
       "ready": "Ready"
+    },
+    "documentation": {
+      "title": "Import format and template",
+      "description": "Columns may be in English or French and in any order. The CSV delimiter is detected automatically.",
+      "downloadTemplate": "Download CSV template",
+      "requiredTitle": "Required data",
+      "requiredFields": "Date, stake and odds. Odds may be omitted for a refund. Sport, type, label and result are recommended to preserve a useful history.",
+      "resultsTitle": "Recognized statuses",
+      "resultsValues": "P = pending · W = won · L = lost · R or C = refunded/cancelled · CASH = cash out. HW and HL are accepted with a warning because Kalivoa does not yet calculate half-wins and half-losses natively.",
+      "betAnalytixTitle": "Bet-Analytix compatibility",
+      "betAnalytixDescription": "The Export_Formatted_Bet-Analytix.csv format is recognized natively. Accumulator selections, tipster and closing odds are preserved in dedicated fields. American or fractional odds are converted to decimal.",
+      "notImportedTitle": "Bet-Analytix columns without a Kalivoa equivalent",
+      "notImportedDescription": "EstimatedProbability, Commission, Bonus and Eachway are not stored yet because Kalivoa does not currently have matching fields. They never prevent an import."
     },
     "complete": {
       "title": "History imported!",
@@ -577,7 +598,8 @@
     "tableTabs": {
       "sport": "Sport",
       "type": "Bet type",
-      "bookmaker": "Bookmaker"
+      "bookmaker": "Bookmaker",
+      "tipster": "Tipster"
     },
     "table": {
       "name": "Name",
@@ -622,6 +644,8 @@
       "result": "Result",
       "profit": "P&L",
       "actions": "Actions",
+      "tipster": "Tipster · {name}",
+      "showSelections": "View {count} selections",
       "editAriaLabel": "Edit this bet",
       "deleteAriaLabel": "Delete this bet"
     },
@@ -639,7 +663,10 @@
       "deleteAriaLabel": "Delete the {sport} {betType} bet",
       "deleteLabel": "Delete",
       "cashedOut": "cashed out {amount}",
-      "stakeAtOdds": "{stake} @ {odds}"
+      "stakeAtOdds": "{stake} @ {odds}",
+      "tipster": "Tipster · {name}",
+      "showSelections": "View {count} selections",
+      "hideSelections": "Hide selections"
     },
     "deleteDrawer": {
       "titleSingle": "Delete this bet?",

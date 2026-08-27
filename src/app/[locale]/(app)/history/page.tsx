@@ -34,6 +34,9 @@ export default async function HistoryPage() {
     freebet: b.freebet,
     live: b.live,
     profit: computeProfit(b),
+    format: b.format,
+    tipster: b.tipster,
+    selections: b.selections,
   }));
 
   const bankrollOptions = activeBankrolls.map((br) => ({ id: br.id, name: br.name }));

@@ -13,7 +13,7 @@ export async function StatsTable({
   currency,
 }: {
   rows: GroupStat[];
-  kind: "sport" | "type" | "bookmaker";
+  kind: "sport" | "type" | "bookmaker" | "tipster";
   currency: Currency;
 }) {
   const locale = await getLocale();

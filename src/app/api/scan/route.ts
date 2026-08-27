@@ -60,6 +60,12 @@ function isoDateOrNull(value: unknown): string | null {
   return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value ? null : value;
 }
 
+function betFormat(value: unknown): ParsedBet["format"] {
+  return ["SIMPLE", "COMBINE", "SYSTEME", "BACK", "LAY"].includes(String(value))
+    ? String(value) as NonNullable<ParsedBet["format"]>
+    : "SIMPLE";
+}
+
 export async function POST(request: NextRequest) {
   const scanStartedAt = Date.now();
   const locale = await getLocale();
@@ -342,6 +348,26 @@ export async function POST(request: NextRequest) {
       live: Boolean(r.live),
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
+      format: betFormat(r.format),
+      tipster: typeof r.tipster === "string" ? r.tipster.trim().slice(0, 120) || null : null,
+      closingOdds: numOrNull(r.closingOdds),
+      selections: Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
+        if (!rawSelection || typeof rawSelection !== "object") return [];
+        const selection = rawSelection as Record<string, unknown>;
+        const label = String(selection.label ?? "").trim();
+        if (!label) return [];
+        const selectionResult = selection.result == null
+          ? null
+          : labelToBetResult(String(selection.result)) ?? null;
+        return [{
+          sport: String(selection.sport ?? sport).trim() || sport,
+          competition: typeof selection.competition === "string" ? selection.competition.trim() || null : null,
+          betType: typeof selection.betType === "string" ? selection.betType.trim() || null : null,
+          label,
+          odds: numOrNull(selection.odds),
+          result: selectionResult,
+        }];
+      }) : [],
       taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.

@@ -37,7 +37,11 @@ Schéma attendu pour chaque pari :
   "freebet": false,
   "live": false,
   "result": "Gagné" | "Perdu" | "Remboursé" | "En attente" | "Cashé",
-  "cashOutAmount": nombre (uniquement si result est "Cashé", sinon null)
+  "cashOutAmount": nombre (uniquement si result est "Cashé", sinon null),
+  "format": "SIMPLE" | "COMBINE" | "SYSTEME" | "BACK" | "LAY",
+  "tipster": "nom visible du tipster, ou null",
+  "closingOdds": "cote de clôture visible, ou null",
+  "selections": [{ "sport": "sport visible", "competition": "compétition ou null", "betType": "marché ou null", "label": "sélection exacte", "odds": "cote individuelle ou null", "result": "Gagné" | "Perdu" | "Remboursé" | "En attente" | null }]
 }
 
 Types de paris déjà utilisés, à réutiliser en priorité (choisis le plus proche, n'utilise "Autre" qu'en dernier recours) :
@@ -59,7 +63,8 @@ Règles impératives :
 - "En attente" : un ticket sans étiquette colorée "Gagné"/"Perdu"/"Annulé" (souvent marqué "En cours", ou sans étiquette du tout), ou un pari long terme pas encore résolu (vainqueur final d'un tournoi/classement général/champion national sur une compétition en cours), doit être classé "result": "En attente". Le "Gains" affiché à 0,00 € sur ce type de ticket ne signifie PAS une perte — capture quand même la mise et la cote normalement, juste sans résultat.
 - "Cashé" (encaissement anticipé) : utilise ce résultat UNIQUEMENT si le ticket déjà clôturé affiche explicitement le statut "Cashé" / "Cash Out effectué", avec le montant réellement encaissé dans "Gains". Ce statut final explicite est prioritaire sur le statut d'une sélection individuelle. Un bouton ou une offre "Cashout 0,70 €" visible sur un ticket "En cours" signifie seulement que le cashout est proposé : le pari n'est PAS cashé, garde "result": "En attente" et "cashOutAmount": null. Ne déduis jamais un cashout depuis une offre disponible ou un bouton d'action.
 - "Mymatch" ou paris combinant plusieurs sélections sur le même match : combine toutes les sélections visibles dans une seule "description", séparées par " + ", et utilise "betType": "Mymatch". Si le détail est masqué (ticket réduit), précise "(détail des sélections non affiché sur le screen)" dans la description.
-- "Combiné" (plusieurs matchs différents) : retourne UN SEUL objet pour le ticket. Garde le détail de chaque sélection (marché + résultat gagné/perdu) dans la description, avec la cote totale dans "odds". Si toutes les sélections visibles appartiennent au même sport, conserve ce sport et utilise "betType": "Combiné" (par exemple un combiné de tennis). Si les sélections couvrent plusieurs sports, utilise "sport": "Autre sport", "betType": "Autre" et commence la description par « Combiné — ». Le résultat global du ticket reste prioritaire ; l'eventResult peut résumer les résultats réellement visibles des sélections, sans en inventer.
+- "Combiné" (plusieurs matchs différents) : retourne UN SEUL objet pour le ticket avec "format": "COMBINE". Ajoute chaque jambe lisible dans "selections", dans l'ordre de l'écran. La cote de "odds" est uniquement la cote totale du ticket ; la cote individuelle va dans la sélection. Si toutes les sélections appartiennent au même sport, conserve ce sport et utilise "betType": "Combiné" (par exemple un combiné de tennis). Si elles couvrent plusieurs sports, utilise "sport": "Autre sport", "betType": "Autre" et commence la description par « Combiné — ». Le résultat global du ticket reste prioritaire. Pour un ticket simple, utilise "format": "SIMPLE" et une seule sélection si son détail est visible. N'invente jamais une sélection masquée : un tableau vide est accepté.
+- "tipster" et "closingOdds" : renseigne-les seulement si ces informations sont explicitement visibles. Sinon mets null. Ne déduis jamais un tipster depuis un pseudonyme ambigu.
 - Ne devine jamais un ticket partiellement masqué ou coupé : ignore-le plutôt que d'inventer des valeurs.
 - Renseigne toujours "ticketRef" quand une référence est visible sur le ticket (souvent en petit, en bas, format "Ref : XXXXXXXX") — c'est utilisé pour détecter les doublons entre captures. Si plusieurs tickets de CETTE réponse ont la même référence, ne les inclus qu'une seule fois.
 - Si un marché ne correspond vraiment à aucun type existant mais qu'il est lisible : renseigne directement un "betType" court et explicite plutôt que "Autre" (par exemple "Nombre de fautes"). Utilise "Autre" seulement si le marché est trop vague ou illisible.`;

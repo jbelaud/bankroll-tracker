@@ -71,18 +71,20 @@ model User {
   monthlyScanCount       Int      @default(0)
   monthlyScanWindowStart DateTime @default(now())
 
-  bankrolls Bankroll[]
-  insight   Insight?
-  scanUsages ScanUsage[]
-  growthEvents GrowthEvent[]
-  referredBy Referral? @relation("ReferredUser")
-  referrals Referral[] @relation("Referrer")
-  referralRewards ReferralReward[]
-  feedbacks Feedback[]
-  taxonomyEntries UserTaxonomyEntry[]
-  scanQualityReports ScanQualityReport[]
-  scanDrafts ScanDraft[]
-  redeemedBetaInvite BetaInvite?
+  bankrolls             Bankroll[]
+  insight               Insight?
+  scanUsages            ScanUsage[]
+  growthEvents          GrowthEvent[]
+  referredBy            Referral?              @relation("ReferredUser")
+  referrals             Referral[]             @relation("Referrer")
+  referralRewards       ReferralReward[]
+  feedbacks             Feedback[]
+  taxonomyEntries       UserTaxonomyEntry[]
+  scanQualityReports    ScanQualityReport[]
+  scanDrafts            ScanDraft[]
+  tipsters              Tipster[]
+  importBatches         ImportBatch[]
+  redeemedBetaInvite    BetaInvite?
   betaInviteRedemptions BetaInviteRedemption[]
 
   @@map("users")
@@ -191,6 +193,14 @@ enum BetEntryMethod {
   FILE
 }
 
+enum BetFormat {
+  SIMPLE
+  COMBINE
+  SYSTEME
+  BACK
+  LAY
+}
+
 // ------------------------------------------------------------
 // Pari
 // ------------------------------------------------------------
@@ -201,40 +211,103 @@ enum BetEntryMethod {
 // car il conditionne des calculs (computeProfit) qui ne doivent pas
 // dériver silencieusement si quelqu'un tape une valeur inattendue.
 model Bet {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   bankrollId String
-  bankroll   Bankroll  @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  bankroll   Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
 
-  ticketRef  String?   // référence du ticket bookmaker, pour la dédup
-  date       DateTime
-  sport      String
-  betType    String
+  ticketRef   String? // référence du ticket bookmaker, pour la dédup
+  date        DateTime
+  sport       String
+  betType     String
   description String?
   eventResult String? // score/résultat de l'événement, distinct de la sélection jouée
 
-  stake      Float
-  odds       Float?    // inconnue uniquement pour un pari remboursé sans cote visible
+  stake Float
+  odds  Float? // inconnue uniquement pour un pari remboursé sans cote visible
 
   boosted      Boolean @default(false)
-  originalOdds Float?  // cote avant boost, si boosted=true
+  originalOdds Float? // cote avant boost, si boosted=true
 
-  freebet    Boolean   @default(false)
-  live       Boolean   @default(false)
+  freebet Boolean @default(false)
+  live    Boolean @default(false)
 
   result        BetResult @default(EN_ATTENTE)
-  cashOutAmount Float?    // montant encaissé si result = CASHE
+  cashOutAmount Float? // montant encaissé si result = CASHE
 
-  createdAt  DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  entryMethod BetEntryMethod @default(UNKNOWN)
-  scanUsageId String?
-  scanUsage   ScanUsage? @relation(fields: [scanUsageId], references: [id], onDelete: SetNull)
+  entryMethod   BetEntryMethod @default(UNKNOWN)
+  format        BetFormat      @default(SIMPLE)
+  closingOdds   Float?
+  tipsterId     String?
+  tipster       Tipster?       @relation(fields: [tipsterId], references: [id], onDelete: SetNull)
+  importBatchId String?
+  importBatch   ImportBatch?   @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  selections    BetSelection[]
+  scanUsageId   String?
+  scanUsage     ScanUsage?     @relation(fields: [scanUsageId], references: [id], onDelete: SetNull)
 
   @@index([bankrollId])
   @@index([ticketRef])
   @@index([entryMethod, createdAt])
   @@index([scanUsageId])
+  @@index([tipsterId, date])
+  @@index([importBatchId])
   @@map("bets")
+}
+
+// Profil minimal créé automatiquement à partir d'un import. Les informations
+// éditoriales pourront être complétées plus tard sans bloquer la migration.
+model Tipster {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  normalizedName String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  bets           Bet[]
+
+  @@unique([userId, normalizedName])
+  @@index([userId, name])
+  @@map("tipsters")
+}
+
+// Une sélection est un détail facultatif du ticket. Les données financières
+// et le résultat global restent sur Bet, seule source de vérité des stats.
+model BetSelection {
+  id          String     @id @default(uuid())
+  betId       String
+  bet         Bet        @relation(fields: [betId], references: [id], onDelete: Cascade)
+  position    Int
+  sport       String
+  competition String?
+  betType     String?
+  label       String
+  odds        Float?
+  result      BetResult?
+  createdAt   DateTime   @default(now())
+
+  @@unique([betId, position])
+  @@index([betId])
+  @@map("bet_selections")
+}
+
+// Trace un import de fichier afin de pouvoir expliquer sa provenance et, plus
+// tard, proposer une annulation de lot sans mélanger plusieurs migrations.
+model ImportBatch {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source            String
+  fileName          String?
+  importedCount     Int      @default(0)
+  skippedDuplicates Int      @default(0)
+  createdAt         DateTime @default(now())
+  bets              Bet[]
+
+  @@index([userId, createdAt])
+  @@map("import_batches")
 }
 
 // ------------------------------------------------------------

@@ -1,4 +1,13 @@
-import type { BetResult } from "@prisma/client";
+import type { BetFormat, BetResult } from "@prisma/client";
+
+export type ParsedBetSelection = {
+  sport: string;
+  competition: string | null;
+  betType: string | null;
+  label: string;
+  odds: number | null;
+  result: BetResult | null;
+};
 
 // Pari extrait d'un ticket par l'IA, avant review/import.
 // Miroir du format produit par le pipeline de l'artifact de référence
@@ -23,6 +32,10 @@ export type ParsedBet = {
   live: boolean;
   result: BetResult;
   cashOutAmount: number | null;
+  format?: BetFormat;
+  tipster?: string | null;
+  closingOdds?: number | null;
+  selections?: ParsedBetSelection[];
   possibleDuplicate?: boolean;
   /** Index de la capture source, uniquement durant la revue côté client. */
   sourceScanIndex?: number;

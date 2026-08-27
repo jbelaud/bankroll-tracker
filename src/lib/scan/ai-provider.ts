@@ -6,6 +6,20 @@ import type { Taxonomy } from "@/lib/taxonomy";
 const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"] as const;
 type GeminiModel = (typeof GEMINI_MODELS)[number];
 
+const BET_SELECTION_RESPONSE_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    sport: { type: "string" },
+    competition: { type: ["string", "null"] },
+    betType: { type: ["string", "null"] },
+    label: { type: "string" },
+    odds: { type: ["number", "null"] },
+    result: { type: ["string", "null"], enum: ["Gagné", "Perdu", "Remboursé", "En attente", null] },
+  },
+  required: ["sport", "competition", "betType", "label", "odds", "result"],
+} as const;
+
 const BET_RESPONSE_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -24,10 +38,15 @@ const BET_RESPONSE_SCHEMA = {
     live: { type: "boolean" },
     result: { type: "string", enum: ["Gagné", "Perdu", "Remboursé", "En attente", "Cashé"] },
     cashOutAmount: { type: ["number", "null"] },
+    format: { type: "string", enum: ["SIMPLE", "COMBINE", "SYSTEME", "BACK", "LAY"] },
+    tipster: { type: ["string", "null"] },
+    closingOdds: { type: ["number", "null"] },
+    selections: { type: "array", items: BET_SELECTION_RESPONSE_SCHEMA },
   },
   required: [
     "date", "ticketRef", "sport", "betType", "description", "eventResult",
     "stake", "odds", "boosted", "originalOdds", "freebet", "live", "result", "cashOutAmount",
+    "format", "tipster", "closingOdds", "selections",
   ],
 } as const;
 

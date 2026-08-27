@@ -92,6 +92,11 @@ export function ReviewBetCard({
             {translateTaxonomy(tSports, bet.sport)}
             <span className="text-muted-foreground"> · {translateTaxonomy(tBetTypes, bet.betType)}</span>
           </span>
+          {bet.selections?.length ? (
+            <span className="text-xs font-medium text-primary">
+              {t("selectionsDetected", { count: bet.selections.length })}
+            </span>
+          ) : null}
           {bet.possibleDuplicate && (
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
@@ -188,6 +193,46 @@ export function ReviewBetCard({
           )}
         />
       </div>
+
+      {bet.selections?.length ? (
+        <fieldset className="rounded-xl border border-border bg-muted/25 p-3">
+          <legend className="px-1 text-xs font-semibold">{t("selectionsTitle")}</legend>
+          <div className="mt-1 flex flex-col gap-3">
+            {bet.selections.map((selection, selectionIndex) => (
+              <div key={selectionIndex} className="grid grid-cols-[1fr_5rem] gap-2 border-t border-border/70 pt-3 first:border-0 first:pt-0">
+                <div className="flex flex-col gap-1">
+                  <Label htmlFor={uid(`selection-${selectionIndex}`)} className="text-[0.7rem] text-muted-foreground">
+                    {t("selectionLabel", { number: selectionIndex + 1, sport: selection.sport })}
+                  </Label>
+                  <Input
+                    id={uid(`selection-${selectionIndex}`)}
+                    value={selection.label}
+                    onChange={(event) => onPatch({
+                      selections: bet.selections!.map((item, index) => index === selectionIndex ? { ...item, label: event.target.value } : item),
+                    })}
+                    className="min-h-touch rounded-lg px-2 text-xs"
+                  />
+                  {selection.competition ? <span className="text-[0.7rem] text-muted-foreground">{selection.competition}</span> : null}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Label htmlFor={uid(`selection-odds-${selectionIndex}`)} className="text-[0.7rem] text-muted-foreground">{t("oddsLabel")}</Label>
+                  <Input
+                    id={uid(`selection-odds-${selectionIndex}`)}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={selection.odds ?? ""}
+                    onChange={(event) => onPatch({
+                      selections: bet.selections!.map((item, index) => index === selectionIndex ? { ...item, odds: event.target.value ? Number(event.target.value) : null } : item),
+                    })}
+                    className="num min-h-touch rounded-lg px-2 text-xs"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
 
       <div className="flex flex-col gap-1">
         <Label htmlFor={uid("event-result")} className="text-xs">

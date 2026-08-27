@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import type { BetResult, Currency } from "@prisma/client";
+import type { BetFormat, BetResult, Currency } from "@prisma/client";
 import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
 import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
@@ -36,6 +36,17 @@ export type HistoryBetItemData = {
   freebet: boolean;
   live: boolean;
   profit: number;
+  format?: BetFormat;
+  tipster?: { id: string; name: string } | null;
+  selections?: Array<{
+    id: string;
+    sport: string;
+    competition: string | null;
+    betType: string | null;
+    label: string;
+    odds: number | null;
+    result: BetResult | null;
+  }>;
 };
 
 export function HistoryList({
@@ -83,7 +94,7 @@ export function HistoryList({
   const filteredBets = useMemo(
     () =>
       bets.filter((b) => {
-        const searchText = `${b.sport} ${b.betType} ${b.description ?? ""} ${b.eventResult ?? ""} ${b.bankrollName}`.toLocaleLowerCase();
+        const searchText = `${b.sport} ${b.betType} ${b.description ?? ""} ${b.eventResult ?? ""} ${b.bankrollName} ${b.tipster?.name ?? ""} ${(b.selections ?? []).map((selection) => selection.label).join(" ")}`.toLocaleLowerCase();
         return (!sport || b.sport === sport) && (!bankroll || b.bankrollId === bankroll) &&
           (!result || b.result === result) && (!query.trim() || searchText.includes(query.trim().toLocaleLowerCase()));
       }),
@@ -475,6 +486,20 @@ function DesktopHistoryTable({
                   <td className="max-w-80 px-3 py-3">
                     <span className="block truncate font-medium">{event}</span>
                     {bet.description && bet.eventResult && <span className="mt-0.5 block truncate text-muted-foreground">{bet.eventResult}</span>}
+                    {bet.tipster ? <span className="mt-0.5 block text-primary">{t("tipster", { name: bet.tipster.name })}</span> : null}
+                    {(bet.selections?.length ?? 0) > 0 ? (
+                      <details className="mt-1">
+                        <summary className="cursor-pointer font-semibold text-primary">{t("showSelections", { count: bet.selections?.length ?? 0 })}</summary>
+                        <ol className="mt-2 flex min-w-72 flex-col gap-1 rounded-lg border border-border bg-muted/30 p-2">
+                          {(bet.selections ?? []).map((selection, index) => (
+                            <li key={selection.id} className="flex items-start justify-between gap-2">
+                              <span><strong>{index + 1}. {selection.label}</strong><span className="block text-muted-foreground">{[selection.sport, selection.competition, selection.betType].filter(Boolean).join(" · ")}</span></span>
+                              {selection.odds ? <span className="num shrink-0">{fmtOdds(selection.odds, locale)}</span> : null}
+                            </li>
+                          ))}
+                        </ol>
+                      </details>
+                    ) : null}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <span className="block font-medium">{translateTaxonomy(tSports, bet.sport)}</span>

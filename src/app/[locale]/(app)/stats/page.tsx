@@ -104,6 +104,8 @@ export default async function StatsPage({
 
   const bookmakerByBankrollId = new Map(activeBankrolls.map((br) => [br.id, br.bookmaker]));
   const byBookmaker = groupStats(bets, (b) => bookmakerByBankrollId.get(b.bankrollId) ?? "—");
+  const tipsterNameByBetId = new Map(bets.map((bet) => [bet.id, bet.tipster?.name ?? null]));
+  const byTipster = groupStats(bets.filter((bet) => bet.tipster), (bet) => tipsterNameByBetId.get(bet.id) ?? "—");
 
   const daily = Object.values(
     bets
@@ -216,6 +218,7 @@ export default async function StatsPage({
               />
             }
             bookmakerTable={<StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />}
+            tipsterTable={<StatsTable rows={byTipster} kind="tipster" currency={currency} />}
           />
         </div>
       </section>

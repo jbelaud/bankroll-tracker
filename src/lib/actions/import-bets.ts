@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { randomUUID } from "node:crypto";
 import { getTranslations } from "next-intl/server";
 import { createBet } from "@/lib/actions/bets";
 import { requireUser } from "@/lib/auth";
@@ -55,7 +56,8 @@ function duplicateKey(bet: {
 export async function importExternalBets(
   bankrollId: string,
   bets: ParsedBet[],
-  sourceFormat: string
+  sourceFormat: string,
+  fileName?: string
 ): Promise<FileImportResult> {
   const user = await requireUser();
   if (bets.length === 0) return { error: "Aucun pari valide à importer." };
@@ -77,6 +79,7 @@ export async function importExternalBets(
   const acceptedKeys = new Set<string>();
   const taxonomyEntries = new Map<string, { userId: string; sport: string; betType: string }>();
   const rows: Array<{
+    id: string;
     bankrollId: string;
     ticketRef: string | null;
     date: Date;
@@ -93,6 +96,11 @@ export async function importExternalBets(
     result: ParsedBet["result"];
     cashOutAmount: number | null;
     entryMethod: "FILE";
+    format: ParsedBet["format"];
+    closingOdds: number | null;
+    tipsterName: string | null;
+    tipsterKey: string | null;
+    selections: NonNullable<ParsedBet["selections"]>;
   }> = [];
   let skippedDuplicates = 0;
 
@@ -113,6 +121,7 @@ export async function importExternalBets(
     if (normalized.taxonomyMismatch) return { error: `Sport et type de pari incompatibles à la ligne ${index + 1}.` };
     const description = bet.description.normalize("NFKC").trim().slice(0, 2_000) || null;
     const row = {
+      id: randomUUID(),
       bankrollId,
       ticketRef: bet.ticketRef?.normalize("NFKC").trim().slice(0, 255) || null,
       date,
@@ -129,6 +138,11 @@ export async function importExternalBets(
       result: bet.result,
       cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
       entryMethod: "FILE" as const,
+      format: bet.format ?? "SIMPLE",
+      closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 0 ? (bet.closingOdds ?? null) : null,
+      tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
+      tipsterKey: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr").slice(0, 120) || null,
+      selections: (bet.selections ?? []).slice(0, 100),
     };
     const key = duplicateKey(row);
     if (existingKeys.has(key) || acceptedKeys.has(key)) {
@@ -145,10 +159,47 @@ export async function importExternalBets(
   }
 
   if (rows.length > 0) {
-    await prisma.$transaction([
-      prisma.bet.createMany({ data: rows }),
-      prisma.userTaxonomyEntry.createMany({ data: [...taxonomyEntries.values()], skipDuplicates: true }),
-    ]);
+    await prisma.$transaction(async (tx) => {
+      const batch = await tx.importBatch.create({
+        data: {
+          userId: user.id,
+          source: sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
+          fileName: fileName?.normalize("NFKC").trim().replace(/[\\/]/g, "_").slice(0, 255) || null,
+          importedCount: rows.length,
+          skippedDuplicates,
+        },
+      });
+      const tipsters = [...new Map(rows.filter((row) => row.tipsterKey && row.tipsterName).map((row) => [row.tipsterKey!, row.tipsterName!])).entries()];
+      if (tipsters.length) {
+        await tx.tipster.createMany({
+          data: tipsters.map(([normalizedName, name]) => ({ userId: user.id, normalizedName, name })),
+          skipDuplicates: true,
+        });
+      }
+      const tipsterRows = tipsters.length
+        ? await tx.tipster.findMany({ where: { userId: user.id, normalizedName: { in: tipsters.map(([key]) => key) } }, select: { id: true, normalizedName: true } })
+        : [];
+      const tipsterIds = new Map(tipsterRows.map((tipster) => [tipster.normalizedName, tipster.id]));
+      await tx.bet.createMany({
+        data: rows.map(({ tipsterName: _tipsterName, tipsterKey, selections: _selections, ...row }) => ({
+          ...row,
+          tipsterId: tipsterKey ? tipsterIds.get(tipsterKey) ?? null : null,
+          importBatchId: batch.id,
+        })),
+      });
+      const selections = rows.flatMap((row) => row.selections.map((selection, position) => ({
+        betId: row.id,
+        position,
+        sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || row.sport,
+        competition: selection.competition?.normalize("NFKC").trim().slice(0, 255) || null,
+        betType: selection.betType?.normalize("NFKC").trim().slice(0, 255) || null,
+        label: selection.label.normalize("NFKC").trim().slice(0, 1_000) || `Sélection ${position + 1}`,
+        odds: Number.isFinite(selection.odds) && (selection.odds as number) > 0 ? selection.odds : null,
+        result: selection.result,
+      })));
+      if (selections.length) await tx.betSelection.createMany({ data: selections });
+      await tx.userTaxonomyEntry.createMany({ data: [...taxonomyEntries.values()], skipDuplicates: true });
+    });
     await recordGrowthEventSafely({
       name: "bets_imported",
       userId: user.id,
@@ -229,7 +280,14 @@ export async function importBets(
         bet.ticketRef,
         new Date(bet.date!),
         bet.eventResult,
-        { entryMethod: scanUsageId ? "SCAN" : "MANUAL", scanUsageId }
+        {
+          entryMethod: scanUsageId ? "SCAN" : "MANUAL",
+          scanUsageId,
+          format: bet.format,
+          tipster: bet.tipster,
+          closingOdds: bet.closingOdds,
+          selections: bet.selections,
+        }
       );
     }
     if (uniqueScanUsageIds.length) {

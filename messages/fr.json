@@ -360,7 +360,10 @@
         "oddsLabel": "Cote",
         "resultLabel": "Résultat",
         "cashoutLabel": "Montant encaissé ({currency})",
-        "freebetLabel": "Freebet (mise non engagée)"
+        "freebetLabel": "Freebet (mise non engagée)",
+        "selectionsDetected": "{count, plural, one {# sélection détectée} other {# sélections détectées}}",
+        "selectionsTitle": "Détail des sélections",
+        "selectionLabel": "Sélection {number} · {sport}"
       }
     },
     "complete": {
@@ -427,6 +430,10 @@
       "valid": "Paris prêts à importer",
       "invalid": "Lignes ignorées",
       "warnings": "Lignes à vérifier",
+      "betAnalytixDetected": "Export Bet-Analytix reconnu",
+      "betAnalytixDetails": "Les états, les types et les cotes sont convertis automatiquement. {count, plural, =0 {Aucune ligne de sélection séparée.} one {# ligne de sélection a été regroupée dans son combiné.} other {# lignes de sélection ont été regroupées dans leurs combinés.}}",
+      "bookmakerDetected": "Bookmaker détecté : {bookmakers}.",
+      "bookmakerMismatch": "La bankroll choisie est rattachée à {selected} : vérifie ce choix avant l’import.",
       "firstRows": "Aperçu des {count} premières lignes sur {total}.",
       "invalidSkipped": "{count, plural, one {# ligne incomplète sera ignorée.} other {# lignes incomplètes seront ignorées.}} Les autres paris peuvent être importés normalement.",
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
@@ -438,8 +445,22 @@
       "bet": "Pari",
       "stake": "Mise",
       "odds": "Cote",
+      "result": "Résultat",
       "status": "État",
       "ready": "Prêt"
+    },
+    "documentation": {
+      "title": "Format et modèle d’import",
+      "description": "Les colonnes peuvent être en français ou en anglais et dans n’importe quel ordre. Le séparateur CSV est détecté automatiquement.",
+      "downloadTemplate": "Télécharger le modèle CSV",
+      "requiredTitle": "Données indispensables",
+      "requiredFields": "Date, mise et cote. La cote peut être absente pour un remboursement. Sport, type, libellé et résultat sont recommandés pour conserver un historique exploitable.",
+      "resultsTitle": "États reconnus",
+      "resultsValues": "P = en attente · W = gagné · L = perdu · R ou C = remboursé/annulé · CASH = cash out. HW et HL sont acceptés avec un avertissement, car Kalivoa ne calcule pas encore nativement les demi-gains et demi-pertes.",
+      "betAnalytixTitle": "Compatibilité Bet-Analytix",
+      "betAnalytixDescription": "Le format Export_Formatted_Bet-Analytix.csv est reconnu nativement. Les sélections des combinés, le tipster et la cote de clôture sont conservés dans des champs dédiés. Les cotes américaines ou fractionnaires sont converties en décimal.",
+      "notImportedTitle": "Colonnes Bet-Analytix sans équivalent Kalivoa",
+      "notImportedDescription": "EstimatedProbability, Commission, Bonus et Eachway ne sont pas enregistrées pour le moment, car Kalivoa ne possède pas encore de champs correspondants. Elles n’empêchent jamais l’import."
     },
     "complete": {
       "title": "Historique importé !",
@@ -577,7 +598,8 @@
     "tableTabs": {
       "sport": "Sport",
       "type": "Type de pari",
-      "bookmaker": "Bookmaker"
+      "bookmaker": "Bookmaker",
+      "tipster": "Tipster"
     },
     "table": {
       "name": "Nom",
@@ -622,6 +644,8 @@
       "result": "Résultat",
       "profit": "P&L",
       "actions": "Actions",
+      "tipster": "Tipster · {name}",
+      "showSelections": "Voir les {count} sélections",
       "editAriaLabel": "Modifier ce pari",
       "deleteAriaLabel": "Supprimer ce pari"
     },
@@ -639,7 +663,10 @@
       "deleteAriaLabel": "Supprimer le pari {sport} {betType}",
       "deleteLabel": "Supprimer",
       "cashedOut": "encaissé {amount}",
-      "stakeAtOdds": "{stake} @ {odds}"
+      "stakeAtOdds": "{stake} @ {odds}",
+      "tipster": "Tipster · {name}",
+      "showSelections": "Voir les {count} sélections",
+      "hideSelections": "Masquer les sélections"
     },
     "deleteDrawer": {
       "titleSingle": "Supprimer ce pari ?",

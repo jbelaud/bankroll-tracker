@@ -11,6 +11,10 @@ const mocks = vi.hoisted(() => ({
   betCount: vi.fn(),
   betCreateMany: vi.fn(),
   taxonomyCreateMany: vi.fn(),
+  importBatchCreate: vi.fn(),
+  tipsterCreateMany: vi.fn(),
+  tipsterFindMany: vi.fn(),
+  selectionCreateMany: vi.fn(),
   transaction: vi.fn(),
 }));
 
@@ -30,6 +34,9 @@ vi.mock("@/lib/prisma", () => ({
     bankroll: { findFirst: mocks.bankrollFindFirst },
     bet: { findMany: mocks.betFindMany, count: mocks.betCount, createMany: mocks.betCreateMany },
     userTaxonomyEntry: { createMany: mocks.taxonomyCreateMany },
+    importBatch: { create: mocks.importBatchCreate },
+    tipster: { createMany: mocks.tipsterCreateMany, findMany: mocks.tipsterFindMany },
+    betSelection: { createMany: mocks.selectionCreateMany },
     $transaction: mocks.transaction,
   },
 }));
@@ -66,7 +73,17 @@ describe("importExternalBets", () => {
     mocks.betCount.mockResolvedValue(0);
     mocks.betCreateMany.mockReturnValue(Promise.resolve({ count: 1 }));
     mocks.taxonomyCreateMany.mockReturnValue(Promise.resolve({ count: 1 }));
-    mocks.transaction.mockResolvedValue([{ count: 1 }, { count: 1 }]);
+    mocks.importBatchCreate.mockResolvedValue({ id: "batch-1" });
+    mocks.tipsterCreateMany.mockResolvedValue({ count: 0 });
+    mocks.tipsterFindMany.mockResolvedValue([]);
+    mocks.selectionCreateMany.mockResolvedValue({ count: 0 });
+    mocks.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) => callback({
+      bet: { createMany: mocks.betCreateMany },
+      userTaxonomyEntry: { createMany: mocks.taxonomyCreateMany },
+      importBatch: { create: mocks.importBatchCreate },
+      tipster: { createMany: mocks.tipsterCreateMany, findMany: mocks.tipsterFindMany },
+      betSelection: { createMany: mocks.selectionCreateMany },
+    }));
     mocks.recordEvent.mockResolvedValue(undefined);
   });
 
