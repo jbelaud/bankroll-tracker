@@ -1,0 +1,121 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({
+  requireUser: vi.fn(),
+  bankrollFindFirst: vi.fn(),
+  betFindFirst: vi.fn(),
+  betCreate: vi.fn(),
+  betUpdate: vi.fn(),
+  selectionCreateMany: vi.fn(),
+  tipsterFindFirst: vi.fn(),
+  tipsterFindUnique: vi.fn(),
+  isLocked: vi.fn(),
+  saveTaxonomy: vi.fn(),
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock("server-only", () => ({}));
+vi.mock("@/lib/auth", () => ({ requireUser: mocks.requireUser }));
+vi.mock("@/lib/billing/bankroll-access", () => ({ isBankrollLockedForUser: mocks.isLocked }));
+vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn().mockResolvedValue("fr") }));
+vi.mock("next-intl/server", () => ({ getTranslations: vi.fn().mockResolvedValue((key: string) => key) }));
+vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("@/lib/taxonomy", () => ({
+  getUserTaxonomy: vi.fn().mockResolvedValue({ Football: ["Résultat du match"] }),
+  normalizeTaxonomyPair: vi.fn((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false })),
+  saveUserTaxonomyEntry: mocks.saveTaxonomy,
+}));
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    bankroll: { findFirst: mocks.bankrollFindFirst },
+    bet: { findFirst: mocks.betFindFirst, create: mocks.betCreate, update: mocks.betUpdate },
+    betSelection: { createMany: mocks.selectionCreateMany },
+    tipster: { findFirst: mocks.tipsterFindFirst, findUnique: mocks.tipsterFindUnique },
+  },
+}));
+
+const { createBet, updateBet } = await import("@/lib/actions/bets");
+
+const updateInput = {
+  sport: "Football",
+  betType: "Résultat du match",
+  description: "Paris gagne",
+  eventResult: "",
+  date: "2026-08-27",
+  stake: 10,
+  odds: 2,
+  result: "EN_ATTENTE" as const,
+  cashOutAmount: null,
+  boosted: false,
+  originalOdds: null,
+  freebet: false,
+  live: false,
+  tipsterId: null as string | null,
+};
+
+describe("association Bet / Tipster", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.requireUser.mockResolvedValue({ id: "user-a" });
+    mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-a", userId: "user-a" });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a" });
+    mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
+    mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
+    mocks.isLocked.mockResolvedValue(false);
+    mocks.saveTaxonomy.mockResolvedValue(undefined);
+  });
+
+  it("crée un pari Personnel sans Tipster", async () => {
+    await createBet(
+      "bankroll-a", "Football", "Résultat du match", "Paris gagne", 10, 2,
+      false, null, false, false, "EN_ATTENTE", null, null, new Date("2026-08-27")
+    );
+
+    expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ tipsterId: null }),
+    }));
+  });
+
+  it("associe uniquement un Tipster actif possédé", async () => {
+    mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-a" });
+
+    await createBet(
+      "bankroll-a", "Football", "Résultat du match", "Paris gagne", 10, 2,
+      false, null, false, false, "EN_ATTENTE", null, null, new Date("2026-08-27"), null,
+      { tipsterId: "tipster-a" }
+    );
+
+    expect(mocks.tipsterFindFirst).toHaveBeenCalledWith({
+      where: { id: "tipster-a", userId: "user-a", status: "ACTIVE" },
+      select: { id: true },
+    });
+    expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ tipsterId: "tipster-a" }),
+    }));
+  });
+
+  it("refuse le Tipster d'un autre utilisateur", async () => {
+    mocks.tipsterFindFirst.mockResolvedValue(null);
+
+    await expect(createBet(
+      "bankroll-a", "Football", "Résultat du match", "Paris gagne", 10, 2,
+      false, null, false, false, "EN_ATTENTE", null, null, new Date("2026-08-27"), null,
+      { tipsterId: "tipster-b" }
+    )).rejects.toThrow("Tipster introuvable.");
+    expect(mocks.betCreate).not.toHaveBeenCalled();
+  });
+
+  it("permet de changer puis retirer le Tipster d'un pari possédé", async () => {
+    mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-a" });
+
+    await updateBet("bet-a", { ...updateInput, tipsterId: "tipster-a" });
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ tipsterId: "tipster-a" }),
+    }));
+
+    await updateBet("bet-a", { ...updateInput, tipsterId: null });
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ tipsterId: null }),
+    }));
+  });
+});

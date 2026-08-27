@@ -14,10 +14,7 @@ import {
   saveUserTaxonomyEntry,
 } from "@/lib/taxonomy";
 import type { ParsedBetSelection } from "@/lib/scan/types";
-
-function normalizedTipsterName(value: string): string {
-  return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
-}
+import { resolveOwnedTipsterId } from "@/lib/tipsters/service";
 
 // Revalidation commune : tous les écrans qui affichent des paris ou des
 // soldes dérivés (Dashboard, Bankrolls, Historique) doivent refléter le
@@ -76,6 +73,7 @@ export async function createBet(
     entryMethod?: BetEntryMethod;
     scanUsageId?: string | null;
     format?: BetFormat;
+    tipsterId?: string | null;
     tipster?: string | null;
     closingOdds?: number | null;
     selections?: ParsedBetSelection[];
@@ -107,13 +105,10 @@ export async function createBet(
     throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
   }
 
-  const tipsterName = source.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null;
-  const tipster = tipsterName ? await prisma.tipster.upsert({
-    where: { userId_normalizedName: { userId: user.id, normalizedName: normalizedTipsterName(tipsterName).slice(0, 120) } },
-    update: {},
-    create: { userId: user.id, name: tipsterName, normalizedName: normalizedTipsterName(tipsterName).slice(0, 120) },
-    select: { id: true },
-  }) : null;
+  const tipsterId = await resolveOwnedTipsterId(user.id, {
+    tipsterId: source.tipsterId,
+    detectedTipsterName: source.tipster,
+  });
 
   const bet = await prisma.bet.create({
     data: {
@@ -136,7 +131,7 @@ export async function createBet(
       format: source.format ?? "SIMPLE",
       closingOdds: source.closingOdds ?? null,
       importBatchId: source.importBatchId ?? null,
-      tipsterId: tipster?.id ?? null,
+      tipsterId,
       scanUsageId: source.scanUsageId ?? null,
     },
   });
@@ -164,6 +159,10 @@ export async function listBets(bankrollId: string) {
 
   return prisma.bet.findMany({
     where: { bankrollId },
+    include: {
+      tipster: { select: { id: true, name: true, normalizedName: true, status: true } },
+      selections: { orderBy: { position: "asc" } },
+    },
     orderBy: { date: "desc" },
   });
 }
@@ -176,7 +175,7 @@ export async function listAllBets() {
   return prisma.bet.findMany({
     where: { bankroll: { userId: user.id } },
     include: {
-      tipster: { select: { id: true, name: true } },
+      tipster: { select: { id: true, name: true, normalizedName: true, status: true } },
       selections: { orderBy: { position: "asc" } },
     },
     orderBy: { date: "desc" },
@@ -300,6 +299,7 @@ export type UpdateBetInput = {
   originalOdds: number | null;
   freebet: boolean;
   live: boolean;
+  tipsterId: string | null;
 };
 
 // Édition complète depuis l'historique. Les mêmes contrôles que l'import et
@@ -324,6 +324,11 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   if (normalizedTaxonomy.taxonomyMismatch) {
     throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
   }
+  const tipsterId = await resolveOwnedTipsterId(
+    user.id,
+    { tipsterId: input.tipsterId },
+    { allowArchivedById: true }
+  );
 
   const updated = await prisma.bet.update({
     where: { id: existing.id },
@@ -341,6 +346,11 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       originalOdds: input.boosted ? input.originalOdds : null,
       freebet: input.freebet,
       live: input.live,
+      tipsterId,
+    },
+    include: {
+      tipster: { select: { id: true, name: true, normalizedName: true, status: true } },
+      selections: { orderBy: { position: "asc" } },
     },
   });
   await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);

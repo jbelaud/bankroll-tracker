@@ -17,6 +17,7 @@ import { DeleteBetsDrawer } from "./delete-bets-drawer";
 import { EditBetSheet } from "./edit-bet-sheet";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { MoveBetsDrawer } from "./move-bets-drawer";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 export type HistoryBetItemData = {
   id: string;
@@ -37,7 +38,7 @@ export type HistoryBetItemData = {
   live: boolean;
   profit: number;
   format?: BetFormat;
-  tipster?: { id: string; name: string } | null;
+  tipster?: TipsterOption | null;
   selections?: Array<{
     id: string;
     sport: string;
@@ -55,6 +56,7 @@ export function HistoryList({
   scopedToBankroll = false,
   currency,
   taxonomy,
+  tipsters = [],
 }: {
   bets: HistoryBetItemData[];
   // Omis quand scopedToBankroll est vrai (écran Détail bankroll) : pas de
@@ -63,6 +65,7 @@ export function HistoryList({
   scopedToBankroll?: boolean;
   currency: Currency;
   taxonomy: Taxonomy;
+  tipsters?: TipsterOption[];
 }) {
   const router = useRouter();
   const locale = useLocale();
@@ -413,6 +416,7 @@ export function HistoryList({
         onSaved={handleSaved}
         currency={currency}
         taxonomy={taxonomy}
+        tipsters={tipsters}
       />
     </div>
   );

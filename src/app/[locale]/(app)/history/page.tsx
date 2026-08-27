@@ -6,10 +6,16 @@ import { getServerCurrency } from "@/lib/get-server-currency";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
+import { listTipsters } from "@/lib/actions/tipsters";
 
 export default async function HistoryPage() {
   const user = await requireUser();
-  const [bets, bankrolls, taxonomy] = await Promise.all([listAllBets(), listBankrolls(), getUserTaxonomy(user.id)]);
+  const [bets, bankrolls, taxonomy, tipsters] = await Promise.all([
+    listAllBets(),
+    listBankrolls(),
+    getUserTaxonomy(user.id),
+    listTipsters(),
+  ]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const activeBets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
@@ -46,7 +52,13 @@ export default async function HistoryPage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
-      <HistoryList bets={items} bankrollOptions={bankrollOptions} currency={currency} taxonomy={taxonomy} />
+      <HistoryList
+        bets={items}
+        bankrollOptions={bankrollOptions}
+        currency={currency}
+        taxonomy={taxonomy}
+        tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
+      />
     </div>
   );
 }

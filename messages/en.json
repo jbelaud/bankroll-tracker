@@ -331,6 +331,16 @@
       "historyKept": "Historical bets stay linked to this tipster and remain visible in your history.",
       "confirm": "Archive tipster",
       "archiving": "Archiving…"
+    },
+    "selector": {
+      "label": "Tipster",
+      "personal": "Personal",
+      "add": "Add a tipster",
+      "detected": "New tipster detected",
+      "matched": "Tipster detected and linked: {name}",
+      "createAndAssociate": "Create and associate",
+      "keepPersonal": "Keep as Personal",
+      "archived": "Archived"
     }
   },
 

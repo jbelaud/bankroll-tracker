@@ -33,6 +33,8 @@ export type ParsedBet = {
   result: BetResult;
   cashOutAmount: number | null;
   format?: BetFormat;
+  /** Sélection applicative : undefined = auto-match du nom détecté, null = Personnel explicite. */
+  tipsterId?: string | null;
   tipster?: string | null;
   closingOdds?: number | null;
   selections?: ParsedBetSelection[];

@@ -16,6 +16,7 @@ import { Link } from "@/i18n/navigation";
 import { LockKey } from "@phosphor-icons/react/dist/ssr";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
+import { listTipsters } from "@/lib/actions/tipsters";
 
 export default async function BankrollDetailPage({
   params,
@@ -57,6 +58,7 @@ export default async function BankrollDetailPage({
   const bets = await listBets(id);
   const movements = await listBankrollMovements(id);
   const taxonomy = await getUserTaxonomy(user.id);
+  const tipsters = await listTipsters();
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
   // le solde ; la courbe part du capital initial puis cumule pari par pari.
@@ -90,6 +92,9 @@ export default async function BankrollDetailPage({
     freebet: b.freebet,
     live: b.live,
     profit: profitOfBet(b),
+    format: b.format,
+    tipster: b.tipster,
+    selections: b.selections,
   }));
 
   const deleteThisBankroll = deleteBankroll.bind(null, bankroll.id);
@@ -160,6 +165,7 @@ export default async function BankrollDetailPage({
         scopedToBankroll
         currency={currency}
         taxonomy={taxonomy}
+        tipsters={tipsters.map(({ id: tipsterId, name, normalizedName, status }) => ({ id: tipsterId, name, normalizedName, status }))}
       />
       </section>
     </div>

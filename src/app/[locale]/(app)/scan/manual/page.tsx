@@ -6,10 +6,15 @@ import { getServerCurrency } from "@/lib/get-server-currency";
 import { ManualEntryForm } from "@/components/scan/manual-entry-form";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
+import { listTipsters } from "@/lib/actions/tipsters";
 
 export default async function ManualEntryPage() {
   const user = await requireUser();
-  const [bankrolls, taxonomy] = await Promise.all([listBankrolls(), getUserTaxonomy(user.id)]);
+  const [bankrolls, taxonomy, tipsters] = await Promise.all([
+    listBankrolls(),
+    getUserTaxonomy(user.id),
+    listTipsters(),
+  ]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const t = await getTranslations("scan");
   const tCommon = await getTranslations("common");
@@ -45,6 +50,7 @@ export default async function ManualEntryPage() {
         bankrolls={activeBankrolls.map((br) => ({ id: br.id, name: br.name, bookmaker: br.bookmaker }))}
         currency={currency}
         taxonomy={taxonomy}
+        tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
       />
     </div>
   );

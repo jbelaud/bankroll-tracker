@@ -331,6 +331,16 @@
       "historyKept": "Les paris historiques restent associés à ce tipster et continuent d’apparaître dans l’historique.",
       "confirm": "Archiver le tipster",
       "archiving": "Archivage…"
+    },
+    "selector": {
+      "label": "Tipster",
+      "personal": "Personnel",
+      "add": "Ajouter un tipster",
+      "detected": "Nouveau tipster détecté",
+      "matched": "Tipster détecté et associé : {name}",
+      "createAndAssociate": "Créer et associer",
+      "keepPersonal": "Rester en Personnel",
+      "archived": "Archivé"
     }
   },
 

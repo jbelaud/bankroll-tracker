@@ -13,20 +13,28 @@ import { updateBet } from "@/lib/actions/bets";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import type { Taxonomy } from "@/lib/taxonomy";
 import type { HistoryBetItemData } from "./history-list";
+import { TipsterSelector } from "@/components/tipsters/tipster-selector";
+import type { TipsterOption } from "@/lib/tipsters/types";
+import { computeProfit } from "@/lib/profit";
 
 type EditableBet = Omit<HistoryBetItemData, "profit" | "date"> & { date: string };
 
-export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxonomy }: {
+export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxonomy, tipsters: initialTipsters }: {
   bet: HistoryBetItemData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSaved: (bet: HistoryBetItemData) => void;
   currency: Currency;
   taxonomy: Taxonomy;
+  tipsters: TipsterOption[];
 }) {
   const [value, setValue] = useState<EditableBet | null>(bet ? { ...bet, date: bet.date.toISOString().slice(0, 10) } : null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [tipsters, setTipsters] = useState<TipsterOption[]>(() => {
+    if (!bet?.tipster || initialTipsters.some((tipster) => tipster.id === bet.tipster?.id)) return initialTipsters;
+    return [...initialTipsters, bet.tipster];
+  });
   const t = useTranslations("history.editBet");
   const tCommon = useTranslations("common");
   const tSports = useTranslations("sports");
@@ -55,8 +63,9 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
         sport: value.sport, betType: value.betType, description: value.description ?? "", eventResult: value.eventResult ?? "",
         date: value.date, stake: value.stake, odds: value.odds, result: value.result, cashOutAmount: value.cashOutAmount,
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
+        tipsterId: value.tipster?.id ?? null,
       });
-      onSaved({ ...updated, bankrollName: bet.bankrollName, profit: 0 });
+      onSaved({ ...updated, bankrollName: bet.bankrollName, profit: computeProfit(updated) });
       onOpenChange(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : tCommon("unexpectedError"));
@@ -79,6 +88,16 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
           </div>
           <div className="flex flex-col gap-1"><Label htmlFor="edit-description">{t("descriptionLabel")}</Label><Input id="edit-description" value={value.description ?? ""} onChange={(e) => patch({ description: e.target.value })} /></div>
           <div className="flex flex-col gap-1"><Label htmlFor="edit-event-result">{t("eventResultLabel")}</Label><Input id="edit-event-result" value={value.eventResult ?? ""} onChange={(e) => patch({ eventResult: e.target.value })} /></div>
+          <TipsterSelector
+            id="edit-tipster"
+            tipsters={tipsters}
+            value={value.tipster?.id ?? null}
+            onChange={(tipsterId) => patch({ tipster: tipsterId ? tipsters.find((tipster) => tipster.id === tipsterId) ?? null : null })}
+            onTipsterCreated={(tipster) => {
+              setTipsters((items) => [...items.filter((item) => item.id !== tipster.id), tipster]);
+              patch({ tipster });
+            }}
+          />
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-3 flex flex-col gap-1"><Label htmlFor="edit-date">{t("date")}</Label><Input id="edit-date" type="date" value={value.date} onChange={(e) => patch({ date: e.target.value })} /></div>
             <div className="flex flex-col gap-1"><Label htmlFor="edit-stake">{t("stake", { currency })}</Label><Input id="edit-stake" type="number" step="0.01" min="0" value={value.stake} onChange={(e) => patch({ stake: Number(e.target.value) })} /></div>

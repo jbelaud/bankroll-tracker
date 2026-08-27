@@ -19,6 +19,8 @@ import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
 import { createManualBetForm } from "@/lib/actions/manual-bet-form";
 import type { Taxonomy } from "@/lib/taxonomy";
+import { TipsterSelector } from "@/components/tipsters/tipster-selector";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 type BankrollOption = { id: string; name: string; bookmaker: string };
 
@@ -26,10 +28,12 @@ export function ManualEntryForm({
   bankrolls,
   currency,
   taxonomy,
+  tipsters: initialTipsters,
 }: {
   bankrolls: BankrollOption[];
   currency: Currency;
   taxonomy: Taxonomy;
+  tipsters: TipsterOption[];
 }) {
   const router = useRouter();
   const t = useTranslations("scan.manual");
@@ -45,6 +49,8 @@ export function ManualEntryForm({
   const [betType, setBetType] = useState(taxonomy[sportList[0] ?? "Football"]?.[0] ?? "Autre");
   const [boosted, setBoosted] = useState(false);
   const [result, setResult] = useState<BetResult>("EN_ATTENTE");
+  const [tipsterId, setTipsterId] = useState<string | null>(null);
+  const [tipsters, setTipsters] = useState(initialTipsters);
 
   useEffect(() => {
     if (state?.success) router.push("/dashboard");
@@ -83,6 +89,15 @@ export function ManualEntryForm({
         </Select>
         <input type="hidden" name="bankrollId" value={bankrollId} />
       </div>
+
+      <TipsterSelector
+        id="manual-tipster"
+        tipsters={tipsters}
+        value={tipsterId}
+        onChange={setTipsterId}
+        onTipsterCreated={(tipster) => setTipsters((items) => [...items.filter((item) => item.id !== tipster.id), tipster])}
+      />
+      <input type="hidden" name="tipsterId" value={tipsterId ?? ""} />
 
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-1.5">
