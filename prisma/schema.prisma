@@ -201,6 +201,19 @@ enum BetFormat {
   LAY
 }
 
+enum TipsterPlatform {
+  DISCORD
+  TELEGRAM
+  X
+  WEBSITE
+  OTHER
+}
+
+enum TipsterStatus {
+  ACTIVE
+  ARCHIVED
+}
+
 // ------------------------------------------------------------
 // Pari
 // ------------------------------------------------------------
@@ -256,20 +269,25 @@ model Bet {
   @@map("bets")
 }
 
-// Profil minimal créé automatiquement à partir d'un import. Les informations
-// éditoriales pourront être complétées plus tard sans bloquer la migration.
+// Source de recommandation privée à l'utilisateur. Un nom détecté pendant un
+// import n'est créé qu'après confirmation explicite dans l'interface.
 model Tipster {
-  id             String   @id @default(uuid())
+  id             String          @id @default(uuid())
   userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
   normalizedName String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  platform       TipsterPlatform?
+  notes          String?
+  status         TipsterStatus   @default(ACTIVE)
+  archivedAt     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   bets           Bet[]
 
   @@unique([userId, normalizedName])
   @@index([userId, name])
+  @@index([userId, status, name])
   @@map("tipsters")
 }
 
