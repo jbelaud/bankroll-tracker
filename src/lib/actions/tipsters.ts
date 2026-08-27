@@ -2,8 +2,10 @@
 
 import { Prisma, type TipsterPlatform } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
+import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
 import {
   cleanTipsterName,
@@ -68,6 +70,10 @@ function revalidateTipsterViews() {
   revalidatePath("/[locale]/history", "page");
 }
 
+async function getTipsterErrorsT() {
+  return getTranslations({ locale: await getServerLocale(), namespace: "errors" });
+}
+
 export async function listTipsters(options: { includeArchived?: boolean } = {}): Promise<TipsterDto[]> {
   const user = await requireUser();
   const tipsters = await prisma.tipster.findMany({
@@ -90,8 +96,8 @@ export async function createTipster(
   const normalizedName = normalizeTipsterName(name);
   const platform = input.platform ?? null;
 
-  if (!name) return { success: false, error: "Le nom du tipster est requis." };
-  if (!isTipsterPlatform(platform)) return { success: false, error: "Plateforme invalide." };
+  if (!name) return { success: false, error: (await getTipsterErrorsT())("tipsterNameRequired") };
+  if (!isTipsterPlatform(platform)) return { success: false, error: (await getTipsterErrorsT())("tipsterPlatformInvalid") };
 
   const existing = await prisma.tipster.findUnique({
     where: { userId_normalizedName: { userId: user.id, normalizedName } },
@@ -134,19 +140,19 @@ export async function createTipster(
 export async function updateTipster(id: string, input: TipsterInput): Promise<CreateTipsterResult> {
   const user = await requireUser();
   const owned = await prisma.tipster.findFirst({ where: { id, userId: user.id }, select: { id: true } });
-  if (!owned) return { success: false, error: "Tipster introuvable." };
+  if (!owned) return { success: false, error: (await getTipsterErrorsT())("tipsterNotFound") };
 
   const name = cleanTipsterName(input.name);
   const normalizedName = normalizeTipsterName(name);
   const platform = input.platform ?? null;
-  if (!name) return { success: false, error: "Le nom du tipster est requis." };
-  if (!isTipsterPlatform(platform)) return { success: false, error: "Plateforme invalide." };
+  if (!name) return { success: false, error: (await getTipsterErrorsT())("tipsterNameRequired") };
+  if (!isTipsterPlatform(platform)) return { success: false, error: (await getTipsterErrorsT())("tipsterPlatformInvalid") };
 
   const duplicate = await prisma.tipster.findFirst({
     where: { userId: user.id, normalizedName, id: { not: id } },
     include: { _count: { select: { bets: true } } },
   });
-  if (duplicate) return { success: false, error: "Un tipster portant ce nom existe déjà." };
+  if (duplicate) return { success: false, error: (await getTipsterErrorsT())("tipsterDuplicate") };
 
   const updated = await prisma.tipster.update({
     where: { id: owned.id },
@@ -164,7 +170,7 @@ export async function archiveTipster(id: string): Promise<{ success: true } | { 
     where: { id, userId: user.id, status: "ACTIVE" },
     data: { status: "ARCHIVED", archivedAt: new Date() },
   });
-  if (updated.count !== 1) return { success: false, error: "Tipster introuvable." };
+  if (updated.count !== 1) return { success: false, error: (await getTipsterErrorsT())("tipsterNotFound") };
 
   await recordGrowthEventSafely({ name: "tipster_archived", userId: user.id });
   revalidateTipsterViews();

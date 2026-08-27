@@ -38,6 +38,7 @@
     "scannerDesktop": "OCR Scan",
     "fileImport": "Import history",
     "stats": "Stats",
+    "tipsters": "Tipsters",
     "referrals": "Referrals",
     "account": "Account",
     "groups": {
@@ -279,6 +280,58 @@
     "deleteConfirmTitle": "Delete this bankroll?",
     "deleteConfirmWithBets": "This will also permanently delete {count, plural, one {# bet} other {# bets}} associated with this bankroll. This action is irreversible.",
     "deleteConfirmNoBets": "This action is irreversible."
+  },
+
+  "tipsters": {
+    "title": "Tipsters",
+    "description": "Manage the people and services behind your betting recommendations.",
+    "add": "Add a tipster",
+    "activeTitle": "Active ({count})",
+    "archivedTitle": "Archived ({count})",
+    "noActive": "No active tipster. You can add one or keep only your archived history.",
+    "betCount": "{count, plural, =0 {No associated bets} one {# associated bet} other {# associated bets}}",
+    "empty": {
+      "title": "You haven't added any tipsters yet",
+      "description": "Add a tipster to link imported bets to their source."
+    },
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "platforms": {
+      "none": "Platform not provided",
+      "DISCORD": "Discord",
+      "TELEGRAM": "Telegram",
+      "X": "X",
+      "WEBSITE": "Website",
+      "OTHER": "Other"
+    },
+    "actions": {
+      "edit": "Edit",
+      "archive": "Archive"
+    },
+    "form": {
+      "createTitle": "Add a tipster",
+      "createDescription": "A name is enough. You can fill in the other details later.",
+      "editTitle": "Edit tipster",
+      "editDescription": "Update their information without changing associated bets.",
+      "nameLabel": "Tipster name *",
+      "namePlaceholder": "El Professor",
+      "platformLabel": "Platform",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Useful information about this tipster (optional)",
+      "duplicate": "A tipster with this name already exists.",
+      "create": "Create tipster",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "archive": {
+      "title": "Archive this tipster?",
+      "description": "{name} will no longer be suggested for new imports.",
+      "historyKept": "Historical bets stay linked to this tipster and remain visible in your history.",
+      "confirm": "Archive tipster",
+      "archiving": "Archiving…"
+    }
   },
 
   "scan": {
@@ -1006,7 +1059,11 @@
     "movementAmountPositive": "Amount must be greater than zero.",
     "movementDateInvalid": "Movement date is invalid.",
     "withdrawalExceedsBalance": "The withdrawal cannot exceed the available balance.",
-    "movementNotFound": "Movement not found."
+    "movementNotFound": "Movement not found.",
+    "tipsterNameRequired": "The tipster name is required.",
+    "tipsterPlatformInvalid": "Invalid platform.",
+    "tipsterNotFound": "Tipster not found.",
+    "tipsterDuplicate": "A tipster with this name already exists."
   },
 
   "results": {

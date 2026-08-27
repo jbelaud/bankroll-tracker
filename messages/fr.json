@@ -38,6 +38,7 @@
     "scannerDesktop": "Scan OCR",
     "fileImport": "Importer un historique",
     "stats": "Stats",
+    "tipsters": "Tipsters",
     "referrals": "Parrainage",
     "account": "Compte",
     "groups": {
@@ -279,6 +280,58 @@
     "deleteConfirmTitle": "Supprimer cette bankroll ?",
     "deleteConfirmWithBets": "Cela supprimera aussi définitivement {count, plural, one {# pari associé} other {# paris associés}} à cette bankroll. Cette action est irréversible.",
     "deleteConfirmNoBets": "Cette action est irréversible."
+  },
+
+  "tipsters": {
+    "title": "Tipsters",
+    "description": "Gère les personnes et services à l’origine de tes recommandations de paris.",
+    "add": "Ajouter un tipster",
+    "activeTitle": "Actifs ({count})",
+    "archivedTitle": "Archivés ({count})",
+    "noActive": "Aucun tipster actif. Tu peux en ajouter un ou conserver uniquement ton historique archivé.",
+    "betCount": "{count, plural, =0 {Aucun pari associé} one {# pari associé} other {# paris associés}}",
+    "empty": {
+      "title": "Tu n’as encore ajouté aucun tipster",
+      "description": "Ajoute un tipster pour associer tes paris importés à leur source."
+    },
+    "status": {
+      "active": "Actif",
+      "archived": "Archivé"
+    },
+    "platforms": {
+      "none": "Plateforme non renseignée",
+      "DISCORD": "Discord",
+      "TELEGRAM": "Telegram",
+      "X": "X",
+      "WEBSITE": "Site web",
+      "OTHER": "Autre"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "archive": "Archiver"
+    },
+    "form": {
+      "createTitle": "Ajouter un tipster",
+      "createDescription": "Le nom suffit. Tu pourras compléter les autres informations plus tard.",
+      "editTitle": "Modifier le tipster",
+      "editDescription": "Mets à jour ses informations sans modifier les paris déjà associés.",
+      "nameLabel": "Nom du tipster *",
+      "namePlaceholder": "El Professor",
+      "platformLabel": "Plateforme",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Informations utiles sur ce tipster (facultatif)",
+      "duplicate": "Un tipster portant ce nom existe déjà.",
+      "create": "Créer le tipster",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…"
+    },
+    "archive": {
+      "title": "Archiver ce tipster ?",
+      "description": "{name} ne sera plus proposé dans les nouveaux imports.",
+      "historyKept": "Les paris historiques restent associés à ce tipster et continuent d’apparaître dans l’historique.",
+      "confirm": "Archiver le tipster",
+      "archiving": "Archivage…"
+    }
   },
 
   "scan": {
@@ -1006,7 +1059,11 @@
     "movementAmountPositive": "Le montant doit être supérieur à zéro.",
     "movementDateInvalid": "La date du mouvement est invalide.",
     "withdrawalExceedsBalance": "Le retrait ne peut pas dépasser le solde disponible.",
-    "movementNotFound": "Mouvement introuvable."
+    "movementNotFound": "Mouvement introuvable.",
+    "tipsterNameRequired": "Le nom du tipster est requis.",
+    "tipsterPlatformInvalid": "Plateforme invalide.",
+    "tipsterNotFound": "Tipster introuvable.",
+    "tipsterDuplicate": "Un tipster portant ce nom existe déjà."
   },
 
   "results": {

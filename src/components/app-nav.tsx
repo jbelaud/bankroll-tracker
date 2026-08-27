@@ -11,6 +11,7 @@ import {
   ListBullets,
   UserCircle,
   UsersThree,
+  UserList,
   FileArrowUp,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { href: "/import-history", key: "fileImport", icon: FileArrowUp },
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
+  { href: "/tipsters", key: "tipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },
 ] as const;

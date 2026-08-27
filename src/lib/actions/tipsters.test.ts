@@ -14,6 +14,15 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/auth", () => ({ requireUser: mocks.requireUser }));
 vi.mock("@/lib/growth/events", () => ({ recordGrowthEventSafely: mocks.recordEvent }));
+vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn().mockResolvedValue("fr") }));
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn().mockResolvedValue((key: string) => ({
+    tipsterNameRequired: "Le nom du tipster est requis.",
+    tipsterPlatformInvalid: "Plateforme invalide.",
+    tipsterNotFound: "Tipster introuvable.",
+    tipsterDuplicate: "Un tipster portant ce nom existe déjà.",
+  })[key] ?? key),
+}));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
