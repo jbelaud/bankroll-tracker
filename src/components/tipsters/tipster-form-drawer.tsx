@@ -63,6 +63,10 @@ export function TipsterFormDrawer({
         setError(result.error);
         return;
       }
+      if (result.existing && result.tipster.status === "ARCHIVED") {
+        setError(t("archivedDuplicate"));
+        return;
+      }
       if (result.existing && !selectExisting) {
         setError(t("duplicate"));
         return;

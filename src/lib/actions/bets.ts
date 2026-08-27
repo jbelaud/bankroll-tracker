@@ -15,6 +15,7 @@ import {
 } from "@/lib/taxonomy";
 import type { ParsedBetSelection } from "@/lib/scan/types";
 import { resolveOwnedTipsterId } from "@/lib/tipsters/service";
+import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 
 // Revalidation commune : tous les écrans qui affichent des paris ou des
 // soldes dérivés (Dashboard, Bankrolls, Historique) doivent refléter le
@@ -32,6 +33,18 @@ function revalidateBetViews() {
 
 async function getErrorsT() {
   return getTranslations({ locale: await getServerLocale(), namespace: "errors" });
+}
+
+async function getBetValidationMessages(): Promise<BetValidationMessages> {
+  const t = await getErrorsT();
+  return {
+    bankrollNotFound: t("bankrollNotFound"),
+    bankrollLocked: t("bankrollLocked"),
+    stakePositive: t("stakePositive"),
+    invalidResult: t("invalidResult"),
+    oddsPositive: t("oddsPositive"),
+    taxonomyMismatch: "Le type de pari ne correspond pas au sport sélectionné.",
+  };
 }
 
 // Vérifie que la bankroll appartient bien à l'utilisateur de la session avant
@@ -81,76 +94,31 @@ export async function createBet(
   } = {}
 ) {
   const user = await requireUser();
-  await getOwnedBankroll(bankrollId, user.id);
-  // Pendant un import massif, les nouveaux couples sont déjà enregistrés au
-  // fil de l'eau : éviter de relire tout l'historique pour chaque pari.
-  const taxonomy = await getUserTaxonomy(user.id, false);
-  const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, sport, betType);
-
-  if (!Number.isFinite(stake) || stake <= 0) {
-    throw new Error((await getErrorsT())("stakePositive"));
-  }
-  if (!isBetResult(result)) {
-    throw new Error((await getErrorsT())("invalidResult"));
-  }
-  // Une cote inconnue est acceptable seulement pour un ticket intégralement
-  // remboursé : elle reste alors null, au lieu d'inventer une cote à 1.
-  if (odds === null && result !== "REMBOURSE") {
-    throw new Error((await getErrorsT())("oddsPositive"));
-  }
-  if (odds !== null && (!Number.isFinite(odds) || odds <= 0)) {
-    throw new Error((await getErrorsT())("oddsPositive"));
-  }
-  if (normalizedTaxonomy.taxonomyMismatch) {
-    throw new Error("Le type de pari ne correspond pas au sport sélectionné.");
-  }
-
   const tipsterId = await resolveOwnedTipsterId(user.id, {
     tipsterId: source.tipsterId,
     detectedTipsterName: source.tipster,
   });
-
-  const bet = await prisma.bet.create({
-    data: {
-      bankrollId,
-      sport: normalizedTaxonomy.sport,
-      betType: normalizedTaxonomy.betType,
-      description: description.trim() || null,
-      eventResult: eventResult?.trim() || null,
-      stake,
-      odds,
-      boosted,
-      originalOdds: boosted ? originalOdds : null,
-      freebet,
-      live,
-      result,
-      cashOutAmount: result === "CASHE" ? cashOutAmount : null,
-      ticketRef: ticketRef?.trim() || null,
-      date,
-      entryMethod: source.entryMethod ?? "MANUAL",
-      format: source.format ?? "SIMPLE",
-      closingOdds: source.closingOdds ?? null,
-      importBatchId: source.importBatchId ?? null,
-      tipsterId,
-      scanUsageId: source.scanUsageId ?? null,
+  return createOwnedBet(user.id, {
+    bankrollId,
+    sport,
+    betType,
+    description,
+    stake,
+    odds,
+    boosted,
+    originalOdds,
+    freebet,
+    live,
+    result,
+    cashOutAmount,
+    ticketRef,
+    date,
+    eventResult,
+    source: {
+      ...source,
+      resolvedTipsterId: tipsterId,
     },
-  });
-  if (source.selections?.length) {
-    await prisma.betSelection.createMany({
-      data: source.selections.slice(0, 100).map((selection, position) => ({
-        betId: bet.id,
-        position,
-        sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || normalizedTaxonomy.sport,
-        competition: selection.competition?.normalize("NFKC").trim().slice(0, 255) || null,
-        betType: selection.betType?.normalize("NFKC").trim().slice(0, 255) || null,
-        label: selection.label.normalize("NFKC").trim().slice(0, 1_000) || `Sélection ${position + 1}`,
-        odds: Number.isFinite(selection.odds) && (selection.odds as number) > 0 ? selection.odds : null,
-        result: selection.result,
-      })),
-    });
-  }
-  await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
-  return bet;
+  }, await getBetValidationMessages());
 }
 
 export async function listBets(bankrollId: string) {
@@ -187,7 +155,7 @@ export async function listAllBets() {
 async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
-    select: { id: true, bankrollId: true },
+    select: { id: true, bankrollId: true, tipsterId: true },
   });
   if (!bet) {
     throw new Error((await getErrorsT())("betNotFound"));
@@ -327,7 +295,7 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   const tipsterId = await resolveOwnedTipsterId(
     user.id,
     { tipsterId: input.tipsterId },
-    { allowArchivedById: true }
+    { allowArchivedById: input.tipsterId !== null && input.tipsterId === existing.tipsterId }
   );
 
   const updated = await prisma.bet.update({

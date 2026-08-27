@@ -29,6 +29,9 @@ import {
   parseBetsFileContent,
   type ParsedBetsFile,
 } from "@/lib/file-import/parse-bets-file";
+import { TipsterSelector } from "@/components/tipsters/tipster-selector";
+import { normalizeTipsterName } from "@/lib/tipsters/normalize";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 type BankrollOption = { id: string; name: string; bookmaker: string };
 
@@ -47,7 +50,7 @@ function downloadCsvTemplate() {
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
+export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankrolls: BankrollOption[]; tipsters: TipsterOption[] }) {
   const t = useTranslations("fileImport");
   const tResults = useTranslations("results");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,6 +61,8 @@ export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
   const [isDragging, setIsDragging] = useState(false);
   const [result, setResult] = useState<{ imported: number; skippedDuplicates: number } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [tipsters, setTipsters] = useState(initialTipsters);
+  const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
 
   const validBets = useMemo(
     () => parsed?.rows.flatMap((row) => (row.bet ? [row.bet] : [])) ?? [],
@@ -71,11 +76,32 @@ export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
     parsed.detectedBookmakers.length > 1
     || !parsed.detectedBookmakers.some((bookmaker) => normalizeBookmaker(bookmaker).toLocaleLowerCase("fr") === selectedBookmaker)
   ));
+  const detectedTipsters = useMemo(() => {
+    const groups = new Map<string, { name: string; value: string | null | undefined }>();
+    for (const bet of validBets) {
+      if (!bet.tipster) continue;
+      const key = normalizeTipsterName(bet.tipster);
+      if (!key || groups.has(key)) continue;
+      groups.set(key, { name: bet.tipster, value: bet.tipsterId });
+    }
+    return Array.from(groups, ([key, group]) => ({ key, ...group }));
+  }, [validBets]);
+  const betsWithoutDetectedTipster = validBets.filter((bet) => !bet.tipster).length;
+
+  function patchDetectedTipster(key: string, tipsterId: string | null) {
+    setParsed((current) => current ? {
+      ...current,
+      rows: current.rows.map((row) => row.bet && row.bet.tipster && normalizeTipsterName(row.bet.tipster) === key
+        ? { ...row, bet: { ...row.bet, tipsterId } }
+        : row),
+    } : current);
+  }
 
   async function readFile(file: File | undefined) {
     if (!file) return;
     setFileError("");
     setResult(null);
+    setFallbackTipsterId(null);
     if (file.size > MAX_IMPORT_FILE_BYTES) {
       setParsed(null);
       setFileError(t("errors.tooLarge"));
@@ -98,7 +124,14 @@ export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
     startTransition(async () => {
       try {
         const source = parsed.sourceProfile === "BET_ANALYTIX" ? "BET_ANALYTIX" : parsed.format;
-        const response = await importExternalBets(bankrollId, validBets, source, fileName);
+        const response = await importExternalBets(
+          bankrollId,
+          validBets.map((bet) => !bet.tipster && bet.tipsterId === undefined
+            ? { ...bet, tipsterId: fallbackTipsterId }
+            : bet),
+          source,
+          fileName
+        );
         if (response.imported === undefined) {
           setFileError(response.error);
           return;
@@ -115,6 +148,7 @@ export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
     setFileName("");
     setFileError("");
     setResult(null);
+    setFallbackTipsterId(null);
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -238,6 +272,38 @@ export function FileImportFlow({ bankrolls }: { bankrolls: BankrollOption[] }) {
               <span className="font-semibold">{t("preview.bookmakerDetected", { bookmakers: parsed.detectedBookmakers.join(", ") })}</span>
               {bookmakerMismatch ? ` ${t("preview.bookmakerMismatch", { selected: selectedBankroll?.bookmaker ?? "—" })}` : null}
             </div>
+          ) : null}
+
+          {(detectedTipsters.length > 0 || betsWithoutDetectedTipster > 0) ? (
+            <section className="mt-5 rounded-xl border border-border bg-muted/20 p-3 sm:p-4" aria-labelledby="file-tipsters-title">
+              <h3 id="file-tipsters-title" className="text-sm font-semibold">{t("tipsters.title")}</h3>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{t("tipsters.description")}</p>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                {detectedTipsters.map((detected, index) => (
+                  <TipsterSelector
+                    key={detected.key}
+                    id={`file-tipster-${index}`}
+                    tipsters={tipsters}
+                    value={detected.value}
+                    detectedName={detected.name}
+                    onChange={(tipsterId) => patchDetectedTipster(detected.key, tipsterId)}
+                    onTipsterCreated={(tipster) => setTipsters((items) => [...items.filter((item) => item.id !== tipster.id), tipster])}
+                    creationOrigin="import"
+                  />
+                ))}
+                {betsWithoutDetectedTipster > 0 ? (
+                  <TipsterSelector
+                    id="file-tipster-default"
+                    tipsters={tipsters}
+                    value={fallbackTipsterId}
+                    label={t("tipsters.defaultLabel", { count: betsWithoutDetectedTipster })}
+                    onChange={setFallbackTipsterId}
+                    onTipsterCreated={(tipster) => setTipsters((items) => [...items.filter((item) => item.id !== tipster.id), tipster])}
+                    creationOrigin="import"
+                  />
+                ) : null}
+              </div>
+            </section>
           ) : null}
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">

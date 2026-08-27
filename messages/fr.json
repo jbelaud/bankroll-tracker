@@ -321,6 +321,7 @@
       "notesLabel": "Notes",
       "notesPlaceholder": "Informations utiles sur ce tipster (facultatif)",
       "duplicate": "Un tipster portant ce nom existe déjà.",
+      "archivedDuplicate": "Ce tipster existe déjà mais il est archivé. Modifie-le depuis la page Tipsters pour le réutiliser.",
       "create": "Créer le tipster",
       "save": "Enregistrer",
       "saving": "Enregistrement…"
@@ -486,6 +487,11 @@
       "tooLarge": "Ce fichier dépasse la limite de 10 Mo.",
       "read": "Impossible de lire ce fichier.",
       "import": "L’import n’a pas pu être terminé. Réessaie dans quelques instants."
+    },
+    "tipsters": {
+      "title": "Sources des paris",
+      "description": "Les noms explicitement détectés sont associés individuellement. Tu peux aussi appliquer un Tipster aux paris sans source.",
+      "defaultLabel": "Tipster par défaut ({count, plural, one {# pari sans source} other {# paris sans source}})"
     },
     "preview": {
       "columns": "{count, plural, one {# colonne détectée} other {# colonnes détectées}}",
@@ -817,6 +823,7 @@
 
   "account": {
     "title": "Compte",
+    "tipstersLink": "Gérer mes tipsters",
     "adminLink": "Administration",
     "referralLink": "Parrainer des amis",
     "feedback": {

@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/auth", () => ({ requireUser: mocks.requireUser }));
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/billing/bankroll-access", () => ({ isBankrollLockedForUser: mocks.isLocked }));
 vi.mock("@/lib/growth/events", () => ({ recordGrowthEventSafely: mocks.recordEvent }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
@@ -128,5 +129,47 @@ describe("importExternalBets", () => {
     expect(mocks.betCreateMany).toHaveBeenCalledWith({
       data: [expect.objectContaining({ ticketRef: null, description: "Nouveau pari" })],
     });
+  });
+
+  it("laisse un pari sans Tipster en Personnel", async () => {
+    await importExternalBets("bankroll-1", [bet({ tipster: null })], "CSV");
+
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ tipsterId: null })],
+    });
+  });
+
+  it("matche un Tipster détecté existant sans en créer un nouveau", async () => {
+    mocks.tipsterFindMany.mockResolvedValue([{ id: "tipster-1", normalizedName: "el professor" }]);
+
+    await importExternalBets("bankroll-1", [bet({ tipster: " EL  PROFESSOR " })], "CSV");
+
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ tipsterId: "tipster-1" })],
+    });
+    expect(mocks.tipsterCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("ne crée pas automatiquement un Tipster détecté inconnu", async () => {
+    mocks.tipsterFindMany.mockResolvedValue([]);
+
+    await importExternalBets("bankroll-1", [bet({ tipster: "Betting God" })], "CSV");
+
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ tipsterId: null })],
+    });
+    expect(mocks.tipsterCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("associe le Tipster créé depuis la revue et refuse un ID étranger", async () => {
+    mocks.tipsterFindMany.mockResolvedValueOnce([{ id: "tipster-1", normalizedName: "betting god" }]);
+    await importExternalBets("bankroll-1", [bet({ tipster: "Betting God", tipsterId: "tipster-1" })], "CSV");
+    expect(mocks.betCreateMany).toHaveBeenLastCalledWith({
+      data: [expect.objectContaining({ tipsterId: "tipster-1" })],
+    });
+
+    mocks.tipsterFindMany.mockResolvedValueOnce([]);
+    await expect(importExternalBets("bankroll-1", [bet({ tipsterId: "tipster-other" })], "CSV"))
+      .resolves.toEqual({ error: "Tipster introuvable." });
   });
 });

@@ -321,6 +321,7 @@
       "notesLabel": "Notes",
       "notesPlaceholder": "Useful information about this tipster (optional)",
       "duplicate": "A tipster with this name already exists.",
+      "archivedDuplicate": "This tipster already exists but is archived. Edit it from the Tipsters page to reuse it.",
       "create": "Create tipster",
       "save": "Save",
       "saving": "Saving…"
@@ -486,6 +487,11 @@
       "tooLarge": "This file is larger than the 10 MB limit.",
       "read": "This file could not be read.",
       "import": "The import could not be completed. Try again in a few moments."
+    },
+    "tipsters": {
+      "title": "Bet sources",
+      "description": "Explicitly detected names are linked individually. You can also apply a Tipster to bets without a source.",
+      "defaultLabel": "Default tipster ({count, plural, one {# bet without a source} other {# bets without a source}})"
     },
     "preview": {
       "columns": "{count, plural, one {# column detected} other {# columns detected}}",
@@ -817,6 +823,7 @@
 
   "account": {
     "title": "Account",
+    "tipstersLink": "Manage my tipsters",
     "adminLink": "Administration",
     "referralLink": "Refer friends",
     "feedback": {

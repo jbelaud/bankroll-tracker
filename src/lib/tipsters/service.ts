@@ -40,3 +40,48 @@ export async function resolveOwnedTipsterId(
   });
   return matched?.status === "ACTIVE" ? matched.id : null;
 }
+
+export async function resolveOwnedTipsterIdsForImport(
+  userId: string,
+  selections: TipsterSelection[]
+): Promise<Array<string | null>> {
+  const requestedIds = Array.from(new Set(selections.flatMap((selection) =>
+    typeof selection.tipsterId === "string" ? [selection.tipsterId] : []
+  )));
+  const requestedNames = Array.from(new Set(selections.flatMap((selection) => {
+    if (selection.tipsterId !== undefined || !selection.detectedTipsterName) return [];
+    const normalizedName = normalizeTipsterName(selection.detectedTipsterName);
+    return normalizedName ? [normalizedName] : [];
+  })));
+
+  if (requestedIds.length === 0 && requestedNames.length === 0) {
+    return selections.map(() => null);
+  }
+
+  const tipsters = await prisma.tipster.findMany({
+    where: {
+      userId,
+      status: "ACTIVE",
+      OR: [
+        ...(requestedIds.length > 0 ? [{ id: { in: requestedIds } }] : []),
+        ...(requestedNames.length > 0 ? [{ normalizedName: { in: requestedNames } }] : []),
+      ],
+    },
+    select: { id: true, normalizedName: true },
+  });
+  const byId = new Map(tipsters.map((tipster) => [tipster.id, tipster.id]));
+  const byName = new Map(tipsters.map((tipster) => [tipster.normalizedName, tipster.id]));
+
+  for (const requestedId of requestedIds) {
+    if (!byId.has(requestedId)) throw new Error("Tipster introuvable.");
+  }
+
+  return selections.map((selection) => {
+    if (selection.tipsterId === null) return null;
+    if (typeof selection.tipsterId === "string") return byId.get(selection.tipsterId) ?? null;
+    const normalizedName = selection.detectedTipsterName
+      ? normalizeTipsterName(selection.detectedTipsterName)
+      : "";
+    return normalizedName ? byName.get(normalizedName) ?? null : null;
+  });
+}

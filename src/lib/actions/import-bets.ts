@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
 import { getTranslations } from "next-intl/server";
-import { createBet } from "@/lib/actions/bets";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { prisma } from "@/lib/prisma";
@@ -16,6 +15,8 @@ import {
   getUserTaxonomy,
   normalizeTaxonomyPair,
 } from "@/lib/taxonomy";
+import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
+import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -98,8 +99,8 @@ export async function importExternalBets(
     entryMethod: "FILE";
     format: ParsedBet["format"];
     closingOdds: number | null;
+    tipsterId: string | null | undefined;
     tipsterName: string | null;
-    tipsterKey: string | null;
     selections: NonNullable<ParsedBet["selections"]>;
   }> = [];
   let skippedDuplicates = 0;
@@ -140,8 +141,8 @@ export async function importExternalBets(
       entryMethod: "FILE" as const,
       format: bet.format ?? "SIMPLE",
       closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 0 ? (bet.closingOdds ?? null) : null,
+      tipsterId: bet.tipsterId,
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
-      tipsterKey: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr").slice(0, 120) || null,
       selections: (bet.selections ?? []).slice(0, 100),
     };
     const key = duplicateKey(row);
@@ -158,6 +159,16 @@ export async function importExternalBets(
     });
   }
 
+  let resolvedTipsterIds: Array<string | null>;
+  try {
+    resolvedTipsterIds = await resolveOwnedTipsterIdsForImport(user.id, rows.map((row) => ({
+      tipsterId: row.tipsterId,
+      detectedTipsterName: row.tipsterName,
+    })));
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Tipster introuvable." };
+  }
+
   if (rows.length > 0) {
     await prisma.$transaction(async (tx) => {
       const batch = await tx.importBatch.create({
@@ -169,21 +180,10 @@ export async function importExternalBets(
           skippedDuplicates,
         },
       });
-      const tipsters = [...new Map(rows.filter((row) => row.tipsterKey && row.tipsterName).map((row) => [row.tipsterKey!, row.tipsterName!])).entries()];
-      if (tipsters.length) {
-        await tx.tipster.createMany({
-          data: tipsters.map(([normalizedName, name]) => ({ userId: user.id, normalizedName, name })),
-          skipDuplicates: true,
-        });
-      }
-      const tipsterRows = tipsters.length
-        ? await tx.tipster.findMany({ where: { userId: user.id, normalizedName: { in: tipsters.map(([key]) => key) } }, select: { id: true, normalizedName: true } })
-        : [];
-      const tipsterIds = new Map(tipsterRows.map((tipster) => [tipster.normalizedName, tipster.id]));
       await tx.bet.createMany({
-        data: rows.map(({ tipsterName: _tipsterName, tipsterKey, selections: _selections, ...row }) => ({
+        data: rows.map(({ tipsterName: _tipsterName, tipsterId: _tipsterId, selections: _selections, ...row }, index) => ({
           ...row,
-          tipsterId: tipsterKey ? tipsterIds.get(tipsterKey) ?? null : null,
+          tipsterId: resolvedTipsterIds[index] ?? null,
           importBatchId: batch.id,
         })),
       });
@@ -212,6 +212,24 @@ export async function importExternalBets(
     });
     if (totalBets === 0) {
       await recordGrowthEventSafely({ name: "first_bet_imported", userId: user.id, properties: { import_method: "file" } });
+    }
+    const selectedTipsters = resolvedTipsterIds.filter(Boolean).length;
+    const autoMatchedTipsters = rows.filter((row, index) =>
+      row.tipsterId === undefined && Boolean(row.tipsterName) && Boolean(resolvedTipsterIds[index])
+    ).length;
+    if (selectedTipsters > 0) {
+      await recordGrowthEventSafely({
+        name: "tipster_selected_on_import",
+        userId: user.id,
+        properties: { bets_count: selectedTipsters, import_method: "file" },
+      });
+    }
+    if (autoMatchedTipsters > 0) {
+      await recordGrowthEventSafely({
+        name: "import_tipster_auto_matched",
+        userId: user.id,
+        properties: { bets_count: autoMatchedTipsters, import_method: "file" },
+      });
     }
   }
 
@@ -246,6 +264,30 @@ export async function importBets(
 
   let existingBets = 0;
   try {
+    const bankroll = await prisma.bankroll.findFirst({
+      where: { id: bankrollId, userId: user.id },
+      select: { id: true },
+    });
+    if (!bankroll) return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollNotFound") };
+    if (await isBankrollLockedForUser(user.id, bankrollId)) {
+      return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollLocked") };
+    }
+    const [taxonomy, resolvedTipsterIds, tErrors] = await Promise.all([
+      getUserTaxonomy(user.id, false),
+      resolveOwnedTipsterIdsForImport(user.id, bets.map((bet) => ({
+        tipsterId: bet.tipsterId,
+        detectedTipsterName: bet.tipster,
+      }))),
+      getTranslations({ locale, namespace: "errors" }),
+    ]);
+    const validationMessages: BetValidationMessages = {
+      bankrollNotFound: tErrors("bankrollNotFound"),
+      bankrollLocked: tErrors("bankrollLocked"),
+      stakePositive: tErrors("stakePositive"),
+      invalidResult: tErrors("invalidResult"),
+      oddsPositive: tErrors("oddsPositive"),
+      taxonomyMismatch: "Le type de pari ne correspond pas au sport sélectionné.",
+    };
     const uniqueScanUsageIds = [...new Set(scanUsageIds.filter(Boolean))];
     const scanUsages = uniqueScanUsageIds.length
       ? await prisma.scanUsage.findMany({
@@ -262,33 +304,51 @@ export async function importBets(
     const existingScanImports = await prisma.bet.count({
       where: { bankroll: { userId: user.id }, entryMethod: "SCAN" },
     });
-    for (const bet of bets) {
+    for (const [index, bet] of bets.entries()) {
       const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;
-      await createBet(
+      await createOwnedBet(user.id, {
         bankrollId,
-        bet.sport,
-        bet.betType,
-        bet.description,
-        bet.stake!,
-        bet.odds,
-        bet.boosted,
-        bet.originalOdds,
-        bet.freebet,
-        bet.live,
-        bet.result,
-        bet.cashOutAmount,
-        bet.ticketRef,
-        new Date(bet.date!),
-        bet.eventResult,
-        {
+        sport: bet.sport,
+        betType: bet.betType,
+        description: bet.description,
+        stake: bet.stake!,
+        odds: bet.odds,
+        boosted: bet.boosted,
+        originalOdds: bet.originalOdds,
+        freebet: bet.freebet,
+        live: bet.live,
+        result: bet.result,
+        cashOutAmount: bet.cashOutAmount,
+        ticketRef: bet.ticketRef,
+        date: new Date(bet.date!),
+        eventResult: bet.eventResult,
+        source: {
           entryMethod: scanUsageId ? "SCAN" : "MANUAL",
           scanUsageId,
           format: bet.format,
-          tipster: bet.tipster,
+          resolvedTipsterId: resolvedTipsterIds[index],
           closingOdds: bet.closingOdds,
           selections: bet.selections,
-        }
-      );
+        },
+      }, validationMessages, { bankrollValidated: true, taxonomy });
+    }
+    const selectedTipsters = resolvedTipsterIds.filter(Boolean).length;
+    const autoMatchedTipsters = bets.filter((bet, index) =>
+      bet.tipsterId === undefined && Boolean(bet.tipster) && Boolean(resolvedTipsterIds[index])
+    ).length;
+    if (selectedTipsters > 0) {
+      await recordGrowthEventSafely({
+        name: "tipster_selected_on_import",
+        userId: user.id,
+        properties: { bets_count: selectedTipsters, import_method: "scan" },
+      });
+    }
+    if (autoMatchedTipsters > 0) {
+      await recordGrowthEventSafely({
+        name: "import_tipster_auto_matched",
+        userId: user.id,
+        properties: { bets_count: autoMatchedTipsters, import_method: "scan" },
+      });
     }
     if (uniqueScanUsageIds.length) {
       const importedByScan = new Map<string, number>();

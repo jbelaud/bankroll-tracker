@@ -18,6 +18,7 @@ import { ReviewBetCard } from "./review-bet-card";
 import type { Taxonomy } from "@/lib/taxonomy";
 import type { BankrollOption } from "./scan-flow";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 export function ReviewList({
   initialBets,
@@ -33,6 +34,7 @@ export function ReviewList({
   showQualityOffer,
   currency,
   taxonomy,
+  initialTipsters,
   initialExcludedIndexes = [],
   onReviewChange,
 }: {
@@ -49,6 +51,7 @@ export function ReviewList({
   showQualityOffer: boolean;
   currency: Currency;
   taxonomy: Taxonomy;
+  initialTipsters: TipsterOption[];
   initialExcludedIndexes?: number[];
   onReviewChange?: (bets: ParsedBet[], excludedIndexes: number[], bankrollId: string) => void;
 }) {
@@ -57,6 +60,7 @@ export function ReviewList({
   const [shareQuality, setShareQuality] = useState(false);
   const [qualityIssueType, setQualityIssueType] = useState("INCORRECT");
   const [qualityIssueDetails, setQualityIssueDetails] = useState("");
+  const [tipsters, setTipsters] = useState(initialTipsters);
   const duplicateWarningTracked = useRef(false);
   const bookmakerMismatchTracked = useRef(false);
   const reviewChangeRef = useRef(onReviewChange);
@@ -268,6 +272,11 @@ export function ReviewList({
             onToggleExcluded={() => toggleExcluded(i)}
             currency={currency}
             taxonomy={reviewTaxonomy}
+            tipsters={tipsters}
+            onTipsterCreated={(tipster) => setTipsters((items) => [
+              ...items.filter((item) => item.id !== tipster.id),
+              tipster,
+            ])}
           />
         ))}
       </ul>

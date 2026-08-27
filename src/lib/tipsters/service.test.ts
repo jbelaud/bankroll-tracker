@@ -3,14 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   findFirst: vi.fn(),
   findUnique: vi.fn(),
+  findMany: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/prisma", () => ({
-  prisma: { tipster: { findFirst: mocks.findFirst, findUnique: mocks.findUnique } },
+  prisma: { tipster: { findFirst: mocks.findFirst, findUnique: mocks.findUnique, findMany: mocks.findMany } },
 }));
 
-const { resolveOwnedTipsterId } = await import("@/lib/tipsters/service");
+const { resolveOwnedTipsterId, resolveOwnedTipsterIdsForImport } = await import("@/lib/tipsters/service");
 
 describe("resolveOwnedTipsterId", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -51,5 +52,35 @@ describe("resolveOwnedTipsterId", () => {
     mocks.findUnique.mockResolvedValue({ id: "tipster-a", status: "ARCHIVED" });
     await expect(resolveOwnedTipsterId("user-a", { detectedTipsterName: "El Professor" }))
       .resolves.toBeNull();
+  });
+});
+
+describe("resolveOwnedTipsterIdsForImport", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("résout les IDs et noms détectés en une seule requête utilisateur", async () => {
+    mocks.findMany.mockResolvedValue([
+      { id: "tipster-a", normalizedName: "el professor" },
+      { id: "tipster-b", normalizedName: "valuebetfr" },
+    ]);
+
+    await expect(resolveOwnedTipsterIdsForImport("user-a", [
+      { tipsterId: "tipster-a" },
+      { detectedTipsterName: "VALUEBETFR" },
+      { detectedTipsterName: "Inconnu" },
+      { tipsterId: null, detectedTipsterName: "El Professor" },
+    ])).resolves.toEqual(["tipster-a", "tipster-b", null, null]);
+
+    expect(mocks.findMany).toHaveBeenCalledTimes(1);
+    expect(mocks.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ userId: "user-a", status: "ACTIVE" }),
+    }));
+  });
+
+  it("refuse tout ID explicite qui n'appartient pas à l'utilisateur", async () => {
+    mocks.findMany.mockResolvedValue([]);
+
+    await expect(resolveOwnedTipsterIdsForImport("user-a", [{ tipsterId: "tipster-b" }]))
+      .rejects.toThrow("Tipster introuvable.");
   });
 });

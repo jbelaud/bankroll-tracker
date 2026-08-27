@@ -22,6 +22,7 @@ import { UploadZone } from "./upload-zone";
 import { ScanningView } from "./scanning-view";
 import { ReviewList } from "./review-list";
 import { Button } from "@/components/ui/button";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 export type BankrollOption = { id: string; name: string; bookmaker: string };
 
@@ -40,11 +41,13 @@ export function ScanFlow({
   currency,
   taxonomy,
   pendingDrafts,
+  tipsters,
 }: {
   bankrolls: BankrollOption[];
   currency: Currency;
   taxonomy: Taxonomy;
   pendingDrafts: PendingScanDraft[];
+  tipsters: TipsterOption[];
 }) {
   const router = useRouter();
   const t = useTranslations("scan.error");
@@ -242,6 +245,7 @@ export function ScanFlow({
         showQualityOffer={flow.files.length > 0}
         currency={currency}
         taxonomy={taxonomy}
+        initialTipsters={tipsters}
       />
     );
   }

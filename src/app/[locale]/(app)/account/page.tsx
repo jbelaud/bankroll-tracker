@@ -110,6 +110,13 @@ export default async function AccountPage({
       </section>
 
       <Link
+        href="/tipsters"
+        className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
+      >
+        {t("tipstersLink")}
+      </Link>
+
+      <Link
         href="/referrals"
         className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
       >

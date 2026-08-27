@@ -3,10 +3,12 @@ import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@/i18n/navigation";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { FileImportFlow } from "@/components/file-import/file-import-flow";
+import { listTipsters } from "@/lib/actions/tipsters";
 
 export default async function ImportHistoryPage() {
-  const [bankrolls, t, tCommon] = await Promise.all([
+  const [bankrolls, tipsters, t, tCommon] = await Promise.all([
     listBankrolls(),
+    listTipsters(),
     getTranslations("fileImport"),
     getTranslations("common"),
   ]);
@@ -26,7 +28,10 @@ export default async function ImportHistoryPage() {
     <div className="flex flex-1 flex-col gap-1">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <p className="mb-4 text-sm leading-6 text-muted-foreground">{t("description")}</p>
-      <FileImportFlow bankrolls={activeBankrolls.map(({ id, name, bookmaker }) => ({ id, name, bookmaker }))} />
+      <FileImportFlow
+        bankrolls={activeBankrolls.map(({ id, name, bookmaker }) => ({ id, name, bookmaker }))}
+        tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
+      />
     </div>
   );
 }

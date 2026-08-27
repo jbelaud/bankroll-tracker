@@ -7,13 +7,15 @@ import { ScanFlow } from "@/components/scan/scan-flow";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { listPendingScanDrafts } from "@/lib/actions/scan-drafts";
+import { listTipsters } from "@/lib/actions/tipsters";
 
 export default async function ScanPage() {
   const user = await requireUser();
-  const [bankrolls, taxonomy, pendingDrafts, t, tCommon, currency] = await Promise.all([
+  const [bankrolls, taxonomy, pendingDrafts, tipsters, t, tCommon, currency] = await Promise.all([
     listBankrolls(),
     getUserTaxonomy(user.id),
     listPendingScanDrafts(),
+    listTipsters(),
     getTranslations("scan"),
     getTranslations("common"),
     getServerCurrency(),
@@ -54,6 +56,7 @@ export default async function ScanPage() {
         currency={currency}
         taxonomy={taxonomy}
         pendingDrafts={pendingDrafts}
+        tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
       />
     </div>
   );

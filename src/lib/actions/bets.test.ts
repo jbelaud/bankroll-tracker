@@ -58,7 +58,7 @@ describe("association Bet / Tipster", () => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-a" });
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-a", userId: "user-a" });
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a" });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null });
     mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
     mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
     mocks.isLocked.mockResolvedValue(false);
@@ -117,5 +117,24 @@ describe("association Bet / Tipster", () => {
     expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
       data: expect.objectContaining({ tipsterId: null }),
     }));
+  });
+
+  it("conserve le Tipster archivé déjà lié sans permettre d'en choisir un autre", async () => {
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived" });
+    mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-archived" });
+
+    await updateBet("bet-a", { ...updateInput, tipsterId: "tipster-archived" });
+    expect(mocks.tipsterFindFirst).toHaveBeenLastCalledWith({
+      where: { id: "tipster-archived", userId: "user-a" },
+      select: { id: true },
+    });
+
+    mocks.tipsterFindFirst.mockResolvedValue(null);
+    await expect(updateBet("bet-a", { ...updateInput, tipsterId: "another-archived" }))
+      .rejects.toThrow("Tipster introuvable.");
+    expect(mocks.tipsterFindFirst).toHaveBeenLastCalledWith({
+      where: { id: "another-archived", userId: "user-a", status: "ACTIVE" },
+      select: { id: true },
+    });
   });
 });

@@ -24,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TipsterSelector } from "@/components/tipsters/tipster-selector";
+import type { TipsterOption } from "@/lib/tipsters/types";
 
 export function ReviewBetCard({
   bet,
@@ -33,6 +35,8 @@ export function ReviewBetCard({
   onToggleExcluded,
   currency,
   taxonomy,
+  tipsters,
+  onTipsterCreated,
 }: {
   bet: ParsedBet;
   index: number;
@@ -41,6 +45,8 @@ export function ReviewBetCard({
   onToggleExcluded: () => void;
   currency: Currency;
   taxonomy: Taxonomy;
+  tipsters: TipsterOption[];
+  onTipsterCreated: (tipster: TipsterOption) => void;
 }) {
   const suggested = hasSuggestedType(bet);
   const uid = (field: string) => `bet-${index}-${field}`;
@@ -193,6 +199,16 @@ export function ReviewBetCard({
           )}
         />
       </div>
+
+      <TipsterSelector
+        id={uid("tipster")}
+        tipsters={tipsters}
+        value={bet.tipsterId}
+        detectedName={bet.tipster}
+        onChange={(tipsterId) => onPatch({ tipsterId })}
+        onTipsterCreated={onTipsterCreated}
+        creationOrigin="import"
+      />
 
       {bet.selections?.length ? (
         <fieldset className="rounded-xl border border-border bg-muted/25 p-3">

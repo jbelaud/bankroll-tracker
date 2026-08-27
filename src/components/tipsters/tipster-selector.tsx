@@ -21,6 +21,8 @@ export function TipsterSelector({
   onChange,
   onTipsterCreated,
   allowCreate = true,
+  label,
+  creationOrigin = "management",
 }: {
   id: string;
   tipsters: TipsterOption[];
@@ -29,6 +31,8 @@ export function TipsterSelector({
   onChange: (tipsterId: string | null) => void;
   onTipsterCreated: (tipster: TipsterOption) => void;
   allowCreate?: boolean;
+  label?: string;
+  creationOrigin?: "management" | "import";
 }) {
   const t = useTranslations("tipsters.selector");
   const [createOpen, setCreateOpen] = useState(false);
@@ -48,7 +52,7 @@ export function TipsterSelector({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id}>{t("label")}</Label>
+      <Label htmlFor={id}>{label ?? t("label")}</Label>
       {unknownDetected ? (
         <div className="mb-1 rounded-xl border border-primary/30 bg-primary/8 p-3">
           <p className="flex items-center gap-1.5 text-xs font-semibold text-primary">
@@ -109,7 +113,7 @@ export function TipsterSelector({
           open
           onOpenChange={setCreateOpen}
           defaultName={unknownDetected ? detectedName ?? "" : ""}
-          origin="import"
+          origin={creationOrigin}
           selectExisting
           onSaved={(created) => {
             if (created.status !== "ACTIVE") return;
