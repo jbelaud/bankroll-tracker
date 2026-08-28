@@ -181,11 +181,16 @@ export async function importExternalBets(
         },
       });
       await tx.bet.createMany({
-        data: rows.map(({ tipsterName: _tipsterName, tipsterId: _tipsterId, selections: _selections, ...row }, index) => ({
-          ...row,
-          tipsterId: resolvedTipsterIds[index] ?? null,
-          importBatchId: batch.id,
-        })),
+        data: rows.map((row, index) => {
+          const data = {
+            ...row,
+            tipsterId: resolvedTipsterIds[index] ?? null,
+            importBatchId: batch.id,
+          };
+          Reflect.deleteProperty(data, "tipsterName");
+          Reflect.deleteProperty(data, "selections");
+          return data;
+        }),
       });
       const selections = rows.flatMap((row) => row.selections.map((selection, position) => ({
         betId: row.id,

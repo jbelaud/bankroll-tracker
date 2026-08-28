@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import {
   BETA_INVITE_DURATION_DAYS,
   BETA_INVITE_TOKEN_BYTES,
