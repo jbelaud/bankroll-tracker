@@ -10,6 +10,34 @@ function countBy(items, keyOf, fallback) {
   }, {});
 }
 
+function bookmakerMetrics(scans) {
+  return scans.reduce((metrics, scan) => {
+    const bookmaker = scan.selectedBookmaker ?? "NON_RENSEIGNE";
+    const current = metrics[bookmaker] ?? {
+      scans: 0,
+      ready: 0,
+      empty: 0,
+      technicalFailures: 0,
+      historical: 0,
+      betsDetected: 0,
+      betsImported: 0,
+      betsExcluded: 0,
+      fieldsCorrected: 0,
+    };
+    current.scans += 1;
+    current.betsDetected += scan.betsDetected ?? 0;
+    current.betsImported += scan.betsImported;
+    current.betsExcluded += scan.betsExcluded;
+    current.fieldsCorrected += scan.fieldsCorrectedCount;
+    if (scan.outcome === "READY") current.ready += 1;
+    else if (scan.outcome === "EMPTY") current.empty += 1;
+    else if (scan.outcome === "TECHNICAL_FAILURE") current.technicalFailures += 1;
+    else current.historical += 1;
+    metrics[bookmaker] = current;
+    return metrics;
+  }, {});
+}
+
 async function main() {
   const betaUsers = await prisma.user.findMany({
     where: { plan: "BETA_TESTER" },
@@ -26,6 +54,7 @@ async function main() {
         selectedBookmaker: true,
         betsDetected: true,
         betsImported: true,
+        betsExcluded: true,
         fieldsCorrectedCount: true,
       },
     }),
@@ -73,7 +102,9 @@ async function main() {
       selectedBookmakers: countBy(scans, (scan) => scan.selectedBookmaker, "NON_RENSEIGNE"),
       betsDetected: scans.reduce((sum, scan) => sum + (scan.betsDetected ?? 0), 0),
       betsImported: scans.reduce((sum, scan) => sum + scan.betsImported, 0),
+      betsExcluded: scans.reduce((sum, scan) => sum + scan.betsExcluded, 0),
       fieldsCorrected: scans.reduce((sum, scan) => sum + scan.fieldsCorrectedCount, 0),
+      byBookmaker: bookmakerMetrics(scans),
     },
     betsByEntryMethod: countBy(bets, (bet) => bet.entryMethod, "UNKNOWN"),
     acquisitionSources: countBy(betaUsers, (user) => sourceByUser.get(user.id), "NON_ATTRIBUE"),
