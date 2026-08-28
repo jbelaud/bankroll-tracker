@@ -35,9 +35,9 @@ export function BetaTesterManager({
 }) {
   const [pending, startTransition] = useTransition();
   const [maxRedemptions, setMaxRedemptions] = useState(DEFAULT_BETA_CAMPAIGN_MAX_REDEMPTIONS);
-  const [utmSource, setUtmSource] = useState("direct_outreach");
-  const [utmMedium, setUtmMedium] = useState("beta_invite");
-  const [utmCampaign, setUtmCampaign] = useState("beta_wave_1");
+  const [utmSource, setUtmSource] = useState("x");
+  const [utmMedium, setUtmMedium] = useState("organic_social");
+  const [utmCampaign, setUtmCampaign] = useState("x_scan_demo_01");
   const [error, setError] = useState("");
   const [latestInviteUrl, setLatestInviteUrl] = useState("");
   const [copiedInviteUrl, setCopiedInviteUrl] = useState("");
@@ -133,7 +133,7 @@ export function BetaTesterManager({
           </label>
           <label className="flex flex-col gap-1 text-xs font-medium">
             Source UTM
-            <input aria-label="Source UTM" value={utmSource} onChange={(event) => setUtmSource(event.target.value)} placeholder="tiktok" className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm" />
+            <input aria-label="Source UTM" value={utmSource} onChange={(event) => setUtmSource(event.target.value)} placeholder="x" className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm" />
           </label>
           <label className="flex flex-col gap-1 text-xs font-medium">
             Medium UTM

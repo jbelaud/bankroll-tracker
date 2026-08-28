@@ -47,18 +47,18 @@ describe("createBetaCampaignInvite", () => {
 
   it("crée un lien court attribué et récupérable depuis l'administration", async () => {
     const result = await createBetaCampaignInvite(25, {
-      source: " TikTok ",
+      source: " X ",
       medium: "Organic_Social",
-      campaign: "Content_Scan_01",
+      campaign: "X_Scan_Demo_01",
     });
 
     const data = mocks.betaInviteCreate.mock.calls[0][0].data;
     expect(data.publicCode).toMatch(/^[A-Za-z0-9_-]{22}$/);
     expect(data.tokenHash).toBe(`hash:${data.publicCode}`);
     expect(data).toMatchObject({
-      utmSource: "tiktok",
+      utmSource: "x",
       utmMedium: "organic_social",
-      utmCampaign: "content_scan_01",
+      utmCampaign: "x_scan_demo_01",
       maxRedemptions: 25,
     });
     expect(result).toEqual({
@@ -70,9 +70,9 @@ describe("createBetaCampaignInvite", () => {
 
   it("refuse une attribution UTM non sûre avant toute écriture", async () => {
     await expect(createBetaCampaignInvite(25, {
-      source: "tiktok<script>",
+      source: "x<script>",
       medium: "organic_social",
-      campaign: "content_scan_01",
+      campaign: "x_scan_demo_01",
     })).rejects.toThrow("La source UTM");
 
     expect(mocks.betaInviteCreate).not.toHaveBeenCalled();

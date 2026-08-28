@@ -22,8 +22,8 @@ paris anglophones ciblées à ce stade.
   cible surtout des créateurs de produits, pas des parieurs français.
 
 Cette décision évite du spam, un bannissement de compte et une acquisition non
-qualifiée. Elle ne bloque pas le marketing : TikTok, Reels, Shorts, SEO et les
-communautés où l’autorisation est explicite restent prioritaires.
+qualifiée. X devient le seul canal social prioritaire pour cette phase ; Reddit
+reste en veille et aucune publication n'y est planifiée.
 
 ## Règle opérationnelle
 

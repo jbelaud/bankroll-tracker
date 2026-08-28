@@ -19,9 +19,9 @@ describe("GET /join/[code]", () => {
 
   it("redirige un lien attribué vers l'inscription avec son invitation et ses UTM", async () => {
     mocks.betaInviteFindUnique.mockResolvedValue({
-      utmSource: "tiktok",
+      utmSource: "x",
       utmMedium: "organic_social",
-      utmCampaign: "content_scan_01",
+      utmCampaign: "x_scan_demo_01",
     });
 
     const response = await GET(
@@ -31,7 +31,7 @@ describe("GET /join/[code]", () => {
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe(
-      `https://preview.example.com/fr/signup?invite=${code}&utm_source=tiktok&utm_medium=organic_social&utm_campaign=content_scan_01`,
+      `https://preview.example.com/fr/signup?invite=${code}&utm_source=x&utm_medium=organic_social&utm_campaign=x_scan_demo_01`,
     );
     expect(mocks.betaInviteFindUnique).toHaveBeenCalledWith({
       where: { publicCode: code },

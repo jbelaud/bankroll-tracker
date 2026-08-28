@@ -1,4 +1,19 @@
-# Content Factory Kalivoa Scan — Session 01
+# Content Factory Kalivoa Scan — X Session 01
+
+## Décision de canal
+
+X est le seul canal social prioritaire pour cette session. Les contenus ne sont
+pas déclinés pour d'autres plateformes sociales.
+
+Les publications suivent les recommandations organiques de X : texte concis et
+conversationnel, appel à l'action clair, aucun hashtag, média peu chargé en
+texte, vidéo de 15 secondes maximum et sous-titres lisibles sans le son.
+
+Références :
+
+- [Bonnes pratiques organiques X](https://business.x.com/en/basics/organic-best-practices) ;
+- [Publication de vidéos sur X](https://help.x.com/en/using-x/x-videos) ;
+- [Analyse des publications et vidéos](https://business.x.com/en/help/campaign-measurement-and-analytics/tweet-activity-dashboard).
 
 ## Règles de publication
 
@@ -8,113 +23,90 @@
 - montrer la vérification avant import : ne jamais présenter le Scan comme
   infaillible ou automatique sans contrôle ;
 - ne publier ni taux de réussite, ni témoignage, ni volume non mesuré ;
+- répondre aux commentaires utiles depuis le compte fondateur ;
 - CTA unique : `Teste gratuitement Kalivoa pendant la bêta.`
-
-## Objectif de la session
-
-Obtenir trois contenus verticaux 9:16 à partir d'un même parcours réel :
-capture(s) → Kalivoa Scan → vérification → import → historique mis à jour.
 
 ## Préparation unique
 
-1. Utiliser un compte de démonstration Kalivoa et un ou plusieurs tickets réels
-   déjà importables, sans données personnelles visibles.
+1. Utiliser un compte de démonstration et des tickets dont l'usage marketing est
+   autorisé.
 2. Préparer une bankroll correspondant au bookmaker du ticket.
-3. Ouvrir `https://kalivoa.com/fr/scan` sur téléphone.
-4. Commencer l'enregistrement d'écran avant la sélection de la capture.
-5. Réaliser un parcours entier propre ; il servira de matière première aux
-   trois montages ci-dessous.
+3. Enregistrer sur mobile un parcours complet : captures → Scan → vérification →
+   import → historique.
+4. Exporter trois vidéos sous-titrées de 8 à 15 secondes à partir de ce parcours.
+5. Créer un lien d'invitation UTM distinct pour chaque publication.
 
-## Contenu 01 — Démonstration « Zéro saisie »
+## Publication X 01 — Démonstration « Zéro ressaisie »
 
 | Élément | Contenu |
 | --- | --- |
-| Objectif | Faire comprendre le produit en moins de 10 secondes. |
+| Objectif | Faire comprendre le produit immédiatement. |
 | Durée | 8 à 10 s. |
-| Hook | `Tu rentres encore tes paris un par un ?` |
-| 0–2 s | Sélection d'une ou plusieurs captures réelles. |
-| 2–5 s | Analyse puis écran de vérification. Overlay : `Kalivoa lit tes tickets.` |
-| 5–7 s | Import. Overlay : `Tu vérifies. Tu gardes le contrôle.` |
-| 7–10 s | Historique ou dashboard mis à jour. Overlay : `Tes paris. Tes stats. Zéro saisie.` |
-| CTA | `Teste gratuitement Kalivoa pendant la bêta.` |
-| KPI | Clics profil/lien, inscriptions attribuées, premier Scan. |
+| 0–2 s | Sélection d'une ou plusieurs captures anonymisées. |
+| 2–5 s | Analyse puis écran de vérification. |
+| 5–7 s | Import après contrôle utilisateur. |
+| 7–10 s | Historique ou dashboard mis à jour. |
+| KPI | Vues qualifiées, clics, inscriptions et premier Scan. |
 
-**TikTok / Reels**
+**Texte du post**
 
-`Tes tickets contiennent déjà les infos de ton historique. Kalivoa Scan les lit, tu vérifies, puis tu importes. Bêta gratuite : lien en bio.`
+`Tu rentres encore tes paris un par un ? Kalivoa lit les informations visibles sur tes captures, puis te laisse tout vérifier avant l’import. Tes tickets deviennent un historique exploitable sans ressaisie. Bêta gratuite : lien ci-dessous.`
 
-Hashtags : `#parissportifs #bankroll #productivité #buildinpublic`
+**UTM** : `x / organic_social / x_scan_demo_01`
 
-**Shorts**
-
-Titre : `Importer ses paris depuis un screenshot : le Scan Kalivoa`
-
-## Contenu 02 — OCR Challenge
+## Publication X 02 — OCR Challenge
 
 | Élément | Contenu |
 | --- | --- |
-| Objectif | Montrer un vrai ticket plus difficile sans promesse excessive. |
+| Objectif | Montrer un cas réel difficile sans promesse excessive. |
 | Durée | 10 à 12 s. |
-| Hook | `Est-ce que Kalivoa arrive à lire ce ticket ?` |
-| 0–2 s | Afficher brièvement le ticket anonymisé, puis sélectionner la capture. |
-| 2–6 s | Lancer Scan. Overlay : `Je teste un vrai ticket.` |
-| 6–9 s | Montrer le résultat et la vérification. Overlay : `Je corrige si nécessaire.` |
-| 9–12 s | Import ou constat honnête d'un champ à corriger. |
-| CTA | `Essaie de casser Kalivoa Scan avec tes tickets.` |
-| KPI | Commentaires qualifiés, clics, inscriptions → Scan. |
+| 0–2 s | Afficher brièvement le ticket anonymisé. |
+| 2–6 s | Lancer le Scan. |
+| 6–9 s | Montrer le résultat et la vérification. |
+| 9–12 s | Importer ou montrer honnêtement un champ corrigé. |
+| KPI | Réponses qualifiées, clics et inscriptions vers un premier Scan. |
 
-Format bookmaker : privilégier 1xBet, PMU ou un combiné, selon les tickets
-dont l'usage marketing est autorisé. Ne pas affirmer que le bookmaker est
-« pris en charge » : le contenu teste justement le résultat réel.
+Format bookmaker : privilégier 1xBet, PMU ou un combiné selon les tickets dont
+l'usage est autorisé. Ne pas annoncer un bookmaker comme pris en charge si son
+profil n'est pas validé.
 
-**TikTok / Reels**
+**Texte du post**
 
-`Je teste Kalivoa Scan avec un vrai ticket. Le but n’est pas de promettre zéro erreur : tu vérifies toujours avant d’importer. Quel bookmaker je devrais tester ensuite ?`
+`Je teste Kalivoa Scan avec un vrai ticket anonymisé. L’objectif n’est pas de cacher les erreurs : chaque donnée reste vérifiable et corrigeable avant l’import. Quel format de ticket devrais-je tester ensuite ?`
 
-Hashtags : `#ocr #parissportifs #buildinpublic #saasfrançais`
+**UTM** : `x / organic_social / x_ocr_challenge_01`
 
-**Shorts**
-
-Titre : `OCR Challenge : Kalivoa peut-il lire ce ticket ?`
-
-## Contenu 03 — Build in public : MMA
+## Publication X 03 — Build in public : MMA
 
 | Élément | Contenu |
 | --- | --- |
-| Objectif | Prouver que les retours bêta influencent le produit. |
+| Objectif | Montrer qu'un retour bêta améliore réellement le produit. |
 | Durée | 9 à 12 s. |
-| Hook | `Un testeur a trouvé un cas que Kalivoa ne classait pas bien.` |
-| 0–3 s | Ticket MMA anonymisé. Overlay : `Le MMA partait parfois dans “Autre sport”.` |
-| 3–6 s | Écran Scan / vérification du même type de ticket. Overlay : `Le classement MMA a été ajouté.` |
-| 6–9 s | Montrer le sport MMA dans la revue. Overlay : `Les retours bêta améliorent le Scan.` |
-| 9–12 s | CTA. |
-| CTA | `Teste gratuitement Kalivoa pendant la bêta.` |
-| KPI | Commentaires, sauvegardes, inscriptions attribuées. |
+| 0–3 s | Ticket MMA anonymisé. |
+| 3–6 s | Écran Scan et vérification du même type de ticket. |
+| 6–9 s | Montrer le classement MMA dans la revue. |
+| 9–12 s | Appel à tester la bêta. |
+| KPI | Réponses, clics, inscriptions attribuées et premier Scan. |
 
-Ne pas montrer de « avant/après » falsifié : le contenu décrit un correctif réel
-et ne montre que le résultat actuel, avec le contrôle utilisateur.
+Ne pas fabriquer de faux avant/après : décrire le correctif réel et montrer
+uniquement l'état actuel du produit.
 
-**TikTok / Reels**
+**Texte du post**
 
-`Un retour bêta nous a signalé que certains tickets MMA étaient mal classés. Le classement MMA est maintenant pris en compte dans Kalivoa Scan. C’est exactement pour ça que la bêta existe.`
+`Un retour bêta nous a signalé que certains tickets MMA étaient classés trop largement. Kalivoa prend maintenant ce cas en compte dans la revue du Scan. C’est exactement le rôle de cette bêta : tester, corriger, améliorer.`
 
-Hashtags : `#mma #ufc #buildinpublic #ocr #kalivoa`
+**UTM** : `x / organic_social / x_build_mma_01`
 
-**Shorts**
+## Publication et mesure
 
-Titre : `Un retour bêta a amélioré le Scan MMA de Kalivoa`
+Publier un contenu à la fois et utiliser son lien court dédié :
 
-## Publication et attribution
-
-Dans l’administration Kalivoa, créer un lien d’invitation limité distinct pour
-chaque publication. Les trois champs UTM sont intégrés au lien :
-
-| Canal | Source UTM | Medium UTM | Campagne UTM |
+| Publication | Source | Medium | Campagne |
 | --- | --- | --- | --- |
-| TikTok | `tiktok` | `organic_social` | `content_scan_01` |
-| Instagram | `instagram` | `organic_social` | `content_scan_01` |
-| YouTube Shorts | `youtube` | `organic_social` | `content_scan_01` |
+| Démonstration | `x` | `organic_social` | `x_scan_demo_01` |
+| OCR Challenge | `x` | `organic_social` | `x_ocr_challenge_01` |
+| Build in public MMA | `x` | `organic_social` | `x_build_mma_01` |
 
-Ne pas réutiliser le même lien pour tous les canaux : chaque canal doit recevoir
-son invitation limitée afin que les inscriptions et premiers Scans restent
-attribuables.
+Après chaque publication, relever les impressions, engagements, vues vidéo,
+clics, inscriptions attribuées et premiers Scans. Utiliser les tableaux de bord
+X pour le haut du funnel et le rapport Kalivoa pour l'activation produit.
