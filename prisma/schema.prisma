@@ -27,8 +27,8 @@ model User {
 
   // Parrainage bêta : le code est créé avec le profil, tandis que la relation
   // de parrainage reste irréversible et entièrement gérée côté serveur.
-  referralCode        String  @unique
-  referralScanCredits Int     @default(0)
+  referralCode        String @unique
+  referralScanCredits Int    @default(0)
 
   // Objectifs (équivalent du champ "goals" persisté dans l'artifact)
   monthlyProfitGoal Float @default(0)
@@ -49,19 +49,19 @@ model User {
   // null tant que l'utilisateur n'a jamais entamé de checkout. Le webhook
   // (/api/stripe/webhook) est la seule source de vérité qui les met à jour,
   // jamais l'UI directement.
-  plan                          Plan      @default(FREE)
-  stripeCustomerId              String?   @unique
-  stripeSubscriptionId          String?   @unique
-  subscriptionStatus            String?
-  subscriptionCurrentPeriodEnd  DateTime?
+  plan                         Plan      @default(FREE)
+  stripeCustomerId             String?   @unique
+  stripeSubscriptionId         String?   @unique
+  subscriptionStatus           String?
+  subscriptionCurrentPeriodEnd DateTime?
   // La remise bêta Stripe ne doit être utilisée qu'une seule fois par
   // utilisateur, même après une résiliation suivie d'une nouvelle souscription.
-  betaOfferUsedAt               DateTime?
+  betaOfferUsedAt              DateTime?
 
   // Crédits ponctuels accordés à l'abonnement pour l'import d'historique.
   // Ils sont consommés avant le quota mensuel et expirent 30 jours après
   // l'abonnement, sans jamais être recréés par les webhooks du cycle de vie.
-  initialScanCreditRemaining Int      @default(0)
+  initialScanCreditRemaining Int       @default(0)
   initialScanCreditExpiresAt DateTime?
   initialScanCreditGrantedAt DateTime?
 
@@ -132,19 +132,19 @@ enum ScanQualityIssueType {
 // Bankroll
 // ------------------------------------------------------------
 model Bankroll {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   name      String
   bookmaker String
   initial   Float    @default(0) // capital de départ
   createdAt DateTime @default(now())
 
-  bets      Bet[]
-  movements BankrollMovement[]
+  bets               Bet[]
+  movements          BankrollMovement[]
   scanQualityReports ScanQualityReport[]
-  scanDrafts ScanDraft[]
+  scanDrafts         ScanDraft[]
 
   @@index([userId])
   @@map("bankrolls")
@@ -359,20 +359,20 @@ enum ScanOutcome {
 }
 
 model ScanUsage {
-  id           String   @id @default(uuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  model        String
-  plan         Plan     @default(FREE)
-  inputTokens  Int
-  outputTokens Int
-  costUsd      Float
+  model                   String
+  plan                    Plan         @default(FREE)
+  inputTokens             Int
+  outputTokens            Int
+  costUsd                 Float
   // Empêche qu'une même capture soit traitée plusieurs fois pour le
   // parrainage. Les valeurs nulles des anciennes lignes restent autorisées.
-  sourceHash   String?
-  referralEligible    Boolean   @default(false)
-  referralProcessedAt DateTime?
+  sourceHash              String?
+  referralEligible        Boolean      @default(false)
+  referralProcessedAt     DateTime?
   // Champs P0 : uniquement des métadonnées agrégées, jamais la capture ou
   // son texte OCR. outcome est null pour les scans historiques afin de ne pas
   // fabriquer une mesure de qualité rétroactive.
@@ -383,20 +383,20 @@ model ScanUsage {
   promptVersion           String?
   durationMs              Int?
   betsDetected            Int?
-  betsImported            Int      @default(0)
-  betsExcluded            Int      @default(0)
-  fieldsCorrectedCount    Int      @default(0)
+  betsImported            Int          @default(0)
+  betsExcluded            Int          @default(0)
+  fieldsCorrectedCount    Int          @default(0)
   correctedFields         Json?
   verificationCompletedAt DateTime?
-  createdAt    DateTime @default(now())
+  createdAt               DateTime     @default(now())
 
   bets Bet[]
 
+  @@unique([userId, sourceHash])
   @@index([userId, createdAt])
   @@index([createdAt])
   @@index([outcome, createdAt])
   @@index([selectedBookmaker, outcome, createdAt])
-  @@unique([userId, sourceHash])
   @@map("scan_usages")
 }
 
@@ -441,18 +441,18 @@ model GrowthEvent {
 // Une relation directe, sans niveau supplémentaire : un filleul n'a qu'un
 // parrain et chaque utilisateur peut suivre les personnes qu'il a invitées.
 model Referral {
-  id             String   @id @default(uuid())
-  referrerId     String
-  referredUserId String   @unique
-  referrer       User     @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
-  referredUser   User     @relation("ReferredUser", fields: [referredUserId], references: [id], onDelete: Cascade)
-  validScanCount Int      @default(0)
+  id               String           @id @default(uuid())
+  referrerId       String
+  referredUserId   String           @unique
+  referrer         User             @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referredUser     User             @relation("ReferredUser", fields: [referredUserId], references: [id], onDelete: Cascade)
+  validScanCount   Int              @default(0)
   firstValidScanAt DateTime?
   fifthValidScanAt DateTime?
-  suspiciousAt   DateTime?
+  suspiciousAt     DateTime?
   suspiciousReason String?
-  rewards        ReferralReward[]
-  createdAt      DateTime @default(now())
+  rewards          ReferralReward[]
+  createdAt        DateTime         @default(now())
 
   @@unique([referrerId, referredUserId])
   @@index([referrerId, createdAt])
@@ -507,18 +507,24 @@ model BetaProgram {
 }
 
 model BetaInvite {
-  id                String    @id @default(uuid())
-  tokenHash         String    @unique
-  email             String?
-  maxRedemptions    Int       @default(1)
-  redemptionCount   Int       @default(0)
-  expiresAt         DateTime
-  revokedAt         DateTime?
-  redeemedAt        DateTime?
-  redeemedByUserId  String?   @unique
-  redeemedByUser    User?     @relation(fields: [redeemedByUserId], references: [id], onDelete: SetNull)
-  redemptions       BetaInviteRedemption[]
-  createdAt         DateTime  @default(now())
+  id               String                 @id @default(uuid())
+  tokenHash        String                 @unique
+  // Code public réservé aux liens de campagne. Il est volontairement distinct
+  // des invitations nominatives, qui restent uniquement hashées.
+  publicCode       String?                @unique
+  utmSource        String?
+  utmMedium        String?
+  utmCampaign      String?
+  email            String?
+  maxRedemptions   Int                    @default(1)
+  redemptionCount  Int                    @default(0)
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  redeemedAt       DateTime?
+  redeemedByUserId String?                @unique
+  redeemedByUser   User?                  @relation(fields: [redeemedByUserId], references: [id], onDelete: SetNull)
+  redemptions      BetaInviteRedemption[]
+  createdAt        DateTime               @default(now())
 
   @@index([expiresAt])
   @@index([email])
@@ -542,13 +548,13 @@ model BetaInviteRedemption {
 }
 
 model BookmakerScanProfile {
-  id            String                 @id @default(uuid())
-  bookmaker     String                 @unique
-  supportStatus BookmakerSupportStatus @default(UNTESTED)
+  id            String                        @id @default(uuid())
+  bookmaker     String                        @unique
+  supportStatus BookmakerSupportStatus        @default(UNTESTED)
   rules         String?
   examples      Json?
-  version       Int                    @default(1)
-  updatedAt     DateTime               @updatedAt
+  version       Int                           @default(1)
+  updatedAt     DateTime                      @updatedAt
   history       BookmakerScanProfileVersion[]
 
   @@map("bookmaker_scan_profiles")
@@ -611,14 +617,14 @@ model ScanQualityReport {
 // serveur authentifiées gardent le contrôle d'accès, tandis que la RLS
 // bloque tout accès accidentel via la Data API Supabase.
 model Feedback {
-  id        String         @id @default(uuid())
+  id        String           @id @default(uuid())
   userId    String
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   category  FeedbackCategory @default(BUG)
   message   String
   page      String?
-  status    FeedbackStatus @default(OPEN)
-  createdAt DateTime       @default(now())
+  status    FeedbackStatus   @default(OPEN)
+  createdAt DateTime         @default(now())
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
@@ -642,13 +648,13 @@ enum FeedbackStatus {
 // 12h dans l'artifact pour maîtriser le coût des appels API)
 // ------------------------------------------------------------
 model Insight {
-  id                    String   @id @default(uuid())
-  userId                String   @unique
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  data                  Json     // { appreciation, points_forts, points_amelioration, recommandations }
+  data                  Json // { appreciation, points_forts, points_amelioration, recommandations }
   generatedAt           DateTime
-  betsCountAtGeneration  Int
+  betsCountAtGeneration Int
 
   @@map("insights")
 }

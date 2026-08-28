@@ -193,7 +193,7 @@ export default async function AdminPage({
     prisma.user.findMany({ where: { plan: "BETA_TESTER" }, select: { id: true, email: true }, orderBy: { email: "asc" } }),
     prisma.betaInvite.findMany({
       where: { email: null },
-      select: { id: true, expiresAt: true, revokedAt: true, maxRedemptions: true, redemptionCount: true },
+      select: { id: true, publicCode: true, utmSource: true, utmMedium: true, utmCampaign: true, expiresAt: true, revokedAt: true, maxRedemptions: true, redemptionCount: true },
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
@@ -322,6 +322,10 @@ export default async function AdminPage({
         }))}
         invites={betaInvites.map((invite) => ({
           id: invite.id,
+          url: invite.publicCode ? `${new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://kalivoa.com").origin}/join/${invite.publicCode}` : null,
+          utmSource: invite.utmSource,
+          utmMedium: invite.utmMedium,
+          utmCampaign: invite.utmCampaign,
           expiresAt: invite.expiresAt.toISOString(),
           revokedAt: invite.revokedAt?.toISOString() ?? null,
           maxRedemptions: invite.maxRedemptions,

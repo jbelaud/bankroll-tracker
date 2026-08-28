@@ -76,6 +76,15 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("Content-Security-Policy", csp);
   request = new NextRequest(request, { headers: requestHeaders });
 
+  // Les URLs courtes de campagne sont hors i18n : /join/<code> doit atteindre
+  // directement son Route Handler, qui redirige ensuite vers /fr/signup.
+  // La canonicalisation de domaine et la CSP ont déjà été appliquées ci-dessus.
+  if (request.nextUrl.pathname.startsWith("/join/")) {
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+    response.headers.set("Content-Security-Policy", csp);
+    return response;
+  }
+
   // next-intl d'abord : résout/ajoute le préfixe de locale. Une redirection
   // ici (préfixe manquant ou à corriger) est renvoyée telle quelle — l'auth
   // sera vérifiée au prochain passage, une fois l'URL correctement préfixée.
