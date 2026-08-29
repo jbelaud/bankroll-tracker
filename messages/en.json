@@ -694,10 +694,10 @@
       "generate": "Generate analysis",
       "regenerate": "Regenerate",
       "generating": "Analyzing…",
-      "cooldownTooltip": "Available again in about {hours}h (limit to keep AI costs under control)",
-      "cooldownMessage": "Next analysis available in ~{hours}h ({cooldownHours}h limit between two generations, to keep costs under control).",
+      "cooldownTooltip": "Available again in about {days} day(s)",
+      "cooldownMessage": "Next analysis available in about {days} day(s), with a {cooldownDays}-day limit between generations.",
       "errorGeneric": "Couldn't generate the analysis right now.",
-      "emptyPrompt": "Generate a personalized analysis of your performance by sport, bet type, bookmaker and odds range.",
+      "emptyPrompt": "Generate a personalized analysis of your performance, including your tipsters' profitability after VIP costs.",
       "strengths": "Strengths",
       "improvements": "Areas to improve",
       "recommendations": "Recommendations"

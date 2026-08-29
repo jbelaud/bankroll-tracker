@@ -694,10 +694,10 @@
       "generate": "Générer l'analyse",
       "regenerate": "Régénérer",
       "generating": "Analyse en cours…",
-      "cooldownTooltip": "Disponible à nouveau dans environ {hours}h (limite pour maîtriser le coût des appels IA)",
-      "cooldownMessage": "Prochaine analyse disponible dans ~{hours}h (limite de {cooldownHours}h entre deux générations, pour maîtriser le coût).",
+      "cooldownTooltip": "Disponible à nouveau dans environ {days} jour(s)",
+      "cooldownMessage": "Prochaine analyse disponible dans environ {days} jour(s), avec une limite de {cooldownDays} jours entre deux générations.",
       "errorGeneric": "Impossible de générer l'analyse pour le moment.",
-      "emptyPrompt": "Génère une analyse personnalisée de tes performances par sport, type de pari, bookmaker et tranche de cote.",
+      "emptyPrompt": "Génère une analyse personnalisée de tes performances, y compris la rentabilité de tes tipsters après leurs coûts VIP.",
       "strengths": "Points forts",
       "improvements": "Points d'amélioration",
       "recommendations": "Recommandations"

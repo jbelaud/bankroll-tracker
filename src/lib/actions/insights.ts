@@ -10,6 +10,7 @@ import { computeGlobalStats, groupStats, bucketStats, ODDS_BUCKETS, oddsBucket }
 import { buildInsightsPrompt, parseInsightResult } from "@/lib/insights/insights-prompt";
 import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
 import { isPaidPlan } from "@/lib/billing/plans";
+import { getTipsterPerformances } from "@/lib/tipsters/analytics";
 import {
   generateTextWithConfiguredProvider,
   hasConfiguredScanProvider,
@@ -71,6 +72,13 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
   const bookmakerByBankrollId = new Map(bankrolls.map((br) => [br.id, br.bookmaker]));
   const byBookmaker = groupStats(bets, (b) => bookmakerByBankrollId.get(b.bankrollId) ?? "—");
   const oddsData = bucketStats(bets, oddsBucket, ODDS_BUCKETS);
+  const tipsterBetIds = bets.filter((bet) => bet.tipsterId).map((bet) => bet.id);
+  const tipsters = tipsterBetIds.length === 0
+    ? []
+    : (await getTipsterPerformances({
+      userId: user.id,
+      betIds: tipsterBetIds,
+    })).filter((tipster) => tipster.settledBetCount > 0);
 
   const locale = await getServerLocale();
   const prompt = buildInsightsPrompt({
@@ -83,6 +91,7 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
     byType,
     byBookmaker,
     oddsData,
+    tipsters,
   });
 
   let insight: InsightResult;

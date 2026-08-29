@@ -11,9 +11,8 @@ import {
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { generateInsightsAction } from "@/lib/actions/insights";
-import type { InsightResult } from "@/lib/insights/types";
+import { INSIGHTS_COOLDOWN_DAYS, type InsightResult } from "@/lib/insights/types";
 
-const COOLDOWN_HOURS = 12;
 
 export function InsightsCard({
   settledCount,
@@ -31,11 +30,12 @@ export function InsightsCard({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [cooldownUntil, setCooldownUntil] = useState<number | null>(initialCooldownUntil);
+  const [renderedAt] = useState(() => Date.now());
   const t = useTranslations("stats.insights");
 
-  const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
-  const hoursLeft = onCooldown
-    ? Math.ceil((cooldownUntil! - Date.now()) / (60 * 60 * 1000))
+  const onCooldown = cooldownUntil != null && renderedAt < cooldownUntil;
+  const daysLeft = onCooldown
+    ? Math.ceil((cooldownUntil! - renderedAt) / (24 * 60 * 60 * 1000))
     : 0;
 
   if (settledCount < 3) {
@@ -78,7 +78,7 @@ export function InsightsCard({
           disabled={loading || onCooldown}
           variant="ghost"
           className="min-h-touch rounded-lg text-xs text-primary"
-          title={onCooldown ? t("cooldownTooltip", { hours: hoursLeft }) : undefined}
+          title={onCooldown ? t("cooldownTooltip", { days: daysLeft }) : undefined}
         >
           {loading ? (
             <CircleNotch size={14} className="animate-spin" aria-hidden />
@@ -91,7 +91,7 @@ export function InsightsCard({
 
       {onCooldown && (
         <p className="text-xs text-muted-foreground">
-          {t("cooldownMessage", { hours: hoursLeft, cooldownHours: COOLDOWN_HOURS })}
+          {t("cooldownMessage", { days: daysLeft, cooldownDays: INSIGHTS_COOLDOWN_DAYS })}
         </p>
       )}
       {error && (

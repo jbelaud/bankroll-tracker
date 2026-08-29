@@ -681,7 +681,7 @@ enum FeedbackStatus {
 
 // ------------------------------------------------------------
 // Insight IA (analyse générée, mise en cache — cf. le cooldown de
-// 12h dans l'artifact pour maîtriser le coût des appels API)
+// 7 jours dans l'application pour maîtriser le coût des appels API)
 // ------------------------------------------------------------
 model Insight {
   id     String @id @default(uuid())
