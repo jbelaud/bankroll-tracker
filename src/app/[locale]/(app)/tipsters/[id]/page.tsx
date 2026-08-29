@@ -147,7 +147,7 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
         <h3 className="mt-6 text-sm font-semibold">{t("historyTitle")}</h3>
         {tipster.costPeriods.length === 0 ? <p className="mt-2 text-xs text-muted-foreground">{t("historyEmpty")}</p> : (
           <ul className="mt-2 divide-y divide-border rounded-xl border border-border">
-            {tipster.costPeriods.map((period) => <li key={period.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-3 text-xs"><span>{period.startDate.toISOString().slice(0, 10)} → {period.endDate ? period.endDate.toISOString().slice(0, 10) : t("ongoing")}</span><strong>{period.kind === "FREE" ? t("free") : `${fmtMoney(period.amount ?? 0, locale, period.currency)} · ${t(`frequencies.${period.frequency}`)}`}</strong></li>)}
+            {tipster.costPeriods.map((period) => <li key={period.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-3 text-xs"><span>{period.startDate.toISOString().slice(0, 10)} → {period.endDate ? period.endDate.toISOString().slice(0, 10) : t("ongoing")}</span><strong>{period.kind === "FREE" ? t("free") : `${fmtMoney(period.amount ?? 0, locale, period.currency)}${period.frequency ? ` · ${t(`frequencies.${period.frequency}`)}` : ""}`}</strong></li>)}
           </ul>
         )}
       </section>
