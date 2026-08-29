@@ -214,6 +214,19 @@ enum TipsterStatus {
   ARCHIVED
 }
 
+enum TipsterCostKind {
+  FREE
+  PAID
+}
+
+enum TipsterCostFrequency {
+  ONE_TIME
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
 // ------------------------------------------------------------
 // Pari
 // ------------------------------------------------------------
@@ -272,23 +285,46 @@ model Bet {
 // Source de recommandation privée à l'utilisateur. Un nom détecté pendant un
 // import n'est créé qu'après confirmation explicite dans l'interface.
 model Tipster {
-  id             String          @id @default(uuid())
+  id             String              @id @default(uuid())
   userId         String
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   name           String
   normalizedName String
   platform       TipsterPlatform?
   notes          String?
-  status         TipsterStatus   @default(ACTIVE)
+  status         TipsterStatus       @default(ACTIVE)
   archivedAt     DateTime?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
   bets           Bet[]
+  costPeriods    TipsterCostPeriod[]
 
   @@unique([userId, normalizedName])
   @@index([userId, name])
   @@index([userId, status, name])
   @@map("tipsters")
+}
+
+// Historique du coût d'accès à un Tipster. L'absence totale de période
+// signifie « coût inconnu » ; une période FREE confirme explicitement un
+// accès gratuit. Les périodes sont fermées avant tout changement de tarif,
+// afin qu'une nouvelle valeur ne réécrive jamais les coûts passés.
+model TipsterCostPeriod {
+  id        String                @id @default(uuid())
+  tipsterId String
+  tipster   Tipster               @relation(fields: [tipsterId], references: [id], onDelete: Cascade)
+  kind      TipsterCostKind
+  amount    Float?
+  currency  Currency
+  frequency TipsterCostFrequency?
+  startDate DateTime              @db.Date
+  endDate   DateTime?             @db.Date
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@index([tipsterId, startDate])
+  @@index([tipsterId, endDate])
+  @@map("tipster_cost_periods")
 }
 
 // Une sélection est un détail facultatif du ticket. Les données financières
