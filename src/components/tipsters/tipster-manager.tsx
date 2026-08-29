@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { TipsterPlatform } from "@prisma/client";
-import { Archive, PencilSimple, Plus, UserList } from "@phosphor-icons/react";
+import { Archive, ChartLineUp, PencilSimple, Plus, UserList } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { archiveTipster, type TipsterDto } from "@/lib/actions/tipsters";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { TipsterFormDrawer, type TipsterFormValue } from "@/components/tipsters/tipster-form-drawer";
+import { Link } from "@/i18n/navigation";
 
 export type TipsterManagerItem = {
   id: string;
@@ -69,7 +70,11 @@ function TipsterCard({
         </p>
         {tipster.notes ? <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{tipster.notes}</p> : null}
       </div>
-      <div className="flex shrink-0 gap-2">
+      <div className="flex shrink-0 flex-wrap gap-2">
+        <Button render={<Link href={`/tipsters/${tipster.id}`} />} variant="outline" className="min-h-touch flex-1 rounded-lg text-xs sm:flex-none">
+          <ChartLineUp size={16} aria-hidden />
+          {t("actions.details")}
+        </Button>
         <Button type="button" variant="outline" onClick={onEdit} className="min-h-touch flex-1 rounded-lg text-xs sm:flex-none">
           <PencilSimple size={16} aria-hidden />
           {t("actions.edit")}

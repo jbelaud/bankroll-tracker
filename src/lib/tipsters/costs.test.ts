@@ -33,6 +33,13 @@ describe("tipster VIP costs", () => {
     }, new Date("2026-08-20"))).toMatchObject({ state: "FREE", configured: true, serviceCost: 0 });
   });
 
+  it("keeps a range before the first configured period unknown", () => {
+    expect(calculateTipsterServiceCost([period({ startDate: new Date("2026-10-01") })], {
+      from: new Date("2026-09-01"),
+      to: new Date("2026-09-30"),
+    })).toMatchObject({ configured: false, serviceCost: null });
+  });
+
   it("charges recurring costs on billing anniversaries without implicit proration", () => {
     const monthly = period();
     expect(countTipsterCostCharges(monthly, {

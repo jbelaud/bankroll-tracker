@@ -308,7 +308,16 @@
     },
     "actions": {
       "edit": "Edit",
-      "archive": "Archive"
+      "archive": "Archive",
+      "details": "View performance"
+    },
+    "analytics": {
+      "bettingProfit": "Betting profit",
+      "vipCost": "VIP cost",
+      "netProfit": "Net profit",
+      "roi": "ROI",
+      "free": "Free",
+      "unknown": "Not specified"
     },
     "form": {
       "createTitle": "Add a tipster",

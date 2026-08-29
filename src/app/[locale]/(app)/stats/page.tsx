@@ -32,6 +32,8 @@ import { StatsFilters } from "@/components/stats/stats-filters";
 import { StatsWorkspace } from "@/components/stats/stats-workspace";
 import { ProfitCurve } from "@/components/stats/profit-curve";
 import { isPaidPlan } from "@/lib/billing/plans";
+import { getTipsterPerformances } from "@/lib/tipsters/analytics";
+import { TipsterStatsTable } from "@/components/stats/tipster-stats-table";
 
 const ALL_SPORTS = "__all__";
 
@@ -68,7 +70,7 @@ export default async function StatsPage({
   const typeFilter = sportFilter && typesBySport[sportFilter]?.includes(requestedTypeFilter)
     ? requestedTypeFilter
     : "";
-  const bets = allBets.filter((bet) => {
+  const bets = accessibleBets.filter((bet) => {
     const day = bet.date.toISOString().slice(0, 10);
     const text = `${bet.description ?? ""} ${bet.eventResult ?? ""}`.toLowerCase();
     return (!from || day >= from) && (!to || day <= to) && (!q || text.includes(q)) && (!bankroll || bet.bankrollId === bankroll) && (!sportFilter || bet.sport === sportFilter) && (!typeFilter || bet.betType === typeFilter) && (!resultFilter || bet.result === resultFilter) && (!live || String(bet.live) === live) && (!freebet || String(bet.freebet) === freebet) && (minStake === null || bet.stake >= minStake) && (maxStake === null || bet.stake <= maxStake) && (minOdds === null || (bet.odds !== null && bet.odds >= minOdds)) && (maxOdds === null || (bet.odds !== null && bet.odds <= maxOdds));
@@ -104,8 +106,14 @@ export default async function StatsPage({
 
   const bookmakerByBankrollId = new Map(activeBankrolls.map((br) => [br.id, br.bookmaker]));
   const byBookmaker = groupStats(bets, (b) => bookmakerByBankrollId.get(b.bankrollId) ?? "—");
-  const tipsterNameByBetId = new Map(bets.map((bet) => [bet.id, bet.tipster?.name ?? null]));
-  const byTipster = groupStats(bets.filter((bet) => bet.tipster), (bet) => tipsterNameByBetId.get(bet.id) ?? "—");
+  const dateFrom = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
+  const dateTo = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
+  const byTipster = (await getTipsterPerformances({
+    userId: user.id,
+    betIds: bets.filter((bet) => bet.tipsterId).map((bet) => bet.id),
+    from: dateFrom,
+    to: dateTo,
+  })).filter((row) => row.betCount > 0);
 
   const daily = Object.values(
     bets
@@ -218,7 +226,7 @@ export default async function StatsPage({
               />
             }
             bookmakerTable={<StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />}
-            tipsterTable={<StatsTable rows={byTipster} kind="tipster" currency={currency} />}
+            tipsterTable={<TipsterStatsTable rows={byTipster} from={from || undefined} to={to || undefined} />}
           />
         </div>
       </section>

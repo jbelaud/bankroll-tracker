@@ -142,7 +142,11 @@ export function calculateTipsterServiceCost(
   range: { from: Date; to: Date },
   today = new Date()
 ): TipsterCostSummary {
-  if (periods.length === 0) {
+  const normalizedTo = utcDay(range.to);
+  const costWasKnownByRangeEnd = periods.some(
+    (period) => utcDay(period.startDate) <= normalizedTo
+  );
+  if (!costWasKnownByRangeEnd) {
     return {
       state: "UNKNOWN",
       configured: false,
@@ -168,4 +172,3 @@ export function calculateTipsterServiceCost(
     currency: periods.at(-1)?.currency ?? null,
   };
 }
-
