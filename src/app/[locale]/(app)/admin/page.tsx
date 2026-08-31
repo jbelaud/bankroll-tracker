@@ -171,7 +171,11 @@ export default async function AdminPage({
     ...(planFilter !== "ALL" ? { plan: planFilter } : {}),
   };
 
-  const dashboardDataPromise = Promise.all([
+  // Le pool Supabase de production est volontairement limité. Regrouper les
+  // lectures dans une transaction force Prisma à les exécuter sur une seule
+  // connexion au lieu de mettre plus de vingt requêtes en concurrence.
+  const stripeTransactionsPromise = listStripeTransactions(range);
+  const dashboardData = await prisma.$transaction([
     prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
     prisma.user.count({ where: { createdAt } }),
     prisma.user.count({ where: { bankrolls: { some: {} } } }),
@@ -198,7 +202,6 @@ export default async function AdminPage({
       take: 25,
       include: { user: { select: { email: true, plan: true } } },
     }),
-    listStripeTransactions(range),
     prisma.feedback.findMany({
       where: { createdAt },
       orderBy: { createdAt: "desc" },
@@ -288,7 +291,7 @@ export default async function AdminPage({
     prisma.growthEvent.count({ where: { name: "signup_started", createdAt } }),
   ]);
 
-  const betaDataPromise = Promise.all([
+  const betaData = await prisma.$transaction([
     prisma.scanUsage.aggregate({
       where: { createdAt, plan: "BETA_TESTER" },
       _count: { _all: true },
@@ -324,7 +327,7 @@ export default async function AdminPage({
     prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
   ]);
 
-  const referralsPromise = prisma.referral.findMany({
+  const referrals = await prisma.referral.findMany({
     select: {
       id: true,
       validScanCount: true,
@@ -342,12 +345,6 @@ export default async function AdminPage({
     take: 50,
   });
 
-  const [dashboardData, betaData, referrals] = await Promise.all([
-    dashboardDataPromise,
-    betaDataPromise,
-    referralsPromise,
-  ]);
-
   const [
     planCounts,
     signups,
@@ -359,7 +356,6 @@ export default async function AdminPage({
     scanUsage,
     scanUsers,
     scans,
-    stripeTransactions,
     recentFeedback,
     qualityCounts,
     qualityReports,
@@ -372,6 +368,7 @@ export default async function AdminPage({
     signupStarts,
   ] = dashboardData;
   const [betaUsage, betaUsageByUser, betaTesters, betaInvites, betaProgram] = betaData;
+  const stripeTransactions = await stripeTransactionsPromise;
 
   const queueReports = qualityReports.map((report) => {
     const finalExtraction = Array.isArray(report.finalExtraction) ? (report.finalExtraction as ParsedBet[]) : [];
