@@ -175,11 +175,11 @@ export default async function AdminPage({
   // lectures dans une transaction force Prisma à les exécuter sur une seule
   // connexion au lieu de mettre plus de vingt requêtes en concurrence.
   const stripeTransactionsPromise = listStripeTransactions(range);
-  const dashboardData = await prisma.$transaction([
-    prisma.user.groupBy({ by: ["plan"], _count: { _all: true } }),
-    prisma.user.count({ where: { createdAt } }),
-    prisma.user.count({ where: { bankrolls: { some: {} } } }),
-    prisma.user.count({
+  const dashboardData = await prisma.$transaction((tx) => Promise.all([
+    tx.user.groupBy({ by: ["plan"], _count: { _all: true } }),
+    tx.user.count({ where: { createdAt } }),
+    tx.user.count({ where: { bankrolls: { some: {} } } }),
+    tx.user.count({
       where: {
         OR: [
           { scanUsages: { some: { createdAt } } },
@@ -187,33 +187,33 @@ export default async function AdminPage({
         ],
       },
     }),
-    prisma.bankroll.count({ where: { createdAt } }),
-    prisma.bet.count({ where: { createdAt } }),
-    prisma.bet.count({ where: { createdAt, result: { not: "EN_ATTENTE" } } }),
-    prisma.scanUsage.aggregate({
+    tx.bankroll.count({ where: { createdAt } }),
+    tx.bet.count({ where: { createdAt } }),
+    tx.bet.count({ where: { createdAt, result: { not: "EN_ATTENTE" } } }),
+    tx.scanUsage.aggregate({
       where: { createdAt },
       _count: { _all: true },
       _sum: { inputTokens: true, outputTokens: true, costUsd: true },
     }),
-    prisma.scanUsage.groupBy({ by: ["userId"], where: { createdAt } }),
-    prisma.scanUsage.findMany({
+    tx.scanUsage.groupBy({ by: ["userId"], where: { createdAt } }),
+    tx.scanUsage.findMany({
       where: { createdAt },
       orderBy: { createdAt: "desc" },
       take: 25,
       include: { user: { select: { email: true, plan: true } } },
     }),
-    prisma.feedback.findMany({
+    tx.feedback.findMany({
       where: { createdAt },
       orderBy: { createdAt: "desc" },
       take: 12,
       include: { user: { select: { email: true } } },
     }),
-    prisma.scanQualityReport.groupBy({
+    tx.scanQualityReport.groupBy({
       by: ["bookmaker"],
       _count: { _all: true },
       orderBy: { _count: { bookmaker: "desc" } },
     }),
-    prisma.scanQualityReport.findMany({
+    tx.scanQualityReport.findMany({
       where: { createdAt },
       orderBy: [{ status: "asc" }, { correctionCount: "desc" }, { createdAt: "desc" }],
       take: 25,
@@ -229,16 +229,16 @@ export default async function AdminPage({
         finalExtraction: true,
       },
     }),
-    prisma.bookmakerScanProfile.findMany({
+    tx.bookmakerScanProfile.findMany({
       select: { bookmaker: true, supportStatus: true, rules: true, examples: true, version: true, updatedAt: true },
       orderBy: { bookmaker: "asc" },
     }),
-    prisma.scanUsage.findMany({
+    tx.scanUsage.findMany({
       where: { createdAt, outcome: { not: null } },
       select: { selectedBookmaker: true, outcome: true, betsDetected: true, betsImported: true, fieldsCorrectedCount: true },
     }),
-    prisma.user.count({ where: userWhere }),
-    prisma.user.findMany({
+    tx.user.count({ where: userWhere }),
+    tx.user.findMany({
       where: userWhere,
       orderBy: { createdAt: "desc" },
       skip: (userPage - 1) * USER_PAGE_SIZE,
@@ -271,7 +271,7 @@ export default async function AdminPage({
         },
       },
     }),
-    prisma.user.findMany({
+    tx.user.findMany({
       where: { createdAt },
       select: {
         growthEvents: {
@@ -287,28 +287,28 @@ export default async function AdminPage({
         },
       },
     }),
-    prisma.growthEvent.count({ where: { name: "landing_view", createdAt } }),
-    prisma.growthEvent.count({ where: { name: "signup_started", createdAt } }),
-  ]);
+    tx.growthEvent.count({ where: { name: "landing_view", createdAt } }),
+    tx.growthEvent.count({ where: { name: "signup_started", createdAt } }),
+  ]));
 
-  const betaData = await prisma.$transaction([
-    prisma.scanUsage.aggregate({
+  const betaData = await prisma.$transaction((tx) => Promise.all([
+    tx.scanUsage.aggregate({
       where: { createdAt, plan: "BETA_TESTER" },
       _count: { _all: true },
       _sum: { costUsd: true },
     }),
-    prisma.scanUsage.groupBy({
+    tx.scanUsage.groupBy({
       by: ["userId"],
       where: { createdAt, plan: "BETA_TESTER" },
       _count: { _all: true },
       _sum: { costUsd: true },
     }),
-    prisma.user.findMany({
+    tx.user.findMany({
       where: { plan: "BETA_TESTER" },
       select: { id: true, email: true },
       orderBy: { email: "asc" },
     }),
-    prisma.betaInvite.findMany({
+    tx.betaInvite.findMany({
       where: { email: null },
       select: {
         id: true,
@@ -324,8 +324,8 @@ export default async function AdminPage({
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
-    prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
-  ]);
+    tx.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
+  ]));
 
   const referrals = await prisma.referral.findMany({
     select: {
