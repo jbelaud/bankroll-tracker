@@ -1,6 +1,7 @@
 import type { Plan } from "@prisma/client";
 import { CaretLeft, CaretRight, MagnifyingGlass, Users } from "@phosphor-icons/react/ssr";
 import { getTranslations } from "next-intl/server";
+import { AdminUserActions } from "@/components/admin/admin-user-actions";
 import { cn } from "@/lib/utils";
 
 export type AdminUserRow = {
@@ -9,6 +10,7 @@ export type AdminUserRow = {
   name: string | null;
   plan: Plan;
   subscriptionStatus: string | null;
+  stripeManaged: boolean;
   createdAt: string;
   lastActiveAt: string;
   bankrolls: number;
@@ -82,6 +84,26 @@ export async function AdminUserTable({
 
   const sourceLabel = (source: string) => {
     return KNOWN_SOURCES.includes(source as KnownSource) ? t(`sources.${source as KnownSource}`) : source;
+  };
+  const actionLabels = {
+    apply: t("actions.apply"),
+    cancel: t("actions.cancel"),
+    changeTitle: t("actions.changeTitle"),
+    changeDescription: t("actions.changeDescription"),
+    confirmChange: t("actions.confirmChange"),
+    delete: t("actions.delete"),
+    deleteTitle: t("actions.deleteTitle"),
+    deleteDescription: t("actions.deleteDescription"),
+    deleteInstruction: t("actions.deleteInstruction"),
+    confirmDelete: t("actions.confirmDelete"),
+    stripeManaged: t("actions.stripeManaged"),
+    successPlan: t("actions.successPlan"),
+    plans: {
+      FREE: t("plans.FREE"),
+      BETA_TESTER: t("plans.BETA_TESTER"),
+      BETA_PREMIUM: t("plans.BETA_PREMIUM"),
+      PREMIUM: t("plans.PREMIUM"),
+    },
   };
 
   return (
@@ -162,12 +184,15 @@ export async function AdminUserTable({
                   <span className={cn("rounded-full px-2 py-1 font-medium", sourceTone(user.acquisitionSource))}>{sourceLabel(user.acquisitionSource)}</span>
                   <span>{t("lastActivityShort", { date: dateTimeFormat.format(new Date(user.lastActiveAt)) })}</span>
                 </div>
+                <div className="mt-4 border-t border-border pt-4">
+                  <AdminUserActions userId={user.id} email={user.email} plan={user.plan} stripeManaged={user.stripeManaged} labels={actionLabels} />
+                </div>
               </article>
             ))}
           </div>
 
           <div className="hidden overflow-x-auto lg:block">
-            <table className="w-full min-w-[62rem] border-collapse text-left text-xs">
+            <table className="w-full min-w-[76rem] border-collapse text-left text-xs">
               <thead className="bg-background/45 text-[0.65rem] uppercase tracking-[0.08em] text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-5 py-3 font-semibold">{t("user")}</th>
@@ -177,6 +202,7 @@ export async function AdminUserTable({
                   <th scope="col" className="px-4 py-3 text-right font-semibold">{t("bets")}</th>
                   <th scope="col" className="px-4 py-3 text-right font-semibold">{t("scans")}</th>
                   <th scope="col" className="px-5 py-3 text-right font-semibold">{t("lastActivity")}</th>
+                  <th scope="col" className="px-5 py-3 text-right font-semibold">{t("actions.title")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -211,6 +237,9 @@ export async function AdminUserTable({
                     <td className="px-5 py-4 text-right">
                       <span className="block font-medium">{dateTimeFormat.format(new Date(user.lastActiveAt))}</span>
                       <span className="text-[0.65rem] text-muted-foreground">{t("joined", { date: dateFormat.format(new Date(user.createdAt)) })}</span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <AdminUserActions userId={user.id} email={user.email} plan={user.plan} stripeManaged={user.stripeManaged} labels={actionLabels} />
                     </td>
                   </tr>
                 ))}

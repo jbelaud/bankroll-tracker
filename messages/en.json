@@ -1156,6 +1156,21 @@
         "discord": "Discord",
         "other_referral": "Other referral",
         "unknown": "Unattributed"
+      },
+      "actions": {
+        "title": "Actions",
+        "apply": "Apply plan",
+        "cancel": "Cancel",
+        "changeTitle": "Change plan",
+        "changeDescription": "This change immediately updates the user’s access rights.",
+        "confirmChange": "Confirm change",
+        "delete": "Delete account",
+        "deleteTitle": "Permanently delete this account?",
+        "deleteDescription": "The Auth account, bankrolls, bets, scans, and all other related data will be deleted. This action cannot be undone.",
+        "deleteInstruction": "Type the email address to confirm:",
+        "confirmDelete": "Delete permanently",
+        "stripeManaged": "Stripe-managed account: cancel the subscription first.",
+        "successPlan": "Plan updated."
       }
     },
     "feedbackCategories": {

@@ -1156,6 +1156,21 @@
         "discord": "Discord",
         "other_referral": "Autre site",
         "unknown": "Non attribué"
+      },
+      "actions": {
+        "title": "Actions",
+        "apply": "Appliquer la formule",
+        "cancel": "Annuler",
+        "changeTitle": "Modifier la formule",
+        "changeDescription": "Cette modification change immédiatement les droits d’accès de l’utilisateur.",
+        "confirmChange": "Confirmer la modification",
+        "delete": "Supprimer le compte",
+        "deleteTitle": "Supprimer définitivement ce compte ?",
+        "deleteDescription": "Le compte Auth, ses bankrolls, ses paris, ses scans et ses autres données associées seront supprimés. Cette action est irréversible.",
+        "deleteInstruction": "Recopiez l’adresse e-mail pour confirmer :",
+        "confirmDelete": "Supprimer définitivement",
+        "stripeManaged": "Compte géré par Stripe : résiliez d’abord l’abonnement.",
+        "successPlan": "Formule mise à jour."
       }
     },
     "feedbackCategories": {

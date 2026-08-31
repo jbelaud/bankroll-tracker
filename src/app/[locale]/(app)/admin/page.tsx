@@ -249,6 +249,7 @@ export default async function AdminPage({
         name: true,
         plan: true,
         subscriptionStatus: true,
+        stripeSubscriptionId: true,
         createdAt: true,
         _count: { select: { bankrolls: true, scanUsages: true } },
         bankrolls: {
@@ -489,6 +490,7 @@ export default async function AdminPage({
       name: user.name,
       plan: user.plan,
       subscriptionStatus: user.subscriptionStatus,
+      stripeManaged: Boolean(user.stripeSubscriptionId),
       createdAt: user.createdAt.toISOString(),
       lastActiveAt: lastActiveAt.toISOString(),
       bankrolls: user._count.bankrolls,
