@@ -13,6 +13,7 @@ import {
   UsersThree,
   UserList,
   FileArrowUp,
+  Gauge,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -30,6 +31,7 @@ const NAV_ITEMS = [
   { href: "/tipsters", key: "tipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },
+  { href: "/admin", key: "admin", icon: Gauge, adminOnly: true },
 ] as const;
 
 const DESKTOP_NAV_GROUPS = [
@@ -50,9 +52,11 @@ const MOBILE_NAV_ITEMS = MOBILE_NAV_ORDER.map((key) => {
 export function AppNav({
   plan,
   currentPeriodEnd,
+  isAdmin,
 }: {
   plan: Plan;
   currentPeriodEnd: Date | null;
+  isAdmin: boolean;
 }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
@@ -74,7 +78,7 @@ export function AppNav({
                   {t(`groups.${groupKey}`)}
                 </p>
                 <ul className="mt-2 flex flex-col gap-1">
-                  {items.map(({ href, key, icon: Icon, ...item }) => {
+                  {items.filter((item) => !("adminOnly" in item) || !item.adminOnly || isAdmin).map(({ href, key, icon: Icon, ...item }) => {
                     const label = t("desktopKey" in item ? item.desktopKey : key);
                     const active = pathname.startsWith(href);
                     const isPrimary = "primary" in item && item.primary;

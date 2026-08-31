@@ -40,6 +40,7 @@
     "stats": "Stats",
     "tipsters": "Tipsters",
     "referrals": "Parrainage",
+    "admin": "Administration",
     "account": "Compte",
     "groups": {
       "tracking": "Suivi",
@@ -1015,7 +1016,38 @@
 
   "admin": {
     "title": "Administration",
-    "description": "Pilotage des utilisateurs, des revenus Stripe et de la consommation IA.",
+    "description": "Une vue claire de la croissance, de l’activation produit, des revenus et des opérations de Kalivoa.",
+    "eyebrow": "Centre de pilotage",
+    "liveData": "Données actualisées à l’ouverture",
+    "sectionNavigation": "Sections de l’administration",
+    "sections": {
+      "overview": "Vue d’ensemble",
+      "users": "Utilisateurs",
+      "operations": "Opérations"
+    },
+    "totalUsers": "Utilisateurs inscrits",
+    "totalUsersDetail": "{free} gratuits · {paid} payants",
+    "activeRateDetail": "{rate}% de la base active sur la période",
+    "testMode": "TEST",
+    "productActivity": "Activité produit",
+    "productActivityDescription": "Volumes créés et consommés sur {period}.",
+    "bankrollUsersDetailShort": "{count} utilisateurs équipés",
+    "tokenSplitShort": "{input} entrée · {output} sortie",
+    "acquisition": {
+      "title": "Acquisition",
+      "description": "Premier contact rattaché aux nouveaux comptes de la période.",
+      "trackingActive": "Suivi actif",
+      "empty": "Aucune inscription attribuée sur cette période.",
+      "landings": "Visites suivies",
+      "signupStarts": "Débuts d’inscription",
+      "signups": "Comptes créés",
+      "gaNote": "La provenance des comptes est déjà suivie en interne via le first-touch et les UTM. Google Analytics reste optionnel pour approfondir l’audience et les parcours anonymes."
+    },
+    "operations": {
+      "eyebrow": "Exploitation",
+      "title": "Qualité et opérations",
+      "description": "Gestion de la bêta, des parrainages, des retours et de la qualité des imports."
+    },
     "referrals": {
       "title": "Parrainages bêta",
       "description": "Suivi auditable des filleuls, récompenses et signalements anti-fraude.",
@@ -1088,6 +1120,44 @@
     "feedbackCount": "Retours bêta",
     "recentFeedback": "Derniers retours bêta",
     "noFeedback": "Aucun retour bêta sur cette période.",
+    "users": {
+      "title": "Utilisateurs",
+      "description": "{count} compte(s) correspondant aux filtres",
+      "searchLabel": "Rechercher un utilisateur",
+      "searchPlaceholder": "Nom ou adresse e-mail…",
+      "planFilter": "Filtrer par formule",
+      "filter": "Filtrer",
+      "emptyTitle": "Aucun utilisateur trouvé",
+      "emptyDescription": "Modifiez la recherche ou le filtre de formule.",
+      "user": "Utilisateur",
+      "acquisition": "Provenance",
+      "plan": "Formule",
+      "bankrolls": "Bankrolls",
+      "bets": "Paris",
+      "scans": "Scans",
+      "lastActivity": "Dernière activité",
+      "lastActivityShort": "Actif le {date}",
+      "joined": "Inscrit le {date}",
+      "pageSummary": "Page {page} sur {pages} · {total} résultat(s)",
+      "pagination": "Pagination des utilisateurs",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "plans": {
+        "ALL": "Toutes les formules",
+        "FREE": "Gratuit",
+        "BETA_TESTER": "Bêta-testeur",
+        "BETA_PREMIUM": "Premium bêta",
+        "PREMIUM": "Premium"
+      },
+      "sources": {
+        "direct": "Accès direct",
+        "google_seo": "Google SEO",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "other_referral": "Autre site",
+        "unknown": "Non attribué"
+      }
+    },
     "feedbackCategories": {
       "BUG": "Bug",
       "IDEA": "Idée",

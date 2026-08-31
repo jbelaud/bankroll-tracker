@@ -40,6 +40,7 @@
     "stats": "Stats",
     "tipsters": "Tipsters",
     "referrals": "Referrals",
+    "admin": "Administration",
     "account": "Account",
     "groups": {
       "tracking": "Tracking",
@@ -1015,7 +1016,38 @@
 
   "admin": {
     "title": "Administration",
-    "description": "Track users, Stripe revenue and AI consumption.",
+    "description": "A clear view of Kalivoa’s growth, product activation, revenue, and operations.",
+    "eyebrow": "Control center",
+    "liveData": "Data refreshed on load",
+    "sectionNavigation": "Administration sections",
+    "sections": {
+      "overview": "Overview",
+      "users": "Users",
+      "operations": "Operations"
+    },
+    "totalUsers": "Registered users",
+    "totalUsersDetail": "{free} free · {paid} paid",
+    "activeRateDetail": "{rate}% of users active during this period",
+    "testMode": "TEST",
+    "productActivity": "Product activity",
+    "productActivityDescription": "Volume created and consumed over {period}.",
+    "bankrollUsersDetailShort": "{count} equipped users",
+    "tokenSplitShort": "{input} input · {output} output",
+    "acquisition": {
+      "title": "Acquisition",
+      "description": "First touch attributed to new accounts during the period.",
+      "trackingActive": "Tracking active",
+      "empty": "No attributed sign-up during this period.",
+      "landings": "Tracked visits",
+      "signupStarts": "Sign-up starts",
+      "signups": "Accounts created",
+      "gaNote": "Account sources are already tracked internally through first-touch and UTM data. Google Analytics remains optional for deeper anonymous audience and journey analysis."
+    },
+    "operations": {
+      "eyebrow": "Operations",
+      "title": "Quality and operations",
+      "description": "Manage the beta, referrals, feedback, and import quality."
+    },
     "referrals": {
       "title": "Beta referrals",
       "description": "Auditable tracking of referrals, rewards and anti-fraud flags.",
@@ -1088,6 +1120,44 @@
     "feedbackCount": "Beta feedback",
     "recentFeedback": "Latest beta feedback",
     "noFeedback": "No beta feedback in this period.",
+    "users": {
+      "title": "Users",
+      "description": "{count} account(s) match the current filters",
+      "searchLabel": "Search users",
+      "searchPlaceholder": "Name or email address…",
+      "planFilter": "Filter by plan",
+      "filter": "Filter",
+      "emptyTitle": "No users found",
+      "emptyDescription": "Change the search or plan filter.",
+      "user": "User",
+      "acquisition": "Source",
+      "plan": "Plan",
+      "bankrolls": "Bankrolls",
+      "bets": "Bets",
+      "scans": "Scans",
+      "lastActivity": "Last activity",
+      "lastActivityShort": "Active on {date}",
+      "joined": "Joined on {date}",
+      "pageSummary": "Page {page} of {pages} · {total} result(s)",
+      "pagination": "User pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "plans": {
+        "ALL": "All plans",
+        "FREE": "Free",
+        "BETA_TESTER": "Beta tester",
+        "BETA_PREMIUM": "Beta Premium",
+        "PREMIUM": "Premium"
+      },
+      "sources": {
+        "direct": "Direct",
+        "google_seo": "Google SEO",
+        "reddit": "Reddit",
+        "discord": "Discord",
+        "other_referral": "Other referral",
+        "unknown": "Unattributed"
+      }
+    },
     "feedbackCategories": {
       "BUG": "Bug",
       "IDEA": "Idea",

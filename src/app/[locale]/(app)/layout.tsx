@@ -5,6 +5,7 @@ import { redirect } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 
 export const metadata: Metadata = {
   robots: {
@@ -39,6 +40,7 @@ export default async function AppLayout({
       <AppNav
         plan={dbUser?.plan ?? "FREE"}
         currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
+        isAdmin={isAdminEmail(user.email)}
       />
       <div className="flex min-h-dvh flex-col lg:pl-64">
         <AppTopBar />
