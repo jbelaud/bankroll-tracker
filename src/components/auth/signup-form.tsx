@@ -6,7 +6,7 @@ import { CheckCircle, LockSimple, Sparkle } from "@phosphor-icons/react";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Brand } from "@/components/marketing/brand";
-import { signInWithGoogle, signUp } from "@/app/auth/actions";
+import { resendSignUpConfirmation, signInWithGoogle, signUp } from "@/app/auth/actions";
 import { getAcquisitionContext, trackPublicGrowthEvent } from "@/lib/growth/client";
 
 export function SignupForm({ betaPhaseActive }: { betaPhaseActive: boolean }) {
@@ -19,6 +19,7 @@ export function SignupForm({ betaPhaseActive }: { betaPhaseActive: boolean }) {
 
 function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
   const [state, action, pending] = useActionState(signUp, undefined);
+  const [resendState, resendAction, resendPending] = useActionState(resendSignUpConfirmation, undefined);
   const t = useTranslations("auth.signup");
   const tMarketing = useTranslations("marketing");
   const invite = useSearchParams().get("invite") ?? "";
@@ -100,6 +101,19 @@ function SignupFormContent({ betaPhaseActive }: { betaPhaseActive: boolean }) {
               {pending ? t("submitting") : t("submit")}
             </button>
           </form>
+
+          {state?.message && state.email ? (
+            <form action={resendAction} className="mt-3 space-y-2">
+              <input type="hidden" name="email" value={state.email} />
+              <input type="hidden" name="invite" value={invite} />
+              <AcquisitionFields />
+              {resendState?.error ? <p role="alert" className="rounded-xl border border-loss/30 bg-loss/10 px-3 py-2.5 text-sm leading-5 text-loss">{resendState.error}</p> : null}
+              {resendState?.message ? <p role="status" className="rounded-xl border border-profit/30 bg-profit/10 px-3 py-2.5 text-sm leading-5 text-profit">{resendState.message}</p> : null}
+              <button type="submit" disabled={resendPending} className="flex h-10 w-full items-center justify-center rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground transition hover:border-primary/50 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50">
+                {resendPending ? t("resending") : t("resend")}
+              </button>
+            </form>
+          ) : null}
 
           <p className="mt-4 text-center text-xs leading-5 text-muted-foreground">{t("freemium.noCard")}</p>
           <p className="mt-5 text-center text-sm text-muted-foreground">{t("hasAccount")} {" "}<Link href="/login" className="font-semibold text-primary underline-offset-4 hover:underline">{t("loginLink")}</Link></p>

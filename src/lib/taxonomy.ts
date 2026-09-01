@@ -6,7 +6,12 @@ export type Taxonomy = Record<string, string[]>;
 const MAX_LABEL_LENGTH = 80;
 
 function key(value: string) {
-  return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase("fr");
 }
 
 /** Normalise une valeur provenant de l'IA ou d'un formulaire avant stockage. */
@@ -29,15 +34,74 @@ function findExistingLabel(values: string[], candidate: string): string | undefi
 // la discipline ou de la promotion. On les ramène à une seule taxonomie pour
 // que les statistiques et filtres ne fragmentent pas le MMA.
 const STANDARD_SPORT_ALIASES: Record<string, string> = {
+  basket: "Basketball",
+  "american football": "Football américain",
+  hockey: "Hockey sur glace",
+  "ice hockey": "Hockey sur glace",
+  pingpong: "Tennis de table",
+  "ping pong": "Tennis de table",
   "arts martiaux mixtes": "MMA",
   "mixed martial arts": "MMA",
   ufc: "MMA",
+  boxing: "Boxe",
+  box: "Boxe",
+  f1: "Formule 1",
+  formula1: "Formule 1",
+  "formula 1": "Formule 1",
+  motorsport: "Sports mécaniques",
+  "motor sports": "Sports mécaniques",
+  esports: "Esport",
+  "e-sport": "Esport",
+  darts: "Fléchettes",
+  athletics: "Athlétisme",
+  swimming: "Natation",
+  "winter sports": "Sports d'hiver",
+  horseracing: "Courses hippiques",
+  "horse racing": "Courses hippiques",
 };
 
-function normalizeStandardSport(taxonomy: Taxonomy, value: string): string {
+const STANDARD_COMPETITION_ALIASES: Record<string, { sport: string; competition: string }> = {
+  nba: { sport: "Basketball", competition: "NBA" },
+  euroleague: { sport: "Basketball", competition: "EuroLeague" },
+  nfl: { sport: "Football américain", competition: "NFL" },
+  nhl: { sport: "Hockey sur glace", competition: "NHL" },
+  mlb: { sport: "Baseball", competition: "MLB" },
+  ufc: { sport: "MMA", competition: "UFC" },
+};
+
+const STANDARD_BET_TYPE_ALIASES: Record<string, string[]> = {
+  "match result": ["Résultat du match", "Vainqueur du match", "Vainqueur du combat", "Vainqueur"],
+  "resultat match": ["Résultat du match", "Vainqueur du match", "Vainqueur du combat", "Vainqueur"],
+  "resultat du match": ["Résultat du match", "Vainqueur du match", "Vainqueur du combat", "Vainqueur"],
+  "match winner": ["Vainqueur du match", "Vainqueur du combat", "Résultat du match", "Vainqueur"],
+  winner: ["Vainqueur", "Vainqueur du match", "Vainqueur du combat", "Résultat du match"],
+  vainqueur: ["Vainqueur", "Vainqueur du match", "Vainqueur du combat", "Résultat du match"],
+  victoire: ["Vainqueur", "Vainqueur du match", "Vainqueur du combat", "Résultat du match"],
+  moneyline: ["Vainqueur", "Vainqueur du match", "Vainqueur du combat", "Résultat du match"],
+  "fight winner": ["Vainqueur du combat"],
+  "total points": ["Total points"],
+  "over under": ["Total points", "Total de jeux", "Over/Under buts", "Nombre de rounds"],
+  accumulator: ["Combiné"],
+  parlay: ["Combiné"],
+  other: ["Autre"],
+};
+
+export function normalizeSportContext(
+  taxonomy: Taxonomy,
+  rawValue: string
+): { sport: string; competition: string | null } {
+  const value = cleanTaxonomyLabel(rawValue) ?? "Autre sport";
+  const competitionAlias = STANDARD_COMPETITION_ALIASES[key(value)];
+  if (competitionAlias) return competitionAlias;
   const known = findExistingLabel(Object.keys(taxonomy), value);
-  if (known) return known;
-  return STANDARD_SPORT_ALIASES[key(value)] ?? value;
+  return {
+    sport: known ?? STANDARD_SPORT_ALIASES[key(value)] ?? value,
+    competition: null,
+  };
+}
+
+function normalizeStandardSport(taxonomy: Taxonomy, value: string): string {
+  return normalizeSportContext(taxonomy, value).sport;
 }
 
 /** Fusionne la taxonomie standard et les ajouts privés d'un utilisateur. */
@@ -101,18 +165,21 @@ export function normalizeTaxonomyPair(
   const sport = normalizeStandardSport(taxonomy, cleanedSport);
   const cleanedBetType = cleanTaxonomyLabel(rawBetType) ?? "Autre";
   const availableTypes = taxonomy[sport] ?? [];
-  const betType = findExistingLabel(availableTypes, cleanedBetType) ?? cleanedBetType;
+  const aliasedBetType = STANDARD_BET_TYPE_ALIASES[key(cleanedBetType)]
+    ?.find((candidate) => findExistingLabel(availableTypes, candidate));
+  const betType = findExistingLabel(availableTypes, cleanedBetType) ?? aliasedBetType ?? cleanedBetType;
 
-  // On bloque les associations manifestement incohérentes pour un sport
-  // standard (Cyclisme + Buteur, Football + Top 1…). Les nouveaux sports
-  // restent, eux, libres pour pouvoir apprendre une taxonomie personnelle.
+  // On signale les associations manifestement incohérentes pour permettre une
+  // vérification, sans remplacer le marché détecté par « Autre » : le libellé
+  // exact reste exploitable dans les statistiques et enrichit la taxonomie
+  // personnelle une fois l'import validé.
   const taxonomyMismatch = Boolean(SPORTS[sport])
     && !findExistingLabel(availableTypes, betType)
     && isKnownTypeForAnotherSport(sport, betType);
 
   return {
     sport,
-    betType: taxonomyMismatch ? SPORTS[sport].at(-1) ?? "Autre" : betType,
+    betType,
     taxonomyMismatch,
   };
 }

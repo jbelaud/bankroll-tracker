@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
   tipsterFindMany: vi.fn(),
   selectionCreateMany: vi.fn(),
   transaction: vi.fn(),
+  taxonomyNormalize: vi.fn(),
+  sportContextNormalize: vi.fn(),
 }));
 
 vi.mock("@/lib/auth", () => ({ requireUser: mocks.requireUser }));
@@ -28,7 +30,8 @@ vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn() }));
 vi.mock("@/lib/actions/bets", () => ({ createBet: vi.fn() }));
 vi.mock("@/lib/taxonomy", () => ({
   getUserTaxonomy: vi.fn().mockResolvedValue({}),
-  normalizeTaxonomyPair: vi.fn((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false })),
+  normalizeTaxonomyPair: mocks.taxonomyNormalize,
+  normalizeSportContext: mocks.sportContextNormalize,
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -86,6 +89,8 @@ describe("importExternalBets", () => {
       betSelection: { createMany: mocks.selectionCreateMany },
     }));
     mocks.recordEvent.mockResolvedValue(undefined);
+    mocks.taxonomyNormalize.mockImplementation((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false }));
+    mocks.sportContextNormalize.mockImplementation((_taxonomy, sport: string) => ({ sport, competition: null }));
   });
 
   it("refuse une bankroll qui n'appartient pas à l'utilisateur", async () => {
@@ -108,6 +113,54 @@ describe("importExternalBets", () => {
       name: "bets_imported",
       properties: expect.objectContaining({ import_method: "file", file_format: "csv" }),
     }));
+  });
+
+  it("conserve un marché inattendu sans le classer dans Autre", async () => {
+    mocks.taxonomyNormalize.mockReturnValue({ sport: "Basketball", betType: "Buteur", taxonomyMismatch: true });
+
+    const response = await importExternalBets("bankroll-1", [bet({ sport: "Basketball", betType: "Buteur" })], "CSV");
+
+    expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ sport: "Basketball", betType: "Buteur" })],
+    });
+  });
+
+  it("enregistre NBA comme compétition du basket", async () => {
+    mocks.sportContextNormalize.mockImplementation((_taxonomy, sport: string) => sport === "NBA"
+      ? { sport: "Basketball", competition: "NBA" }
+      : { sport, competition: null });
+
+    await importExternalBets("bankroll-1", [bet({ sport: "NBA", betType: "Vainqueur" })], "CSV");
+
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ sport: "Basketball", betType: "Vainqueur" })],
+    });
+    expect(mocks.selectionCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ sport: "Basketball", competition: "NBA", betType: "Vainqueur" })],
+    });
+  });
+
+  it("ajoute chaque sport détecté dans la taxonomie personnelle", async () => {
+    await importExternalBets("bankroll-1", [bet({
+      sport: "Multi-sport",
+      betType: "Combiné",
+      selections: [{
+        sport: "Pickleball",
+        competition: "PPA Tour",
+        betType: "Vainqueur du match",
+        label: "Joueur A",
+        odds: 1.8,
+        result: "GAGNE",
+      }],
+    })], "CSV");
+
+    expect(mocks.taxonomyCreateMany).toHaveBeenCalledWith({
+      data: expect.arrayContaining([
+        expect.objectContaining({ sport: "Pickleball", betType: "Vainqueur du match" }),
+      ]),
+      skipDuplicates: true,
+    });
   });
 
   it("ignore les doublons déjà présents et ceux répétés dans le fichier", async () => {

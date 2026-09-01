@@ -16,7 +16,7 @@ import {
 
 export type AuthFormState =
   | { error: string; errorCode?: "signupEmailRateLimited"; message?: undefined }
-  | { message: string; error?: undefined }
+  | { message: string; email?: string; error?: undefined }
   | undefined;
 
 async function getOrigin() {
@@ -139,7 +139,7 @@ export async function signUp(
   }
 
   if (!data.session) {
-    return { message: t("confirmEmailMessage") };
+    return { message: t("confirmEmailMessage"), email };
   }
   if (data.user && invite) await redeemBetaInvite(invite, data.user);
   if (data.user) {
@@ -153,6 +153,32 @@ export async function signUp(
   }
 
   redirectToLocalized({ href: "/dashboard", locale });
+}
+
+export async function resendSignUpConfirmation(
+  _prevState: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  const email = String(formData.get("email") ?? "").normalize("NFKC").trim();
+  const invite = String(formData.get("invite") ?? "") || null;
+  const growth = growthAttributionFromForm(formData);
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "auth.signup" });
+  const tErrors = await getTranslations({ locale, namespace: "auth.errors" });
+  if (!email || !email.includes("@")) return { error: tErrors("invalidEmail") };
+
+  const supabase = await createClient();
+  const origin = await getOrigin();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined, growth) },
+  });
+  if (error) {
+    const errorKey = authErrorKey(error, "signUp");
+    return { error: tErrors(errorKey), errorCode: errorKey === "signupEmailRateLimited" ? errorKey : undefined };
+  }
+  return { message: t("resendSuccess"), email };
 }
 
 export async function signInWithGoogle(formData: FormData) {

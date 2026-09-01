@@ -5,6 +5,8 @@ export const SUPPORTED_BET_FILE_EXTENSIONS = ["csv", "json", "tsv", "txt"] as co
 export const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_IMPORT_ROWS = 5_000;
 
+export type ImportDateOrder = "AUTO" | "DMY" | "MDY";
+
 export type ParsedFileRow = {
   sourceRow: number;
   bet: ParsedBet | null;
@@ -27,6 +29,7 @@ type FlatRecord = Record<string, unknown>;
 const FIELD_ALIASES = {
   date: ["date", "betdate", "placedat", "placeddate", "createdat", "timestamp", "datetime", "jour", "placedon"],
   sport: ["sport", "discipline", "category", "sportname"],
+  competition: ["competition", "league", "tournament", "championship", "championnat", "ligue"],
   betType: ["bettype", "type", "market", "marketname", "betmarket", "marche", "typedpari", "typepari"],
   description: ["description", "selection", "pick", "bet", "event", "eventname", "match", "fixture", "label", "name", "pronostic"],
   eventResult: ["eventresult", "score", "finalscore", "matchresult", "resultatevenement"],
@@ -142,7 +145,16 @@ function parseBoolean(value: unknown): boolean {
   );
 }
 
-function parseDate(value: unknown): string | null {
+function validDate(year: number, month: number, day: number): string | null {
+  const candidate = new Date(Date.UTC(year, month - 1, day));
+  return candidate.getUTCFullYear() === year
+    && candidate.getUTCMonth() === month - 1
+    && candidate.getUTCDate() === day
+    ? candidate.toISOString().slice(0, 10)
+    : null;
+}
+
+function parseDate(value: unknown, dateOrder: Exclude<ImportDateOrder, "AUTO">): string | null {
   const numericValue = typeof value === "number"
     ? value
     : /^\d+(?:\.\d+)?$/.test(stringValue(value))
@@ -161,22 +173,17 @@ function parseDate(value: unknown): string | null {
   if (!raw) return null;
   const isoDate = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:\D|$)/);
   if (isoDate) {
-    const candidate = new Date(Date.UTC(Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3])));
-    if (
-      candidate.getUTCFullYear() === Number(isoDate[1]) &&
-      candidate.getUTCMonth() === Number(isoDate[2]) - 1 &&
-      candidate.getUTCDate() === Number(isoDate[3])
-    ) return candidate.toISOString().slice(0, 10);
+    return validDate(Number(isoDate[1]), Number(isoDate[2]), Number(isoDate[3]));
   }
-  const french = raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2}|\d{4})(?:\D|$)/);
-  if (french) {
-    const year = french[3].length === 2 ? 2000 + Number(french[3]) : Number(french[3]);
-    const candidate = new Date(Date.UTC(year, Number(french[2]) - 1, Number(french[1])));
-    if (
-      candidate.getUTCFullYear() === year &&
-      candidate.getUTCMonth() === Number(french[2]) - 1 &&
-      candidate.getUTCDate() === Number(french[1])
-    ) return candidate.toISOString().slice(0, 10);
+  const numericDate = raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2}|\d{4})(?:\D|$)/);
+  if (numericDate) {
+    const first = Number(numericDate[1]);
+    const second = Number(numericDate[2]);
+    const year = numericDate[3].length === 2 ? 2000 + Number(numericDate[3]) : Number(numericDate[3]);
+    const effectiveOrder = first > 12 ? "DMY" : second > 12 ? "MDY" : dateOrder;
+    return effectiveOrder === "DMY"
+      ? validDate(year, second, first)
+      : validDate(year, first, second);
   }
   const parsed = new Date(raw);
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString().slice(0, 10);
@@ -207,11 +214,31 @@ function parseFormat(value: unknown): BetFormat {
   return "SIMPLE";
 }
 
-function rowFromRecord(record: FlatRecord, sourceRow: number): ParsedFileRow {
+function resolveDateOrder(records: FlatRecord[], requested: ImportDateOrder): Exclude<ImportDateOrder, "AUTO"> {
+  if (requested !== "AUTO") return requested;
+  let dmyEvidence = 0;
+  let mdyEvidence = 0;
+  for (const record of records) {
+    const raw = stringValue(mapRecord(record).date);
+    const match = raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](?:\d{2}|\d{4})(?:\D|$)/);
+    if (!match) continue;
+    const first = Number(match[1]);
+    const second = Number(match[2]);
+    if (first > 12 && second <= 12) dmyEvidence += 1;
+    if (second > 12 && first <= 12) mdyEvidence += 1;
+  }
+  return mdyEvidence > dmyEvidence ? "MDY" : "DMY";
+}
+
+function rowFromRecord(
+  record: FlatRecord,
+  sourceRow: number,
+  dateOrder: Exclude<ImportDateOrder, "AUTO">
+): ParsedFileRow {
   const fields = mapRecord(record);
   const errors: string[] = [];
   const warnings: string[] = [];
-  const date = parseDate(fields.date);
+  const date = parseDate(fields.date, dateOrder);
   const stake = parseNumber(fields.stake);
   const parsedOdds = parseOdds(fields.odds);
   const odds = parsedOdds.value;
@@ -227,11 +254,16 @@ function rowFromRecord(record: FlatRecord, sourceRow: number): ParsedFileRow {
   const sport = stringValue(fields.sport) || "Autre sport";
   const betType = stringValue(fields.betType) || "Autre";
   const description = stringValue(fields.description);
+  const competition = stringValue(fields.competition) || null;
   if (!fields.sport) warnings.push("Sport non fourni : « Autre sport » sera utilisé");
   if (!fields.betType) warnings.push("Type non fourni : « Autre » sera utilisé");
   if (!description) warnings.push("Description non fournie");
   if (!stringValue(fields.result)) warnings.push("Résultat non fourni : « En attente » sera utilisé");
-  if (isAmbiguousDayMonth(fields.date)) warnings.push("Date ambiguë interprétée au format jour/mois/année");
+  if (isAmbiguousDayMonth(fields.date)) {
+    warnings.push(dateOrder === "DMY"
+      ? "Date ambiguë interprétée au format jour/mois/année"
+      : "Date ambiguë interprétée au format mois/jour/année");
+  }
   if (parsedOdds.convertedFrom === "AMERICAN") warnings.push("Cote américaine convertie en cote décimale");
   if (parsedOdds.convertedFrom === "FRACTIONAL") warnings.push("Cote fractionnaire convertie en cote décimale");
   const sourceResult = normalizeKey(stringValue(fields.result));
@@ -262,14 +294,21 @@ function rowFromRecord(record: FlatRecord, sourceRow: number): ParsedFileRow {
       format: parseFormat(record.__format ?? fields.format ?? fields.betType),
       tipster: stringValue(fields.tipster) || null,
       closingOdds: parseOdds(fields.closingOdds).value,
-      selections: rawSelections.map((selection) => ({
+      selections: rawSelections.length > 0 ? rawSelections.map((selection) => ({
         sport: stringValue(selection.Sport) || sport,
         competition: stringValue(selection.Competition) || null,
         betType: stringValue(selection.BetType) || null,
         label: stringValue(selection.Label) || "Sélection sans libellé",
         odds: parseOdds(selection.Odds).value,
         result: stringValue(selection.State) ? parseResult(selection.State, null) : null,
-      })),
+      })) : competition ? [{
+        sport,
+        competition,
+        betType,
+        label: description || betType,
+        odds,
+        result,
+      }] : [],
     },
   };
 }
@@ -430,7 +469,11 @@ function recordsFromJson(value: unknown): unknown[] {
   return firstArray ?? [];
 }
 
-export function parseBetsFileContent(fileName: string, content: string): ParsedBetsFile {
+export function parseBetsFileContent(
+  fileName: string,
+  content: string,
+  options: { dateOrder?: ImportDateOrder } = {}
+): ParsedBetsFile {
   const extension = fileName.split(".").at(-1)?.toLocaleLowerCase() ?? "";
   if (!SUPPORTED_BET_FILE_EXTENSIONS.includes(extension as (typeof SUPPORTED_BET_FILE_EXTENSIONS)[number])) {
     throw new Error("Format non pris en charge. Utilise un fichier CSV, JSON, TSV ou TXT.");
@@ -448,9 +491,10 @@ export function parseBetsFileContent(fileName: string, content: string): ParsedB
     if (records.length === 0) throw new Error("Aucune liste de paris n’a été trouvée dans ce fichier JSON.");
     if (records.length > MAX_IMPORT_ROWS) throw new Error(`Le fichier dépasse la limite de ${MAX_IMPORT_ROWS} paris.`);
     const flatRecords = records.map((record) => flattenRecord(record));
+    const dateOrder = resolveDateOrder(flatRecords, options.dateOrder ?? "AUTO");
     return {
       format: "JSON",
-      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1)),
+      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1, dateOrder)),
       detectedColumns: [...new Set(flatRecords.flatMap((record) => Object.keys(record)))],
       sourceProfile: "GENERIC",
       sourceLabel: null,
@@ -470,9 +514,10 @@ export function parseBetsFileContent(fileName: string, content: string): ParsedB
   }));
   const betAnalytix = isBetAnalytixExport(headers) ? betAnalytixRecords(records) : null;
   const parsedRecords = betAnalytix?.records ?? records;
+  const dateOrder = resolveDateOrder(parsedRecords.map(({ record }) => record), options.dateOrder ?? "AUTO");
   return {
     format: extension === "tsv" || delimiter === "\t" ? "TSV" : extension === "txt" ? "TXT" : "CSV",
-    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow)),
+    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow, dateOrder)),
     detectedColumns: headers,
     sourceProfile: betAnalytix ? "BET_ANALYTIX" : "GENERIC",
     sourceLabel: betAnalytix ? "Bet-Analytix" : null,

@@ -89,6 +89,36 @@ describe("parseBetsFileContent", () => {
     expect(parsed.rows[0].warnings).toContain("Date ambiguë interprétée au format jour/mois/année");
   });
 
+  it("conserve la compétition séparément du sport", () => {
+    const parsed = parseBetsFileContent("bets.csv", [
+      "date,sport,league,market,selection,stake,odds,result",
+      "2026-08-20,Basket,NBA,Match winner,Atlanta Hawks,10,2,won",
+    ].join("\n"));
+
+    expect(parsed.rows[0].bet).toMatchObject({
+      sport: "Basket",
+      betType: "Match winner",
+      selections: [expect.objectContaining({ sport: "Basket", competition: "NBA" })],
+    });
+  });
+
+  it("détecte automatiquement les dates américaines à partir des lignes non ambiguës", () => {
+    const parsed = parseBetsFileContent("bets.csv", [
+      "date,stake,odds",
+      "04/24/2026,10,2",
+      "04/12/2026,10,2",
+    ].join("\n"));
+
+    expect(parsed.rows[0].bet?.date).toBe("2026-04-24");
+    expect(parsed.rows[1].bet?.date).toBe("2026-04-12");
+    expect(parsed.rows[1].warnings).toContain("Date ambiguë interprétée au format mois/jour/année");
+  });
+
+  it("permet de choisir explicitement le format anglais pour un fichier entièrement ambigu", () => {
+    const parsed = parseBetsFileContent("bets.csv", "date,stake,odds\n04/12/2026,10,2", { dateOrder: "MDY" });
+    expect(parsed.rows[0].bet?.date).toBe("2026-04-12");
+  });
+
   it("reconnaît Bet-Analytix et regroupe les sélections d'un combiné", () => {
     const parsed = parseBetsFileContent("Export_Formatted_Bet-Analytix.csv", [
       '"Date";"Type";"Sport";"Label";"Odds";"Stake";"State";"Bookmaker";"Tipster";"Category";"Competition";"BetType";"Closing";"EstimatedProbability";"Commission";"Bonus";"Live";"Freebet";"Cashout";"Eachway";"Comment"',

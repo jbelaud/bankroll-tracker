@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { mergeTaxonomy, normalizeTaxonomyPair } from "./taxonomy";
+import { mergeTaxonomy, normalizeSportContext, normalizeTaxonomyPair } from "./taxonomy";
 
 describe("taxonomie personnelle", () => {
   it("ajoute un nouveau sport et ses types sans modifier les valeurs standards", () => {
     const taxonomy = mergeTaxonomy([
-      { sport: "Padel", betType: "Vainqueur du match" },
-      { sport: "Padel", betType: "Total jeux" },
+      { sport: "Pickleball", betType: "Vainqueur du match" },
+      { sport: "Pickleball", betType: "Total jeux" },
     ]);
 
-    expect(taxonomy.Padel).toEqual(["Vainqueur du match", "Total jeux"]);
+    expect(taxonomy.Pickleball).toEqual(["Vainqueur du match", "Total jeux"]);
     expect(taxonomy.Football).toContain("Buteur");
   });
 
@@ -21,13 +21,19 @@ describe("taxonomie personnelle", () => {
     });
   });
 
-  it("signale et neutralise un type connu incohérent pour un sport standard", () => {
+  it("signale un type inattendu sans le remplacer par Autre", () => {
     const taxonomy = mergeTaxonomy();
     expect(normalizeTaxonomyPair(taxonomy, "Cyclisme", "Buteur")).toEqual({
       sport: "Cyclisme",
-      betType: "Autre",
+      betType: "Buteur",
       taxonomyMismatch: true,
     });
+  });
+
+  it("distingue une compétition du sport qui la porte", () => {
+    const taxonomy = mergeTaxonomy();
+    expect(normalizeSportContext(taxonomy, "NBA")).toEqual({ sport: "Basketball", competition: "NBA" });
+    expect(normalizeSportContext(taxonomy, "NFL")).toEqual({ sport: "Football américain", competition: "NFL" });
   });
 
   it("normalise les synonymes MMA proposés par l'OCR", () => {
@@ -38,5 +44,24 @@ describe("taxonomie personnelle", () => {
       taxonomyMismatch: false,
     });
     expect(normalizeTaxonomyPair(taxonomy, "UFC", "Vainqueur du combat").sport).toBe("MMA");
+  });
+
+  it("normalise les noms de sports et marchés courants en français et en anglais", () => {
+    const taxonomy = mergeTaxonomy();
+    expect(normalizeTaxonomyPair(taxonomy, "Basket", "Match winner")).toEqual({
+      sport: "Basketball",
+      betType: "Vainqueur",
+      taxonomyMismatch: false,
+    });
+    expect(normalizeTaxonomyPair(taxonomy, "Basketball", "Résultat du match")).toEqual({
+      sport: "Basketball",
+      betType: "Vainqueur",
+      taxonomyMismatch: false,
+    });
+    expect(normalizeTaxonomyPair(taxonomy, "Boxing", "Fight winner")).toEqual({
+      sport: "Boxe",
+      betType: "Vainqueur du combat",
+      taxonomyMismatch: false,
+    });
   });
 });

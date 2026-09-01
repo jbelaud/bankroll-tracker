@@ -10,7 +10,7 @@ import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { calculateScanCostUsd } from "@/lib/scan/cost";
-import { getUserTaxonomy, normalizeTaxonomyPair } from "@/lib/taxonomy";
+import { getUserTaxonomy, normalizeSportContext, normalizeTaxonomyPair } from "@/lib/taxonomy";
 import {
   analyzeTicketImage,
   hasConfiguredScanProvider,
@@ -326,17 +326,54 @@ export async function POST(request: NextRequest) {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
     const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
+    const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
     const { sport, betType, taxonomyMismatch } = normalizeTaxonomyPair(
       taxonomy,
-      String(r.sport ?? "Autre sport"),
+      sportContext.sport,
       String(r.betType ?? "Autre")
     );
+    const selections = Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
+      if (!rawSelection || typeof rawSelection !== "object") return [];
+      const selection = rawSelection as Record<string, unknown>;
+      const label = String(selection.label ?? "").trim();
+      if (!label) return [];
+      const selectionResult = selection.result == null
+        ? null
+        : labelToBetResult(String(selection.result)) ?? null;
+      const selectionContext = normalizeSportContext(taxonomy, String(selection.sport ?? sport));
+      const normalizedSelection = normalizeTaxonomyPair(
+        taxonomy,
+        selectionContext.sport,
+        String(selection.betType ?? betType)
+      );
+      return [{
+        sport: normalizedSelection.sport,
+        competition: typeof selection.competition === "string"
+          ? selection.competition.trim() || selectionContext.competition
+          : selectionContext.competition,
+        betType: typeof selection.betType === "string" ? normalizedSelection.betType : null,
+        label,
+        odds: numOrNull(selection.odds),
+        result: selectionResult,
+      }];
+    }) : [];
+    if (sportContext.competition && selections.length === 0) {
+      selections.push({
+        sport,
+        competition: sportContext.competition,
+        betType,
+        label: String(r.description ?? "").trim() || betType,
+        odds: numOrNull(r.odds),
+        result,
+      });
+    }
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: isoDateOrNull(r.date),
       sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
-      // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont ramenés à Autre.
+      // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont signalés
+      // pour vérification sans perdre le libellé détecté.
       betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
@@ -351,23 +388,7 @@ export async function POST(request: NextRequest) {
       format: betFormat(r.format),
       tipster: typeof r.tipster === "string" ? r.tipster.trim().slice(0, 120) || null : null,
       closingOdds: numOrNull(r.closingOdds),
-      selections: Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
-        if (!rawSelection || typeof rawSelection !== "object") return [];
-        const selection = rawSelection as Record<string, unknown>;
-        const label = String(selection.label ?? "").trim();
-        if (!label) return [];
-        const selectionResult = selection.result == null
-          ? null
-          : labelToBetResult(String(selection.result)) ?? null;
-        return [{
-          sport: String(selection.sport ?? sport).trim() || sport,
-          competition: typeof selection.competition === "string" ? selection.competition.trim() || null : null,
-          betType: typeof selection.betType === "string" ? selection.betType.trim() || null : null,
-          label,
-          odds: numOrNull(selection.odds),
-          result: selectionResult,
-        }];
-      }) : [],
+      selections,
       taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.

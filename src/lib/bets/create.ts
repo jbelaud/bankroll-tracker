@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import type { ParsedBetSelection } from "@/lib/scan/types";
 import {
   getUserTaxonomy,
+  normalizeSportContext,
   normalizeTaxonomyPair,
   saveUserTaxonomyEntry,
   type Taxonomy,
@@ -72,6 +73,20 @@ export async function createOwnedBet(
   if (normalizedTaxonomy.taxonomyMismatch) throw new Error(messages.taxonomyMismatch);
 
   const source = input.source ?? {};
+  const normalizedSelections = (source.selections ?? []).slice(0, 100).map((selection) => {
+    const context = normalizeSportContext(taxonomy, selection.sport);
+    const normalized = normalizeTaxonomyPair(
+      taxonomy,
+      context.sport,
+      selection.betType ?? normalizedTaxonomy.betType
+    );
+    return {
+      ...selection,
+      sport: normalized.sport,
+      competition: selection.competition || context.competition,
+      betType: selection.betType ? normalized.betType : null,
+    };
+  });
   const bet = await prisma.bet.create({
     data: {
       bankrollId: input.bankrollId,
@@ -97,9 +112,9 @@ export async function createOwnedBet(
       scanUsageId: source.scanUsageId ?? null,
     },
   });
-  if (source.selections?.length) {
+  if (normalizedSelections.length) {
     await prisma.betSelection.createMany({
-      data: source.selections.slice(0, 100).map((selection, position) => ({
+      data: normalizedSelections.map((selection, position) => ({
         betId: bet.id,
         position,
         sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || normalizedTaxonomy.sport,
@@ -111,6 +126,11 @@ export async function createOwnedBet(
       })),
     });
   }
-  await saveUserTaxonomyEntry(userId, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
+  await Promise.all([
+    saveUserTaxonomyEntry(userId, normalizedTaxonomy.sport, normalizedTaxonomy.betType),
+    ...normalizedSelections.flatMap((selection) => selection.betType
+      ? [saveUserTaxonomyEntry(userId, selection.sport, selection.betType)]
+      : []),
+  ]);
   return bet;
 }

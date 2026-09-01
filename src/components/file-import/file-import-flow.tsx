@@ -27,6 +27,7 @@ import { normalizeBookmaker } from "@/lib/bookmakers";
 import {
   MAX_IMPORT_FILE_BYTES,
   parseBetsFileContent,
+  type ImportDateOrder,
   type ParsedBetsFile,
 } from "@/lib/file-import/parse-bets-file";
 import { TipsterSelector } from "@/components/tipsters/tipster-selector";
@@ -63,6 +64,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const [isPending, startTransition] = useTransition();
   const [tipsters, setTipsters] = useState(initialTipsters);
   const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
+  const [dateOrder, setDateOrder] = useState<ImportDateOrder>("AUTO");
+  const [loadedFile, setLoadedFile] = useState<{ name: string; content: string } | null>(null);
 
   const validBets = useMemo(
     () => parsed?.rows.flatMap((row) => (row.bet ? [row.bet] : [])) ?? [],
@@ -108,12 +111,26 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
       return;
     }
     try {
-      const nextParsed = parseBetsFileContent(file.name, await file.text());
+      const content = await file.text();
+      const nextParsed = parseBetsFileContent(file.name, content, { dateOrder });
       setParsed(nextParsed);
+      setLoadedFile({ name: file.name, content });
       setFileName(file.name);
     } catch (error) {
       setParsed(null);
       setFileName(file.name);
+      setFileError(error instanceof Error ? error.message : t("errors.read"));
+    }
+  }
+
+  function changeDateOrder(value: string | null) {
+    const nextOrder = (value ?? "AUTO") as ImportDateOrder;
+    setDateOrder(nextOrder);
+    if (!loadedFile) return;
+    try {
+      setParsed(parseBetsFileContent(loadedFile.name, loadedFile.content, { dateOrder: nextOrder }));
+      setFileError("");
+    } catch (error) {
       setFileError(error instanceof Error ? error.message : t("errors.read"));
     }
   }
@@ -149,6 +166,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
     setFileError("");
     setResult(null);
     setFallbackTipsterId(null);
+    setLoadedFile(null);
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -182,7 +200,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
 
   return (
     <div className="flex flex-1 flex-col gap-5">
-      <div className="grid gap-1.5 lg:max-w-md">
+      <div className="grid gap-4 lg:max-w-3xl lg:grid-cols-2">
+        <div className="grid gap-1.5">
         <Label htmlFor="file-import-bankroll" className="text-xs">{t("bankrollLabel")}</Label>
         <Select
           value={bankrollId}
@@ -200,6 +219,24 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             ))}
           </SelectContent>
         </Select>
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="file-import-date-order" className="text-xs">{t("dateOrder.label")}</Label>
+          <Select
+            value={dateOrder}
+            onValueChange={changeDateOrder}
+            items={{ AUTO: t("dateOrder.auto"), DMY: t("dateOrder.dmy"), MDY: t("dateOrder.mdy") }}
+          >
+            <SelectTrigger id="file-import-date-order" className="min-h-touch w-full rounded-lg px-3 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="AUTO">{t("dateOrder.auto")}</SelectItem>
+              <SelectItem value="DMY">{t("dateOrder.dmy")}</SelectItem>
+              <SelectItem value="MDY">{t("dateOrder.mdy")}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <input

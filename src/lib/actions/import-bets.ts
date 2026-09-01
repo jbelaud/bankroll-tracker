@@ -13,6 +13,7 @@ import { isBetResult } from "@/lib/bet-result";
 import { MAX_IMPORT_ROWS } from "@/lib/file-import/parse-bets-file";
 import {
   getUserTaxonomy,
+  normalizeSportContext,
   normalizeTaxonomyPair,
 } from "@/lib/taxonomy";
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
@@ -118,9 +119,33 @@ export async function importExternalBets(
       return { error: `Cash out invalide à la ligne ${index + 1}.` };
     }
 
-    const normalized = normalizeTaxonomyPair(taxonomy, bet.sport, bet.betType);
-    if (normalized.taxonomyMismatch) return { error: `Sport et type de pari incompatibles à la ligne ${index + 1}.` };
+    const sportContext = normalizeSportContext(taxonomy, bet.sport);
+    const normalized = normalizeTaxonomyPair(taxonomy, sportContext.sport, bet.betType);
     const description = bet.description.normalize("NFKC").trim().slice(0, 2_000) || null;
+    const normalizedSelections = (bet.selections ?? []).slice(0, 100).map((selection) => {
+      const selectionContext = normalizeSportContext(taxonomy, selection.sport);
+      const selectionPair = normalizeTaxonomyPair(
+        taxonomy,
+        selectionContext.sport,
+        selection.betType ?? normalized.betType
+      );
+      return {
+        ...selection,
+        sport: selectionPair.sport,
+        competition: selection.competition || selectionContext.competition,
+        betType: selection.betType ? selectionPair.betType : null,
+      };
+    });
+    if (sportContext.competition && normalizedSelections.length === 0) {
+      normalizedSelections.push({
+        sport: normalized.sport,
+        competition: sportContext.competition,
+        betType: normalized.betType,
+        label: description || normalized.betType,
+        odds: bet.odds,
+        result: bet.result,
+      });
+    }
     const row = {
       id: randomUUID(),
       bankrollId,
@@ -143,7 +168,7 @@ export async function importExternalBets(
       closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 0 ? (bet.closingOdds ?? null) : null,
       tipsterId: bet.tipsterId,
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
-      selections: (bet.selections ?? []).slice(0, 100),
+      selections: normalizedSelections,
     };
     const key = duplicateKey(row);
     if (existingKeys.has(key) || acceptedKeys.has(key)) {
@@ -157,6 +182,14 @@ export async function importExternalBets(
       sport: normalized.sport,
       betType: normalized.betType,
     });
+    for (const selection of normalizedSelections) {
+      if (!selection.betType) continue;
+      taxonomyEntries.set(`${selection.sport}\u0000${selection.betType}`, {
+        userId: user.id,
+        sport: selection.sport,
+        betType: selection.betType,
+      });
+    }
   }
 
   let resolvedTipsterIds: Array<string | null>;
