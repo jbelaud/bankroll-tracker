@@ -28,6 +28,12 @@ async function getOrigin() {
   // Les redirections de confirmation/OAuth doivent revenir vers l'URL publique
   // configurée, jamais vers une valeur Host envoyée par un client. Ce repli
   // sur l'hôte de requête ne sert qu'au développement local.
+  // En Preview, les variables Vercel sont elles aussi une source de confiance
+  // et doivent primer sur l'URL canonique de production : Google et les e-mails
+  // reviennent ainsi sur le déploiement que l'utilisateur est en train de tester.
+  const previewOrigin = getPreviewOrigin();
+  if (previewOrigin) return previewOrigin;
+
   const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (configuredAppUrl) {
     return new URL(configuredAppUrl).origin;
@@ -59,7 +65,7 @@ export async function requestPasswordReset(
   const t = await getTranslations({ locale, namespace: "auth.passwordReset" });
   if (!email || !email.includes("@")) return { error: t("invalidEmail") };
 
-  const origin = getPreviewOrigin() ?? await getOrigin();
+  const origin = await getOrigin();
   const callback = new URL("/auth/callback", origin);
   callback.searchParams.set("next", `/${locale}/reset-password`);
   const supabase = await createClient();
