@@ -593,6 +593,8 @@
     "title": "Import history",
     "description": "Move your previous bets from Bet Analytics, a bookmaker or another app in one go.",
     "bankrollLabel": "Import into this bankroll",
+    "allocationLabel": "Destination bookmaker",
+    "allocationPlaceholder": "Choose a bookmaker",
     "noBankroll": {
       "title": "No bankroll yet",
       "description": "Imported history must be linked to a bankroll: create one first."

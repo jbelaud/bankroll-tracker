@@ -60,14 +60,22 @@ export async function importExternalBets(
   bankrollId: string,
   bets: ParsedBet[],
   sourceFormat: string,
-  fileName?: string
+  fileName?: string,
+  requestedAllocationId?: string | null
 ): Promise<FileImportResult> {
   const user = await requireUser();
   if (bets.length === 0) return { error: "Aucun pari valide à importer." };
   if (bets.length > MAX_IMPORT_ROWS) return { error: `Un import est limité à ${MAX_IMPORT_ROWS} paris.` };
 
   const [bankroll, existingBets, taxonomy, totalBets] = await Promise.all([
-    prisma.bankroll.findFirst({ where: { id: bankrollId, userId: user.id }, select: { id: true } }),
+    prisma.bankroll.findFirst({
+      where: { id: bankrollId, userId: user.id },
+      select: {
+        id: true,
+        mode: true,
+        allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
+      },
+    }),
     prisma.bet.findMany({
       where: { bankrollId, bankroll: { userId: user.id } },
       select: { ticketRef: true, date: true, stake: true, odds: true, description: true },
@@ -78,12 +86,27 @@ export async function importExternalBets(
   if (!bankroll) return { error: "Bankroll introuvable." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
+  const requestedAllocation = requestedAllocationId
+    ? bankroll.allocations.find((allocation) => allocation.id === requestedAllocationId)
+    : null;
+  if (requestedAllocationId && !requestedAllocation) {
+    return { error: "Le bookmaker choisi n’appartient pas à cette bankroll." };
+  }
+  const importAllocation = bankroll.mode === "DISTRIBUTED"
+    ? requestedAllocation ?? (bankroll.allocations.length === 1 ? bankroll.allocations[0] : null)
+    : null;
+  if (bankroll.mode === "DISTRIBUTED" && bankroll.allocations.length > 1 && !importAllocation) {
+    return { error: "Choisis le bookmaker dans lequel importer ces paris." };
+  }
+
   const existingKeys = new Set(existingBets.map(duplicateKey));
   const acceptedKeys = new Set<string>();
   const taxonomyEntries = new Map<string, { userId: string; sport: string; betType: string }>();
   const rows: Array<{
     id: string;
     bankrollId: string;
+    allocationId: string | null;
+    bookmaker: string | null;
     ticketRef: string | null;
     date: Date;
     sport: string;
@@ -150,6 +173,8 @@ export async function importExternalBets(
     const row = {
       id: randomUUID(),
       bankrollId,
+      allocationId: importAllocation?.id ?? null,
+      bookmaker: importAllocation?.bookmaker ?? null,
       ticketRef: bet.ticketRef?.normalize("NFKC").trim().slice(0, 255) || null,
       date,
       sport: normalized.sport,

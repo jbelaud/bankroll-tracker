@@ -32,7 +32,12 @@ export default async function ImportHistoryPage() {
         bankrolls={activeBankrolls.map(({ id, name, bookmaker, mode, allocations }) => ({
           id,
           name,
-          bookmaker: bookmaker ?? (mode === "SINGLE" ? "Solde unique" : `${allocations.length} bookmakers`),
+          mode,
+          bookmaker,
+          allocations: allocations.map(({ id: allocationId, bookmaker: allocationBookmaker }) => ({
+            id: allocationId,
+            bookmaker: allocationBookmaker,
+          })),
         }))}
         tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
       />

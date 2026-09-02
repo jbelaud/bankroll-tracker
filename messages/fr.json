@@ -593,6 +593,8 @@
     "title": "Importer un historique",
     "description": "Transfère en une fois tes anciens paris depuis Bet Analytics, un bookmaker ou une autre application.",
     "bankrollLabel": "Importer dans cette bankroll",
+    "allocationLabel": "Bookmaker de destination",
+    "allocationPlaceholder": "Choisir un bookmaker",
     "noBankroll": {
       "title": "Pas encore de bankroll",
       "description": "L’historique importé doit être rattaché à une bankroll : crée-la d’abord."

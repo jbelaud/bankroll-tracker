@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   betFindFirst: vi.fn(),
   betCreate: vi.fn(),
   betUpdate: vi.fn(),
+  betFindMany: vi.fn(),
+  betUpdateMany: vi.fn(),
   selectionCreateMany: vi.fn(),
   tipsterFindFirst: vi.fn(),
   tipsterFindUnique: vi.fn(),
@@ -28,13 +30,19 @@ vi.mock("@/lib/taxonomy", () => ({
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     bankroll: { findFirst: mocks.bankrollFindFirst },
-    bet: { findFirst: mocks.betFindFirst, create: mocks.betCreate, update: mocks.betUpdate },
+    bet: {
+      findFirst: mocks.betFindFirst,
+      findMany: mocks.betFindMany,
+      create: mocks.betCreate,
+      update: mocks.betUpdate,
+      updateMany: mocks.betUpdateMany,
+    },
     betSelection: { createMany: mocks.selectionCreateMany },
     tipster: { findFirst: mocks.tipsterFindFirst, findUnique: mocks.tipsterFindUnique },
   },
 }));
 
-const { createBet, updateBet } = await import("@/lib/actions/bets");
+const { createBet, moveBets, updateBet } = await import("@/lib/actions/bets");
 
 const updateInput = {
   sport: "Football",
@@ -136,5 +144,54 @@ describe("association Bet / Tipster", () => {
       where: { id: "another-archived", userId: "user-a", status: "ACTIVE" },
       select: { id: true },
     });
+  });
+});
+
+describe("déplacement de paris entre bankrolls", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.requireUser.mockResolvedValue({ id: "user-a" });
+    mocks.isLocked.mockResolvedValue(false);
+    mocks.betFindMany.mockResolvedValue([{ id: "bet-a", bankrollId: "bankroll-source" }]);
+    mocks.betUpdateMany.mockResolvedValue({ count: 1 });
+  });
+
+  it("remplace l’ancienne allocation par celle d’une destination mono-bookmaker", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-target",
+      userId: "user-a",
+      mode: "DISTRIBUTED",
+      allocations: [{ id: "allocation-target", bookmaker: "Betclic" }],
+    });
+
+    await expect(moveBets(["bet-a"], "bankroll-target")).resolves.toEqual({ moved: 1 });
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: {
+        bankrollId: "bankroll-target",
+        allocationId: "allocation-target",
+        bookmaker: "Betclic",
+      },
+    }));
+  });
+
+  it("efface une allocation étrangère si la destination exige un choix ultérieur", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-target",
+      userId: "user-a",
+      mode: "DISTRIBUTED",
+      allocations: [
+        { id: "allocation-a", bookmaker: "Winamax" },
+        { id: "allocation-b", bookmaker: "Betclic" },
+      ],
+    });
+
+    await moveBets(["bet-a"], "bankroll-target");
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: {
+        bankrollId: "bankroll-target",
+        allocationId: null,
+        bookmaker: null,
+      },
+    }));
   });
 });

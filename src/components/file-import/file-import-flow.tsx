@@ -34,7 +34,19 @@ import { TipsterSelector } from "@/components/tipsters/tipster-selector";
 import { normalizeTipsterName } from "@/lib/tipsters/normalize";
 import type { TipsterOption } from "@/lib/tipsters/types";
 
-type BankrollOption = { id: string; name: string; bookmaker: string };
+type BankrollOption = {
+  id: string;
+  name: string;
+  mode: "SINGLE" | "DISTRIBUTED";
+  bookmaker: string | null;
+  allocations: Array<{ id: string; bookmaker: string }>;
+};
+
+function bankrollLabel(bankroll: BankrollOption) {
+  if (bankroll.mode === "SINGLE") return `${bankroll.name} (solde unique)`;
+  if (bankroll.allocations.length === 1) return `${bankroll.name} (${bankroll.allocations[0].bookmaker})`;
+  return `${bankroll.name} (${bankroll.allocations.length} bookmakers)`;
+}
 
 const KALIVOA_CSV_TEMPLATE = [
   "Date;Sport;BetType;Label;Odds;Stake;State;Bookmaker;Live;Freebet;Cashout;Comment",
@@ -56,6 +68,10 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const tResults = useTranslations("results");
   const inputRef = useRef<HTMLInputElement>(null);
   const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
+  const initialBankroll = bankrolls[0];
+  const [allocationId, setAllocationId] = useState(
+    initialBankroll?.mode === "DISTRIBUTED" ? (initialBankroll.allocations[0]?.id ?? "") : ""
+  );
   const [parsed, setParsed] = useState<ParsedBetsFile | null>(null);
   const [fileName, setFileName] = useState("");
   const [fileError, setFileError] = useState("");
@@ -74,8 +90,15 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const invalidCount = parsed ? parsed.rows.length - validBets.length : 0;
   const warningCount = parsed?.rows.filter((row) => row.warnings.length > 0).length ?? 0;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
-  const selectedBookmaker = selectedBankroll ? normalizeBookmaker(selectedBankroll.bookmaker).toLocaleLowerCase("fr") : "";
-  const bookmakerMismatch = Boolean(parsed && parsed.detectedBookmakers.length > 0 && (
+  const selectedAllocation = selectedBankroll?.allocations.find((allocation) => allocation.id === allocationId);
+  const selectedBookmakerLabel = selectedAllocation?.bookmaker
+    ?? (selectedBankroll?.mode === "DISTRIBUTED" && selectedBankroll.allocations.length === 1
+      ? selectedBankroll.allocations[0].bookmaker
+      : null);
+  const selectedBookmaker = selectedBookmakerLabel
+    ? normalizeBookmaker(selectedBookmakerLabel).toLocaleLowerCase("fr")
+    : "";
+  const bookmakerMismatch = Boolean(selectedBookmaker && parsed && parsed.detectedBookmakers.length > 0 && (
     parsed.detectedBookmakers.length > 1
     || !parsed.detectedBookmakers.some((bookmaker) => normalizeBookmaker(bookmaker).toLocaleLowerCase("fr") === selectedBookmaker)
   ));
@@ -147,7 +170,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             ? { ...bet, tipsterId: fallbackTipsterId }
             : bet),
           source,
-          fileName
+          fileName,
+          allocationId || null
         );
         if (response.imported === undefined) {
           setFileError(response.error);
@@ -205,8 +229,13 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
         <Label htmlFor="file-import-bankroll" className="text-xs">{t("bankrollLabel")}</Label>
         <Select
           value={bankrollId}
-          onValueChange={(value) => setBankrollId(value as string)}
-          items={Object.fromEntries(bankrolls.map((bankroll) => [bankroll.id, `${bankroll.name} (${bankroll.bookmaker})`]))}
+          onValueChange={(value) => {
+            const nextId = value as string;
+            const nextBankroll = bankrolls.find((bankroll) => bankroll.id === nextId);
+            setBankrollId(nextId);
+            setAllocationId(nextBankroll?.mode === "DISTRIBUTED" ? (nextBankroll.allocations[0]?.id ?? "") : "");
+          }}
+          items={Object.fromEntries(bankrolls.map((bankroll) => [bankroll.id, bankrollLabel(bankroll)]))}
         >
           <SelectTrigger id="file-import-bankroll" className="min-h-touch w-full rounded-lg px-3 text-sm">
             <SelectValue />
@@ -214,12 +243,33 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           <SelectContent>
             {bankrolls.map((bankroll) => (
               <SelectItem key={bankroll.id} value={bankroll.id} className="min-h-touch text-sm">
-                {bankroll.name} ({bankroll.bookmaker})
+                {bankrollLabel(bankroll)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         </div>
+        {selectedBankroll?.mode === "DISTRIBUTED" ? (
+          <div className="grid gap-1.5">
+            <Label htmlFor="file-import-allocation" className="text-xs">{t("allocationLabel")}</Label>
+            <Select
+              value={allocationId}
+              onValueChange={(value) => setAllocationId(value as string)}
+              items={Object.fromEntries(selectedBankroll.allocations.map((allocation) => [allocation.id, allocation.bookmaker]))}
+            >
+              <SelectTrigger id="file-import-allocation" className="min-h-touch w-full rounded-lg px-3 text-sm">
+                <SelectValue placeholder={t("allocationPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedBankroll.allocations.map((allocation) => (
+                  <SelectItem key={allocation.id} value={allocation.id} className="min-h-touch text-sm">
+                    {allocation.bookmaker}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : null}
         <div className="grid gap-1.5">
           <Label htmlFor="file-import-date-order" className="text-xs">{t("dateOrder.label")}</Label>
           <Select
@@ -307,7 +357,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           {parsed.detectedBookmakers.length > 0 ? (
             <div className={`mt-3 rounded-xl border p-3 text-xs leading-5 ${bookmakerMismatch ? "border-warning/30 bg-warning/10 text-warning" : "border-border bg-muted/30 text-muted-foreground"}`}>
               <span className="font-semibold">{t("preview.bookmakerDetected", { bookmakers: parsed.detectedBookmakers.join(", ") })}</span>
-              {bookmakerMismatch ? ` ${t("preview.bookmakerMismatch", { selected: selectedBankroll?.bookmaker ?? "—" })}` : null}
+              {bookmakerMismatch ? ` ${t("preview.bookmakerMismatch", { selected: selectedBookmakerLabel ?? "—" })}` : null}
             </div>
           ) : null}
 

@@ -105,7 +105,10 @@ export default async function StatsPage({
   };
 
   const bookmakerByBankrollId = new Map(activeBankrolls.map((br) => [br.id, br.bookmaker]));
-  const byBookmaker = groupStats(bets, (b) => bookmakerByBankrollId.get(b.bankrollId) ?? "—");
+  const byBookmaker = groupStats(
+    bets,
+    (bet) => bet.bookmaker ?? bookmakerByBankrollId.get(bet.bankrollId) ?? "—"
+  );
   const dateFrom = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
   const dateTo = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
   const byTipster = (await getTipsterPerformances({

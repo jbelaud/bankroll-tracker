@@ -208,6 +208,19 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
   if (betIds.length === 0) return { moved: 0 };
 
   await getOwnedBankroll(targetBankrollId, user.id);
+  const targetBankroll = await prisma.bankroll.findFirst({
+    where: { id: targetBankrollId, userId: user.id },
+    select: {
+      mode: true,
+      allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
+    },
+  });
+  if (!targetBankroll) {
+    throw new Error((await getErrorsT())("bankrollNotFound"));
+  }
+  const soleTargetAllocation = targetBankroll.mode === "DISTRIBUTED" && targetBankroll.allocations.length === 1
+    ? targetBankroll.allocations[0]
+    : null;
   const bets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
     select: { id: true, bankrollId: true },
@@ -225,7 +238,15 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
       bankroll: { userId: user.id },
       bankrollId: { not: targetBankrollId },
     },
-    data: { bankrollId: targetBankrollId },
+    // Une allocation appartient à une seule bankroll. Il ne faut donc jamais
+    // conserver celle de la source. Une destination mono-bookmaker est
+    // réaffectée automatiquement ; une destination multi-bookmaker reste à
+    // répartir explicitement depuis le détail de la bankroll.
+    data: {
+      bankrollId: targetBankrollId,
+      allocationId: soleTargetAllocation?.id ?? null,
+      bookmaker: soleTargetAllocation?.bookmaker ?? null,
+    },
   });
   revalidateBetViews();
   return { moved: moved.count };

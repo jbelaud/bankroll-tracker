@@ -72,7 +72,11 @@ describe("importExternalBets", () => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-1" });
     mocks.isLocked.mockResolvedValue(false);
-    mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1" });
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-1",
+      mode: "DISTRIBUTED",
+      allocations: [{ id: "allocation-1", bookmaker: "Winamax" }],
+    });
     mocks.betFindMany.mockResolvedValue([]);
     mocks.betCount.mockResolvedValue(0);
     mocks.betCreateMany.mockReturnValue(Promise.resolve({ count: 1 }));
@@ -107,12 +111,40 @@ describe("importExternalBets", () => {
 
     expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
     expect(mocks.betCreateMany).toHaveBeenCalledWith({
-      data: [expect.objectContaining({ bankrollId: "bankroll-1", entryMethod: "FILE", ticketRef: "ticket-1" })],
+      data: [expect.objectContaining({
+        bankrollId: "bankroll-1",
+        allocationId: "allocation-1",
+        bookmaker: "Winamax",
+        entryMethod: "FILE",
+        ticketRef: "ticket-1",
+      })],
     });
     expect(mocks.recordEvent).toHaveBeenCalledWith(expect.objectContaining({
       name: "bets_imported",
       properties: expect.objectContaining({ import_method: "file", file_format: "csv" }),
     }));
+  });
+
+  it("exige et valide le bookmaker de destination pour une bankroll répartie", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-1",
+      mode: "DISTRIBUTED",
+      allocations: [
+        { id: "allocation-a", bookmaker: "Winamax" },
+        { id: "allocation-b", bookmaker: "Betclic" },
+      ],
+    });
+
+    await expect(importExternalBets("bankroll-1", [bet()], "CSV"))
+      .resolves.toEqual({ error: "Choisis le bookmaker dans lequel importer ces paris." });
+    await expect(importExternalBets("bankroll-1", [bet()], "CSV", undefined, "allocation-other"))
+      .resolves.toEqual({ error: "Le bookmaker choisi n’appartient pas à cette bankroll." });
+
+    const response = await importExternalBets("bankroll-1", [bet()], "CSV", undefined, "allocation-b");
+    expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({
+      data: [expect.objectContaining({ allocationId: "allocation-b", bookmaker: "Betclic" })],
+    });
   });
 
   it("conserve un marché inattendu sans le classer dans Autre", async () => {
