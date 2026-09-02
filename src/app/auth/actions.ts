@@ -19,6 +19,11 @@ export type AuthFormState =
   | { message: string; email?: string; error?: undefined }
   | undefined;
 
+export type PasswordFormState =
+  | { error: string; message?: undefined }
+  | { message: string; error?: undefined }
+  | undefined;
+
 async function getOrigin() {
   // Les redirections de confirmation/OAuth doivent revenir vers l'URL publique
   // configurée, jamais vers une valeur Host envoyée par un client. Ce repli
@@ -37,6 +42,50 @@ async function getOrigin() {
   const host = h.get("host");
   if (!host) throw new Error("Host manquant");
   return `${proto}://${host}`;
+}
+
+function getPreviewOrigin() {
+  if (process.env.VERCEL_ENV !== "preview") return null;
+  const host = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL;
+  return host ? `https://${host}` : null;
+}
+
+export async function requestPasswordReset(
+  _previousState: PasswordFormState,
+  formData: FormData
+): Promise<PasswordFormState> {
+  const email = String(formData.get("email") ?? "").normalize("NFKC").trim();
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "auth.passwordReset" });
+  if (!email || !email.includes("@")) return { error: t("invalidEmail") };
+
+  const origin = getPreviewOrigin() ?? await getOrigin();
+  const callback = new URL("/auth/callback", origin);
+  callback.searchParams.set("next", `/${locale}/reset-password`);
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: callback.toString() });
+  if (error) return { error: t("unavailable") };
+  // Réponse volontairement identique même si l'adresse n'existe pas.
+  return { message: t("sent") };
+}
+
+export async function updatePassword(
+  _previousState: PasswordFormState,
+  formData: FormData
+): Promise<PasswordFormState> {
+  const password = String(formData.get("password") ?? "");
+  const confirmation = String(formData.get("confirmation") ?? "");
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "auth.passwordReset" });
+  if (password.length < 8) return { error: t("passwordTooShort") };
+  if (password !== confirmation) return { error: t("passwordMismatch") };
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: t("expired") };
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) return { error: t("unavailable") };
+  redirectToLocalized({ href: "/dashboard", locale });
 }
 
 type GrowthAttribution = {

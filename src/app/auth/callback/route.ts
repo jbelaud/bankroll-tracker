@@ -17,13 +17,14 @@ export async function GET(request: NextRequest) {
   // Seules les routes internes sont admises : ne jamais refléter une URL
   // externe fournie en query string après un retour OAuth.
   const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const isPasswordRecovery = safeNext.endsWith("/reset-password");
 
   if (code) {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      if (data.user && invite) await redeemBetaInvite(invite, data.user);
-      if (data.user) {
+      if (!isPasswordRecovery && data.user && invite) await redeemBetaInvite(invite, data.user);
+      if (!isPasswordRecovery && data.user) {
         await attachStoredReferralToNewUser(data.user.id);
         await recordGrowthEventSafely({
           name: "signup_completed",
