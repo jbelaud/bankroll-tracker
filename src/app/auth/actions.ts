@@ -31,13 +31,13 @@ async function getOrigin() {
   // En Preview, les variables Vercel sont elles aussi une source de confiance
   // et doivent primer sur l'URL canonique de production : Google et les e-mails
   // reviennent ainsi sur le déploiement que l'utilisateur est en train de tester.
-  const previewOrigin = getPreviewOrigin();
-  if (previewOrigin) return previewOrigin;
-
   const configuredAppUrl = process.env.NEXT_PUBLIC_APP_URL;
   if (configuredAppUrl) {
     return new URL(configuredAppUrl).origin;
   }
+
+  const previewOrigin = getPreviewOrigin();
+  if (previewOrigin) return previewOrigin;
 
   if (process.env.NODE_ENV === "production") {
     throw new Error("NEXT_PUBLIC_APP_URL doit être configuré en production");
