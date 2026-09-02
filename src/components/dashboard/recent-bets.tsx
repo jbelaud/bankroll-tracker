@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
-import { fmtDate, fmtMoney, fmtMoneySigned } from "@/lib/format";
+import { fmtDate, fmtMoney, fmtMoneySigned, fmtStakeUnits } from "@/lib/format";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 
@@ -15,6 +15,7 @@ type RecentBet = {
   pending: boolean;
   profit: number;
   bankrollName: string;
+  referenceCapital: number | null;
 };
 
 export async function RecentBets({ bets }: { bets: RecentBet[] }) {
@@ -61,9 +62,7 @@ export async function RecentBets({ bets }: { bets: RecentBet[] }) {
                     {fmtDate(bet.date, locale)} · {bet.bankrollName}
                   </span>
                 </div>
-                <span className="num text-xs text-muted-foreground">
-                  {fmtMoney(bet.stake, locale, currency)}
-                </span>
+                <span className="num text-right text-xs text-muted-foreground"><span className="block">{fmtMoney(bet.stake, locale, currency)}</span>{fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="block text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}</span>
                 {bet.pending ? (
                   <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
                     {tResults("EN_ATTENTE")}

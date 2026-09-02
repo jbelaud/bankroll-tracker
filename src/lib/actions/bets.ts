@@ -91,6 +91,8 @@ export async function createBet(
     closingOdds?: number | null;
     selections?: ParsedBetSelection[];
     importBatchId?: string | null;
+    allocationId?: string | null;
+    bookmaker?: string | null;
   } = {}
 ) {
   const user = await requireUser();
@@ -100,6 +102,8 @@ export async function createBet(
   });
   return createOwnedBet(user.id, {
     bankrollId,
+    allocationId: source.allocationId,
+    bookmaker: source.bookmaker,
     sport,
     betType,
     description,

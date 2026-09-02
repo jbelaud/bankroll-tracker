@@ -47,7 +47,7 @@ export default async function ManualEntryPage() {
     <div className="flex max-w-3xl flex-col gap-4">
       <h1 className="text-xl font-semibold">{tCommon("manualEntryTitle")}</h1>
       <ManualEntryForm
-        bankrolls={activeBankrolls.map((br) => ({ id: br.id, name: br.name, bookmaker: br.bookmaker }))}
+        bankrolls={activeBankrolls.map((br) => ({ id: br.id, name: br.name, mode: br.mode, bookmaker: br.bookmaker, referenceCapital: br.referenceCapital, allocations: br.allocations }))}
         currency={currency}
         taxonomy={taxonomy}
         tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}

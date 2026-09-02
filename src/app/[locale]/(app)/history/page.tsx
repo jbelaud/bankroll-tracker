@@ -21,11 +21,13 @@ export default async function HistoryPage() {
   const activeBets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
 
   const bankrollName = (id: string) => activeBankrolls.find((br) => br.id === id)?.name ?? "—";
+  const bankrollReference = (id: string) => activeBankrolls.find((br) => br.id === id)?.referenceCapital ?? null;
 
   const items: HistoryBetItemData[] = activeBets.map((b) => ({
     id: b.id,
     bankrollId: b.bankrollId,
     bankrollName: bankrollName(b.bankrollId),
+    referenceCapital: bankrollReference(b.bankrollId),
     date: b.date,
     sport: b.sport,
     betType: b.betType,

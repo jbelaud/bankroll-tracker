@@ -51,7 +51,10 @@ export default async function ScanPage() {
         bankrolls={activeBankrolls.map((br) => ({
           id: br.id,
           name: br.name,
+          mode: br.mode,
           bookmaker: br.bookmaker,
+          referenceCapital: br.referenceCapital,
+          allocations: br.allocations,
         }))}
         currency={currency}
         taxonomy={taxonomy}

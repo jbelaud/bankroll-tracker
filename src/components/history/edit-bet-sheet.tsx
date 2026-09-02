@@ -65,7 +65,7 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
         tipsterId: value.tipster?.id ?? null,
       });
-      onSaved({ ...updated, bankrollName: bet.bankrollName, profit: computeProfit(updated) });
+      onSaved({ ...updated, bankrollName: bet.bankrollName, referenceCapital: bet.referenceCapital, profit: computeProfit(updated) });
       onOpenChange(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : tCommon("unexpectedError"));

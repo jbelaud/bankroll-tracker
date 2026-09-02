@@ -77,9 +77,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const { count, types } = correctionSummary(rawExtraction, finalExtraction);
+    const reportBookmaker = bankroll.bookmaker ?? detection.detectedBookmaker ?? "Non renseigné";
     const expiresAt = new Date(Date.now() + QUALITY_RETENTION_DAYS * 24 * 60 * 60 * 1000);
     await prisma.scanQualityReport.create({ data: {
-      id, userId: user.id, bankrollId: bankroll.id, bookmaker: bankroll.bookmaker,
+      id, userId: user.id, bankrollId: bankroll.id, bookmaker: reportBookmaker,
       detectedBookmaker: detection.detectedBookmaker, detectionConfidence: detection.detectionConfidence,
       model: String(form.get("model") ?? "unknown").slice(0, 100), promptVersion: SCAN_PROMPT_VERSION,
       issueType, issueDetails,
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Le partage n'a pas pu être enregistré." }, { status: 500 });
   }
   const discord = await sendQualityReportToDiscord({
-    reportId: id, bookmaker: bankroll.bookmaker, issueType, issueDetails, image,
+    reportId: id, bookmaker: bankroll.bookmaker ?? detection.detectedBookmaker ?? "Non renseigné", issueType, issueDetails, image,
   });
   return NextResponse.json({ ok: true, discordSent: discord.sent }, { status: 201 });
 }

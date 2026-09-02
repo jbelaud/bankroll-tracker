@@ -34,6 +34,8 @@ export async function createManualBetForm(
   const result = String(formData.get("result") ?? "EN_ATTENTE") as BetResult;
   const cashOutAmount = result === "CASHE" ? Number(formData.get("cashOutAmount")) : null;
   const tipsterId = String(formData.get("tipsterId") ?? "").trim() || null;
+  const allocationId = String(formData.get("allocationId") ?? "").trim() || null;
+  const bookmaker = String(formData.get("bookmaker") ?? "").trim() || null;
 
   try {
     await createBet(
@@ -52,7 +54,7 @@ export async function createManualBetForm(
       null,
       new Date(date),
       null,
-      { tipsterId }
+      { tipsterId, allocationId, bookmaker }
     );
   } catch (e) {
     const t = await getTranslations({ locale: await getServerLocale(), namespace: "common" });

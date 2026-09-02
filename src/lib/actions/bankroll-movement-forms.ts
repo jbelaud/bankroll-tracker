@@ -18,7 +18,8 @@ export async function createBankrollMovementForm(
       String(formData.get("type") ?? ""),
       Number(formData.get("amount")),
       String(formData.get("note") ?? ""),
-      date
+      date,
+      String(formData.get("allocationId") ?? "").trim() || null
     );
     return { success: true };
   } catch (error) {

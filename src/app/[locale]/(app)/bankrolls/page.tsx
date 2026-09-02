@@ -30,8 +30,11 @@ export default async function BankrollsPage({
     return {
       id: br.id,
       name: br.name,
+      mode: br.mode,
       bookmaker: br.bookmaker,
       initial: br.initial,
+      referenceCapital: br.referenceCapital,
+      allocations: br.allocations,
       balance: summary.balance,
       profit: summary.profit,
       betCount: bets.filter((bet) => bet.bankrollId === br.id).length,

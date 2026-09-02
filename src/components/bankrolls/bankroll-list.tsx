@@ -104,7 +104,10 @@ export function BankrollList({
                 <div className="min-w-0 pr-10">
                   <div className="min-w-0">
                     <h2 className="truncate text-sm font-semibold">{br.name}</h2>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{br.bookmaker}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {br.mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: br.allocations.length })}
+                    </p>
+                    {br.referenceCapital ? <p className="num mt-1 text-[0.65rem] text-primary">{t("referenceUnit", { value: fmtMoney(br.referenceCapital / 100, locale, currency) })}</p> : null}
                   </div>
                 </div>
 

@@ -24,7 +24,20 @@ import { ReviewList } from "./review-list";
 import { Button } from "@/components/ui/button";
 import type { TipsterOption } from "@/lib/tipsters/types";
 
-export type BankrollOption = { id: string; name: string; bookmaker: string };
+export type BankrollOption = {
+  id: string;
+  name: string;
+  mode: "SINGLE" | "DISTRIBUTED";
+  bookmaker: string | null;
+  referenceCapital: number | null;
+  allocations: { id: string; bookmaker: string; initial: number }[];
+};
+
+export function bankrollOptionLabel(bankroll: BankrollOption) {
+  if (bankroll.mode === "SINGLE") return `${bankroll.name} (solde unique)`;
+  if (bankroll.allocations.length === 1) return `${bankroll.name} (${bankroll.allocations[0].bookmaker})`;
+  return `${bankroll.name} (${bankroll.allocations.length} bookmakers)`;
+}
 
 // Machine à états sur une seule route : les File[] vivent en mémoire,
 // une navigation les perdrait — le contenu se transforme en place.

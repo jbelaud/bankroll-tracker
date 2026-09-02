@@ -6,14 +6,14 @@ const bankroll = { id: "bankroll-1", initial: 100 } as Bankroll;
 
 function bet(overrides: Partial<Bet>): Bet {
   return {
-    id: "bet-1", bankrollId: "bankroll-1", ticketRef: null, date: new Date(), sport: "Football", betType: "1N2", description: null, eventResult: null,
+    id: "bet-1", bankrollId: "bankroll-1", allocationId: null, bookmaker: null, ticketRef: null, date: new Date(), sport: "Football", betType: "1N2", description: null, eventResult: null,
     stake: 10, odds: 2, boosted: false, originalOdds: null, freebet: false, live: false, result: "GAGNE", cashOutAmount: null, createdAt: new Date(), entryMethod: "UNKNOWN", format: "SIMPLE", closingOdds: null, tipsterId: null, importBatchId: null, scanUsageId: null,
     ...overrides,
   };
 }
 
 function movement(type: BankrollMovement["type"], amount: number): BankrollMovement {
-  return { id: `${type}-${amount}`, bankrollId: "bankroll-1", type, amount, note: null, date: new Date(), createdAt: new Date() };
+  return { id: `${type}-${amount}`, bankrollId: "bankroll-1", allocationId: null, type, amount, note: null, date: new Date(), createdAt: new Date() };
 }
 
 describe("summarizeBankrollCapital", () => {

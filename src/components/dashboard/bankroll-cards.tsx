@@ -7,7 +7,7 @@ import { TrendBadge } from "./trend-badge";
 type BankrollSummary = {
   id: string;
   name: string;
-  bookmaker: string;
+  bookmaker: string | null;
   balance: number;
   profit: number;
 };
@@ -40,7 +40,7 @@ export async function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[
           >
             <div className="flex flex-col">
               <span className="truncate text-sm font-medium">{br.name}</span>
-              <span className="text-xs text-muted-foreground">{br.bookmaker}</span>
+              <span className="text-xs text-muted-foreground">{br.bookmaker ?? "Solde unique"}</span>
             </div>
             <span className="num text-lg font-semibold">{fmtMoney(br.balance, locale, currency)}</span>
             <TrendBadge

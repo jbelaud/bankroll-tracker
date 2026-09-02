@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { ReviewBetCard } from "./review-bet-card";
 import type { Taxonomy } from "@/lib/taxonomy";
-import type { BankrollOption } from "./scan-flow";
+import { bankrollOptionLabel, type BankrollOption } from "./scan-flow";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import type { TipsterOption } from "@/lib/tipsters/types";
 
@@ -101,13 +101,14 @@ export function ReviewList({
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
+  const selectedBookmaker = selectedBankroll?.bookmaker ?? (selectedBankroll?.allocations.length === 1 ? selectedBankroll.allocations[0].bookmaker : null);
   const bookmakerMismatch = Boolean(
-    selectedBankroll &&
+    selectedBookmaker &&
       detectedBookmakers.length > 0 &&
       detectedBookmakers.some(
         (bookmaker) =>
           normalizeBookmaker(bookmaker).toLocaleLowerCase("fr") !==
-          normalizeBookmaker(selectedBankroll.bookmaker).toLocaleLowerCase("fr")
+          normalizeBookmaker(selectedBookmaker).toLocaleLowerCase("fr")
       )
   );
   useEffect(() => {
@@ -188,7 +189,7 @@ export function ReviewList({
           onValueChange={(value) => onBankrollChange(value as string)}
           disabled={importing}
           items={Object.fromEntries(
-            bankrolls.map((bankroll) => [bankroll.id, `${bankroll.name} (${bankroll.bookmaker})`])
+            bankrolls.map((bankroll) => [bankroll.id, bankrollOptionLabel(bankroll)])
           )}
         >
           <SelectTrigger id="review-bankroll" className="mt-2 min-h-touch w-full rounded-lg px-3 text-sm">
@@ -197,7 +198,7 @@ export function ReviewList({
           <SelectContent>
             {bankrolls.map((bankroll) => (
               <SelectItem key={bankroll.id} value={bankroll.id} className="min-h-touch text-sm">
-                {bankroll.name} ({bankroll.bookmaker})
+                {bankrollOptionLabel(bankroll)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -209,7 +210,7 @@ export function ReviewList({
           <Warning size={16} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           <p>{t("bookmakerMismatch", {
             detected: detectedBookmakers.join(", "),
-            selected: selectedBankroll.bookmaker,
+            selected: selectedBookmaker ?? "",
           })}</p>
         </section>
       )}
@@ -271,6 +272,7 @@ export function ReviewList({
             onPatch={(patch) => patchBet(i, patch)}
             onToggleExcluded={() => toggleExcluded(i)}
             currency={currency}
+            referenceCapital={selectedBankroll?.referenceCapital ?? null}
             taxonomy={reviewTaxonomy}
             tipsters={tipsters}
             onTipsterCreated={(tipster) => setTipsters((items) => [

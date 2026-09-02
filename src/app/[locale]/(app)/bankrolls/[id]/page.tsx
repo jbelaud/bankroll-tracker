@@ -12,6 +12,7 @@ import { Sparkline } from "@/components/dashboard/sparkline";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
 import { BankrollCapitalStats } from "@/components/bankrolls/bankroll-capital-stats";
 import { BankrollMovementPanel } from "@/components/bankrolls/bankroll-movement-panel";
+import { BankrollAllocationList } from "@/components/bankrolls/bankroll-allocation-list";
 import { Link } from "@/i18n/navigation";
 import { LockKey } from "@phosphor-icons/react/dist/ssr";
 import { requireUser } from "@/lib/auth";
@@ -78,6 +79,7 @@ export default async function BankrollDetailPage({
     id: b.id,
     bankrollId: b.bankrollId,
     bankrollName: bankroll.name,
+    referenceCapital: bankroll.referenceCapital,
     date: b.date,
     sport: b.sport,
     betType: b.betType,
@@ -100,13 +102,23 @@ export default async function BankrollDetailPage({
   const deleteThisBankroll = deleteBankroll.bind(null, bankroll.id);
   const t = await getTranslations("bankrollDetail");
   const currency = await getServerCurrency();
+  const allocationItems = bankroll.allocations.map((allocation) => ({
+    id: allocation.id,
+    bookmaker: allocation.bookmaker,
+    balance: allocation.initial
+      + bets.filter((bet) => bet.allocationId === allocation.id && countsTowardPerformance(bet.result)).reduce((sum, bet) => sum + profitOfBet(bet), 0)
+      + movements.filter((movement) => movement.allocationId === allocation.id).reduce((sum, movement) => sum + movementDelta(movement), 0),
+    betCount: bets.filter((bet) => bet.allocationId === allocation.id).length,
+  }));
 
   return (
     <div className="flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6">
       <div className="lg:col-span-12">
         <BankrollDetailHeader
           name={bankroll.name}
-          bookmaker={bankroll.bookmaker}
+          mode={bankroll.mode}
+          allocationCount={bankroll.allocations.length}
+          referenceCapital={bankroll.referenceCapital}
           balance={balance}
           profit={profit}
           initial={bankroll.initial}
@@ -115,6 +127,8 @@ export default async function BankrollDetailPage({
           currency={currency}
         />
       </div>
+
+      {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
 
       <div className="lg:col-span-5">
         <BankrollCapitalStats
@@ -132,8 +146,11 @@ export default async function BankrollDetailPage({
           bankroll={{
             id: bankroll.id,
             name: bankroll.name,
+            mode: bankroll.mode,
             bookmaker: bankroll.bookmaker,
             initial: bankroll.initial,
+            referenceCapital: bankroll.referenceCapital,
+            allocations: bankroll.allocations,
           }}
           betCount={bets.length}
           deleteAction={deleteThisBankroll}
@@ -148,6 +165,7 @@ export default async function BankrollDetailPage({
           currency={currency}
           locale={locale}
           today={new Date().toISOString().slice(0, 10)}
+          allocations={bankroll.mode === "DISTRIBUTED" ? bankroll.allocations.map(({ id: allocationId, bookmaker }) => ({ id: allocationId, bookmaker })) : []}
         />
       </div>
 

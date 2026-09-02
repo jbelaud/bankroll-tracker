@@ -5,7 +5,9 @@ import { fmtMoney, fmtMoneySigned, fmtPct } from "@/lib/format";
 
 export async function BankrollDetailHeader({
   name,
-  bookmaker,
+  mode,
+  allocationCount,
+  referenceCapital,
   balance,
   profit,
   initial,
@@ -14,7 +16,9 @@ export async function BankrollDetailHeader({
   currency,
 }: {
   name: string;
-  bookmaker: string;
+  mode: "SINGLE" | "DISTRIBUTED";
+  allocationCount: number;
+  referenceCapital: number | null;
   balance: number;
   profit: number;
   initial: number;
@@ -36,8 +40,11 @@ export async function BankrollDetailHeader({
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
       <div className="flex flex-col">
-        <span className="text-sm font-medium text-muted-foreground">{bookmaker}</span>
+        <span className="text-sm font-medium text-muted-foreground">
+          {mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: allocationCount })}
+        </span>
         <h1 className="text-lg font-semibold">{name}</h1>
+        {referenceCapital ? <span className="num mt-1 text-xs text-primary">{t("referenceUnit", { value: fmtMoney(referenceCapital / 100, locale, currency) })}</span> : null}
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <span className="num text-4xl font-bold tracking-tight">{fmtMoney(balance, locale, currency)}</span>

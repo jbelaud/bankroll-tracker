@@ -24,6 +24,8 @@ export type BetValidationMessages = {
 
 export type CreateOwnedBetInput = {
   bankrollId: string;
+  allocationId?: string | null;
+  bookmaker?: string | null;
   sport: string;
   betType: string;
   description: string;
@@ -63,6 +65,13 @@ export async function createOwnedBet(
     if (!bankroll) throw new Error(messages.bankrollNotFound);
     if (await isBankrollLockedForUser(userId, input.bankrollId)) throw new Error(messages.bankrollLocked);
   }
+  if (input.allocationId) {
+    const allocation = await prisma.bankrollAllocation.findFirst({
+      where: { id: input.allocationId, bankrollId: input.bankrollId, bankroll: { userId } },
+      select: { id: true },
+    });
+    if (!allocation) throw new Error(messages.bankrollNotFound);
+  }
 
   const taxonomy = options.taxonomy ?? await getUserTaxonomy(userId, false);
   const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, input.sport, input.betType);
@@ -90,6 +99,8 @@ export async function createOwnedBet(
   const bet = await prisma.bet.create({
     data: {
       bankrollId: input.bankrollId,
+      allocationId: input.allocationId ?? null,
+      bookmaker: input.bookmaker?.trim() || null,
       sport: normalizedTaxonomy.sport,
       betType: normalizedTaxonomy.betType,
       description: input.description.trim() || null,

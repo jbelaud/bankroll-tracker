@@ -6,7 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import type { BetFormat, BetResult, Currency } from "@prisma/client";
 import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
-import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
+import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import { groupHistoryBets } from "@/lib/history-grouping";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
@@ -23,6 +23,7 @@ export type HistoryBetItemData = {
   id: string;
   bankrollId: string;
   bankrollName: string;
+  referenceCapital: number | null;
   date: Date;
   sport: string;
   betType: string;
@@ -510,7 +511,7 @@ function DesktopHistoryTable({
                     <span className="block text-muted-foreground">{translateTaxonomy(tBetTypes, bet.betType)}</span>
                   </td>
                   {!scopedToBankroll && <td className="max-w-32 truncate px-3 py-3 text-muted-foreground">{bet.bankrollName}</td>}
-                  <td className="num whitespace-nowrap px-3 py-3 text-right">{fmtMoney(bet.stake, locale, currency)}</td>
+                  <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtMoney(bet.stake, locale, currency)}</span>{fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="block text-[0.65rem] text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}</td>
                   <td className="num whitespace-nowrap px-3 py-3 text-right">{fmtOdds(bet.odds, locale)}</td>
                   <td className="px-3 py-3"><span className="inline-flex rounded-full bg-muted px-2 py-1 font-medium text-muted-foreground">{tResults(bet.result)}</span></td>
                   <td className={positive ? "num whitespace-nowrap px-3 py-3 text-right font-semibold text-profit" : "num whitespace-nowrap px-3 py-3 text-right font-semibold text-loss"}>

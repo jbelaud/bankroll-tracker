@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { createBankroll, updateBankroll } from "@/lib/actions/bankrolls";
+import type { BankrollAllocationInput, BankrollInput } from "@/lib/actions/bankrolls";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 
 // Wrappers FormData pour useActionState — même patron que src/app/auth/actions.ts.
@@ -14,11 +15,25 @@ export type BankrollFormState =
   | { success: true; error?: undefined }
   | undefined;
 
-function parseFields(formData: FormData) {
+function parseFields(formData: FormData): BankrollInput {
+  const mode = formData.get("mode") === "SINGLE" ? "SINGLE" : "DISTRIBUTED";
+  let allocations: BankrollAllocationInput[] = [];
+  try {
+    const parsed = JSON.parse(String(formData.get("allocations") ?? "[]"));
+    if (Array.isArray(parsed)) allocations = parsed.map((item) => ({
+      bookmaker: String(item?.bookmaker ?? ""),
+      initial: Number(item?.initial),
+    }));
+  } catch {
+    allocations = [];
+  }
+  const referenceRaw = String(formData.get("referenceCapital") ?? "").trim();
   return {
     name: String(formData.get("name") ?? ""),
-    bookmaker: String(formData.get("bookmaker") ?? ""),
+    mode,
     initial: Number(formData.get("initial")),
+    referenceCapital: referenceRaw ? Number(referenceRaw) : null,
+    allocations,
   };
 }
 
@@ -33,10 +48,10 @@ export async function createBankrollForm(
   _prevState: BankrollFormState,
   formData: FormData
 ): Promise<BankrollFormState> {
-  const { name, bookmaker, initial } = parseFields(formData);
+  const input = parseFields(formData);
 
   try {
-    await createBankroll(name, bookmaker, initial);
+    await createBankroll(input);
   } catch (e) {
     const t = await getTranslations({ locale: await getServerLocale(), namespace: "common" });
     return { error: e instanceof Error ? e.message : t("unexpectedError") };
@@ -51,10 +66,10 @@ export async function updateBankrollForm(
   formData: FormData
 ): Promise<BankrollFormState> {
   const id = String(formData.get("id") ?? "");
-  const { name, bookmaker, initial } = parseFields(formData);
+  const input = parseFields(formData);
 
   try {
-    await updateBankroll(id, name, bookmaker, initial);
+    await updateBankroll(id, input);
   } catch (e) {
     const t = await getTranslations({ locale: await getServerLocale(), namespace: "common" });
     return { error: e instanceof Error ? e.message : t("unexpectedError") };

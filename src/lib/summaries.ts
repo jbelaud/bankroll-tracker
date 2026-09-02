@@ -4,7 +4,7 @@ import { summarizeBankrollCapital } from "@/lib/bankroll-balance";
 export type BankrollSummary = {
   id: string;
   name: string;
-  bookmaker: string;
+  bookmaker: string | null;
   balance: number;
   profit: number;
 };

@@ -15,7 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
-import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds } from "@/lib/format";
+import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import type { HistoryBetItemData } from "./history-list";
 
@@ -271,6 +271,7 @@ export function HistoryBetItem({
               ? t("cashedOut", { amount: fmtMoney(bet.cashOutAmount ?? 0, locale, currency) })
               : t("stakeAtOdds", { stake: fmtMoney(bet.stake, locale, currency), odds: fmtOdds(bet.odds, locale) })}
           </span>
+          {fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}
           <span className={cn("rounded-full px-2 py-0.5 text-[0.65rem] font-semibold", resultTone)}>
             {tResults(bet.result)}
           </span>

@@ -41,6 +41,11 @@ export function fmtPct(n: number, locale: string, digits = 1): string {
   }).format(v / 100);
 }
 
+export function fmtStakeUnits(stake: number, referenceCapital: number | null | undefined, locale: string): string | null {
+  if (!referenceCapital || referenceCapital <= 0) return null;
+  return `${new Intl.NumberFormat(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format((stake / referenceCapital) * 100)} u`;
+}
+
 export function fmtDate(d: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit" }).format(d);
 }

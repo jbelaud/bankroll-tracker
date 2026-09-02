@@ -18,6 +18,7 @@ import {
 } from "@/lib/taxonomy";
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
+import { normalizeBookmaker } from "@/lib/bookmakers";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -304,7 +305,7 @@ export async function importBets(
   try {
     const bankroll = await prisma.bankroll.findFirst({
       where: { id: bankrollId, userId: user.id },
-      select: { id: true },
+      select: { id: true, mode: true, allocations: { select: { id: true, bookmaker: true } } },
     });
     if (!bankroll) return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollNotFound") };
     if (await isBankrollLockedForUser(user.id, bankrollId)) {
@@ -330,12 +331,17 @@ export async function importBets(
     const scanUsages = uniqueScanUsageIds.length
       ? await prisma.scanUsage.findMany({
           where: { id: { in: uniqueScanUsageIds }, userId: user.id, outcome: "READY" },
-          select: { id: true },
+          select: { id: true, detectedBookmaker: true },
         })
       : [];
     if (scanUsages.length !== uniqueScanUsageIds.length) {
       return { error: "Un Scan associé à cet import est introuvable." };
     }
+    const scanUsageById = new Map(scanUsages.map((usage) => [usage.id, usage]));
+    const allocationByBookmaker = new Map(bankroll.allocations.map((allocation) => [
+      normalizeBookmaker(allocation.bookmaker).toLocaleLowerCase("fr"),
+      allocation,
+    ]));
     existingBets = await prisma.bet.count({
       where: { bankroll: { userId: user.id } },
     });
@@ -344,8 +350,15 @@ export async function importBets(
     });
     for (const [index, bet] of bets.entries()) {
       const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;
+      const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
+      const detectedAllocation = detectedBookmaker
+        ? allocationByBookmaker.get(normalizeBookmaker(detectedBookmaker).toLocaleLowerCase("fr"))
+        : undefined;
+      const allocation = detectedAllocation ?? (bankroll.mode === "DISTRIBUTED" && bankroll.allocations.length === 1 ? bankroll.allocations[0] : undefined);
       await createOwnedBet(user.id, {
         bankrollId,
+        allocationId: allocation?.id ?? null,
+        bookmaker: detectedBookmaker ?? allocation?.bookmaker ?? null,
         sport: bet.sport,
         betType: bet.betType,
         description: bet.description,

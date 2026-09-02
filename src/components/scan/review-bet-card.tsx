@@ -1,7 +1,7 @@
 "use client";
 
 import type { BetResult, Currency } from "@prisma/client";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   X,
   Warning,
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
-import { currencySymbol } from "@/lib/format";
+import { currencySymbol, fmtStakeUnits } from "@/lib/format";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ export function ReviewBetCard({
   onPatch,
   onToggleExcluded,
   currency,
+  referenceCapital,
   taxonomy,
   tipsters,
   onTipsterCreated,
@@ -44,11 +45,13 @@ export function ReviewBetCard({
   onPatch: (patch: Partial<ParsedBet>) => void;
   onToggleExcluded: () => void;
   currency: Currency;
+  referenceCapital: number | null;
   taxonomy: Taxonomy;
   tipsters: TipsterOption[];
   onTipsterCreated: (tipster: TipsterOption) => void;
 }) {
   const suggested = hasSuggestedType(bet);
+  const locale = useLocale();
   const uid = (field: string) => `bet-${index}-${field}`;
   const t = useTranslations("scan.review.card");
   const tSports = useTranslations("sports");
@@ -290,6 +293,7 @@ export function ReviewBetCard({
             onChange={(e) => onPatch({ stake: e.target.value === "" ? null : Number(e.target.value) })}
             className="num min-h-touch rounded-lg px-2 text-sm"
           />
+          {bet.stake !== null && fmtStakeUnits(bet.stake, referenceCapital, locale) ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, referenceCapital, locale)}</span> : null}
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor={uid("odds")} className="text-xs">

@@ -45,7 +45,8 @@ export async function createBankrollMovement(
   type: string,
   amount: number,
   note: string,
-  date: Date
+  date: Date,
+  allocationId: string | null = null
 ) {
   const user = await requireUser();
   const t = await getTranslations({ locale: await getServerLocale(), namespace: "errors" });
@@ -55,16 +56,25 @@ export async function createBankrollMovement(
 
   const bankroll = await prisma.bankroll.findFirst({
     where: { id: bankrollId, userId: user.id },
-    include: { bets: true, movements: true },
+    include: { bets: true, movements: true, allocations: true },
   });
   if (!bankroll) throw new Error(t("bankrollNotFound"));
   if (await isBankrollLockedForUser(user.id, bankrollId)) throw new Error(t("bankrollLocked"));
+  const allocation = allocationId ? bankroll.allocations.find((item) => item.id === allocationId) : null;
+  if (allocationId && !allocation) throw new Error(t("bankrollNotFound"));
+  if (bankroll.mode === "DISTRIBUTED" && bankroll.allocations.length > 1 && !allocation) throw new Error(t("movementAllocationRequired"));
 
-  const current = summarizeBankrollCapital(bankroll, bankroll.bets, bankroll.movements).balance;
+  const current = allocation
+    ? summarizeBankrollCapital(
+        { id: bankroll.id, initial: allocation.initial },
+        bankroll.bets.filter((bet) => bet.allocationId === allocation.id),
+        bankroll.movements.filter((movement) => movement.allocationId === allocation.id)
+      ).balance
+    : summarizeBankrollCapital(bankroll, bankroll.bets, bankroll.movements).balance;
   if (type === "WITHDRAWAL" && amount > current) throw new Error(t("withdrawalExceedsBalance"));
 
   const movement = await prisma.bankrollMovement.create({
-    data: { bankrollId, type, amount, note: note.trim().slice(0, 280) || null, date },
+    data: { bankrollId, allocationId: allocation?.id ?? (bankroll.allocations.length === 1 ? bankroll.allocations[0].id : null), type, amount, note: note.trim().slice(0, 280) || null, date },
   });
   await refreshMovementViews(bankrollId);
   return movement;

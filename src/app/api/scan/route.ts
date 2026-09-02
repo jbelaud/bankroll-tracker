@@ -122,19 +122,20 @@ export async function POST(request: NextRequest) {
     getUserTaxonomy(user.id),
     prisma.bankroll.findFirst({
       where: { id: bankrollId, userId: user.id },
-      select: { bookmaker: true },
+      select: { bookmaker: true, allocations: { select: { bookmaker: true }, take: 2 } },
     }),
   ]);
   if (!bankroll) return NextResponse.json({ error: "Bankroll introuvable." }, { status: 404 });
-  const normalizedBookmaker = normalizeBookmaker(bankroll.bookmaker);
+  const scanBookmaker = bankroll.bookmaker ?? (bankroll.allocations.length === 1 ? bankroll.allocations[0].bookmaker : null);
+  const normalizedBookmaker = scanBookmaker ? normalizeBookmaker(scanBookmaker) : undefined;
   if (await isBankrollLockedForUser(user.id, bankrollId)) {
     return NextResponse.json({ error: t("bankrollLocked") }, { status: 403 });
   }
-  const profile = await prisma.bookmakerScanProfile.findUnique({
+  const profile = normalizedBookmaker ? await prisma.bookmakerScanProfile.findUnique({
     where: { bookmaker: normalizedBookmaker },
     select: { supportStatus: true, rules: true },
-  });
-  const supportStatus = profile?.supportStatus ?? (bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
+  }) : null;
+  const supportStatus = profile?.supportStatus ?? (normalizedBookmaker && bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },

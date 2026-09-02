@@ -131,23 +131,51 @@ enum ScanQualityIssueType {
 // ------------------------------------------------------------
 // Bankroll
 // ------------------------------------------------------------
+enum BankrollMode {
+  SINGLE
+  DISTRIBUTED
+}
+
 model Bankroll {
   id     String @id @default(uuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name      String
-  bookmaker String
-  initial   Float    @default(0) // capital de départ
-  createdAt DateTime @default(now())
+  name             String
+  mode             BankrollMode @default(DISTRIBUTED)
+  bookmaker        String?
+  initial          Float        @default(0) // capital réel de départ
+  referenceCapital Float? // 1 u = 1 % de ce montant de référence
+  createdAt        DateTime     @default(now())
 
   bets               Bet[]
   movements          BankrollMovement[]
+  allocations        BankrollAllocation[]
   scanQualityReports ScanQualityReport[]
   scanDrafts         ScanDraft[]
 
   @@index([userId])
   @@map("bankrolls")
+}
+
+// Ventilation facultative d'un capital entre plusieurs bookmakers. Elle est
+// canonique en mode DISTRIBUTED ; le champ Bankroll.bookmaker ne sert plus
+// qu'à préserver la compatibilité avec les anciennes bankrolls mono-bookmaker.
+model BankrollAllocation {
+  id         String   @id @default(uuid())
+  bankrollId String
+  bankroll   Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  bookmaker  String
+  initial    Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  bets      Bet[]
+  movements BankrollMovement[]
+
+  @@unique([bankrollId, bookmaker])
+  @@index([bankrollId])
+  @@map("bankroll_allocations")
 }
 
 enum BankrollMovementType {
@@ -159,16 +187,19 @@ enum BankrollMovementType {
 // initial reste immutable dans les statistiques : les mouvements ultérieurs
 // expliquent précisément les variations de solde hors performance sportive.
 model BankrollMovement {
-  id         String               @id @default(uuid())
-  bankrollId String
-  bankroll   Bankroll             @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
-  type       BankrollMovementType
-  amount     Float
-  note       String?
-  date       DateTime             @default(now())
-  createdAt  DateTime             @default(now())
+  id           String               @id @default(uuid())
+  bankrollId   String
+  bankroll     Bankroll             @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  allocationId String?
+  allocation   BankrollAllocation?  @relation(fields: [allocationId], references: [id], onDelete: SetNull)
+  type         BankrollMovementType
+  amount       Float
+  note         String?
+  date         DateTime             @default(now())
+  createdAt    DateTime             @default(now())
 
   @@index([bankrollId, date])
+  @@index([allocationId, date])
   @@map("bankroll_movements")
 }
 
@@ -237,9 +268,12 @@ enum TipsterCostFrequency {
 // car il conditionne des calculs (computeProfit) qui ne doivent pas
 // dériver silencieusement si quelqu'un tape une valeur inattendue.
 model Bet {
-  id         String   @id @default(uuid())
-  bankrollId String
-  bankroll   Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  id           String              @id @default(uuid())
+  bankrollId   String
+  bankroll     Bankroll            @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  allocationId String?
+  allocation   BankrollAllocation? @relation(fields: [allocationId], references: [id], onDelete: SetNull)
+  bookmaker    String?
 
   ticketRef   String? // référence du ticket bookmaker, pour la dédup
   date        DateTime
@@ -274,6 +308,7 @@ model Bet {
   scanUsage     ScanUsage?     @relation(fields: [scanUsageId], references: [id], onDelete: SetNull)
 
   @@index([bankrollId])
+  @@index([allocationId])
   @@index([ticketRef])
   @@index([entryMethod, createdAt])
   @@index([scanUsageId])

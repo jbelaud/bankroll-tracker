@@ -21,8 +21,8 @@ import { createManualBetForm } from "@/lib/actions/manual-bet-form";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { TipsterSelector } from "@/components/tipsters/tipster-selector";
 import type { TipsterOption } from "@/lib/tipsters/types";
+import { bankrollOptionLabel, type BankrollOption } from "./scan-flow";
 
-type BankrollOption = { id: string; name: string; bookmaker: string };
 
 export function ManualEntryForm({
   bankrolls,
@@ -44,6 +44,9 @@ export function ManualEntryForm({
   const [state, action, pending] = useActionState(createManualBetForm, undefined);
 
   const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
+  const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
+  const [allocationId, setAllocationId] = useState(bankrolls[0]?.mode === "DISTRIBUTED" ? bankrolls[0].allocations[0]?.id ?? "" : "");
+  const selectedAllocation = selectedBankroll?.allocations.find((allocation) => allocation.id === allocationId);
   const sportList = Object.keys(taxonomy);
   const [sport, setSport] = useState(sportList[0] ?? "Football");
   const [betType, setBetType] = useState(taxonomy[sportList[0] ?? "Football"]?.[0] ?? "Autre");
@@ -73,8 +76,13 @@ export function ManualEntryForm({
         </Label>
         <Select
           value={bankrollId}
-          onValueChange={(v) => setBankrollId(v as string)}
-          items={Object.fromEntries(bankrolls.map((br) => [br.id, `${br.name} (${br.bookmaker})`]))}
+          onValueChange={(v) => {
+            const id = v as string;
+            setBankrollId(id);
+            const next = bankrolls.find((bankroll) => bankroll.id === id);
+            setAllocationId(next?.mode === "DISTRIBUTED" ? next.allocations[0]?.id ?? "" : "");
+          }}
+          items={Object.fromEntries(bankrolls.map((br) => [br.id, bankrollOptionLabel(br)]))}
         >
           <SelectTrigger id="manual-bankroll" className="min-h-touch w-full rounded-lg px-3 text-sm">
             <SelectValue />
@@ -82,13 +90,23 @@ export function ManualEntryForm({
           <SelectContent>
             {bankrolls.map((br) => (
               <SelectItem key={br.id} value={br.id} className="min-h-touch text-sm">
-                {br.name} ({br.bookmaker})
+                {bankrollOptionLabel(br)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <input type="hidden" name="bankrollId" value={bankrollId} />
+        <input type="hidden" name="bookmaker" value={selectedAllocation?.bookmaker ?? selectedBankroll?.bookmaker ?? ""} />
       </div>
+
+      {selectedBankroll?.mode === "DISTRIBUTED" && selectedBankroll.allocations.length > 1 ? <div className="flex flex-col gap-1.5">
+        <Label htmlFor="manual-allocation" className="text-xs">Bookmaker</Label>
+        <Select value={allocationId} onValueChange={(value) => setAllocationId(value as string)} items={Object.fromEntries(selectedBankroll.allocations.map((allocation) => [allocation.id, allocation.bookmaker]))}>
+          <SelectTrigger id="manual-allocation" className="min-h-touch w-full rounded-lg px-3 text-sm"><SelectValue /></SelectTrigger>
+          <SelectContent>{selectedBankroll.allocations.map((allocation) => <SelectItem key={allocation.id} value={allocation.id}>{allocation.bookmaker}</SelectItem>)}</SelectContent>
+        </Select>
+      </div> : null}
+      <input type="hidden" name="allocationId" value={allocationId} />
 
       <TipsterSelector
         id="manual-tipster"

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { BankrollOption } from "./scan-flow";
+import { bankrollOptionLabel, type BankrollOption } from "./scan-flow";
 
 const MAX_GALLERY_IMAGES = 10;
 
@@ -64,7 +64,7 @@ export function UploadZone({
           value={bankrollId}
           onValueChange={(v) => onBankrollChange(v as string)}
           items={Object.fromEntries(
-            bankrolls.map((br) => [br.id, `${br.name} (${br.bookmaker})`])
+            bankrolls.map((br) => [br.id, bankrollOptionLabel(br)])
           )}
         >
           <SelectTrigger
@@ -76,7 +76,7 @@ export function UploadZone({
           <SelectContent>
             {bankrolls.map((br) => (
               <SelectItem key={br.id} value={br.id} className="min-h-touch text-sm">
-                {br.name} ({br.bookmaker})
+                {bankrollOptionLabel(br)}
               </SelectItem>
             ))}
           </SelectContent>

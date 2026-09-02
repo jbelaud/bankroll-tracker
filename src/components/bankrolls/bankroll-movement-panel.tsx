@@ -19,12 +19,14 @@ export function BankrollMovementPanel({
   currency,
   locale,
   today,
+  allocations,
 }: {
   bankrollId: string;
   movements: MovementItem[];
   currency: Currency;
   locale: string;
   today: string;
+  allocations: { id: string; bookmaker: string }[];
 }) {
   const t = useTranslations("bankrollDetail");
   const router = useRouter();
@@ -95,6 +97,13 @@ export function BankrollMovementPanel({
           </DrawerHeader>
           <form action={action} className="flex flex-col gap-4 p-4 pb-[max(env(safe-area-inset-bottom),1.5rem)]">
             <input type="hidden" name="bankrollId" value={bankrollId} />
+            {allocations.length > 1 ? <div className="flex flex-col gap-1.5">
+              <Label htmlFor="movement-allocation" className="text-xs">{t("movementAllocationLabel")}</Label>
+              <select id="movement-allocation" name="allocationId" required className="min-h-touch rounded-lg border border-input bg-background px-3 text-sm">
+                <option value="">{t("movementAllocationChoose")}</option>
+                {allocations.map((allocation) => <option key={allocation.id} value={allocation.id}>{allocation.bookmaker}</option>)}
+              </select>
+            </div> : <input type="hidden" name="allocationId" value={allocations[0]?.id ?? ""} />}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="movement-type" className="text-xs">{t("movementTypeLabel")}</Label>
               <select id="movement-type" name="type" defaultValue="DEPOSIT" className="min-h-touch rounded-lg border border-input bg-background px-3 text-sm">
