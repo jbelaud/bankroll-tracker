@@ -246,9 +246,19 @@ export async function signInWithGoogle(formData: FormData) {
 
   await storeReferralContext(referral);
 
+  const callbackUrl = getAuthCallbackUrl(origin, locale, invite ?? undefined, growth);
+  const parsedCallbackUrl = new URL(callbackUrl);
+  console.info("[auth/google] Initialisation OAuth", {
+    redirectOrigin: parsedCallbackUrl.origin,
+    redirectPathname: parsedCallbackUrl.pathname,
+    vercelEnvironment: process.env.VERCEL_ENV ?? null,
+    gitBranch: process.env.VERCEL_GIT_COMMIT_REF ?? null,
+    hasConfiguredAppUrl: Boolean(process.env.NEXT_PUBLIC_APP_URL),
+  });
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: getAuthCallbackUrl(origin, locale, invite ?? undefined, growth) },
+    options: { redirectTo: callbackUrl },
   });
 
   const url = data?.url;
