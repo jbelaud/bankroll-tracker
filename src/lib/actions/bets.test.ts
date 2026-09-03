@@ -26,6 +26,7 @@ vi.mock("@/lib/taxonomy", () => ({
   getUserTaxonomy: vi.fn().mockResolvedValue({ Football: ["Résultat du match"] }),
   normalizeTaxonomyPair: vi.fn((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false })),
   saveUserTaxonomyEntry: mocks.saveTaxonomy,
+  saveUserTaxonomyEntries: mocks.saveTaxonomy,
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {

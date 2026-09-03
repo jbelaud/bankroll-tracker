@@ -190,11 +190,27 @@ function isDefaultPair(sport: string, betType: string): boolean {
 
 /** Enregistre les nouveaux couples seulement après validation/import du pari. */
 export async function saveUserTaxonomyEntry(userId: string, sport: string, betType: string) {
-  if (isDefaultPair(sport, betType)) return;
+  await saveUserTaxonomyEntries(userId, [{ sport, betType }]);
+}
 
-  await prisma.userTaxonomyEntry.upsert({
-    where: { userId_sport_betType: { userId, sport, betType } },
-    create: { userId, sport, betType },
-    update: {},
+/**
+ * Enregistre un lot en une seule requête. `skipDuplicates` rend l'opération
+ * sûre lorsque le pari principal et ses sélections contiennent le même couple,
+ * ou lorsque deux validations concurrentes découvrent la même taxonomie.
+ */
+export async function saveUserTaxonomyEntries(
+  userId: string,
+  entries: ReadonlyArray<{ sport: string; betType: string }>
+) {
+  const uniqueEntries = new Map<string, { userId: string; sport: string; betType: string }>();
+  for (const { sport, betType } of entries) {
+    if (isDefaultPair(sport, betType)) continue;
+    uniqueEntries.set(`${sport}\u0000${betType}`, { userId, sport, betType });
+  }
+  if (uniqueEntries.size === 0) return;
+
+  await prisma.userTaxonomyEntry.createMany({
+    data: [...uniqueEntries.values()],
+    skipDuplicates: true,
   });
 }

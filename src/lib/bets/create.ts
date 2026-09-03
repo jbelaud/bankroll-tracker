@@ -9,7 +9,7 @@ import {
   getUserTaxonomy,
   normalizeSportContext,
   normalizeTaxonomyPair,
-  saveUserTaxonomyEntry,
+  saveUserTaxonomyEntries,
   type Taxonomy,
 } from "@/lib/taxonomy";
 
@@ -137,10 +137,10 @@ export async function createOwnedBet(
       })),
     });
   }
-  await Promise.all([
-    saveUserTaxonomyEntry(userId, normalizedTaxonomy.sport, normalizedTaxonomy.betType),
+  await saveUserTaxonomyEntries(userId, [
+    { sport: normalizedTaxonomy.sport, betType: normalizedTaxonomy.betType },
     ...normalizedSelections.flatMap((selection) => selection.betType
-      ? [saveUserTaxonomyEntry(userId, selection.sport, selection.betType)]
+      ? [{ sport: selection.sport, betType: selection.betType }]
       : []),
   ]);
   return bet;
