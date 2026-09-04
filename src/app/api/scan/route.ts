@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
-  // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
+  // 4. Appel IA côté serveur uniquement (Anthropic prioritaire pour le scan).
   let rawBets: unknown[];
   let rawExtraction: unknown;
   let detectedBookmaker: string | null = null;
@@ -228,7 +228,8 @@ export async function POST(request: NextRequest) {
     detectionConfidence = analysis.detectionConfidence;
 
   } catch (e) {
-    await releaseQuota();
+    console.error("[scan] extraction échouée", e);
+    await releaseQuota().catch((quotaError) => console.error("[scan] échec restitution quota", quotaError));
     await prisma.scanUsage.create({
       data: {
         userId: user.id,
@@ -236,7 +237,11 @@ export async function POST(request: NextRequest) {
         plan: dbUser.plan,
         inputTokens: scanInputTokens,
         outputTokens: scanOutputTokens,
-        costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
+        // Le fournisseur peut échouer avant de retourner son modèle et ses
+        // tokens. La télémétrie ne doit jamais masquer l'erreur d'origine.
+        costUsd: scanModel === "unknown"
+          ? 0
+          : calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
         outcome: "TECHNICAL_FAILURE",
         selectedBookmaker: normalizedBookmaker,
         promptVersion: SCAN_PROMPT_VERSION,
@@ -248,7 +253,6 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       properties: { bookmaker: normalizedBookmaker, scan_duration_ms: Date.now() - scanStartedAt },
     });
-    console.error("[scan] extraction échouée", e);
     return NextResponse.json({ error: t("analysisFailed") }, { status: 502 });
   }
 

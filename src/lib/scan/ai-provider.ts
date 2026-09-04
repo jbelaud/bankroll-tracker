@@ -70,6 +70,14 @@ export type ScanAiResponse = {
   outputTokens: number;
 };
 
+export type ScanProvider = "anthropic" | "gemini";
+
+export function getConfiguredScanProvider(): ScanProvider | null {
+  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
+  if (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY) return "gemini";
+  return null;
+}
+
 function getGeminiModel(): GeminiModel {
   const configuredModel = process.env.GEMINI_MODEL;
   return GEMINI_MODELS.includes(configuredModel as GeminiModel)
@@ -78,7 +86,7 @@ function getGeminiModel(): GeminiModel {
 }
 
 export function hasConfiguredScanProvider(): boolean {
-  return Boolean(process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.ANTHROPIC_API_KEY);
+  return getConfiguredScanProvider() !== null;
 }
 
 export async function analyzeTicketImage({
@@ -94,9 +102,39 @@ export async function analyzeTicketImage({
   bookmaker?: string;
   bookmakerRules?: string | null;
 }): Promise<ScanAiResponse> {
+  const provider = getConfiguredScanProvider();
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 
-  if (geminiApiKey) {
+  // Anthropic est prioritaire pour le scan. Gemini reste disponible lorsque
+  // aucune clé Anthropic n'est configurée.
+  if (provider === "anthropic") {
+    const response = await new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.create({
+      model: "claude-haiku-4-5",
+      max_tokens: 8192,
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+            { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+          ],
+        },
+      ],
+    });
+    const text = response.content
+      .filter((block): block is Anthropic.TextBlock => block.type === "text")
+      .map((block) => block.text)
+      .join("\n");
+
+    return {
+      text,
+      model: "claude-haiku-4-5",
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+    };
+  }
+
+  if (provider === "gemini" && geminiApiKey) {
     const model = getGeminiModel();
     const ai = new GoogleGenAI({ apiKey: geminiApiKey });
     const response = await ai.models.generateContent({
@@ -124,34 +162,7 @@ export async function analyzeTicketImage({
     };
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("Aucun fournisseur IA configuré");
-  }
-
-  const response = await new Anthropic().messages.create({
-    model: "claude-haiku-4-5",
-    max_tokens: 8192,
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-          { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
-        ],
-      },
-    ],
-  });
-  const text = response.content
-    .filter((block): block is Anthropic.TextBlock => block.type === "text")
-    .map((block) => block.text)
-    .join("\n");
-
-  return {
-    text,
-    model: "claude-haiku-4-5",
-    inputTokens: response.usage.input_tokens,
-    outputTokens: response.usage.output_tokens,
-  };
+  throw new Error("Aucun fournisseur IA configuré");
 }
 
 /** Generates structured text for other server-side AI features, such as insights. */
