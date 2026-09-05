@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { isBetResult } from "@/lib/bet-result";
+import { toUnits } from "@/lib/bankroll-units";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import {
@@ -159,7 +160,7 @@ export async function listAllBets() {
 async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
-    select: { id: true, bankrollId: true, tipsterId: true },
+    select: { id: true, bankrollId: true, tipsterId: true, referenceCapitalAtBet: true },
   });
   if (!bet) {
     throw new Error((await getErrorsT())("betNotFound"));
@@ -332,6 +333,7 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       eventResult: input.eventResult.trim() || null,
       date,
       stake: input.stake,
+      stakeUnits: toUnits(input.stake, existing.referenceCapitalAtBet),
       odds: input.odds,
       result: input.result,
       cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,

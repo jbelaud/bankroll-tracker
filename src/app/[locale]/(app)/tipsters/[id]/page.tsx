@@ -68,12 +68,11 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
   if (!performance) notFound();
 
   const bankrollName = new Map(activeBankrolls.map((bankroll) => [bankroll.id, bankroll.name]));
-  const bankrollReference = new Map(activeBankrolls.map((bankroll) => [bankroll.id, bankroll.referenceCapital]));
   const history: HistoryBetItemData[] = scopedBets.map((bet) => ({
     id: bet.id,
     bankrollId: bet.bankrollId,
     bankrollName: bankrollName.get(bet.bankrollId) ?? "—",
-    referenceCapital: bankrollReference.get(bet.bankrollId) ?? null,
+    referenceCapital: bet.referenceCapitalAtBet,
     date: bet.date,
     sport: bet.sport,
     betType: bet.betType,

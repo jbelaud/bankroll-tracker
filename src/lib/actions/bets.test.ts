@@ -30,6 +30,13 @@ vi.mock("@/lib/taxonomy", () => ({
 }));
 vi.mock("@/lib/prisma", () => ({
   prisma: {
+    $transaction: async (callback: (tx: unknown) => Promise<unknown>) => callback({
+      $queryRaw: vi.fn().mockResolvedValue([]),
+      bankrollReferencePeriod: { findMany: vi.fn().mockResolvedValue([
+        { referenceCapital: 1000, effectiveFrom: new Date("2026-01-01") },
+      ]) },
+      bet: { create: mocks.betCreate },
+    }),
     bankroll: { findFirst: mocks.bankrollFindFirst },
     bet: {
       findFirst: mocks.betFindFirst,
@@ -67,7 +74,7 @@ describe("association Bet / Tipster", () => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-a" });
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-a", userId: "user-a" });
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000 });
     mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
     mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
     mocks.isLocked.mockResolvedValue(false);
@@ -81,7 +88,7 @@ describe("association Bet / Tipster", () => {
     );
 
     expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
-      data: expect.objectContaining({ tipsterId: null }),
+      data: expect.objectContaining({ tipsterId: null, stakeUnits: 1, referenceCapitalAtBet: 1000 }),
     }));
   });
 
@@ -129,7 +136,7 @@ describe("association Bet / Tipster", () => {
   });
 
   it("conserve le Tipster archivé déjà lié sans permettre d'en choisir un autre", async () => {
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived" });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived", referenceCapitalAtBet: null });
     mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-archived" });
 
     await updateBet("bet-a", { ...updateInput, tipsterId: "tipster-archived" });
@@ -155,6 +162,15 @@ describe("déplacement de paris entre bankrolls", () => {
     mocks.isLocked.mockResolvedValue(false);
     mocks.betFindMany.mockResolvedValue([{ id: "bet-a", bankrollId: "bankroll-source" }]);
     mocks.betUpdateMany.mockResolvedValue({ count: 1 });
+  });
+
+  it("recalcule une mise corrigée avec la référence figée du pari", async () => {
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000 });
+    await updateBet("bet-a", { ...updateInput, stake: 20 });
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ stake: 20, stakeUnits: 2 }),
+    }));
+    expect(mocks.bankrollFindFirst).not.toHaveBeenCalled();
   });
 
   it("remplace l’ancienne allocation par celle d’une destination mono-bookmaker", async () => {

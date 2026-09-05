@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { BetEntryMethod, BetFormat, BetResult } from "@prisma/client";
+import { referenceDateForImport, unitSnapshot } from "@/lib/bankroll-units";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { isBetResult } from "@/lib/bet-result";
 import { prisma } from "@/lib/prisma";
@@ -96,7 +97,12 @@ export async function createOwnedBet(
       betType: selection.betType ? normalized.betType : null,
     };
   });
-  const bet = await prisma.bet.create({
+  const bet = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${input.bankrollId} FOR UPDATE`;
+    const periods = await tx.bankrollReferencePeriod.findMany({ where: { bankrollId: input.bankrollId } });
+    const recordedAt = new Date();
+    const referenceDate = referenceDateForImport(input.date, input.result === "EN_ATTENTE", source.entryMethod === "FILE", recordedAt);
+    return tx.bet.create({
     data: {
       bankrollId: input.bankrollId,
       allocationId: input.allocationId ?? null,
@@ -106,6 +112,7 @@ export async function createOwnedBet(
       description: input.description.trim() || null,
       eventResult: input.eventResult?.trim() || null,
       stake: input.stake,
+      ...unitSnapshot(input.stake, periods, referenceDate, recordedAt),
       odds: input.odds,
       boosted: input.boosted,
       originalOdds: input.boosted ? input.originalOdds : null,
@@ -122,6 +129,7 @@ export async function createOwnedBet(
       tipsterId: source.resolvedTipsterId ?? null,
       scanUsageId: source.scanUsageId ?? null,
     },
+    });
   });
   if (normalizedSelections.length) {
     await prisma.betSelection.createMany({

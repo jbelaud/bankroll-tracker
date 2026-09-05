@@ -89,6 +89,7 @@ export async function createBankroll(input: BankrollInput) {
       bookmaker: legacyBookmaker,
       initial: normalized.initial,
       referenceCapital: normalized.referenceCapital,
+      referencePeriods: { create: { referenceCapital: normalized.referenceCapital, effectiveFrom: new Date() } },
       allocations: normalized.allocations.length ? { create: normalized.allocations } : undefined,
     },
     include: { allocations: { orderBy: { createdAt: "asc" } } },
@@ -125,6 +126,14 @@ export async function updateBankroll(
   const legacyBookmaker = normalized.allocations.length === 1 ? normalized.allocations[0].bookmaker : null;
 
   return prisma.$transaction(async (tx) => {
+    // Serialize changes of reference for this bankroll.
+    await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${id} FOR UPDATE`;
+    const current = await tx.bankroll.findUniqueOrThrow({ where: { id } });
+    if (current.referenceCapital !== normalized.referenceCapital) {
+      await tx.bankrollReferencePeriod.create({
+        data: { bankrollId: id, referenceCapital: normalized.referenceCapital, effectiveFrom: new Date() },
+      });
+    }
     if (normalized.mode === "DISTRIBUTED") {
       const existing = await tx.bankrollAllocation.findMany({
         where: { bankrollId: id },

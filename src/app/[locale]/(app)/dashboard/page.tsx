@@ -150,7 +150,7 @@ export default async function DashboardPage() {
     pending: b.result === "EN_ATTENTE",
     profit: computeProfit(b),
     bankrollName: bankrollName(b.bankrollId),
-    referenceCapital: bankrolls.find((br) => br.id === b.bankrollId)?.referenceCapital ?? null,
+    referenceCapital: b.referenceCapitalAtBet,
   }));
 
   if (bankrolls.length === 0) {

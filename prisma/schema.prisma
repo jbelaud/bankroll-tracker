@@ -153,9 +153,39 @@ model Bankroll {
   allocations        BankrollAllocation[]
   scanQualityReports ScanQualityReport[]
   scanDrafts         ScanDraft[]
+  referencePeriods   BankrollReferencePeriod[]
+  stakingProfile     StakingProfile?
 
   @@index([userId])
   @@map("bankrolls")
+}
+
+// Références connues à partir de leur date d'effet. Les périodes antérieures
+// inconnues ne sont jamais reconstruites à partir du capital actuel.
+model BankrollReferencePeriod {
+  id               String   @id @default(uuid())
+  bankrollId       String
+  bankroll         Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  referenceCapital Float?
+  effectiveFrom    DateTime
+  createdAt        DateTime @default(now())
+
+  @@unique([bankrollId, effectiveFrom])
+  @@map("bankroll_reference_periods")
+}
+
+model StakingProfile {
+  id               String   @id @default(uuid())
+  bankrollId       String   @unique
+  bankroll         Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  referenceCapital Float
+  unitPercent      Float    @default(1)
+  rounding         Float    @default(0)
+  decreaseThreshold Float   @default(5)
+  increaseThreshold Float   @default(25)
+  updatedAt        DateTime @updatedAt
+
+  @@map("staking_profiles")
 }
 
 // Ventilation facultative d'un capital entre plusieurs bookmakers. Elle est
@@ -283,6 +313,9 @@ model Bet {
   eventResult String? // score/résultat de l'événement, distinct de la sélection jouée
 
   stake Float
+  referenceCapitalAtBet Float?
+  stakeUnits            Float?
+  unitsRecordedAt       DateTime?
   odds  Float? // inconnue uniquement pour un pari remboursé sans cote visible
 
   boosted      Boolean @default(false)

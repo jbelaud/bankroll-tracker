@@ -7,6 +7,9 @@ function bet(overrides: Partial<Bet>): Bet {
     id: "bet-1", bankrollId: "bankroll-1", allocationId: null, bookmaker: null, ticketRef: null, date: new Date("2026-08-25"), sport: "Football", betType: "Résultat du match", description: null, eventResult: null,
     stake: 10, odds: 2, boosted: false, originalOdds: null, freebet: false, live: false, result: "GAGNE", cashOutAmount: null, createdAt: new Date(), entryMethod: "UNKNOWN", format: "SIMPLE", closingOdds: null, tipsterId: null, importBatchId: null, scanUsageId: null,
     ...overrides,
+    referenceCapitalAtBet: overrides.referenceCapitalAtBet ?? null,
+    stakeUnits: overrides.stakeUnits ?? null,
+    unitsRecordedAt: overrides.unitsRecordedAt ?? null,
   };
 }
 
