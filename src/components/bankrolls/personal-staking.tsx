@@ -47,7 +47,7 @@ export function PersonalStaking({ bankrollId, settings, balance }: {
     && (gap <= -settings.decreaseThreshold || gap >= settings.increaseThreshold);
 
   return (
-    <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-12">
+    <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-6">
       <div className="max-w-3xl">
         <h2 className="text-base font-semibold">Mes réglages de suivi</h2>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -84,7 +84,7 @@ export function PersonalStaking({ bankrollId, settings, balance }: {
           </div>
         </fieldset>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <label className="grid gap-1.5 text-sm font-medium">
             Mon montant de référence (€)
             <Input className="h-11 rounded-xl px-3 text-sm" name="referenceCapital" type="number" min="0.01" step="0.01" required value={reference} onChange={(event) => setReference(event.target.value)} />
@@ -93,7 +93,7 @@ export function PersonalStaking({ bankrollId, settings, balance }: {
             Valeur de 1u (%)
             <Input className="h-11 rounded-xl px-3 text-sm" name="unitPercent" type="number" min="0.01" max="100" step="0.01" required value={percent} onChange={(event) => setPercent(event.target.value)} />
           </label>
-          <label className="grid gap-1.5 text-sm font-medium">
+          <label className="grid gap-1.5 text-sm font-medium sm:col-span-2">
             Arrondi de la mise
             <Select value={rounding} onValueChange={(value) => setRounding(value ?? "0")}>
               <SelectTrigger className="h-11 w-full rounded-xl bg-background/70 px-3 text-sm">
