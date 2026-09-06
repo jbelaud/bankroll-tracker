@@ -48,6 +48,14 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("sans pouce rouge visible, ne suffit toujours pas à conclure Perdu");
   });
 
+  it("copies the Unibet footer before converting its DD-MM-YY date", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain('"dateText": "texte exact de la date visible sur le ticket');
+    expect(prompt).toContain("obligatoirement JOUR-MOIS-ANNÉE");
+    expect(prompt).toContain('"date": "2026-09-05", jamais "2026-05-09"');
+    expect(prompt).toContain("contrôlée par le serveur à partir de \"dateText\"");
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });

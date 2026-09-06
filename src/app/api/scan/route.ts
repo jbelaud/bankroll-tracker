@@ -25,6 +25,7 @@ import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
+import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -52,12 +53,6 @@ function numOrNull(v: unknown): number | null {
   if (v == null || v === "") return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
-}
-
-function isoDateOrNull(value: unknown): string | null {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const parsed = new Date(`${value}T00:00:00.000Z`);
-  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value ? null : value;
 }
 
 function betFormat(value: unknown): ParsedBet["format"] {
@@ -324,6 +319,8 @@ export async function POST(request: NextRequest) {
     description: b.description ?? "",
   }));
   const existingTicketRefs = existing.map((bet) => bet.ticketRef);
+  const requiresVisibleDateText = [normalizedBookmaker, detectedBookmaker]
+    .some((bookmaker) => normalizeBookmaker(bookmaker ?? "") === "Unibet");
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
@@ -373,7 +370,9 @@ export async function POST(request: NextRequest) {
     }
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
-      date: isoDateOrNull(r.date),
+      date: normalizeExtractedTicketDate(r.dateText, r.date, {
+        requireVisibleText: requiresVisibleDateText,
+      }),
       sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
       // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont signalés

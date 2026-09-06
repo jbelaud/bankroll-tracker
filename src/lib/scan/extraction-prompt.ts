@@ -25,6 +25,7 @@ Identifie le bookmaker uniquement à partir d'indices visibles. Règle de sécur
 Schéma attendu pour chaque pari :
 {
   "date": "AAAA-MM-JJ, ou null si l'année ou la date complète ne sont pas visibles",
+  "dateText": "texte exact de la date visible sur le ticket, sans conversion (ex: Le 05-09-26 à 21h02), ou null",
   "ticketRef": "référence du ticket telle qu'affichée (ex: 6FQSQQOU), ou null si non visible",
   "sport": "Football" | "Cyclisme" | autre sport si évident,
   "betType": voir liste ci-dessous,
@@ -50,7 +51,7 @@ ${JSON.stringify(taxonomy, null, 0)}
 Précision cyclisme : "Vainqueur" ou "Podium 1er" (quelle que soit la formulation du bookmaker) = toujours "Top 1". On uniformise systématiquement en Top 1 / Top 3 / Top 10, jamais de libellé bookmaker brut.
 
 Règles impératives :
-- "date" : utilise la date affichée en bas du ticket (format ticket "10h02 - 22 juin 2026" → "2026-06-22"). Si l'année ou la date complète n'est pas visible, mets null : ne complète jamais avec la date actuelle.
+- "date" et "dateText" : recopie d'abord dans "dateText" le texte exact de la date affichée en bas du ticket, sans changer l'ordre des nombres, puis convertis-le dans "date". Sur Unibet, le format « Le JJ-MM-AA à HHhMM » est obligatoirement JOUR-MOIS-ANNÉE : « Le 05-09-26 à 21h02 » donne "dateText": "Le 05-09-26 à 21h02" et "date": "2026-09-05", jamais "2026-05-09". Pour un format "10h02 - 22 juin 2026", utilise "date": "2026-06-22". Si l'année ou la date complète n'est pas visible, mets les deux champs à null : ne complète jamais avec la date actuelle. La conversion finale de la date Unibet sera contrôlée par le serveur à partir de "dateText".
 - "stake" et "odds" : si l'une de ces valeurs n'est pas visible, mets null. Ne la calcule jamais depuis un gain, des cotes de jambes ou une autre valeur affichée.
 - "sport" : déduis-le d'abord de la compétition, des participants et du contexte de l'événement, JAMAIS du type de pari, de la cote ou du nom d'une promotion. Une promotion bookmaker n'est jamais une information sportive. Exemples : Afrique du Sud - Canada en rugby doit avoir "sport": "Rugby", même avec un badge « La Grosse Cote Boostée » ; un coureur, une étape ou un classement cycliste doit avoir "sport": "Cyclisme".
 - Sur les tickets Unibet, le petit pictogramme coloré n'est jamais une preuve suffisante du sport. Une opposition entre deux joueurs avec des noms abrégés et le marché « Face à Face - Match » est un indice fort de Tennis : classe-la Tennis sauf si un texte visible identifie explicitement un autre sport. Ne confonds jamais la balle de tennis jaune avec une balle de golf. Utilise Golf uniquement si des indices textuels propres au golf sont visibles, par exemple un tournoi de golf, un parcours, un trou, un round ou un classement de golfeurs.
