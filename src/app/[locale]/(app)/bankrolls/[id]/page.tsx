@@ -133,14 +133,8 @@ export default async function BankrollDetailPage({
       </div>
 
       {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
-      <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
-      <PersonalStaking bankrollId={id} balance={balance} settings={stakingProfile ? {
-        referenceCapital: stakingProfile.referenceCapital, unitPercent: stakingProfile.unitPercent,
-        rounding: stakingProfile.rounding, recommendationsEnabled: stakingProfile.recommendationsEnabled,
-        decreaseThreshold: stakingProfile.decreaseThreshold, increaseThreshold: stakingProfile.increaseThreshold,
-      } : { referenceCapital: bankroll.referenceCapital ?? bankroll.initial, unitPercent: 1, rounding: 0, recommendationsEnabled: false, decreaseThreshold: 5, increaseThreshold: 25 }} />
-
-      <div className="lg:col-span-5">
+      <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
+        <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
         <BankrollCapitalStats
           deposits={capital.deposits}
           withdrawals={capital.withdrawals}
@@ -149,9 +143,6 @@ export default async function BankrollDetailPage({
           performancePct={capital.performancePct}
           currency={currency}
         />
-      </div>
-
-      <div className="lg:col-span-3">
         <BankrollDetailActions
           bankroll={{
             id: bankroll.id,
@@ -166,9 +157,6 @@ export default async function BankrollDetailPage({
           deleteAction={deleteThisBankroll}
           currency={currency}
         />
-      </div>
-
-      <div className="lg:col-span-4">
         <BankrollMovementPanel
           bankrollId={bankroll.id}
           movements={movements.map((movement) => ({ id: movement.id, type: movement.type, amount: movement.amount, note: movement.note, date: movement.date.toISOString() }))}
@@ -178,6 +166,11 @@ export default async function BankrollDetailPage({
           allocations={bankroll.mode === "DISTRIBUTED" ? bankroll.allocations.map(({ id: allocationId, bookmaker }) => ({ id: allocationId, bookmaker })) : []}
         />
       </div>
+      <PersonalStaking bankrollId={id} balance={balance} settings={stakingProfile ? {
+        referenceCapital: stakingProfile.referenceCapital, unitPercent: stakingProfile.unitPercent,
+        rounding: stakingProfile.rounding, recommendationsEnabled: stakingProfile.recommendationsEnabled,
+        decreaseThreshold: stakingProfile.decreaseThreshold, increaseThreshold: stakingProfile.increaseThreshold,
+      } : { referenceCapital: bankroll.referenceCapital ?? bankroll.initial, unitPercent: 1, rounding: 0, recommendationsEnabled: false, decreaseThreshold: 5, increaseThreshold: 25 }} />
 
       {curve.length >= 2 && (
         <div className="glass-card rounded-xl p-4 lg:col-span-12">

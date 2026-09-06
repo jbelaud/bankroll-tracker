@@ -12,7 +12,7 @@ export function ReferenceHistory({ bankrollId, missing }: { bankrollId: string; 
   if (missing === 0) return null;
 
   return (
-    <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-6">
+    <section className="glass-card rounded-2xl p-4 sm:p-5">
       <div className="max-w-2xl">
         <h2 className="text-base font-semibold">Anciennes unités à compléter</h2>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
