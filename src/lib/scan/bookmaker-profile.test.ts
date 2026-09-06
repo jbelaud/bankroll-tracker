@@ -33,6 +33,13 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain('"sport": "Autre sport", "betType": "Autre"');
   });
 
+  it("does not confuse Unibet tennis head-to-head tickets with golf", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("« Face à Face - Match »");
+    expect(prompt).toContain("Ne confonds jamais la balle de tennis jaune avec une balle de golf.");
+    expect(prompt).toContain("Utilise Golf uniquement si des indices textuels propres au golf sont visibles");
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });

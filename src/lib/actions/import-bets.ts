@@ -18,6 +18,7 @@ import {
 } from "@/lib/taxonomy";
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
+import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -343,7 +344,7 @@ export async function importBets(
       where: { bankroll: { userId: user.id }, entryMethod: "SCAN" },
     });
     for (const [index, bet] of bets.entries()) {
-      const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;
+      const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
       await createOwnedBet(user.id, {
         bankrollId,
         sport: bet.sport,
@@ -392,7 +393,7 @@ export async function importBets(
       const importedByScan = new Map<string, number>();
       for (const bet of bets) {
         if (bet.sourceScanIndex === undefined) continue;
-        const scanUsageId = uniqueScanUsageIds[bet.sourceScanIndex];
+        const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
         if (scanUsageId) importedByScan.set(scanUsageId, (importedByScan.get(scanUsageId) ?? 0) + 1);
       }
       const measurementByScan = new Map(scanMeasurements.map((item) => [item.scanUsageId, item]));

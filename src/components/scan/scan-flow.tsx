@@ -16,6 +16,7 @@ import {
   type ScanDraftPayload,
 } from "@/lib/actions/scan-drafts";
 import { correctionSummary, finalBetsForScan } from "@/lib/scan/quality";
+import { scanUsageIdsBySourceIndex } from "@/lib/scan/import-sources";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { UploadZone } from "./upload-zone";
@@ -118,7 +119,8 @@ export function ScanFlow({
       setError("");
       const draftId = (flow.step === "review" || flow.step === "importing") ? flow.draftId : null;
       setFlow({ step: "importing", draftId, bets, files, scans, skippedDuplicateFiles });
-      const scanMeasurements = scans.map((scan) => {
+      const readyScans = scans.filter((scan) => scan.outcome === "READY");
+      const scanMeasurements = readyScans.map((scan) => {
         const finalExtraction = finalBetsForScan(bets, scan.sourceFileIndex);
         const corrections = correctionSummary(scan.rawExtraction, finalExtraction);
         return {
@@ -131,7 +133,7 @@ export function ScanFlow({
       const result = await importBets(
         bankrollId,
         bets,
-        scans.map((scan) => scan.usageId),
+        scanUsageIdsBySourceIndex(scans),
         scanMeasurements
       );
       if (result.imported === undefined) {
