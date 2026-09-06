@@ -26,6 +26,7 @@ import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
+import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -133,43 +134,50 @@ export async function POST(request: NextRequest) {
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true, betsImported: true },
+    select: { id: true, betsImported: true, promptVersion: true },
   });
-  // Une analyse ne devient un doublon bloquant que lorsque ses paris ont
-  // réellement été importés. Un brouillon peut être repris ; une ancienne
-  // analyse sans import ni brouillon est libérée pour que l'utilisateur puisse
-  // l'analyser de nouveau, sans créer une seconde récompense de parrainage.
-  let isRescanAfterUnimportedAnalysis = false;
+  // Une analyse de la version courante devient un doublon bloquant lorsque ses
+  // paris ont été importés ou que son brouillon existe encore. Après une mise
+  // à niveau du prompt, la même image peut être retraitée une fois afin de
+  // bénéficier des nouvelles règles, sans seconde récompense de parrainage.
+  let isRepeatAnalysis = false;
   if (duplicateScan) {
-    if (duplicateScan.betsImported > 0) {
+    const promptWasUpgraded = canRescanAfterPromptUpgrade(
+      duplicateScan.promptVersion,
+      SCAN_PROMPT_VERSION
+    );
+    if (duplicateScan.betsImported > 0 && !promptWasUpgraded) {
       return NextResponse.json(
         { error: t("duplicateScanImported", { count: duplicateScan.betsImported }) },
         { status: 409 }
       );
     }
 
-    const drafts = await prisma.scanDraft.findMany({
-      where: { userId: user.id },
-      select: { payload: true },
-      take: 20,
-    });
-    const hasPendingDraft = drafts.some(({ payload }) => {
-      const scans = (payload as { scans?: unknown }).scans;
-      return Array.isArray(scans) && scans.some(
-        (scan) => typeof scan === "object" && scan !== null && (scan as { usageId?: unknown }).usageId === duplicateScan.id
-      );
-    });
-    if (hasPendingDraft) {
-      return NextResponse.json({ error: t("duplicateScanPending") }, { status: 409 });
+    if (!promptWasUpgraded) {
+      const drafts = await prisma.scanDraft.findMany({
+        where: { userId: user.id },
+        select: { payload: true },
+        take: 20,
+      });
+      const hasPendingDraft = drafts.some(({ payload }) => {
+        const scans = (payload as { scans?: unknown }).scans;
+        return Array.isArray(scans) && scans.some(
+          (scan) => typeof scan === "object" && scan !== null && (scan as { usageId?: unknown }).usageId === duplicateScan.id
+        );
+      });
+      if (hasPendingDraft) {
+        return NextResponse.json({ error: t("duplicateScanPending") }, { status: 409 });
+      }
     }
 
-    // On garde la ligne de coût historique, mais son hash est libéré : aucun
-    // import n'a eu lieu et l'utilisateur n'a plus de brouillon à reprendre.
+    // On garde la ligne de coût historique, mais son hash est libéré. Une
+    // nouvelle version du prompt peut ainsi corriger une capture déjà importée
+    // sans rendre le même fichier rescannable plusieurs fois avec cette version.
     await prisma.scanUsage.update({
       where: { id: duplicateScan.id },
       data: { sourceHash: null },
     });
-    isRescanAfterUnimportedAnalysis = true;
+    isRepeatAnalysis = true;
   }
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
@@ -404,7 +412,7 @@ export async function POST(request: NextRequest) {
     return bet;
   });
 
-  const referralEligible = !isRescanAfterUnimportedAnalysis && hasValidReferralScan(bets);
+  const referralEligible = !isRepeatAnalysis && hasValidReferralScan(bets);
   let scanUsage;
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
