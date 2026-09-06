@@ -160,7 +160,14 @@ export async function listAllBets() {
 async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
-    select: { id: true, bankrollId: true, tipsterId: true, referenceCapitalAtBet: true },
+    select: {
+      id: true, bankrollId: true, tipsterId: true, referenceCapitalAtBet: true,
+      sport: true, betType: true, description: true, eventResult: true, date: true,
+      stake: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true, boosted: true,
+      originalOdds: true, freebet: true, live: true, initialProofAt: true,
+      initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true,
+      certificationLockedAt: true, bankroll: { select: { isPublic: true } },
+    },
   });
   if (!bet) {
     throw new Error((await getErrorsT())("betNotFound"));
@@ -173,7 +180,10 @@ async function getOwnedBet(betId: string, userId: string) {
 
 export async function deleteBet(betId: string) {
   const user = await requireUser();
-  await getOwnedBet(betId, user.id);
+  const bet = await getOwnedBet(betId, user.id);
+  if (bet.bankroll.isPublic && bet.certificationLockedAt) {
+    throw new Error("Un pari suivi par la certification ne peut pas être supprimé pendant sa publication. Repasse d’abord la bankroll en privé.");
+  }
 
   await prisma.bet.delete({ where: { id: betId } });
   revalidateBetViews();
@@ -184,8 +194,11 @@ export async function deleteBets(betIds: string[]) {
 
   const targetedBets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
-    select: { bankrollId: true },
+    select: { bankrollId: true, certificationLockedAt: true, bankroll: { select: { isPublic: true } } },
   });
+  if (targetedBets.some((bet) => bet.bankroll.isPublic && bet.certificationLockedAt)) {
+    throw new Error("Les paris suivis par la certification ne peuvent pas être supprimés pendant leur publication.");
+  }
   const lockedResults = await Promise.all(
     targetedBets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
   );
@@ -224,8 +237,11 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
     : null;
   const bets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
-    select: { id: true, bankrollId: true },
+    select: { id: true, bankrollId: true, certificationLockedAt: true, bankroll: { select: { isPublic: true } } },
   });
+  if (bets.some((bet) => bet.bankroll.isPublic && bet.certificationLockedAt)) {
+    throw new Error("Un pari suivi par la certification ne peut pas être déplacé pendant sa publication.");
+  }
   const sourceLocked = await Promise.all(
     bets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
   );
@@ -259,7 +275,7 @@ export async function updateBetResult(
   cashOutAmount: number | null
 ) {
   const user = await requireUser();
-  await getOwnedBet(betId, user.id);
+  const existing = await getOwnedBet(betId, user.id);
 
   if (!isBetResult(result)) {
     throw new Error((await getErrorsT())("invalidResult"));
@@ -268,12 +284,28 @@ export async function updateBetResult(
     throw new Error((await getErrorsT())("cashoutAmountPositive"));
   }
 
-  const updated = await prisma.bet.update({
-    where: { id: betId },
-    data: {
-      result,
-      cashOutAmount: result === "CASHE" ? cashOutAmount : null,
-    },
+  const normalizedCashOut = result === "CASHE" ? cashOutAmount : null;
+  const updated = await prisma.$transaction(async (tx) => {
+    const bet = await tx.bet.update({
+      where: { id: betId },
+      data: {
+        result,
+        cashOutAmount: normalizedCashOut,
+        resultProofAt: null,
+        resultEntryMethod: result === "EN_ATTENTE" ? "UNKNOWN" : "MANUAL",
+      },
+    });
+    if (existing.bankroll.isPublic && existing.certificationLockedAt
+      && (existing.result !== result || existing.cashOutAmount !== normalizedCashOut)) {
+      await tx.betCorrection.create({ data: {
+        betId,
+        kind: "RESULT_MANUAL",
+        before: { result: existing.result, cashOutUnits: cashOutInUnits(existing.cashOutAmount, existing.referenceCapitalAtBet) },
+        after: { result, cashOutUnits: cashOutInUnits(normalizedCashOut, existing.referenceCapitalAtBet) },
+        reason: "Résultat renseigné manuellement",
+      } });
+    }
+    return bet;
   });
   revalidateBetViews();
   return updated;
@@ -294,6 +326,7 @@ export type UpdateBetInput = {
   freebet: boolean;
   live: boolean;
   tipsterId: string | null;
+  correctionReason?: string;
 };
 
 // Édition complète depuis l'historique. Les mêmes contrôles que l'import et
@@ -324,9 +357,25 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
     { allowArchivedById: input.tipsterId !== null && input.tipsterId === existing.tipsterId }
   );
 
-  const updated = await prisma.bet.update({
-    where: { id: existing.id },
-    data: {
+  const isCertifiedCorrection = existing.bankroll.isPublic && existing.certificationLockedAt !== null;
+  const correctionReason = input.correctionReason?.normalize("NFKC").trim().slice(0, 500) ?? "";
+  if (isCertifiedCorrection && correctionReason.length < 3) {
+    throw new Error("Indique la raison de cette correction : elle sera visible dans le journal de transparence.");
+  }
+
+  const initialProofChanged = existing.sport !== normalizedTaxonomy.sport
+    || existing.betType !== normalizedTaxonomy.betType
+    || (existing.description ?? "") !== input.description.trim()
+    || existing.date.getTime() !== date.getTime()
+    || existing.stake !== input.stake
+    || existing.odds !== input.odds
+    || existing.live !== input.live;
+  const resultChanged = existing.result !== input.result
+    || existing.cashOutAmount !== (input.result === "CASHE" ? input.cashOutAmount : null)
+    || (existing.eventResult ?? "") !== input.eventResult.trim();
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const bet = await tx.bet.update({ where: { id: existing.id }, data: {
       sport: normalizedTaxonomy.sport,
       betType: normalizedTaxonomy.betType,
       description: input.description.trim() || null,
@@ -342,13 +391,46 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       freebet: input.freebet,
       live: input.live,
       tipsterId,
+      initialProofAt: isCertifiedCorrection && initialProofChanged ? null : undefined,
+      initialProofBeforeEvent: isCertifiedCorrection && initialProofChanged ? null : undefined,
+      resultProofAt: isCertifiedCorrection && resultChanged ? null : undefined,
+      resultEntryMethod: resultChanged ? (input.result === "EN_ATTENTE" ? "UNKNOWN" : "MANUAL") : undefined,
     },
     include: {
       tipster: { select: { id: true, name: true, normalizedName: true, status: true } },
       selections: { orderBy: { position: "asc" } },
     },
+    });
+    if (isCertifiedCorrection) {
+      await tx.betCorrection.create({ data: {
+        betId: existing.id,
+        kind: "DETAILS_EDITED",
+        before: auditSnapshot(existing),
+        after: auditSnapshot(bet),
+        reason: correctionReason,
+      } });
+    }
+    return bet;
   });
   await saveUserTaxonomyEntry(user.id, normalizedTaxonomy.sport, normalizedTaxonomy.betType);
   revalidateBetViews();
   return updated;
+}
+
+function auditSnapshot(bet: {
+  sport: string; betType: string; description: string | null; eventResult: string | null;
+  date: Date; stakeUnits: number | null; odds: number | null; result: BetResult; cashOutAmount: number | null;
+  referenceCapitalAtBet: number | null;
+  boosted: boolean; originalOdds: number | null; freebet: boolean; live: boolean;
+}) {
+  return {
+    sport: bet.sport, betType: bet.betType, description: bet.description, eventResult: bet.eventResult,
+    date: bet.date.toISOString(), stakeUnits: bet.stakeUnits, odds: bet.odds, result: bet.result,
+    cashOutUnits: cashOutInUnits(bet.cashOutAmount, bet.referenceCapitalAtBet), boosted: bet.boosted, originalOdds: bet.originalOdds,
+    freebet: bet.freebet, live: bet.live,
+  };
+}
+
+function cashOutInUnits(amount: number | null, referenceCapital: number | null) {
+  return amount !== null && referenceCapital && referenceCapital > 0 ? (amount / referenceCapital) * 100 : null;
 }

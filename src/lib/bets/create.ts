@@ -99,9 +99,20 @@ export async function createOwnedBet(
   });
   const bet = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${input.bankrollId} FOR UPDATE`;
+    const bankrollState = await tx.bankroll.findUniqueOrThrow({
+      where: { id: input.bankrollId },
+      select: { isPublic: true, certificationStartedAt: true },
+    });
     const periods = await tx.bankrollReferencePeriod.findMany({ where: { bankrollId: input.bankrollId } });
+    const scanProof = source.scanUsageId ? await tx.scanUsage.findFirst({
+      where: { id: source.scanUsageId, userId, outcome: "READY" },
+      select: { createdAt: true },
+    }) : null;
     const recordedAt = new Date();
     const referenceDate = referenceDateForImport(input.date, input.result === "EN_ATTENTE", source.entryMethod === "FILE", recordedAt);
+    const certificationActive = bankrollState.isPublic && bankrollState.certificationStartedAt !== null;
+    const pendingScan = certificationActive && source.entryMethod === "SCAN" && input.result === "EN_ATTENTE" && scanProof;
+    const settledScan = certificationActive && source.entryMethod === "SCAN" && input.result !== "EN_ATTENTE" && scanProof;
     return tx.bet.create({
     data: {
       bankrollId: input.bankrollId,
@@ -128,6 +139,14 @@ export async function createOwnedBet(
       importBatchId: source.importBatchId ?? null,
       tipsterId: source.resolvedTipsterId ?? null,
       scanUsageId: source.scanUsageId ?? null,
+      initialProofAt: pendingScan ? scanProof.createdAt : null,
+      // Le scan actuel extrait une date, mais pas encore une heure de début
+      // fiable. On conserve donc la preuve sans prétendre qu'elle précédait
+      // l'événement. Une future heure vérifiée pourra faire évoluer ce statut.
+      initialProofBeforeEvent: pendingScan ? (input.live ? false : null) : null,
+      resultProofAt: settledScan ? scanProof.createdAt : null,
+      resultEntryMethod: input.result === "EN_ATTENTE" ? "UNKNOWN" : settledScan ? "SCAN" : source.entryMethod === "MANUAL" ? "MANUAL" : "UNKNOWN",
+      certificationLockedAt: certificationActive ? recordedAt : null,
     },
     });
   });

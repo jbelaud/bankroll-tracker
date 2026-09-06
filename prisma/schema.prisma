@@ -146,6 +146,10 @@ model Bankroll {
   bookmaker        String?
   initial          Float        @default(0) // capital réel de départ
   referenceCapital Float? // 1 u = 1 % de ce montant de référence
+  isPublic         Boolean      @default(false)
+  publicSlug       String?      @unique
+  publishedAt      DateTime?
+  certificationStartedAt DateTime?
   createdAt        DateTime     @default(now())
 
   bets               Bet[]
@@ -340,6 +344,12 @@ model Bet {
   selections    BetSelection[]
   scanUsageId   String?
   scanUsage     ScanUsage?     @relation(fields: [scanUsageId], references: [id], onDelete: SetNull)
+  initialProofAt          DateTime?
+  initialProofBeforeEvent Boolean?
+  resultProofAt           DateTime?
+  resultEntryMethod       BetEntryMethod @default(UNKNOWN)
+  certificationLockedAt   DateTime?
+  corrections             BetCorrection[]
 
   @@index([bankrollId])
   @@index([allocationId])
@@ -349,6 +359,28 @@ model Bet {
   @@index([tipsterId, date])
   @@index([importBatchId])
   @@map("bets")
+}
+
+enum BetCorrectionKind {
+  DETAILS_EDITED
+  RESULT_MANUAL
+}
+
+// Journal append-only des changements effectués pendant une publication
+// certifiée. Les fichiers de preuve et montants privés ne sont jamais copiés
+// ici ; seules les valeurs métier nécessaires à l'audit sont conservées.
+model BetCorrection {
+  id        String            @id @default(uuid())
+  betId     String
+  bet       Bet               @relation(fields: [betId], references: [id], onDelete: Cascade)
+  kind      BetCorrectionKind
+  before    Json
+  after     Json
+  reason    String
+  createdAt DateTime          @default(now())
+
+  @@index([betId, createdAt])
+  @@map("bet_corrections")
 }
 
 // Source de recommandation privée à l'utilisateur. Un nom détecté pendant un

@@ -8,6 +8,14 @@
 - Restent à réaliser : collecte et conservation des preuves, certification, journal des corrections, publication publique, tests de bout en bout de ces parcours. Les profils multiples indépendants d'une bankroll et les modes prédéfinis restent également à réaliser.
 - Réconciliation : les anciens paris sans référence enregistrée n'ont pas reçu de valeur inventée. Ils demandent une déclaration explicite par période depuis le détail de la bankroll.
 
+## Avancement au 6 septembre 2026 — socle de certification Preview
+
+- Une bankroll reste privée par défaut. Sa certification démarre uniquement lors d'une publication explicite et ne s'applique jamais rétroactivement aux anciens paris.
+- Les nouveaux paris publiés conservent l'origine disponible, les horodatages de preuve et un verrou de certification. Les corrections demandent une justification, invalident les preuves devenues incohérentes et alimentent un journal append-only.
+- Le score v1 est calculé par volume d'unités avec les coefficients 100/70/40/20/0. Un minimum de 10 paris clôturés et 20u maintient le niveau « En observation ».
+- Une première page publique expose uniquement les unités, cotes décimales, résultats, statistiques normalisées et niveaux de preuve. Les euros, références privées, allocations et fichiers originaux ne sont pas transmis.
+- Limite volontaire actuelle : le scan extrait la date du ticket, pas l'heure vérifiée de l'événement. Une preuve initiale est donc conservée mais n'obtient pas automatiquement le niveau fort. Le rapprochement d'un second scan de résultat avec le ticket initial reste le prochain lot.
+
 ## Périmètre impératif
 
 - Branche autorisée : `codex/bankroll-v2-preview`.

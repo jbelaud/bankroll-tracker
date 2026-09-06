@@ -31,6 +31,7 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
   const [value, setValue] = useState<EditableBet | null>(bet ? { ...bet, date: bet.date.toISOString().slice(0, 10) } : null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [correctionReason, setCorrectionReason] = useState("");
   const [tipsters, setTipsters] = useState<TipsterOption[]>(() => {
     if (!bet?.tipster || initialTipsters.some((tipster) => tipster.id === bet.tipster?.id)) return initialTipsters;
     return [...initialTipsters, bet.tipster];
@@ -47,6 +48,7 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
     if (bet && open) {
       setValue({ ...bet, date: bet.date.toISOString().slice(0, 10) });
       setError("");
+      setCorrectionReason("");
     }
   }, [bet, open]);
 
@@ -64,6 +66,7 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
         date: value.date, stake: value.stake, odds: value.odds, result: value.result, cashOutAmount: value.cashOutAmount,
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
         tipsterId: value.tipster?.id ?? null,
+        correctionReason,
       });
       onSaved({ ...updated, bankrollName: bet.bankrollName, referenceCapital: bet.referenceCapital, profit: computeProfit(updated) });
       onOpenChange(false);
@@ -111,6 +114,11 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
             <label className="flex min-h-touch items-center gap-2 rounded-lg border border-input px-3"><input type="checkbox" checked={value.boosted} onChange={(e) => patch({ boosted: e.target.checked })} />{t("boosted")}</label>
           </div>
           {value.boosted && <div className="flex flex-col gap-1"><Label htmlFor="edit-original-odds">{t("originalOdds")}</Label><Input id="edit-original-odds" type="number" step="0.001" min="0" value={value.originalOdds ?? ""} onChange={(e) => patch({ originalOdds: e.target.value ? Number(e.target.value) : null })} /></div>}
+          {bet.certificationLockedAt && <div className="flex flex-col gap-1">
+            <Label htmlFor="edit-correction-reason">Raison de la correction</Label>
+            <textarea id="edit-correction-reason" required minLength={3} maxLength={500} value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} placeholder="Ex. cote mal détectée lors du scan" className="min-h-20 rounded-lg border border-input bg-input/30 px-3 py-2 text-sm outline-none focus:border-ring focus:ring-1 focus:ring-ring/50" />
+            <p className="text-xs text-muted-foreground">Ce pari est suivi publiquement : la correction sera conservée dans le journal de transparence.</p>
+          </div>}
           {error && <p role="alert" className="text-sm text-loss">{error}</p>}
           <Button onClick={save} disabled={saving} className="min-h-touch rounded-lg">{saving ? t("saving") : tCommon("save")}</Button>
         </div>

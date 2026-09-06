@@ -151,6 +151,7 @@ export default async function DashboardPage() {
     profit: computeProfit(b),
     bankrollName: bankrollName(b.bankrollId),
     referenceCapital: b.referenceCapitalAtBet,
+    certificationLockedAt: b.certificationLockedAt,
   }));
 
   if (bankrolls.length === 0) {

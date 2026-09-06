@@ -24,6 +24,7 @@ export type HistoryBetItemData = {
   bankrollId: string;
   bankrollName: string;
   referenceCapital: number | null;
+  certificationLockedAt: Date | null;
   date: Date;
   sport: string;
   betType: string;

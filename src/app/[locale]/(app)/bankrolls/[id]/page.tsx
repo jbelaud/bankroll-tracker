@@ -21,6 +21,8 @@ import { listTipsters } from "@/lib/actions/tipsters";
 import { prisma } from "@/lib/prisma";
 import { ReferenceHistory } from "@/components/bankrolls/reference-history";
 import { PersonalStaking } from "@/components/bankrolls/personal-staking";
+import { CertificationPanel } from "@/components/bankrolls/certification-panel";
+import { certificationSummary } from "@/lib/certification";
 
 export default async function BankrollDetailPage({
   params,
@@ -64,6 +66,7 @@ export default async function BankrollDetailPage({
   const taxonomy = await getUserTaxonomy(user.id);
   const tipsters = await listTipsters();
   const stakingProfile = await prisma.stakingProfile.findUnique({ where: { bankrollId: id } });
+  const correctionCount = await prisma.betCorrection.count({ where: { bet: { bankrollId: id } } });
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
   // le solde ; la courbe part du capital initial puis cumule pari par pari.
@@ -72,6 +75,7 @@ export default async function BankrollDetailPage({
     .sort((a, b) => a.date.getTime() - b.date.getTime());
   const capital = summarizeBankrollCapital(bankroll, bets, movements);
   const { profit, balance } = capital;
+  const certification = certificationSummary(bets, bankroll.certificationStartedAt);
 
   const curveEvents = [
     ...settled.map((bet) => ({ date: bet.date, delta: profitOfBet(bet) })),
@@ -84,6 +88,7 @@ export default async function BankrollDetailPage({
     bankrollId: b.bankrollId,
     bankrollName: bankroll.name,
     referenceCapital: b.referenceCapitalAtBet,
+    certificationLockedAt: b.certificationLockedAt,
     date: b.date,
     sport: b.sport,
     betType: b.betType,
@@ -133,6 +138,14 @@ export default async function BankrollDetailPage({
       </div>
 
       {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
+      <CertificationPanel
+        bankrollId={id}
+        isPublic={bankroll.isPublic}
+        publicSlug={bankroll.publicSlug}
+        startedAt={bankroll.certificationStartedAt?.toISOString() ?? null}
+        summary={certification}
+        correctionCount={correctionCount}
+      />
       <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
         <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
         <BankrollCapitalStats

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   requireUser: vi.fn(),
   bankrollFindFirst: vi.fn(),
+  bankrollFindUniqueOrThrow: vi.fn(),
   betFindFirst: vi.fn(),
   betCreate: vi.fn(),
   betUpdate: vi.fn(),
@@ -35,7 +36,10 @@ vi.mock("@/lib/prisma", () => ({
       bankrollReferencePeriod: { findMany: vi.fn().mockResolvedValue([
         { referenceCapital: 1000, effectiveFrom: new Date("2026-01-01") },
       ]) },
-      bet: { create: mocks.betCreate },
+      bankroll: { findUniqueOrThrow: mocks.bankrollFindUniqueOrThrow },
+      scanUsage: { findFirst: vi.fn().mockResolvedValue(null) },
+      bet: { create: mocks.betCreate, update: mocks.betUpdate },
+      betCorrection: { create: vi.fn().mockResolvedValue({}) },
     }),
     bankroll: { findFirst: mocks.bankrollFindFirst },
     bet: {
@@ -69,12 +73,23 @@ const updateInput = {
   tipsterId: null as string | null,
 };
 
+const ownedBet = (overrides = {}) => ({
+  id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000,
+  sport: "Football", betType: "Résultat du match", description: "Paris gagne", eventResult: null,
+  date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, result: "EN_ATTENTE",
+  cashOutAmount: null, boosted: false, originalOdds: null, freebet: false, live: false,
+  initialProofAt: null, initialProofBeforeEvent: null, resultProofAt: null,
+  resultEntryMethod: "UNKNOWN", certificationLockedAt: null, bankroll: { isPublic: false },
+  ...overrides,
+});
+
 describe("association Bet / Tipster", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-a" });
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-a", userId: "user-a" });
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000 });
+    mocks.bankrollFindUniqueOrThrow.mockResolvedValue({ isPublic: false, certificationStartedAt: null });
+    mocks.betFindFirst.mockResolvedValue(ownedBet());
     mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
     mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
     mocks.isLocked.mockResolvedValue(false);
@@ -136,7 +151,7 @@ describe("association Bet / Tipster", () => {
   });
 
   it("conserve le Tipster archivé déjà lié sans permettre d'en choisir un autre", async () => {
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived", referenceCapitalAtBet: null });
+    mocks.betFindFirst.mockResolvedValue(ownedBet({ tipsterId: "tipster-archived", referenceCapitalAtBet: null }));
     mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-archived" });
 
     await updateBet("bet-a", { ...updateInput, tipsterId: "tipster-archived" });
@@ -160,12 +175,12 @@ describe("déplacement de paris entre bankrolls", () => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-a" });
     mocks.isLocked.mockResolvedValue(false);
-    mocks.betFindMany.mockResolvedValue([{ id: "bet-a", bankrollId: "bankroll-source" }]);
+    mocks.betFindMany.mockResolvedValue([{ id: "bet-a", bankrollId: "bankroll-source", certificationLockedAt: null, bankroll: { isPublic: false } }]);
     mocks.betUpdateMany.mockResolvedValue({ count: 1 });
   });
 
   it("recalcule une mise corrigée avec la référence figée du pari", async () => {
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000 });
+    mocks.betFindFirst.mockResolvedValue(ownedBet());
     await updateBet("bet-a", { ...updateInput, stake: 20 });
     expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
       data: expect.objectContaining({ stake: 20, stakeUnits: 2 }),

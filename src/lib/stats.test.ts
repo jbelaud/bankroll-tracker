@@ -10,6 +10,11 @@ function bet(overrides: Partial<Bet>): Bet {
     referenceCapitalAtBet: overrides.referenceCapitalAtBet ?? null,
     stakeUnits: overrides.stakeUnits ?? null,
     unitsRecordedAt: overrides.unitsRecordedAt ?? null,
+    initialProofAt: overrides.initialProofAt ?? null,
+    initialProofBeforeEvent: overrides.initialProofBeforeEvent ?? null,
+    resultProofAt: overrides.resultProofAt ?? null,
+    resultEntryMethod: overrides.resultEntryMethod ?? "UNKNOWN",
+    certificationLockedAt: overrides.certificationLockedAt ?? null,
   };
 }
 
