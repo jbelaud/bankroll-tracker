@@ -155,7 +155,7 @@ export async function listAllBets() {
 async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
-    select: { id: true, bankrollId: true, tipsterId: true },
+    select: { id: true, bankrollId: true, tipsterId: true, format: true },
   });
   if (!bet) {
     throw new Error((await getErrorsT())("betNotFound"));
@@ -233,7 +233,7 @@ export async function updateBetResult(
   cashOutAmount: number | null
 ) {
   const user = await requireUser();
-  await getOwnedBet(betId, user.id);
+  const existing = await getOwnedBet(betId, user.id);
 
   if (!isBetResult(result)) {
     throw new Error((await getErrorsT())("invalidResult"));
@@ -247,6 +247,9 @@ export async function updateBetResult(
     data: {
       result,
       cashOutAmount: result === "CASHE" ? cashOutAmount : null,
+      ...(existing.format === "SIMPLE" ? {
+        selections: { updateMany: { where: {}, data: { result } } },
+      } : {}),
     },
   });
   revalidateBetViews();
@@ -315,6 +318,18 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       freebet: input.freebet,
       live: input.live,
       tipsterId,
+      ...(existing.format === "SIMPLE" ? {
+        selections: {
+          updateMany: {
+            where: {},
+            data: {
+              sport: normalizedTaxonomy.sport,
+              betType: normalizedTaxonomy.betType,
+              result: input.result,
+            },
+          },
+        },
+      } : {}),
     },
     include: {
       tipster: { select: { id: true, name: true, normalizedName: true, status: true } },

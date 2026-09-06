@@ -40,6 +40,14 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("Utilise Golf uniquement si des indices textuels propres au golf sont visibles");
   });
 
+  it("settles completed Unibet cards from the visible thumb and gains pair", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("un pouce vert accompagné d'un montant « Gains » strictement positif");
+    expect(prompt).toContain("un pouce rouge accompagné de « Gains 0,00 € »");
+    expect(prompt).toContain("ne les classe jamais \"En attente\"");
+    expect(prompt).toContain("sans pouce rouge visible, ne suffit toujours pas à conclure Perdu");
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });

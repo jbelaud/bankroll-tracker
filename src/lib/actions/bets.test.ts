@@ -34,7 +34,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-const { createBet, updateBet } = await import("@/lib/actions/bets");
+const { createBet, updateBet, updateBetResult } = await import("@/lib/actions/bets");
 
 const updateInput = {
   sport: "Football",
@@ -58,7 +58,7 @@ describe("association Bet / Tipster", () => {
     vi.clearAllMocks();
     mocks.requireUser.mockResolvedValue({ id: "user-a" });
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-a", userId: "user-a" });
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, format: "SIMPLE" });
     mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
     mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
     mocks.isLocked.mockResolvedValue(false);
@@ -119,8 +119,32 @@ describe("association Bet / Tipster", () => {
     }));
   });
 
+  it("synchronise le sport et le résultat d'une sélection simple corrigée", async () => {
+    await updateBet("bet-a", { ...updateInput, sport: "Tennis", betType: "Vainqueur du match" });
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        sport: "Tennis",
+        betType: "Vainqueur du match",
+        selections: {
+          updateMany: {
+            where: {},
+            data: { sport: "Tennis", betType: "Vainqueur du match", result: "EN_ATTENTE" },
+          },
+        },
+      }),
+    }));
+
+    await updateBetResult("bet-a", "PERDU", null);
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        result: "PERDU",
+        selections: { updateMany: { where: {}, data: { result: "PERDU" } } },
+      }),
+    }));
+  });
+
   it("conserve le Tipster archivé déjà lié sans permettre d'en choisir un autre", async () => {
-    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived" });
+    mocks.betFindFirst.mockResolvedValue({ id: "bet-a", bankrollId: "bankroll-a", tipsterId: "tipster-archived", format: "SIMPLE" });
     mocks.tipsterFindFirst.mockResolvedValue({ id: "tipster-archived" });
 
     await updateBet("bet-a", { ...updateInput, tipsterId: "tipster-archived" });

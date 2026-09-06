@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { TipsterSelector } from "@/components/tipsters/tipster-selector";
 import type { TipsterOption } from "@/lib/tipsters/types";
+import { patchReviewedBetSport } from "@/lib/scan/review-patches";
 
 export function ReviewBetCard({
   bet,
@@ -142,11 +143,11 @@ export function ReviewBetCard({
             value={bet.sport}
             onValueChange={(value) => {
               const sport = value as string;
-              onPatch({
+              onPatch(patchReviewedBetSport(
+                bet,
                 sport,
-                betType: taxonomy[sport]?.[0] ?? "Autre",
-                taxonomyMismatch: false,
-              });
+                taxonomy[sport]?.[0] ?? "Autre"
+              ));
             }}
             items={Object.fromEntries(sportList.map((sport) => [sport, translateTaxonomy(tSports, sport)]))}
           >
