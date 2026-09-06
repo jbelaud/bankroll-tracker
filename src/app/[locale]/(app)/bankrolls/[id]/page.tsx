@@ -63,7 +63,6 @@ export default async function BankrollDetailPage({
   const movements = await listBankrollMovements(id);
   const taxonomy = await getUserTaxonomy(user.id);
   const tipsters = await listTipsters();
-  const referencePeriods = await prisma.bankrollReferencePeriod.findMany({ where: { bankrollId: id }, orderBy: { effectiveFrom: "desc" } });
   const stakingProfile = await prisma.stakingProfile.findUnique({ where: { bankrollId: id } });
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
@@ -134,12 +133,12 @@ export default async function BankrollDetailPage({
       </div>
 
       {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
-      <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length}
-        periods={referencePeriods.map((period) => ({ referenceCapital: period.referenceCapital, effectiveFrom: period.effectiveFrom.toISOString() }))} />
+      <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
       <PersonalStaking bankrollId={id} balance={balance} settings={stakingProfile ? {
         referenceCapital: stakingProfile.referenceCapital, unitPercent: stakingProfile.unitPercent,
-        rounding: stakingProfile.rounding, decreaseThreshold: stakingProfile.decreaseThreshold, increaseThreshold: stakingProfile.increaseThreshold,
-      } : { referenceCapital: bankroll.referenceCapital ?? bankroll.initial, unitPercent: 1, rounding: 0, decreaseThreshold: 5, increaseThreshold: 25 }} />
+        rounding: stakingProfile.rounding, recommendationsEnabled: stakingProfile.recommendationsEnabled,
+        decreaseThreshold: stakingProfile.decreaseThreshold, increaseThreshold: stakingProfile.increaseThreshold,
+      } : { referenceCapital: bankroll.referenceCapital ?? bankroll.initial, unitPercent: 1, rounding: 0, recommendationsEnabled: false, decreaseThreshold: 5, increaseThreshold: 25 }} />
 
       <div className="lg:col-span-5">
         <BankrollCapitalStats

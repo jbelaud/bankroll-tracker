@@ -181,6 +181,7 @@ model StakingProfile {
   referenceCapital Float
   unitPercent      Float    @default(1)
   rounding         Float    @default(0)
+  recommendationsEnabled Boolean @default(false)
   decreaseThreshold Float   @default(5)
   increaseThreshold Float   @default(25)
   updatedAt        DateTime @updatedAt

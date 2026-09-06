@@ -133,6 +133,12 @@ export async function updateBankroll(
       await tx.bankrollReferencePeriod.create({
         data: { bankrollId: id, referenceCapital: normalized.referenceCapital, effectiveFrom: new Date() },
       });
+      if (normalized.referenceCapital !== null) {
+        await tx.stakingProfile.updateMany({
+          where: { bankrollId: id },
+          data: { referenceCapital: normalized.referenceCapital },
+        });
+      }
     }
     if (normalized.mode === "DISTRIBUTED") {
       const existing = await tx.bankrollAllocation.findMany({

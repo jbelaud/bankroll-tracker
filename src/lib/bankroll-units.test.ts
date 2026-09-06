@@ -23,6 +23,7 @@ describe("historical units", () => {
     expect(referenceAt([...periods, { referenceCapital: null, effectiveFrom: new Date("2026-09-06") }], new Date("2026-09-07"))).toBeNull();
   });
   it("converts the follower's own unit percentage and rounds down", () => {
+    expect(personalStake(1, 500, 1)).toEqual({ amount: 5, rounded: 5 });
     expect(personalStake(2, 750)).toEqual({ amount: 15, rounded: 15 });
     expect(personalStake(2, 750, 0.5, 5)).toEqual({ amount: 7.5, rounded: 5 });
     expect(() => personalStake(2, 750, 0)).toThrow();
