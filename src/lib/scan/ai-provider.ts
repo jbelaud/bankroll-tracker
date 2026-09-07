@@ -31,6 +31,7 @@ const BET_RESPONSE_SCHEMA = {
   additionalProperties: false,
   properties: {
     date: { type: ["string", "null"] },
+    dateText: { type: ["string", "null"] },
     ticketRef: { type: ["string", "null"] },
     sport: { type: "string" },
     betType: { type: "string" },
@@ -46,13 +47,14 @@ const BET_RESPONSE_SCHEMA = {
     cashOutAmount: { type: ["number", "null"] },
     format: { type: "string", enum: ["SIMPLE", "COMBINE", "SYSTEME", "BACK", "LAY"] },
     tipster: { type: ["string", "null"] },
+    tipsterEvidence: { type: ["string", "null"] },
     closingOdds: { type: ["number", "null"] },
     selections: { type: "array", items: BET_SELECTION_RESPONSE_SCHEMA },
   },
   required: [
-    "date", "ticketRef", "sport", "betType", "description", "eventResult",
+    "date", "dateText", "ticketRef", "sport", "betType", "description", "eventResult",
     "stake", "odds", "boosted", "originalOdds", "freebet", "live", "result", "cashOutAmount",
-    "format", "tipster", "closingOdds", "selections",
+    "format", "tipster", "tipsterEvidence", "closingOdds", "selections",
   ],
 } as const;
 

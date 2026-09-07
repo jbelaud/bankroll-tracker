@@ -20,6 +20,7 @@ import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
 import { bookmakerKind, normalizeBookmaker } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
+import { tipsterFromVisibleEvidence } from "@/lib/scan/tipster-evidence";
 import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
@@ -397,7 +398,12 @@ export async function POST(request: NextRequest) {
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
       format: betFormat(r.format),
-      tipster: typeof r.tipster === "string" ? r.tipster.trim().slice(0, 120) || null : null,
+      tipster: tipsterFromVisibleEvidence({
+        candidate: r.tipster,
+        evidence: r.tipsterEvidence,
+        description: String(r.description ?? ""),
+        selectionLabels: selections.map((selection) => selection.label),
+      }),
       closingOdds: numOrNull(r.closingOdds),
       selections,
       taxonomyMismatch,

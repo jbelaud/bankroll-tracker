@@ -66,6 +66,14 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("Retourne exactement un objet par carte complète, jamais davantage");
   });
 
+  it("requires explicit visible evidence before suggesting a tipster", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain('"tipsterEvidence": "ligne exacte');
+    expect(prompt).toContain("Sans ce libellé explicite, mets \"tipster\" et \"tipsterEvidence\" à null");
+    expect(prompt).toContain("Un joueur, une équipe, un participant");
+    expect(prompt).toContain('Ne recopie jamais "description" ou "selections[].label" dans "tipster"');
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });
