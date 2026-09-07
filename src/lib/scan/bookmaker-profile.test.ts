@@ -17,6 +17,8 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("Ne déduis jamais le bookmaker depuis la bankroll fournie.");
     expect(prompt).toContain("nom, son logo ou une marque textuelle propre à ce bookmaker");
     expect(prompt).toContain("La palette, la mise en page, la couleur des cotes");
+    expect(prompt).toContain("La mention générique « Pari n° » est uniquement une référence de ticket");
+    expect(prompt).toContain("N'invente notamment jamais « Pariuret », « Pariubet »");
   });
 
   it("keeps an available cashout offer as a pending bet", () => {

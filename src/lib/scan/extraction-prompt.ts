@@ -1,5 +1,6 @@
 import { SPORTS } from "@/lib/sports";
 import type { Taxonomy } from "@/lib/taxonomy";
+import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
 
 // Prompt d'extraction des tickets — COPIE VERBATIM de l'artifact de référence
 // (bankroll-tracker.jsx, buildExtractionPrompt, lignes 1451-1491). Ne pas
@@ -20,7 +21,7 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte avant ou après,
   "detectionConfidence": nombre entre 0 et 1, ou null si detectedBookmaker est null,
   "bets": [objets de pari]
 }
-Identifie le bookmaker uniquement à partir d'indices visibles. Règle de sécurité : n'indique un bookmaker que si son nom, son logo ou une marque textuelle propre à ce bookmaker est lisible sur la capture. La palette, la mise en page, la couleur des cotes, les statuts « Gagné » / « Perdu » ou la structure générale d'un ticket ne suffisent jamais à identifier un bookmaker. Ne déduis jamais le bookmaker depuis la bankroll fournie. Si le nom ou logo n'est pas lisible, retourne null pour les deux champs — même si un bookmaker est plausible. Cette prudence est particulièrement obligatoire avant de signaler un bookmaker différent de la bankroll sélectionnée. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
+Identifie le bookmaker uniquement à partir d'indices visibles. Règle de sécurité : n'indique un bookmaker que si son nom, son logo ou une marque textuelle propre à ce bookmaker est lisible sur la capture. Les seuls noms autorisés sont : ${KNOWN_BOOKMAKERS.filter((bookmaker) => bookmaker !== "Autre").join(", ")}. Si une autre marque est visible ou si le nom est incertain, retourne null. La mention générique « Pari n° » est uniquement une référence de ticket : elle n'est jamais le début d'un nom de bookmaker. N'invente notamment jamais « Pariuret », « Pariubet » ou une autre marque à partir de cette mention. La palette, la mise en page, la couleur des cotes, les statuts « Gagné » / « Perdu » ou la structure générale d'un ticket ne suffisent jamais à identifier un bookmaker. Ne déduis jamais le bookmaker depuis la bankroll fournie. Si le nom ou logo n'est pas lisible, retourne null pour les deux champs — même si un bookmaker est plausible. Cette prudence est particulièrement obligatoire avant de signaler un bookmaker différent de la bankroll sélectionnée. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
 
 Schéma attendu pour chaque pari :
 {

@@ -17,6 +17,7 @@ import {
 } from "@/lib/actions/scan-drafts";
 import { correctionSummary, finalBetsForScan } from "@/lib/scan/quality";
 import { scanUsageIdsBySourceIndex } from "@/lib/scan/import-sources";
+import { canonicalKnownBookmaker } from "@/lib/bookmakers";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { UploadZone } from "./upload-zone";
@@ -239,11 +240,14 @@ export function ScanFlow({
             buildDraftPayload(bets, flow.scans, flow.skippedDuplicateFiles, excludedIndexes)
           ).catch(() => undefined);
         }}
-        detectedBookmakers={Array.from(new Set(
-          flow.scans
-            .filter((scan) => scan.detectionConfidence !== null && scan.detectionConfidence >= 0.75)
-            .flatMap((scan) => (scan.detectedBookmaker ? [scan.detectedBookmaker] : []))
-        ))}
+          detectedBookmakers={Array.from(new Set(
+            flow.scans
+              .filter((scan) => scan.detectionConfidence !== null && scan.detectionConfidence >= 0.75)
+              .flatMap((scan) => {
+                const bookmaker = canonicalKnownBookmaker(scan.detectedBookmaker ?? "");
+                return bookmaker ? [bookmaker] : [];
+              })
+          ))}
         showQualityOffer={flow.files.length > 0}
         currency={currency}
         taxonomy={taxonomy}

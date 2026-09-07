@@ -14,6 +14,14 @@ export function normalizeBookmaker(value: string): string {
   return normalized;
 }
 
+/** Only names from the controlled catalogue may be exposed as AI detections. */
+export function canonicalKnownBookmaker(value: string): string | null {
+  const normalized = normalizeBookmaker(value).toLocaleLowerCase("fr");
+  return KNOWN_BOOKMAKERS.find(
+    (bookmaker) => bookmaker !== "Autre" && bookmaker.toLocaleLowerCase("fr") === normalized
+  ) ?? null;
+}
+
 export function bookmakerKind(value: string): BookmakerKind {
   const normalized = normalizeBookmaker(value).toLocaleLowerCase("fr");
   const known = KNOWN_BOOKMAKERS.find((item) => item.toLocaleLowerCase("fr") === normalized);
