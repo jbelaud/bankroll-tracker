@@ -6,6 +6,12 @@ import type { Taxonomy } from "@/lib/taxonomy";
 const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"] as const;
 type GeminiModel = (typeof GEMINI_MODELS)[number];
 
+export const ANTHROPIC_SCAN_MODEL = "claude-sonnet-4-6";
+export const STRICT_SCAN_SYSTEM_PROMPT =
+  "Tu es un moteur OCR strict. Transcris uniquement ce qui est réellement visible dans l'image. " +
+  "N'utilise jamais tes connaissances sportives pour compléter, corriger, développer ou remplacer un nom, une équipe, un joueur ou un événement. " +
+  "En cas de doute, omets le ticket ou retourne null au lieu de deviner.";
+
 const BET_SELECTION_RESPONSE_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -109,8 +115,13 @@ export async function analyzeTicketImage({
   // aucune clé Anthropic n'est configurée.
   if (provider === "anthropic") {
     const response = await new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.create({
-      model: "claude-haiku-4-5",
+      model: ANTHROPIC_SCAN_MODEL,
       max_tokens: 8192,
+      temperature: 0,
+      system: STRICT_SCAN_SYSTEM_PROMPT,
+      output_config: {
+        format: { type: "json_schema", schema: SCAN_RESPONSE_SCHEMA },
+      },
       messages: [
         {
           role: "user",
@@ -128,7 +139,7 @@ export async function analyzeTicketImage({
 
     return {
       text,
-      model: "claude-haiku-4-5",
+      model: ANTHROPIC_SCAN_MODEL,
       inputTokens: response.usage.input_tokens,
       outputTokens: response.usage.output_tokens,
     };

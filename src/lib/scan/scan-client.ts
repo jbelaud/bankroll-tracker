@@ -7,6 +7,7 @@ export type ScanTicketResult = {
   bets: ParsedBet[];
   rawExtraction: unknown;
   model: string;
+  promptVersion: string;
   supportStatus: "TESTED" | "UNTESTED" | "VALIDATING";
   detectedBookmaker: string | null;
   detectionConfidence: number | null;
@@ -53,6 +54,7 @@ export async function scanTickets(
         usageId: string;
         rawExtraction: unknown;
         model: string;
+        promptVersion: string;
         supportStatus: ScanTicketResult["supportStatus"];
         detectedBookmaker: string | null;
         detectionConfidence: number | null;
@@ -67,6 +69,7 @@ export async function scanTickets(
       bets: sourcedBets,
       rawExtraction: scan.rawExtraction,
       model: scan.model,
+      promptVersion: scan.promptVersion,
       supportStatus: scan.supportStatus,
       detectedBookmaker: scan.detectedBookmaker,
       detectionConfidence: scan.detectionConfidence,

@@ -7,6 +7,10 @@ describe("calculateScanCostUsd", () => {
     expect(calculateScanCostUsd("claude-haiku-4-5", 1_568, 500)).toBeCloseTo(0.004068);
   });
 
+  it("uses the configured Sonnet 4.6 prices", () => {
+    expect(calculateScanCostUsd("claude-sonnet-4-6", 1_568, 500)).toBeCloseTo(0.012204);
+  });
+
   it("uses Gemini Flash and Flash-Lite prices", () => {
     expect(calculateScanCostUsd("gemini-3.6-flash", 1_568, 500)).toBeCloseTo(0.006102);
     expect(calculateScanCostUsd("gemini-3.5-flash-lite", 1_568, 500)).toBeCloseTo(0.0017204);

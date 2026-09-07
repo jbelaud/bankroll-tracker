@@ -58,6 +58,14 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("contrôlée par le serveur à partir de \"dateText\"");
   });
 
+  it("forbids completing abbreviated or missing participant names", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("TRANSCRIPTION LITTÉRALE OBLIGATOIRE");
+    expect(prompt).toContain("« T.Etcheverry » doit rester « T.Etcheverry »");
+    expect(prompt).toContain("« Joel Josef Schwarzler », est interdit");
+    expect(prompt).toContain("Retourne exactement un objet par carte complète, jamais davantage");
+  });
+
   it("keeps an Unibet boost exception opt-in until its profile is TESTED", () => {
     const unibetRule = "Unibet : Cotes Boostées avec une cote A -> B visible permet boosted=true.";
     const validating = rulesForTestedProfile({ supportStatus: "VALIDATING", rules: unibetRule });
