@@ -27,7 +27,6 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
       certificationStartedAt: true,
       user: { select: { name: true } },
       bets: {
-        where: { certificationLockedAt: { not: null } },
         orderBy: [{ date: "desc" }, { createdAt: "desc" }],
         select: {
           id: true, createdAt: true, date: true, sport: true, betType: true, description: true,
@@ -65,7 +64,7 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
             <PublicMetric label="Score de preuve" value={certification.score === null ? "En observation" : `${certification.score}/100`} />
           </div>
           <div className="mt-2 grid gap-2 sm:grid-cols-3">
-            <PublicMetric label="Paris publiés" value={String(certification.publishedBets)} />
+            <PublicMetric label="Paris dans l’historique" value={String(bankroll.bets.length)} />
             <PublicMetric label="Volume complet" value={`${certification.strongVolumePercent}%`} />
             <PublicMetric label="Paris complets" value={`${certification.strongBetPercent}%`} />
           </div>
@@ -76,7 +75,7 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
             <h2 className="text-lg font-semibold">Paris publics</h2>
             <p className="text-sm text-muted-foreground">Mises affichées uniquement en unités · cotes décimales.</p>
           </div>
-          {bankroll.bets.length === 0 ? <div className="glass-card rounded-2xl p-8 text-center text-sm text-muted-foreground">Aucun pari publié depuis l’activation de la certification.</div> : (
+          {bankroll.bets.length === 0 ? <div className="glass-card rounded-2xl p-8 text-center text-sm text-muted-foreground">Aucun pari dans cette bankroll.</div> : (
             <ul className="grid gap-3">
               {bankroll.bets.map((bet) => {
                 const status = certificationStatus(bet, bankroll.certificationStartedAt);
