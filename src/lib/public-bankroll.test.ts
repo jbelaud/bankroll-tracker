@@ -15,4 +15,29 @@ describe("public bankroll performance", () => {
   it("converts cash-outs to units using the private reference only on the server", () => {
     expect(profitInUnits(bet({ result: "CASHE", stakeUnits: 1, cashOutAmount: 15 }))).toBe(0.5);
   });
+
+  it("does not invent a performance when historical units are missing", () => {
+    const performance = publicPerformance([
+      bet({ result: "GAGNE", stakeUnits: null }),
+      bet({ result: "PERDU", stakeUnits: null }),
+    ]);
+    expect(performance.profit).toBeNull();
+    expect(performance.normalizedBalance).toBeNull();
+    expect(performance.missingUnitCount).toBe(2);
+    expect(performance.results).toMatchObject({ won: 1, lost: 1 });
+    expect(performance.winRate).toBe(50);
+  });
+
+  it("reports unit coverage, total volume and result distribution", () => {
+    const performance = publicPerformance([
+      bet({ result: "GAGNE", stakeUnits: 2 }),
+      bet({ result: "PERDU", stakeUnits: 1 }),
+      bet({ result: "EN_ATTENTE", stakeUnits: 0.5 }),
+      bet({ result: "REMBOURSE", stakeUnits: null }),
+    ]);
+    expect(performance.totalVolume).toBe(3.5);
+    expect(performance.unitBetCount).toBe(3);
+    expect(performance.missingUnitCount).toBe(1);
+    expect(performance.results).toEqual({ won: 1, lost: 1, refunded: 1, pending: 1, cashed: 0 });
+  });
 });

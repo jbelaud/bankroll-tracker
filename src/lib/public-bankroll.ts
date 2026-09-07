@@ -23,12 +23,31 @@ export function profitInUnits(bet: PublicPerformanceBet): number {
 }
 
 export function publicPerformance(bets: PublicPerformanceBet[]) {
-  const settled = bets.filter((bet) => bet.result !== "EN_ATTENTE" && bet.result !== "REMBOURSE");
-  const profit = settled.reduce((sum, bet) => sum + profitInUnits(bet), 0);
+  const betsWithUnits = bets.filter((bet) => bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits));
+  const settled = betsWithUnits.filter((bet) => bet.result !== "EN_ATTENTE" && bet.result !== "REMBOURSE");
+  const profit = settled.length > 0 ? settled.reduce((sum, bet) => sum + profitInUnits(bet), 0) : null;
   const risked = settled.reduce((sum, bet) => sum + (bet.freebet ? 0 : Math.abs(bet.stakeUnits ?? 0)), 0);
+  const won = bets.filter((bet) => bet.result === "GAGNE").length;
+  const lost = bets.filter((bet) => bet.result === "PERDU").length;
+  const decided = won + lost;
+  const knownOdds = bets.filter((bet) => bet.odds !== null);
   return {
     profit,
-    normalizedBalance: 100 + profit,
-    roi: risked > 0 ? (profit / risked) * 100 : null,
+    normalizedBalance: profit === null ? null : 100 + profit,
+    roi: profit !== null && risked > 0 ? (profit / risked) * 100 : null,
+    totalVolume: betsWithUnits.reduce((sum, bet) => sum + Math.abs(bet.stakeUnits ?? 0), 0),
+    unitBetCount: betsWithUnits.length,
+    missingUnitCount: bets.length - betsWithUnits.length,
+    averageOdds: knownOdds.length > 0
+      ? knownOdds.reduce((sum, bet) => sum + (bet.odds ?? 0), 0) / knownOdds.length
+      : null,
+    winRate: decided > 0 ? (won / decided) * 100 : null,
+    results: {
+      won,
+      lost,
+      refunded: bets.filter((bet) => bet.result === "REMBOURSE").length,
+      pending: bets.filter((bet) => bet.result === "EN_ATTENTE").length,
+      cashed: bets.filter((bet) => bet.result === "CASHE").length,
+    },
   };
 }
