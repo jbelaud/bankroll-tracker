@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BookmarkSimple, ChartLineUp, ShieldCheck, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { PublicFollowButton } from "@/components/bankrolls/public-follow-button";
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
 import { Link } from "@/i18n/navigation";
@@ -73,7 +73,10 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
       <header className="flex items-center justify-between gap-4 py-1">
         <Link href="/" className="text-xl font-black tracking-tight">Kalivoa</Link>
-        <Link href={viewer ? "/dashboard" : "/login"} className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">{viewer ? "Mon espace" : "Se connecter"}</Link>
+        {viewer ? <Link href="/dashboard" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">Mon espace</Link> : <div className="flex items-center gap-2">
+          <Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">Se connecter</Link>
+          <Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90">Créer un compte</Link>
+        </div>}
       </header>
 
       <section className="glass-card rounded-3xl p-5 sm:p-6">
@@ -88,7 +91,10 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
           </div>
           {isOwner ? <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
             : viewer ? <PublicFollowButton slug={slug} locale={locale} initialFollowing={isFollowing} initialFollowerCount={bankroll._count.followers} />
-              : <Link href="/login" className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Suivre · {bankroll._count.followers}</Link>}
+              : <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+                <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>
+                <span className="text-xs text-muted-foreground">{bankroll._count.followers} personne(s) suivent cette bankroll</span>
+              </div>}
         </div>
       </section>
 
@@ -131,9 +137,22 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
           <div className="flex flex-wrap gap-2 text-xs"><ResultPill label="Gagnés" value={performance.results.won} tone="profit" /><ResultPill label="Perdus" value={performance.results.lost} tone="loss" /><ResultPill label="En attente" value={performance.results.pending} tone="warning" /></div>
         </div>
 
-        {bankroll.bets.length === 0 ? <div className="glass-card rounded-2xl p-10 text-center text-sm text-muted-foreground">Aucun pari publié pour le moment.</div> : Array.from(monthGroups.entries()).map(([monthKey, bets]) => <div key={monthKey} className="space-y-2">
-          <div className="flex items-center justify-between rounded-xl border border-primary/25 bg-primary/5 px-4 py-3"><h3 className="font-semibold capitalize text-primary">{month.format(bets[0].date)}</h3><span className="text-xs text-muted-foreground">{bets.length} pari(s)</span></div>
-          <ul className="space-y-2">
+        {bankroll.bets.length === 0 ? <div className="glass-card rounded-2xl p-10 text-center text-sm text-muted-foreground">Aucun pari publié pour le moment.</div> : Array.from(monthGroups.entries()).map(([monthKey, bets], index) => {
+          const monthProfits = bets.map((bet) => {
+            const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
+            return canCalculateProfit ? profitInUnits(bet) : null;
+          }).filter((value): value is number => value !== null);
+          const monthProfit = monthProfits.length > 0 ? monthProfits.reduce((sum, value) => sum + value, 0) : null;
+          return <details key={monthKey} open={index === 0} className="group overflow-hidden rounded-2xl border border-border bg-card/30">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 bg-primary/5 px-4 py-3 marker:hidden transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
+            <h3 className="font-semibold capitalize text-primary">{month.format(bets[0].date)}</h3>
+            <span className="flex items-center gap-3 text-xs">
+              <span className="text-muted-foreground">{bets.length} pari(s)</span>
+              {monthProfit !== null ? <strong className={`num ${monthProfit >= 0 ? "text-profit" : "text-loss"}`}>{monthProfit >= 0 ? "+" : ""}{number.format(monthProfit)}u</strong> : null}
+              <CaretDown size={16} className="text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+            </span>
+          </summary>
+          <ul className="space-y-2 border-t border-border p-2 sm:p-3">
             {bets.map((bet) => {
               const proofStatus = certificationStatus(bet, bankroll.certificationStartedAt);
               const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
@@ -156,7 +175,7 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
               </li>;
             })}
           </ul>
-        </div>)}
+        </details>})}
       </section>
     </div>
   </main>;
