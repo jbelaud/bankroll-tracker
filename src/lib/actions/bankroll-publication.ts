@@ -3,6 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
+import { bankrollPublicationError } from "@/lib/bankroll-publication-rules";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { prisma } from "@/lib/prisma";
 
@@ -15,10 +16,15 @@ export async function setBankrollPublication(_state: PublicationState, form: For
   const owned = await prisma.bankroll.findFirst({ where: { id: bankrollId, userId: user.id }, select: { id: true } });
   if (!owned || await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Bankroll inaccessible." };
 
-  await prisma.$transaction(async (tx) => {
+  const publicationError = await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${bankrollId} FOR UPDATE`;
-    const current = await tx.bankroll.findUniqueOrThrow({ where: { id: bankrollId } });
+    const current = await tx.bankroll.findUniqueOrThrow({
+      where: { id: bankrollId },
+      include: { _count: { select: { bets: { where: { stakeUnits: null } } } } },
+    });
     if (publish && !current.isPublic) {
+      const eligibilityError = bankrollPublicationError(current.referenceCapital, current._count.bets);
+      if (eligibilityError) return eligibilityError;
       const now = new Date();
       await tx.bankroll.update({
         where: { id: bankrollId },
@@ -36,7 +42,10 @@ export async function setBankrollPublication(_state: PublicationState, form: For
       });
       await tx.bet.updateMany({ where: { bankrollId }, data: { certificationLockedAt: null } });
     }
+    return null;
   });
+
+  if (publicationError) return { error: publicationError };
 
   revalidatePath("/[locale]/bankrolls/[id]", "page");
   revalidatePath("/[locale]/bankrolls", "page");

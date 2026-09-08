@@ -84,6 +84,7 @@ model User {
   scanDrafts            ScanDraft[]
   tipsters              Tipster[]
   importBatches         ImportBatch[]
+  bankrollFollows       BankrollFollow[]
   redeemedBetaInvite    BetaInvite?
   betaInviteRedemptions BetaInviteRedemption[]
 
@@ -159,9 +160,25 @@ model Bankroll {
   scanDrafts         ScanDraft[]
   referencePeriods   BankrollReferencePeriod[]
   stakingProfile     StakingProfile?
+  followers          BankrollFollow[]
 
   @@index([userId])
   @@map("bankrolls")
+}
+
+// Un suivi relie un membre à une bankroll publique. Le compteur reste visible
+// publiquement, mais l'identité des followers n'est jamais exposée.
+model BankrollFollow {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankrollId String
+  bankroll   Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, bankrollId])
+  @@index([bankrollId, createdAt])
+  @@map("bankroll_follows")
 }
 
 // Références connues à partir de leur date d'effet. Les périodes antérieures

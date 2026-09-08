@@ -26,15 +26,18 @@ const LEVEL_LABELS: Record<string, string> = {
   UNVERIFIED: "Non certifiée",
 };
 
-export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt, summary, correctionCount }: {
+export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt, summary, correctionCount, referenceCapital, missingUnitCount }: {
   bankrollId: string;
   isPublic: boolean;
   publicSlug: string | null;
   startedAt: string | null;
   summary: Summary;
   correctionCount: number;
+  referenceCapital: number | null;
+  missingUnitCount: number;
 }) {
   const [state, action, pending] = useActionState(setBankrollPublication, {});
+  const canPublish = Boolean(referenceCapital && referenceCapital > 0) && missingUnitCount === 0;
 
   return (
     <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-12">
@@ -62,7 +65,7 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
           <form action={action}>
             <input type="hidden" name="bankrollId" value={bankrollId} />
             <input type="hidden" name="publish" value={String(!isPublic)} />
-            <Button type="submit" variant={isPublic ? "outline" : "default"} disabled={pending} className="min-h-11 w-full rounded-xl sm:w-auto">
+            <Button type="submit" variant={isPublic ? "outline" : "default"} disabled={pending || (!isPublic && !canPublish)} className="min-h-11 w-full rounded-xl sm:w-auto">
               {pending ? "Enregistrement…" : isPublic ? "Repasser en privé" : "Rendre publique et activer"}
             </Button>
           </form>
@@ -84,6 +87,9 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
           </p>
         </div>
       )}
+
+      {!isPublic && !referenceCapital ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Ajoute un montant de référence avant de rendre cette bankroll publique. Kalivoa l’utilisera uniquement pour convertir les mises en unités.</p> : null}
+      {!isPublic && referenceCapital && missingUnitCount > 0 ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Complète les unités des {missingUnitCount} ancien(s) pari(s) ci-dessous avant la publication.</p> : null}
 
       {state.error && <p role="alert" className="mt-3 text-sm text-loss">{state.error}</p>}
       {state.success && <p role="status" className="mt-3 text-sm text-profit">{state.success}</p>}

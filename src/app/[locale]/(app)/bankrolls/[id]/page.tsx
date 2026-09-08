@@ -145,6 +145,8 @@ export default async function BankrollDetailPage({
         startedAt={bankroll.certificationStartedAt?.toISOString() ?? null}
         summary={certification}
         correctionCount={correctionCount}
+        referenceCapital={bankroll.referenceCapital}
+        missingUnitCount={bets.filter((bet) => bet.stakeUnits === null).length}
       />
       <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
         <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />

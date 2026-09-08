@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { profitInUnits, publicPerformance, type PublicPerformanceBet } from "./public-bankroll";
+import { profitInUnits, publicPerformance, publicPerformanceSeries, type PublicPerformanceBet } from "./public-bankroll";
 
 function bet(overrides: Partial<PublicPerformanceBet> = {}): PublicPerformanceBet {
   return { result: "GAGNE", stakeUnits: 1, odds: 2, cashOutAmount: null, referenceCapitalAtBet: 1000, freebet: false, ...overrides };
@@ -39,5 +39,15 @@ describe("public bankroll performance", () => {
     expect(performance.unitBetCount).toBe(3);
     expect(performance.missingUnitCount).toBe(1);
     expect(performance.results).toEqual({ won: 1, lost: 1, refunded: 1, pending: 1, cashed: 0 });
+  });
+
+  it("builds a chronological unit curve and calculates drawdown", () => {
+    const series = publicPerformanceSeries([
+      { ...bet({ result: "PERDU", stakeUnits: 1 }), date: new Date("2026-09-02") },
+      { ...bet({ result: "GAGNE", stakeUnits: 2, odds: 2 }), date: new Date("2026-09-01") },
+      { ...bet({ result: "EN_ATTENTE", stakeUnits: 5 }), date: new Date("2026-09-03") },
+    ]);
+    expect(series.points.map((point) => point.value)).toEqual([2, 1]);
+    expect(series.maxDrawdown).toBe(1);
   });
 });

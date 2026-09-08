@@ -9,6 +9,8 @@ export type PublicPerformanceBet = {
   freebet: boolean;
 };
 
+export type PublicPerformancePoint = { date: Date; value: number };
+
 export function profitInUnits(bet: PublicPerformanceBet): number {
   const stakeUnits = bet.stakeUnits ?? 0;
   if (bet.result === "GAGNE") return stakeUnits * ((bet.odds ?? 0) - 1);
@@ -50,4 +52,20 @@ export function publicPerformance(bets: PublicPerformanceBet[]) {
       cashed: bets.filter((bet) => bet.result === "CASHE").length,
     },
   };
+}
+
+export function publicPerformanceSeries(bets: Array<PublicPerformanceBet & { date: Date }>) {
+  const settled = bets
+    .filter((bet) => bet.stakeUnits !== null && ["GAGNE", "PERDU", "CASHE"].includes(bet.result))
+    .toSorted((left, right) => left.date.getTime() - right.date.getTime());
+  let cumulative = 0;
+  let peak = 0;
+  let maxDrawdown = 0;
+  const points: PublicPerformancePoint[] = settled.map((bet) => {
+    cumulative += profitInUnits(bet);
+    peak = Math.max(peak, cumulative);
+    maxDrawdown = Math.max(maxDrawdown, peak - cumulative);
+    return { date: bet.date, value: cumulative };
+  });
+  return { points, maxDrawdown };
 }
