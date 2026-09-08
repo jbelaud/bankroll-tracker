@@ -1,8 +1,20 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getConfiguredScanProvider, hasConfiguredScanProvider } from "./ai-provider";
+import { SPORTS } from "@/lib/sports";
+import { analyzeTicketImage, getConfiguredScanProvider, hasConfiguredScanProvider } from "./ai-provider";
+
+const anthropicCreate = vi.hoisted(() => vi.fn());
+
+vi.mock("@anthropic-ai/sdk", () => ({
+  default: class AnthropicMock {
+    messages = { create: anthropicCreate };
+  },
+}));
 
 describe("scan provider selection", () => {
-  afterEach(() => vi.unstubAllEnvs());
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.clearAllMocks();
+  });
 
   it("prefers Anthropic when both providers are configured", () => {
     vi.stubEnv("ANTHROPIC_API_KEY", "anthropic-test-key");
@@ -28,5 +40,23 @@ describe("scan provider selection", () => {
 
     expect(getConfiguredScanProvider()).toBeNull();
     expect(hasConfiguredScanProvider()).toBe(false);
+  });
+
+  it("does not send Anthropic the incompatible structured-output schema", async () => {
+    vi.stubEnv("ANTHROPIC_API_KEY", "anthropic-test-key");
+    anthropicCreate.mockResolvedValue({
+      content: [{ type: "text", text: '{"detectedBookmaker":null,"detectionConfidence":null,"bets":[]}' }],
+      usage: { input_tokens: 10, output_tokens: 5 },
+    });
+
+    await analyzeTicketImage({
+      base64: "image-data",
+      mediaType: "image/png",
+      taxonomy: SPORTS,
+    });
+
+    expect(anthropicCreate).toHaveBeenCalledWith(expect.not.objectContaining({
+      output_config: expect.anything(),
+    }));
   });
 });

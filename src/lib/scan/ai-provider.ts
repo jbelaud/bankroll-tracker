@@ -121,9 +121,9 @@ export async function analyzeTicketImage({
       max_tokens: 8192,
       temperature: 0,
       system: STRICT_SCAN_SYSTEM_PROMPT,
-      output_config: {
-        format: { type: "json_schema", schema: SCAN_RESPONSE_SCHEMA },
-      },
+      // Anthropic ne reçoit volontairement pas output_config ici. Son sous-ensemble
+      // JSON Schema rejette notre enum nullable de résultat avant même de lire
+      // l'image. Le JSON reste imposé par le prompt et validé par le serveur.
       messages: [
         {
           role: "user",
