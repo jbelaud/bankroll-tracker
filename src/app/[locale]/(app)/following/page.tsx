@@ -20,7 +20,7 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
           name: true,
           publicSlug: true,
           certificationStartedAt: true,
-          user: { select: { name: true } },
+          user: { select: { name: true, publicDisplayName: true, publicHandle: true, publicAvatarUrl: true } },
           _count: { select: { followers: true } },
           bets: {
             orderBy: [{ date: "desc" }, { createdAt: "desc" }],
@@ -66,9 +66,12 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
         return <li key={bankroll.publicSlug}>
           <Link href={`/p/${bankroll.publicSlug}`} className="glass-card group block rounded-2xl p-5 transition-colors hover:border-primary/40 hover:bg-primary/5">
             <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-xs text-muted-foreground">{bankroll.user.name || "Tipster Kalivoa"}</p>
-                <h2 className="mt-1 truncate text-lg font-semibold group-hover:text-primary">{bankroll.name}</h2>
+              <div className="flex min-w-0 items-center gap-3">
+                <FollowerAvatar name={bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"} avatarUrl={bankroll.user.publicAvatarUrl} />
+                <div className="min-w-0">
+                  <p className="truncate text-xs text-muted-foreground">{bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"}{bankroll.user.publicHandle ? ` · @${bankroll.user.publicHandle}` : ""}</p>
+                  <h2 className="mt-1 truncate text-lg font-semibold group-hover:text-primary">{bankroll.name}</h2>
+                </div>
               </div>
               <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[0.65rem] font-semibold text-primary"><ShieldCheck size={14} weight="fill" aria-hidden /> {certification.score === null ? "En observation" : `${certification.score}/100`}</span>
             </div>
@@ -92,4 +95,13 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
 function FollowStat({ label, value, tone }: { label: string; value: string; tone?: "profit" | "loss" | "warning" }) {
   const color = tone === "profit" ? "text-profit" : tone === "loss" ? "text-loss" : tone === "warning" ? "text-warning" : "text-foreground";
   return <div className="rounded-xl border border-border bg-background/30 p-3"><span className="block text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 block text-sm ${color}`}>{value}</strong></div>;
+}
+
+function FollowerAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
+  return <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary text-sm font-bold text-primary-foreground">
+    {avatarUrl ? <>
+      {/* eslint-disable-next-line @next/next/no-img-element -- domaines d’avatars publics configurables */}
+      <img src={avatarUrl} alt="" className="size-full object-cover" />
+    </> : name.trim().charAt(0).toUpperCase() || "?"}
+  </span>;
 }

@@ -18,6 +18,7 @@ import { FeedbackButton } from "@/components/account/feedback-button";
 import { isAdminEmail } from "@/lib/admin";
 import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 import { ScanQualityReports } from "@/components/account/scan-quality-reports";
+import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
 
 export default async function AccountPage({
   params,
@@ -78,6 +79,14 @@ export default async function AccountPage({
           <ArrowSquareOutIcon size={16} aria-hidden />
         </a>
       </section>
+
+      <PublicTipsterProfileForm profile={{
+        publicDisplayName: dbUser?.publicDisplayName ?? null,
+        publicHandle: dbUser?.publicHandle ?? null,
+        publicBio: dbUser?.publicBio ?? null,
+        publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
+        publicXHandle: dbUser?.publicXHandle ?? null,
+      }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
 
       <div className="xl:col-span-6"><AccountGoalsCard
           monthProfit={monthProfit}

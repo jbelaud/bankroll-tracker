@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicFollowButton } from "@/components/bankrolls/public-follow-button";
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
@@ -39,7 +39,15 @@ export default async function PublicBankrollPage({ params, searchParams }: {
       where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
       select: {
         id: true, userId: true, name: true, certificationStartedAt: true,
-        user: { select: { name: true } },
+        user: { select: {
+          name: true,
+          publicDisplayName: true,
+          publicHandle: true,
+          publicBio: true,
+          publicAvatarUrl: true,
+          publicXHandle: true,
+          bankrolls: { where: { isPublic: true }, select: { id: true } },
+        } },
         _count: { select: { followers: true } },
         bets: {
           orderBy: [{ date: "desc" }, { createdAt: "desc" }],
@@ -59,7 +67,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
 
   const viewer = authResult.data.user;
   const isOwner = viewer?.id === bankroll.userId;
-  const [follow, viewerSettings] = await Promise.all([
+  const [follow, viewerSettings, ownerFollowers] = await Promise.all([
     viewer && !isOwner
       ? prisma.bankrollFollow.findUnique({
         where: { userId_bankrollId: { userId: viewer.id, bankrollId: bankroll.id } },
@@ -85,6 +93,11 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         },
       })
       : null,
+    prisma.bankrollFollow.findMany({
+      where: { bankroll: { userId: bankroll.userId, isPublic: true } },
+      distinct: ["userId"],
+      select: { userId: true },
+    }),
   ]);
   const isFollowing = Boolean(follow);
   const requestedProfileId = Array.isArray(query.convertWith) ? query.convertWith[0] : query.convertWith;
@@ -130,14 +143,16 @@ export default async function PublicBankrollPage({ params, searchParams }: {
 
       <section className="glass-card rounded-3xl p-5 sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <span>{bankroll.user.name || "Tipster Kalivoa"}</span><span aria-hidden>·</span>
-              <span className="inline-flex items-center gap-1 text-profit"><ShieldCheck size={15} weight="fill" aria-hidden /> Bankroll publique</span>
-            </div>
-            <h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{bankroll.name}</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">Suivi transparent en unités. Les montants réels du tipster restent privés.</p>
-          </div>
+          <PublicIdentity
+            displayName={bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"}
+            handle={bankroll.user.publicHandle}
+            bio={bankroll.user.publicBio}
+            avatarUrl={bankroll.user.publicAvatarUrl}
+            xHandle={bankroll.user.publicXHandle}
+            bankrollName={bankroll.name}
+            tipsterFollowerCount={ownerFollowers.length}
+            publicBankrollCount={bankroll.user.bankrolls.length}
+          />
           <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
             <div className="flex flex-wrap gap-2">
               {isOwner ? <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
@@ -264,6 +279,41 @@ function ViewTab({ href, active, label, count }: { href: string; active: boolean
 function BetValue({ label, value, tone = "neutral", detail }: { label: string; value: string; tone?: Tone; detail?: string }) { return <div className="flex min-w-0 flex-col items-center justify-center border-r border-border p-3 text-center last:border-r-0"><span className="text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 truncate text-sm ${textTone(tone)}`}>{value}</strong>{detail ? <span className="mt-1 text-[0.65rem] font-semibold text-primary">{detail}</span> : null}</div>; }
 function proofTone(status: CertificationStatus) { return status === "STRONG" ? "bg-profit/15 text-profit" : status === "EXCLUDED" ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"; }
 function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" | "CASHE") { return result === "GAGNE" ? "bg-profit/15 text-profit" : result === "PERDU" ? "bg-loss/15 text-loss" : result === "EN_ATTENTE" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary"; }
+
+function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankrollName, tipsterFollowerCount, publicBankrollCount }: {
+  displayName: string;
+  handle: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+  xHandle: string | null;
+  bankrollName: string;
+  tipsterFollowerCount: number;
+  publicBankrollCount: number;
+}) {
+  const initial = displayName.trim().charAt(0).toUpperCase() || "?";
+  return <div className="flex min-w-0 items-start gap-4">
+    <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary text-xl font-bold text-primary-foreground shadow-sm">
+      {avatarUrl ? <>
+        {/* eslint-disable-next-line @next/next/no-img-element -- URL publique configurable, domaines distants inconnus */}
+        <img src={avatarUrl} alt={`Logo de ${displayName}`} className="size-full object-cover" />
+      </> : initial}
+    </div>
+    <div className="min-w-0">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <strong className="truncate text-base">{displayName}</strong>
+        {handle ? <span className="text-xs font-medium text-primary">@{handle}</span> : null}
+        {xHandle ? <a href={`https://x.com/${xHandle}`} target="_blank" rel="noopener noreferrer" aria-label={`Compte X de ${displayName}`} className="text-muted-foreground transition-colors hover:text-foreground"><XLogo size={16} aria-hidden /></a> : null}
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-profit"><ShieldCheck size={15} weight="fill" aria-hidden /> Bankroll publique</span>
+      </div>
+      <h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{bankrollName}</h1>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{bio || "Suivi transparent en unités. Les montants réels du tipster restent privés."}</p>
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <span><strong className="num text-foreground">{tipsterFollowerCount}</strong> abonné(s) au tipster</span>
+        <span><strong className="num text-foreground">{publicBankrollCount}</strong> bankroll(s) publique(s)</span>
+      </div>
+    </div>
+  </div>;
+}
 
 function PersonalConversionPanel({ locale, slug, viewer, currency, profiles, selectedId, selectedReference, oneUnit }: {
   locale: string;

@@ -25,6 +25,14 @@ model User {
   name      String?
   createdAt DateTime @default(now())
 
+  // Identité publique commune à toutes les bankrolls partagées par ce membre.
+  // Les champs restent facultatifs pour préserver les comptes existants.
+  publicDisplayName String?
+  publicHandle      String? @unique
+  publicBio        String?
+  publicAvatarUrl  String?
+  publicXHandle    String?
+
   // Parrainage bêta : le code est créé avec le profil, tandis que la relation
   // de parrainage reste irréversible et entièrement gérée côté serveur.
   referralCode        String @unique
