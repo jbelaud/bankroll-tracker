@@ -93,6 +93,8 @@ model User {
   tipsters              Tipster[]
   importBatches         ImportBatch[]
   bankrollFollows       BankrollFollow[]
+  followedTipsters      TipsterFollow[]         @relation("TipsterFollowFollower")
+  tipsterFollowers      TipsterFollow[]         @relation("TipsterFollowTipster")
   redeemedBetaInvite    BetaInvite?
   betaInviteRedemptions BetaInviteRedemption[]
 
@@ -187,6 +189,21 @@ model BankrollFollow {
   @@unique([userId, bankrollId])
   @@index([bankrollId, createdAt])
   @@map("bankroll_follows")
+}
+
+// Le suivi d'un tipster est distinct du suivi d'une bankroll : il couvre son
+// identité publique et toutes ses bankrolls publiques actuelles ou futures.
+model TipsterFollow {
+  id         String   @id @default(uuid())
+  followerId String
+  follower   User     @relation("TipsterFollowFollower", fields: [followerId], references: [id], onDelete: Cascade)
+  tipsterId  String
+  tipster    User     @relation("TipsterFollowTipster", fields: [tipsterId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([followerId, tipsterId])
+  @@index([tipsterId, createdAt])
+  @@map("tipster_follows")
 }
 
 // Références connues à partir de leur date d'effet. Les périodes antérieures

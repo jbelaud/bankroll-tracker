@@ -4,6 +4,7 @@ import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree, XLogo 
 import { PublicFollowButton } from "@/components/bankrolls/public-follow-button";
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
+import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
 import { personalStake } from "@/lib/bankroll-units";
@@ -46,7 +47,12 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           publicBio: true,
           publicAvatarUrl: true,
           publicXHandle: true,
-          bankrolls: { where: { isPublic: true }, select: { id: true } },
+          _count: { select: { tipsterFollowers: true } },
+          bankrolls: {
+            where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
+            orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+            select: { id: true, name: true, publicSlug: true, _count: { select: { followers: true } } },
+          },
         } },
         _count: { select: { followers: true } },
         bets: {
@@ -67,7 +73,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
 
   const viewer = authResult.data.user;
   const isOwner = viewer?.id === bankroll.userId;
-  const [follow, viewerSettings, ownerFollowers] = await Promise.all([
+  const [follow, viewerSettings, tipsterFollow] = await Promise.all([
     viewer && !isOwner
       ? prisma.bankrollFollow.findUnique({
         where: { userId_bankrollId: { userId: viewer.id, bankrollId: bankroll.id } },
@@ -93,11 +99,12 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         },
       })
       : null,
-    prisma.bankrollFollow.findMany({
-      where: { bankroll: { userId: bankroll.userId, isPublic: true } },
-      distinct: ["userId"],
-      select: { userId: true },
-    }),
+    viewer && !isOwner && bankroll.user.publicHandle
+      ? prisma.tipsterFollow.findUnique({
+        where: { followerId_tipsterId: { followerId: viewer.id, tipsterId: bankroll.userId } },
+        select: { id: true },
+      })
+      : null,
   ]);
   const isFollowing = Boolean(follow);
   const requestedProfileId = Array.isArray(query.convertWith) ? query.convertWith[0] : query.convertWith;
@@ -150,17 +157,21 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             avatarUrl={bankroll.user.publicAvatarUrl}
             xHandle={bankroll.user.publicXHandle}
             bankrollName={bankroll.name}
-            tipsterFollowerCount={ownerFollowers.length}
+            tipsterFollowerCount={bankroll.user._count.tipsterFollowers}
             publicBankrollCount={bankroll.user.bankrolls.length}
           />
           <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-            <div className="flex flex-wrap gap-2">
-              {isOwner ? <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
-                : viewer ? <PublicFollowButton slug={slug} locale={locale} initialFollowing={isFollowing} initialFollowerCount={bankroll._count.followers} />
-                  : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}
+            <div className="flex flex-wrap justify-end gap-2">
+              {isOwner ? <>
+                {bankroll.user.publicHandle ? <Link href={`/t/${bankroll.user.publicHandle}`} className="inline-flex min-h-11 items-center rounded-xl border border-border px-4 text-sm font-semibold transition-colors hover:bg-muted">Voir mon profil public</Link> : null}
+                <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
+              </> : viewer ? <>
+                {bankroll.user.publicHandle ? <PublicTipsterFollowButton handle={bankroll.user.publicHandle} locale={locale} bankrollSlug={slug} initialFollowing={Boolean(tipsterFollow)} initialFollowerCount={bankroll.user._count.tipsterFollowers} /> : null}
+                <PublicFollowButton slug={slug} locale={locale} initialFollowing={isFollowing} initialFollowerCount={bankroll._count.followers} />
+              </> : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}
               <PublicShareButton locale={locale} slug={slug} bankrollName={bankroll.name} />
             </div>
-            {!viewer ? <span className="text-xs text-muted-foreground">{bankroll._count.followers} personne(s) suivent cette bankroll</span> : null}
+            {!viewer ? <span className="text-xs text-muted-foreground">{bankroll.user._count.tipsterFollowers} abonné(s) au tipster · {bankroll._count.followers} à cette bankroll</span> : null}
           </div>
         </div>
       </section>
@@ -171,6 +182,22 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         <Kpi label="ROI" value={performance.roi === null ? "—" : `${number.format(performance.roi)}%`} tone={performance.roi === null ? "neutral" : performance.roi >= 0 ? "profit" : "loss"} />
         <Kpi label="Réussite" value={performance.winRate === null ? "—" : `${number.format(performance.winRate)}%`} />
       </section>
+
+      {bankroll.user.bankrolls.length > 1 ? <section className="glass-card rounded-2xl p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="text-sm font-semibold">Les bankrolls de {bankroll.user.publicDisplayName || bankroll.user.name || "ce tipster"}</h2><p className="mt-1 text-xs text-muted-foreground">Choisis la stratégie publique que tu souhaites consulter ou suivre.</p></div>
+          {bankroll.user.publicHandle ? <Link href={`/t/${bankroll.user.publicHandle}`} className="text-xs font-semibold text-primary hover:underline">Voir le profil complet</Link> : null}
+        </div>
+        <nav aria-label="Autres bankrolls publiques" className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {bankroll.user.bankrolls.map((item) => {
+            const current = item.id === bankroll.id;
+            return <Link key={item.id} href={`/p/${item.publicSlug}`} aria-current={current ? "page" : undefined} className={`rounded-xl border p-3 transition-colors ${current ? "border-primary bg-primary/10" : "border-border bg-background/30 hover:bg-muted"}`}>
+              <span className="block truncate text-sm font-semibold">{item.name}</span>
+              <span className="mt-1 block text-xs text-muted-foreground">{current ? "Bankroll affichée" : `${item._count.followers} abonné(s)`}</span>
+            </Link>;
+          })}
+        </nav>
+      </section> : null}
 
       <PersonalConversionPanel
         locale={locale}
@@ -301,7 +328,7 @@ function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankroll
     <div className="min-w-0">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <strong className="truncate text-base">{displayName}</strong>
-        {handle ? <span className="text-xs font-medium text-primary">@{handle}</span> : null}
+        {handle ? <Link href={`/t/${handle}`} className="text-xs font-medium text-primary hover:underline">@{handle}</Link> : null}
         {xHandle ? <a href={`https://x.com/${xHandle}`} target="_blank" rel="noopener noreferrer" aria-label={`Compte X de ${displayName}`} className="text-muted-foreground transition-colors hover:text-foreground"><XLogo size={16} aria-hidden /></a> : null}
         <span className="inline-flex items-center gap-1 text-xs font-semibold text-profit"><ShieldCheck size={15} weight="fill" aria-hidden /> Bankroll publique</span>
       </div>

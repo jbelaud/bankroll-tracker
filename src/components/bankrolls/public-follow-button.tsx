@@ -28,7 +28,7 @@ export function PublicFollowButton({ slug, locale, initialFollowing, initialFoll
         className="min-h-11 rounded-xl px-4 text-sm"
       >
         {pending ? <SpinnerGap className="animate-spin" aria-hidden /> : state.following ? <Check weight="bold" aria-hidden /> : <BookmarkSimple weight="bold" aria-hidden />}
-        {state.following ? "Suivie" : "Suivre"}
+        {state.following ? "Bankroll suivie" : "Suivre cette bankroll"}
         <span className="rounded-full bg-background/20 px-1.5 py-0.5 text-[0.65rem]">{state.followerCount}</span>
       </Button>
     </form>
