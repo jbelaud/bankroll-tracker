@@ -37,6 +37,7 @@ export function ReviewList({
   initialTipsters,
   initialExcludedIndexes = [],
   onReviewChange,
+  bankrollSelectionLocked = false,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
@@ -54,6 +55,7 @@ export function ReviewList({
   initialTipsters: TipsterOption[];
   initialExcludedIndexes?: number[];
   onReviewChange?: (bets: ParsedBet[], excludedIndexes: number[], bankrollId: string) => void;
+  bankrollSelectionLocked?: boolean;
 }) {
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(() => new Set(initialExcludedIndexes));
@@ -146,7 +148,7 @@ export function ReviewList({
         <Button
           variant="ghost"
           onClick={onRestart}
-          disabled={importing}
+          disabled={importing || bankrollSelectionLocked}
           className="min-h-touch rounded-lg text-xs text-muted-foreground"
         >
           <ArrowCounterClockwise size={15} aria-hidden />

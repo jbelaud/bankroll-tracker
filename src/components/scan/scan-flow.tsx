@@ -55,12 +55,14 @@ export function ScanFlow({
   taxonomy,
   pendingDrafts,
   tipsters,
+  resultProofTarget,
 }: {
   bankrolls: BankrollOption[];
   currency: Currency;
   taxonomy: Taxonomy;
   pendingDrafts: PendingScanDraft[];
   tipsters: TipsterOption[];
+  resultProofTarget?: { betId: string; bankrollId: string; label: string };
 }) {
   const router = useRouter();
   const t = useTranslations("scan.error");
@@ -68,7 +70,7 @@ export function ScanFlow({
   const tReferral = useTranslations("referral");
   const tEmpty = useTranslations("scan.empty");
   const tPending = useTranslations("scan.pending");
-  const [bankrollId, setBankrollId] = useState(bankrolls[0]?.id ?? "");
+  const [bankrollId, setBankrollId] = useState(resultProofTarget?.bankrollId ?? bankrolls[0]?.id ?? "");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
   const [error, setError] = useState("");
   const [sharingEmpty, setSharingEmpty] = useState(false);
@@ -103,7 +105,7 @@ export function ScanFlow({
             screenshots_count: files.length,
             bets_detected: bets.length,
           });
-          const draftId = await createScanDraft(
+          const draftId = resultProofTarget ? null : await createScanDraft(
             bankrollId,
             buildDraftPayload(bets, scans, skippedDuplicateFiles)
           ).catch(() => null);
@@ -114,7 +116,7 @@ export function ScanFlow({
         setFlow({ step: "idle" });
       }
     },
-    [bankrollId, buildDraftPayload, t]
+    [bankrollId, buildDraftPayload, resultProofTarget, t]
   );
 
   const restart = useCallback(() => {
@@ -145,7 +147,8 @@ export function ScanFlow({
         bankrollId,
         bets,
         scans.map((scan) => scan.usageId),
-        scanMeasurements
+        scanMeasurements,
+        resultProofTarget?.betId
       );
       if (result.imported === undefined) {
         setError(result.error);
@@ -179,7 +182,7 @@ export function ScanFlow({
         earnedReferralScans: scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0),
       });
     },
-    [bankrollId, flow]
+    [bankrollId, flow, resultProofTarget?.betId]
   );
 
   if (flow.step === "scanning") {
@@ -241,6 +244,7 @@ export function ScanFlow({
         bankrolls={bankrolls}
         bankrollId={bankrollId}
         onBankrollChange={setBankrollId}
+        bankrollSelectionLocked={Boolean(resultProofTarget)}
         initialExcludedIndexes={flow.step === "review" ? flow.excludedIndexes : []}
         onReviewChange={(bets, excludedIndexes, selectedBankrollId) => {
           if (!flow.draftId) return;
@@ -264,8 +268,10 @@ export function ScanFlow({
   }
 
   if (flow.step === "completed") {
-    const title = flow.firstImport ? tComplete("firstTitle") : tComplete("title");
-    const description = flow.firstImport
+    const title = resultProofTarget ? "Preuve du résultat enregistrée" : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
+    const description = resultProofTarget
+      ? "Le pari existant a été clôturé avec sa preuve Scan. Son niveau de certification et les statistiques publiques sont à jour."
+      : flow.firstImport
       ? tComplete("firstDescription", { count: flow.imported })
       : tComplete("description", { count: flow.imported });
 
@@ -288,7 +294,7 @@ export function ScanFlow({
           </p>
         ) : null}
 
-        {flow.firstImport ? (
+        {!resultProofTarget && flow.firstImport ? (
           <div className="w-full rounded-xl border border-primary/35 bg-primary/10 p-4 text-left">
             <div className="flex gap-3">
               <DiscordLogo size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
@@ -309,22 +315,22 @@ export function ScanFlow({
           </div>
         ) : null}
 
-        <Button
+        {!resultProofTarget ? <Button
           type="button"
           variant="outline"
           onClick={restart}
           className="min-h-touch w-full rounded-lg text-sm font-semibold"
         >
           {tComplete("scanAgainCta")}
-        </Button>
+        </Button> : null}
 
         <Button
           type="button"
           variant="default"
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push(resultProofTarget ? `/bankrolls/${resultProofTarget.bankrollId}` : "/dashboard")}
           className="min-h-touch w-full rounded-lg text-sm font-semibold"
         >
-          {tComplete("dashboardCta")}
+          {resultProofTarget ? "Retour à la bankroll" : tComplete("dashboardCta")}
         </Button>
       </section>
     );
@@ -332,12 +338,16 @@ export function ScanFlow({
 
   return (
     <div className="flex flex-1 flex-col gap-3">
+      {resultProofTarget ? <section className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+        <p className="text-sm font-semibold">Ajouter la preuve du résultat</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Scanne le ticket clôturé correspondant à « {resultProofTarget.label} ». Kalivoa complétera ce pari existant sans en créer un nouveau.</p>
+      </section> : null}
       {error && (
         <p role="alert" className="text-xs text-loss">
           {error}
         </p>
       )}
-      {pendingDrafts.length > 0 && (
+      {!resultProofTarget && pendingDrafts.length > 0 && (
         <section className="glass-card rounded-xl p-4">
           <h2 className="text-sm font-semibold">{tPending("title")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{tPending("description")}</p>

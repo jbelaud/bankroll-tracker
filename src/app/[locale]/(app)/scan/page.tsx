@@ -8,9 +8,23 @@ import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { listPendingScanDrafts } from "@/lib/actions/scan-drafts";
 import { listTipsters } from "@/lib/actions/tipsters";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
-export default async function ScanPage() {
+export default async function ScanPage({ searchParams }: { searchParams: Promise<{ resultFor?: string | string[] }> }) {
   const user = await requireUser();
+  const query = await searchParams;
+  const resultFor = Array.isArray(query.resultFor) ? query.resultFor[0] : query.resultFor;
+  const resultProofTarget = resultFor ? await prisma.bet.findFirst({
+    where: {
+      id: resultFor,
+      result: "EN_ATTENTE",
+      certificationLockedAt: { not: null },
+      bankroll: { userId: user.id, isPublic: true, certificationStartedAt: { not: null } },
+    },
+    select: { id: true, bankrollId: true, description: true, sport: true, betType: true },
+  }) : null;
+  if (resultFor && !resultProofTarget) notFound();
   const [bankrolls, taxonomy, pendingDrafts, tipsters, t, tCommon, currency] = await Promise.all([
     listBankrolls(),
     getUserTaxonomy(user.id),
@@ -60,6 +74,11 @@ export default async function ScanPage() {
         taxonomy={taxonomy}
         pendingDrafts={pendingDrafts}
         tipsters={tipsters.map(({ id, name, normalizedName, status }) => ({ id, name, normalizedName, status }))}
+        resultProofTarget={resultProofTarget ? {
+          betId: resultProofTarget.id,
+          bankrollId: resultProofTarget.bankrollId,
+          label: resultProofTarget.description || `${resultProofTarget.sport} · ${resultProofTarget.betType}`,
+        } : undefined}
       />
     </div>
   );

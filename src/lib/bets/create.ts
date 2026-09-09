@@ -6,6 +6,7 @@ import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { isBetResult } from "@/lib/bet-result";
 import { prisma } from "@/lib/prisma";
 import type { ParsedBetSelection } from "@/lib/scan/types";
+import { initialProofTiming } from "@/lib/result-proof";
 import {
   getUserTaxonomy,
   normalizeSportContext,
@@ -140,10 +141,9 @@ export async function createOwnedBet(
       tipsterId: source.resolvedTipsterId ?? null,
       scanUsageId: source.scanUsageId ?? null,
       initialProofAt: pendingScan ? scanProof.createdAt : null,
-      // Le scan actuel extrait une date, mais pas encore une heure de début
-      // fiable. On conserve donc la preuve sans prétendre qu'elle précédait
-      // l'événement. Une future heure vérifiée pourra faire évoluer ce statut.
-      initialProofBeforeEvent: pendingScan ? (input.live ? false : null) : null,
+      // Sans heure fiable, seul un scan réalisé avant le jour de l'événement
+      // constitue une preuve forte. Un scan le jour même reste à confirmer.
+      initialProofBeforeEvent: pendingScan ? initialProofTiming(scanProof.createdAt, input.date, input.live) : null,
       resultProofAt: settledScan ? scanProof.createdAt : null,
       resultEntryMethod: input.result === "EN_ATTENTE" ? "UNKNOWN" : settledScan ? "SCAN" : source.entryMethod === "MANUAL" ? "MANUAL" : "UNKNOWN",
       certificationLockedAt: certificationActive ? recordedAt : null,

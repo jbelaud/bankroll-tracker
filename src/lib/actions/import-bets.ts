@@ -19,6 +19,7 @@ import {
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
+import { resultProofMatches } from "@/lib/result-proof";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -310,7 +311,8 @@ export async function importBets(
   bankrollId: string,
   bets: ParsedBet[],
   scanUsageIds: string[] = [],
-  scanMeasurements: ScanImportMeasurement[] = []
+  scanMeasurements: ScanImportMeasurement[] = [],
+  resultForBetId?: string
 ): Promise<ImportResult> {
   const locale = await getServerLocale();
   const user = await requireUser();
@@ -356,13 +358,66 @@ export async function importBets(
     const scanUsages = uniqueScanUsageIds.length
       ? await prisma.scanUsage.findMany({
           where: { id: { in: uniqueScanUsageIds }, userId: user.id, outcome: "READY" },
-          select: { id: true, detectedBookmaker: true },
+          select: { id: true, detectedBookmaker: true, createdAt: true },
         })
       : [];
     if (scanUsages.length !== uniqueScanUsageIds.length) {
       return { error: "Un Scan associé à cet import est introuvable." };
     }
     const scanUsageById = new Map(scanUsages.map((usage) => [usage.id, usage]));
+
+    if (resultForBetId) {
+      if (bets.length !== 1 || uniqueScanUsageIds.length !== 1) return { error: "Sélectionne une seule capture contenant un seul pari pour ajouter cette preuve de résultat." };
+      const scanned = bets[0];
+      const scanUsageId = scanned.sourceScanIndex === undefined ? null : uniqueScanUsageIds[scanned.sourceScanIndex] ?? null;
+      const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
+      if (!scanUsageId || !scanProof || scanned.result === "EN_ATTENTE") {
+        return { error: "Le scan doit afficher clairement le résultat final de ce pari." };
+      }
+      const verifiedScanUsageId = scanUsageId;
+      const target = await prisma.bet.findFirst({
+        where: {
+          id: resultForBetId,
+          bankrollId,
+          result: "EN_ATTENTE",
+          certificationLockedAt: { not: null },
+          bankroll: { userId: user.id, isPublic: true, certificationStartedAt: { not: null } },
+        },
+        select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+      });
+      if (!target) return { error: "Ce pari n’est plus disponible pour une preuve de résultat." };
+      if (!resultProofMatches(target, scanned)) {
+        return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
+      }
+      await prisma.$transaction(async (tx) => {
+        await tx.bet.update({
+          where: { id: target.id },
+          data: {
+            result: scanned.result,
+            cashOutAmount: scanned.result === "CASHE" ? scanned.cashOutAmount : null,
+            eventResult: scanned.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
+            resultProofAt: scanProof.createdAt,
+            resultEntryMethod: "SCAN",
+          },
+        });
+        const measurement = scanMeasurements.find((item) => item.scanUsageId === verifiedScanUsageId);
+        await tx.scanUsage.update({
+          where: { id: verifiedScanUsageId },
+          data: {
+            betsImported: { increment: 1 },
+            betsExcluded: Math.max(0, Math.min(100, Math.trunc(measurement?.betsExcluded ?? 0))),
+            fieldsCorrectedCount: Math.max(0, Math.min(1_000, Math.trunc(measurement?.fieldsCorrectedCount ?? 0))),
+            correctedFields: measurement?.correctedFields?.filter((field) => /^[a-z][a-zA-Z0-9_]{0,63}$/.test(field)).slice(0, 30),
+            verificationCompletedAt: new Date(),
+          },
+        });
+      });
+      await recordGrowthEventSafely({ name: "verification_completed", userId: user.id, properties: { screenshots_count: 1, bets_imported: 1, proof_type: "result" } });
+      revalidatePath("/[locale]/bankrolls/[id]", "page");
+      revalidatePath("/[locale]/history", "page");
+      revalidatePath("/[locale]/p/[slug]", "page");
+      return { imported: 1, firstImport: false };
+    }
     const allocationByBookmaker = new Map(bankroll.allocations.map((allocation) => [
       normalizeBookmaker(allocation.bookmaker).toLocaleLowerCase("fr"),
       allocation,
