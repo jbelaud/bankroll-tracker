@@ -25,11 +25,11 @@ export function unitSnapshot(stake: number, periods: ReferencePeriod[], date: Da
   return { referenceCapitalAtBet, stakeUnits: toUnits(stake, referenceCapitalAtBet), unitsRecordedAt: recordedAt };
 }
 
-export function referenceDateForImport(date: Date, pending: boolean, historicalFile: boolean, now: Date) {
-  // A pending bet entered today (or for a future event) uses today's chosen
-  // reference. Historical files and earlier dates require a known period.
-  if (pending && !historicalFile && date.toISOString().slice(0, 10) >= now.toISOString().slice(0, 10)) return now;
-  return date;
+export function referenceDateForImport(date: Date, historicalFile: boolean, now: Date) {
+  // An interactive import (scan or manual entry) must persist the same current
+  // reference shown in the review UI, even when the ticket is already settled.
+  // Historical file migrations remain tied to their original dated periods.
+  return historicalFile ? date : now;
 }
 
 export function personalStake(units: number, reference: number, unitPercent = 1, rounding = 0) {

@@ -109,7 +109,7 @@ export async function createOwnedBet(
       select: { createdAt: true },
     }) : null;
     const recordedAt = new Date();
-    const referenceDate = referenceDateForImport(input.date, input.result === "EN_ATTENTE", source.entryMethod === "FILE", recordedAt);
+    const referenceDate = referenceDateForImport(input.date, source.entryMethod === "FILE", recordedAt);
     const certificationActive = bankrollState.isPublic && bankrollState.certificationStartedAt !== null;
     const pendingScan = certificationActive && source.entryMethod === "SCAN" && input.result === "EN_ATTENTE" && scanProof;
     const settledScan = certificationActive && source.entryMethod === "SCAN" && input.result !== "EN_ATTENTE" && scanProof;

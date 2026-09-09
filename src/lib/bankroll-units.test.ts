@@ -28,12 +28,13 @@ describe("historical units", () => {
     expect(personalStake(2, 750, 0.5, 5)).toEqual({ amount: 7.5, rounded: 5 });
     expect(() => personalStake(2, 750, 0)).toThrow();
   });
-  it("uses the current reference for a new pending ticket but not for an old file", () => {
+  it("uses the current reference shown during interactive imports but preserves dated file imports", () => {
     const now = new Date("2026-09-05T15:00:00Z");
     const today = new Date("2026-09-05T00:00:00Z");
-    expect(referenceDateForImport(today, true, false, now)).toBe(now);
-    expect(referenceDateForImport(today, true, true, now)).toBe(today);
+    expect(referenceDateForImport(today, false, now)).toBe(now);
+    expect(referenceDateForImport(today, true, now)).toBe(today);
     const old = new Date("2026-09-01");
-    expect(referenceDateForImport(old, true, false, now)).toBe(old);
+    expect(referenceDateForImport(old, false, now)).toBe(now);
+    expect(referenceDateForImport(old, true, now)).toBe(old);
   });
 });
