@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { certificationSummary } from "@/lib/certification";
 import { prisma } from "@/lib/prisma";
 import { publicPerformance } from "@/lib/public-bankroll";
+import { PublicAvatar } from "@/components/tipsters/public-avatar";
 
 export default async function FollowingPage({ params }: { params: Promise<{ locale: string }> }) {
   const [{ locale }, user] = await Promise.all([params, requireUser()]);
@@ -79,7 +80,7 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
             return <li key={tipster.id}>
               <Link href={`/t/${tipster.publicHandle}`} className="glass-card group block rounded-2xl p-5 transition-colors hover:border-primary/40 hover:bg-primary/5">
                 <div className="flex items-center gap-3">
-                  <FollowerAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} />
+                  <PublicAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} className="size-11 text-sm" />
                   <div className="min-w-0 flex-1"><h3 className="truncate font-semibold group-hover:text-primary">{displayName}</h3><p className="mt-1 truncate text-xs text-primary">@{tipster.publicHandle}</p></div>
                   <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground"><UsersThree size={15} aria-hidden /> {tipster._count.tipsterFollowers}</span>
                 </div>
@@ -104,7 +105,7 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
           <Link href={`/p/${bankroll.publicSlug}`} className="glass-card group block rounded-2xl p-5 transition-colors hover:border-primary/40 hover:bg-primary/5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <FollowerAvatar name={bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"} avatarUrl={bankroll.user.publicAvatarUrl} />
+                <PublicAvatar name={bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"} avatarUrl={bankroll.user.publicAvatarUrl} className="size-11 text-sm" />
                 <div className="min-w-0">
                   <p className="truncate text-xs text-muted-foreground">{bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"}{bankroll.user.publicHandle ? ` · @${bankroll.user.publicHandle}` : ""}</p>
                   <h2 className="mt-1 truncate text-lg font-semibold group-hover:text-primary">{bankroll.name}</h2>
@@ -134,13 +135,4 @@ export default async function FollowingPage({ params }: { params: Promise<{ loca
 function FollowStat({ label, value, tone }: { label: string; value: string; tone?: "profit" | "loss" | "warning" }) {
   const color = tone === "profit" ? "text-profit" : tone === "loss" ? "text-loss" : tone === "warning" ? "text-warning" : "text-foreground";
   return <div className="rounded-xl border border-border bg-background/30 p-3"><span className="block text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 block text-sm ${color}`}>{value}</strong></div>;
-}
-
-function FollowerAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
-  return <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-    {avatarUrl ? <>
-      {/* eslint-disable-next-line @next/next/no-img-element -- domaines d’avatars publics configurables */}
-      <img src={avatarUrl} alt="" className="size-full object-cover" />
-    </> : name.trim().charAt(0).toUpperCase() || "?"}
-  </span>;
 }

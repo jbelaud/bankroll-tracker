@@ -5,6 +5,7 @@ import { PublicFollowButton } from "@/components/bankrolls/public-follow-button"
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
+import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
 import { personalStake } from "@/lib/bankroll-units";
@@ -317,14 +318,8 @@ function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankroll
   tipsterFollowerCount: number;
   publicBankrollCount: number;
 }) {
-  const initial = displayName.trim().charAt(0).toUpperCase() || "?";
   return <div className="flex min-w-0 items-start gap-4">
-    <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary text-xl font-bold text-primary-foreground shadow-sm">
-      {avatarUrl ? <>
-        {/* eslint-disable-next-line @next/next/no-img-element -- URL publique configurable, domaines distants inconnus */}
-        <img src={avatarUrl} alt={`Logo de ${displayName}`} className="size-full object-cover" />
-      </> : initial}
-    </div>
+    <PublicAvatar name={displayName} avatarUrl={avatarUrl} />
     <div className="min-w-0">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <strong className="truncate text-base">{displayName}</strong>

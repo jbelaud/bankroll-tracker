@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, BookmarkSimple, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
+import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { Link } from "@/i18n/navigation";
 import { certificationSummary } from "@/lib/certification";
 import { prisma } from "@/lib/prisma";
@@ -91,7 +92,7 @@ export default async function PublicTipsterPage({ params }: {
       <section className="glass-card rounded-3xl p-5 sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-4">
-            <PublicAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} />
+            <PublicAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} className="size-20 text-2xl" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="break-words text-2xl font-bold sm:text-3xl">{displayName}</h1>
@@ -142,17 +143,6 @@ export default async function PublicTipsterPage({ params }: {
       </section>
     </div>
   </main>;
-}
-
-function PublicAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
-  const initial = name.trim().charAt(0).toUpperCase() || "?";
-  return <span className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary text-2xl font-bold text-primary-foreground shadow-sm">
-    {initial}
-    {avatarUrl ? <>
-      {/* eslint-disable-next-line @next/next/no-img-element -- URL publique configurable, domaines distants inconnus */}
-      <img src={avatarUrl} alt={`Logo de ${name}`} className="absolute inset-0 size-full object-cover" />
-    </> : null}
-  </span>;
 }
 
 function Kpi({ label, value }: { label: string; value: string }) {
