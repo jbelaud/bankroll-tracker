@@ -5,7 +5,9 @@ import { PublicFollowButton } from "@/components/bankrolls/public-follow-button"
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
+import { personalStake } from "@/lib/bankroll-units";
 import { certificationStatus, certificationSummary, type CertificationStatus } from "@/lib/certification";
+import { fmtMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { profitInUnits, publicPerformance, publicPerformanceSeries } from "@/lib/public-bankroll";
 import { createClient } from "@/lib/supabase/server";
@@ -24,8 +26,11 @@ const LEVEL_LABELS: Record<string, string> = {
 };
 const FORMAT_LABELS = { SIMPLE: "Simple", COMBINE: "Combiné", SYSTEME: "Système", BACK: "Back", LAY: "Lay" } as const;
 
-export default async function PublicBankrollPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
-  const { locale, slug } = await params;
+export default async function PublicBankrollPage({ params, searchParams }: {
+  params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ convertWith?: string | string[] }>;
+}) {
+  const [{ locale, slug }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
   const [authResult, bankroll] = await Promise.all([
     supabase.auth.getUser(),
@@ -53,12 +58,41 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
 
   const viewer = authResult.data.user;
   const isOwner = viewer?.id === bankroll.userId;
-  const isFollowing = viewer && !isOwner
-    ? Boolean(await prisma.bankrollFollow.findUnique({
-      where: { userId_bankrollId: { userId: viewer.id, bankrollId: bankroll.id } },
-      select: { id: true },
-    }))
-    : false;
+  const [follow, viewerSettings] = await Promise.all([
+    viewer && !isOwner
+      ? prisma.bankrollFollow.findUnique({
+        where: { userId_bankrollId: { userId: viewer.id, bankrollId: bankroll.id } },
+        select: { id: true },
+      })
+      : null,
+    viewer
+      ? prisma.user.findUnique({
+        where: { id: viewer.id },
+        select: {
+          currency: true,
+          bankrolls: {
+            where: { stakingProfile: { isNot: null } },
+            orderBy: { createdAt: "asc" },
+            select: {
+              id: true,
+              name: true,
+              stakingProfile: {
+                select: { referenceCapital: true, unitPercent: true, rounding: true },
+              },
+            },
+          },
+        },
+      })
+      : null,
+  ]);
+  const isFollowing = Boolean(follow);
+  const requestedProfileId = Array.isArray(query.convertWith) ? query.convertWith[0] : query.convertWith;
+  const conversionProfiles = viewerSettings?.bankrolls.filter((item) => item.stakingProfile !== null) ?? [];
+  const selectedConversion = conversionProfiles.find((item) => item.id === requestedProfileId) ?? conversionProfiles[0] ?? null;
+  const selectedProfile = selectedConversion?.stakingProfile ?? null;
+  const oneUnitForViewer = selectedProfile
+    ? personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded
+    : null;
   const certification = certificationSummary(bankroll.bets, bankroll.certificationStartedAt);
   const performance = publicPerformance(bankroll.bets);
   const curve = publicPerformanceSeries(bankroll.bets);
@@ -104,6 +138,21 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
         <Kpi label="ROI" value={performance.roi === null ? "—" : `${number.format(performance.roi)}%`} tone={performance.roi === null ? "neutral" : performance.roi >= 0 ? "profit" : "loss"} />
         <Kpi label="Réussite" value={performance.winRate === null ? "—" : `${number.format(performance.winRate)}%`} />
       </section>
+
+      <PersonalConversionPanel
+        locale={locale}
+        slug={slug}
+        viewer={Boolean(viewer)}
+        currency={viewerSettings?.currency}
+        profiles={conversionProfiles.map((item) => ({
+          id: item.id,
+          name: item.name,
+          referenceCapital: item.stakingProfile!.referenceCapital,
+        }))}
+        selectedId={selectedConversion?.id}
+        selectedReference={selectedProfile?.referenceCapital}
+        oneUnit={oneUnitForViewer}
+      />
 
       <section className="grid gap-4 lg:grid-cols-12">
         <div className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-8">
@@ -169,7 +218,7 @@ export default async function PublicBankrollPage({ params }: { params: Promise<{
                     <p className="mt-1 text-xs text-muted-foreground">{date.format(bet.date)} · {bet.sport} · {bet.betType}{bet.eventResult ? ` · ${bet.eventResult}` : ""}</p>
                     {bet._count.corrections > 0 ? <p className="mt-1 text-[0.65rem] text-warning">{bet._count.corrections} correction(s) tracée(s)</p> : null}
                   </div>
-                  <div className="grid grid-cols-3 border-t border-border sm:w-[25rem] sm:border-l sm:border-t-0"><BetValue label="Cote" value={bet.odds === null ? "—" : number.format(bet.odds)} /><BetValue label="Mise" value={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} /><BetValue label="Bénéfice" value={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} tone={profit === null ? "neutral" : profit >= 0 ? "profit" : "loss"} /></div>
+                  <div className="grid grid-cols-3 border-t border-border sm:w-[25rem] sm:border-l sm:border-t-0"><BetValue label="Cote" value={bet.odds === null ? "—" : number.format(bet.odds)} /><BetValue label="Mise" value={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} detail={bet.stakeUnits !== null && selectedProfile && viewerSettings ? `Pour toi : ${fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)}` : undefined} /><BetValue label="Bénéfice" value={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} tone={profit === null ? "neutral" : profit >= 0 ? "profit" : "loss"} /></div>
                   <div className={`flex min-h-9 items-center justify-center px-3 text-[0.65rem] font-bold sm:[writing-mode:vertical-rl] ${resultBlockTone(bet.result)}`}>{betResultToLabel(bet.result)}</div>
                 </div>
               </li>;
@@ -186,6 +235,45 @@ function textTone(tone: Tone) { return tone === "profit" ? "text-profit" : tone 
 function Kpi({ label, value, tone = "neutral" }: { label: string; value: string; tone?: Tone }) { return <div className="glass-card rounded-2xl p-4 text-center sm:p-5"><span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span><strong className={`num mt-2 block text-2xl sm:text-3xl ${textTone(tone)}`}>{value}</strong></div>; }
 function SmallStat({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-border bg-background/30 p-3"><span className="block text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className="num mt-1 block text-sm">{value}</strong></div>; }
 function ResultPill({ label, value, tone }: { label: string; value: number; tone: Tone }) { return <span className={`rounded-full bg-muted px-3 py-1.5 font-semibold ${textTone(tone)}`}>{label} {value}</span>; }
-function BetValue({ label, value, tone = "neutral" }: { label: string; value: string; tone?: Tone }) { return <div className="flex min-w-0 flex-col items-center justify-center border-r border-border p-3 text-center last:border-r-0"><span className="text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 truncate text-sm ${textTone(tone)}`}>{value}</strong></div>; }
+function BetValue({ label, value, tone = "neutral", detail }: { label: string; value: string; tone?: Tone; detail?: string }) { return <div className="flex min-w-0 flex-col items-center justify-center border-r border-border p-3 text-center last:border-r-0"><span className="text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 truncate text-sm ${textTone(tone)}`}>{value}</strong>{detail ? <span className="mt-1 text-[0.65rem] font-semibold text-primary">{detail}</span> : null}</div>; }
 function proofTone(status: CertificationStatus) { return status === "STRONG" ? "bg-profit/15 text-profit" : status === "EXCLUDED" ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"; }
 function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" | "CASHE") { return result === "GAGNE" ? "bg-profit/15 text-profit" : result === "PERDU" ? "bg-loss/15 text-loss" : result === "EN_ATTENTE" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary"; }
+
+function PersonalConversionPanel({ locale, slug, viewer, currency, profiles, selectedId, selectedReference, oneUnit }: {
+  locale: string;
+  slug: string;
+  viewer: boolean;
+  currency?: "EUR" | "USD" | "GBP";
+  profiles: Array<{ id: string; name: string; referenceCapital: number }>;
+  selectedId?: string;
+  selectedReference?: number;
+  oneUnit: number | null;
+}) {
+  if (!viewer) return <section className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div><h2 className="text-sm font-semibold">Transforme les unités en ta propre mise</h2><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Crée ton compte et Kalivoa affichera sur chaque pari le montant adapté à ta référence personnelle.</p></div>
+    <Link href="/signup" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Créer mon compte</Link>
+  </section>;
+
+  if (!selectedId || !selectedReference || oneUnit === null || !currency) return <section className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div><h2 className="text-sm font-semibold">Configure tes mises personnalisées</h2><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Ajoute un montant de référence privé pour voir ton équivalent en euros sur les paris de ce tipster.</p></div>
+    <Link href="/bankrolls" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer ma référence</Link>
+  </section>;
+
+  return <section className="glass-card rounded-2xl border-primary/20 p-4 sm:p-5">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ma conversion privée</p>
+        <h2 className="mt-1 text-lg font-semibold">1u du tipster = {fmtMoney(oneUnit, locale, currency)} pour toi</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Référence utilisée : {fmtMoney(selectedReference, locale, currency)}. Ce réglage n’est jamais visible par le tipster.</p>
+      </div>
+      {profiles.length > 1 ? <form action={`/${locale}/p/${slug}`} method="get" className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <label className="grid gap-1.5 text-xs font-medium">Calculer avec ma bankroll
+          <select name="convertWith" defaultValue={selectedId} className="min-h-11 min-w-60 rounded-xl border border-border bg-popover px-3 text-sm text-popover-foreground">
+            {profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · {fmtMoney(profile.referenceCapital, locale, currency)}</option>)}
+          </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded-xl border border-border px-4 text-sm font-semibold transition-colors hover:bg-muted">Utiliser</button>
+      </form> : null}
+    </div>
+  </section>;
+}
