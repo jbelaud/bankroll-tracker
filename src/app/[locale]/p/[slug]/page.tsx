@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree } from "@phosphor-icons/react/dist/ssr";
 import { PublicFollowButton } from "@/components/bankrolls/public-follow-button";
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
+import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
 import { personalStake } from "@/lib/bankroll-units";
@@ -137,12 +138,15 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             <h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{bankroll.name}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">Suivi transparent en unités. Les montants réels du tipster restent privés.</p>
           </div>
-          {isOwner ? <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
-            : viewer ? <PublicFollowButton slug={slug} locale={locale} initialFollowing={isFollowing} initialFollowerCount={bankroll._count.followers} />
-              : <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-                <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>
-                <span className="text-xs text-muted-foreground">{bankroll._count.followers} personne(s) suivent cette bankroll</span>
-              </div>}
+          <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+            <div className="flex flex-wrap gap-2">
+              {isOwner ? <div className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {bankroll._count.followers} abonné(s)</div>
+                : viewer ? <PublicFollowButton slug={slug} locale={locale} initialFollowing={isFollowing} initialFollowerCount={bankroll._count.followers} />
+                  : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}
+              <PublicShareButton locale={locale} slug={slug} bankrollName={bankroll.name} />
+            </div>
+            {!viewer ? <span className="text-xs text-muted-foreground">{bankroll._count.followers} personne(s) suivent cette bankroll</span> : null}
+          </div>
         </div>
       </section>
 
