@@ -40,24 +40,27 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
 }) {
   const [state, action, pending] = useActionState(setBankrollPublication, {});
   const canPublish = Boolean(referenceCapital && referenceCapital > 0) && missingUnitCount === 0;
+  const certificationStarted = Boolean(startedAt);
 
   return (
     <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-12">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <span className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${isPublic ? "bg-profit/15 text-profit" : "bg-muted text-muted-foreground"}`}>
-            {isPublic ? <ShieldCheck size={23} weight="fill" aria-hidden /> : <ShieldWarning size={23} aria-hidden />}
+            {certificationStarted ? <ShieldCheck size={23} weight="fill" aria-hidden /> : <ShieldWarning size={23} aria-hidden />}
           </span>
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-base font-semibold">Bankroll publique et certification</h2>
-              <span className={`rounded-full px-2 py-1 text-[0.65rem] font-semibold ${isPublic ? "bg-profit/15 text-profit" : "bg-muted text-muted-foreground"}`}>
-                {isPublic ? "Certification active" : "Privée"}
+              <span className={`rounded-full px-2 py-1 text-[0.65rem] font-semibold ${isPublic ? "bg-profit/15 text-profit" : certificationStarted ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground"}`}>
+                {isPublic ? "Certification active" : certificationStarted ? "Page publique masquée" : "Privée"}
               </span>
             </div>
             <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {isPublic
                 ? "Kalivoa mesure le niveau de preuve des paris ajoutés depuis l’activation. Les montants réels en euros restent privés."
+                : certificationStarted
+                  ? "La page n’est plus visible, mais son historique de certification continue. Les paris restent verrouillés et les corrections restent tracées."
                 : "La certification est inactive tant que cette bankroll reste privée. La rendre publique démarrera un nouveau suivi, sans certifier rétroactivement son historique."}
             </p>
           </div>
@@ -68,13 +71,13 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
             <input type="hidden" name="bankrollId" value={bankrollId} />
             <input type="hidden" name="publish" value={String(!isPublic)} />
             <Button type="submit" variant={isPublic ? "outline" : "default"} disabled={pending || (!isPublic && !canPublish)} className="min-h-11 w-full rounded-xl sm:w-auto">
-              {pending ? "Enregistrement…" : isPublic ? "Repasser en privé" : "Rendre publique et activer"}
+              {pending ? "Enregistrement…" : isPublic ? "Masquer la page publique" : certificationStarted ? "Republier la bankroll" : "Rendre publique et activer"}
             </Button>
           </form>
         </div>
       </div>
 
-      {isPublic && (
+      {certificationStarted && (
         <div className="mt-5 grid gap-2 sm:grid-cols-3 lg:grid-cols-6">
           <Metric label="Paris suivis" value={String(summary.publishedBets)} />
           <Metric label="Volume clôturé" value={`${summary.volume.toFixed(2)}u`} />
@@ -90,13 +93,13 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
         </div>
       )}
 
-      {isPublic && pendingProofBetId ? <div className="mt-4 flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+      {certificationStarted && pendingProofBetId ? <div className="mt-4 flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div><p className="text-sm font-semibold">{pendingProofCount > 1 ? `${pendingProofCount} paris attendent leur preuve de résultat` : "Un pari attend sa preuve de résultat"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Scanne son ticket clôturé : Kalivoa mettra à jour le pari existant et renforcera son niveau de preuve.</p></div>
         <Link href={`/scan?resultFor=${encodeURIComponent(pendingProofBetId)}`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Scanner le résultat</Link>
       </div> : null}
 
-      {!isPublic && !referenceCapital ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Ajoute un montant de référence avant de rendre cette bankroll publique. Kalivoa l’utilisera uniquement pour convertir les mises en unités.</p> : null}
-      {!isPublic && referenceCapital && missingUnitCount > 0 ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Complète les unités des {missingUnitCount} ancien(s) pari(s) ci-dessous avant la publication.</p> : null}
+      {!isPublic && !certificationStarted && !referenceCapital ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Ajoute un montant de référence avant de rendre cette bankroll publique. Kalivoa l’utilisera uniquement pour convertir les mises en unités.</p> : null}
+      {!isPublic && !certificationStarted && referenceCapital && missingUnitCount > 0 ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Complète les unités des {missingUnitCount} ancien(s) pari(s) ci-dessous avant la publication.</p> : null}
 
       {state.error && <p role="alert" className="mt-3 text-sm text-loss">{state.error}</p>}
       {state.success && <p role="status" className="mt-3 text-sm text-profit">{state.success}</p>}

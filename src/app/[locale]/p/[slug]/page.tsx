@@ -64,6 +64,10 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             referenceCapitalAtBet: true, freebet: true, bookmaker: true, format: true,
             entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true,
             resultProofAt: true, resultEntryMethod: true,
+            corrections: {
+              orderBy: { createdAt: "desc" },
+              select: { kind: true, before: true, after: true, createdAt: true },
+            },
             _count: { select: { corrections: true } },
           },
         },
@@ -283,7 +287,19 @@ export default async function PublicBankrollPage({ params, searchParams }: {
                     </div>
                     <strong className="mt-2 block break-words text-sm sm:text-base">{bet.description || `${bet.sport} · ${bet.betType}`}</strong>
                     <p className="mt-1 text-xs text-muted-foreground">{date.format(bet.date)} · {bet.sport} · {bet.betType}{bet.eventResult ? ` · ${bet.eventResult}` : ""}</p>
-                    {bet._count.corrections > 0 ? <p className="mt-1 text-[0.65rem] text-warning">{bet._count.corrections} correction(s) tracée(s)</p> : null}
+                    {bet.corrections.length > 0 ? <details className="mt-2 rounded-lg border border-warning/25 bg-warning/5 px-3 py-2">
+                      <summary className="cursor-pointer text-[0.7rem] font-semibold text-warning">Journal de transparence · {bet.corrections.length} correction(s)</summary>
+                      <ul className="mt-2 space-y-1.5 border-t border-warning/20 pt-2">
+                        {bet.corrections.map((correction, correctionIndex) => {
+                          const fields = correctionFields(correction.before, correction.after);
+                          return <li key={`${correction.createdAt.toISOString()}-${correctionIndex}`} className="text-[0.65rem] leading-relaxed text-muted-foreground">
+                            <strong className="text-foreground">{correction.kind === "RESULT_MANUAL" ? "Résultat renseigné manuellement" : "Pari corrigé"}</strong>
+                            {` le ${date.format(correction.createdAt)}`}
+                            {fields.length > 0 ? ` · ${fields.join(", ")}` : ""}
+                          </li>;
+                        })}
+                      </ul>
+                    </details> : null}
                   </div>
                   <div className="grid grid-cols-3 border-t border-border sm:w-[25rem] sm:border-l sm:border-t-0"><BetValue label="Cote" value={bet.odds === null ? "—" : number.format(bet.odds)} /><BetValue label="Mise" value={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} detail={bet.stakeUnits !== null && selectedProfile && viewerSettings ? `Pour toi : ${fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)}` : undefined} /><BetValue label="Bénéfice" value={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} tone={profit === null ? "neutral" : profit >= 0 ? "profit" : "loss"} /></div>
                   <div className={`flex min-h-9 items-center justify-center px-3 text-[0.65rem] font-bold sm:[writing-mode:vertical-rl] ${resultBlockTone(bet.result)}`}>{betResultToLabel(bet.result)}</div>
@@ -307,6 +323,23 @@ function ViewTab({ href, active, label, count }: { href: string; active: boolean
 function BetValue({ label, value, tone = "neutral", detail }: { label: string; value: string; tone?: Tone; detail?: string }) { return <div className="flex min-w-0 flex-col items-center justify-center border-r border-border p-3 text-center last:border-r-0"><span className="text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 truncate text-sm ${textTone(tone)}`}>{value}</strong>{detail ? <span className="mt-1 text-[0.65rem] font-semibold text-primary">{detail}</span> : null}</div>; }
 function proofTone(status: CertificationStatus) { return status === "STRONG" ? "bg-profit/15 text-profit" : status === "EXCLUDED" ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"; }
 function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" | "CASHE") { return result === "GAGNE" ? "bg-profit/15 text-profit" : result === "PERDU" ? "bg-loss/15 text-loss" : result === "EN_ATTENTE" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary"; }
+
+const CORRECTION_FIELD_LABELS: Record<string, string> = {
+  sport: "sport", betType: "type de pari", description: "sélection", eventResult: "résultat de l’événement",
+  date: "date", stakeUnits: "mise en unités", odds: "cote", result: "résultat", cashOutUnits: "cash out en unités",
+  boosted: "boost", originalOdds: "cote initiale", freebet: "freebet", live: "pari en direct",
+};
+
+function correctionFields(before: unknown, after: unknown) {
+  if (!isJsonObject(before) || !isJsonObject(after)) return [];
+  return Object.entries(CORRECTION_FIELD_LABELS)
+    .filter(([key]) => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+    .map(([, label]) => label);
+}
+
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankrollName, tipsterFollowerCount, publicBankrollCount }: {
   displayName: string;

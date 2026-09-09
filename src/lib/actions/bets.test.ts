@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   betUpdate: vi.fn(),
   betFindMany: vi.fn(),
   betUpdateMany: vi.fn(),
+  betCorrectionCreate: vi.fn(),
   selectionCreateMany: vi.fn(),
   tipsterFindFirst: vi.fn(),
   tipsterFindUnique: vi.fn(),
@@ -39,7 +40,7 @@ vi.mock("@/lib/prisma", () => ({
       bankroll: { findUniqueOrThrow: mocks.bankrollFindUniqueOrThrow },
       scanUsage: { findFirst: vi.fn().mockResolvedValue(null) },
       bet: { create: mocks.betCreate, update: mocks.betUpdate },
-      betCorrection: { create: vi.fn().mockResolvedValue({}) },
+      betCorrection: { create: mocks.betCorrectionCreate },
     }),
     bankroll: { findFirst: mocks.bankrollFindFirst },
     bet: {
@@ -92,6 +93,7 @@ describe("association Bet / Tipster", () => {
     mocks.betFindFirst.mockResolvedValue(ownedBet());
     mocks.betCreate.mockImplementation(async ({ data }) => ({ id: "bet-a", ...data }));
     mocks.betUpdate.mockImplementation(async ({ data }) => ({ id: "bet-a", bankrollId: "bankroll-a", ...data, tipster: null, selections: [] }));
+    mocks.betCorrectionCreate.mockResolvedValue({});
     mocks.isLocked.mockResolvedValue(false);
     mocks.saveTaxonomy.mockResolvedValue(undefined);
   });
@@ -122,6 +124,35 @@ describe("association Bet / Tipster", () => {
     });
     expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ tipsterId: "tipster-a" }),
+    }));
+  });
+
+  it("continue de verrouiller les paris quand une page certifiée est masquée", async () => {
+    mocks.bankrollFindUniqueOrThrow.mockResolvedValue({
+      isPublic: false,
+      certificationStartedAt: new Date("2026-08-01T00:00:00Z"),
+    });
+
+    await createBet(
+      "bankroll-a", "Football", "Résultat du match", "Paris gagne", 10, 2,
+      false, null, false, false, "EN_ATTENTE", null, null, new Date("2026-08-27")
+    );
+
+    expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ certificationLockedAt: expect.any(Date) }),
+    }));
+  });
+
+  it("trace aussi une correction quand la page certifiée est masquée", async () => {
+    mocks.betFindFirst.mockResolvedValue(ownedBet({
+      certificationLockedAt: new Date("2026-08-01T00:00:00Z"),
+      bankroll: { isPublic: false },
+    }));
+
+    await updateBet("bet-a", { ...updateInput, stake: 20, correctionReason: "Mise mal détectée" });
+
+    expect(mocks.betCorrectionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ betId: "bet-a", reason: "Mise mal détectée" }),
     }));
   });
 
@@ -225,5 +256,24 @@ describe("déplacement de paris entre bankrolls", () => {
         bookmaker: null,
       },
     }));
+  });
+
+  it("refuse de déplacer un pari certifié même si sa page est masquée", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-target",
+      userId: "user-a",
+      mode: "SINGLE",
+      allocations: [],
+    });
+    mocks.betFindMany.mockResolvedValue([{
+      id: "bet-a",
+      bankrollId: "bankroll-source",
+      certificationLockedAt: new Date("2026-08-01T00:00:00Z"),
+      bankroll: { isPublic: false },
+    }]);
+
+    await expect(moveBets(["bet-a"], "bankroll-target"))
+      .rejects.toThrow("historique de certification");
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
   });
 });

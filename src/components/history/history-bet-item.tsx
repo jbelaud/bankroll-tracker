@@ -12,6 +12,7 @@ import {
   TrashSimple,
   CheckCircle,
   Circle,
+  ShieldCheck,
 } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
@@ -82,7 +83,7 @@ export function HistoryBetItem({
   }, [isOpen]);
 
   function handlePointerDown(e: React.PointerEvent) {
-    if (selectionMode) return; // le tap natif suffit en mode sélection
+    if (selectionMode || bet.certificationLockedAt) return; // un pari certifié ne peut pas entrer dans une suppression groupée
     const timer = setTimeout(() => {
       const g = gesture.current;
       if (g && g.mode === "pending") {
@@ -142,7 +143,7 @@ export function HistoryBetItem({
       return;
     }
     if (selectionMode) {
-      onToggleSelect(bet.id);
+      if (!bet.certificationLockedAt) onToggleSelect(bet.id);
       return;
     }
     if (isOpen) {
@@ -168,7 +169,7 @@ export function HistoryBetItem({
 
   return (
     <li className="relative overflow-hidden">
-      <div className="absolute inset-y-0 right-0 flex w-20 items-center justify-center">
+      {!bet.certificationLockedAt ? <div className="absolute inset-y-0 right-0 flex w-20 items-center justify-center">
         <button
           type="button"
           aria-label={t("deleteAriaLabel", { sport: sportLabel, betType: betTypeLabel })}
@@ -178,7 +179,7 @@ export function HistoryBetItem({
           <TrashSimple size={16} aria-hidden />
           <span className="text-[0.65rem] font-medium">{t("deleteLabel")}</span>
         </button>
-      </div>
+      </div> : null}
 
       <div
         onPointerDown={handlePointerDown}
@@ -197,7 +198,9 @@ export function HistoryBetItem({
       >
         {selectionMode && (
           <span className="shrink-0 text-primary" aria-hidden>
-            {selected ? (
+            {bet.certificationLockedAt ? (
+              <ShieldCheck size={20} weight="fill" className="text-muted-foreground" />
+            ) : selected ? (
               <CheckCircle size={20} weight="fill" />
             ) : (
               <Circle size={20} className="text-muted-foreground" />

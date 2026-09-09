@@ -32,15 +32,18 @@ export async function setBankrollPublication(_state: PublicationState, form: For
           isPublic: true,
           publicSlug: current.publicSlug ?? randomBytes(12).toString("base64url"),
           publishedAt: now,
-          certificationStartedAt: now,
+          // Une republication reprend le même historique : masquer la page ne
+          // doit jamais permettre de remettre le score de preuve à zéro.
+          certificationStartedAt: current.certificationStartedAt ?? now,
         },
       });
     } else if (!publish && current.isPublic) {
       await tx.bankroll.update({
         where: { id: bankrollId },
-        data: { isPublic: false, publishedAt: null, certificationStartedAt: null },
+        // La page disparaît publiquement, mais le cycle de certification et
+        // les verrous restent définitifs pour préserver la transparence.
+        data: { isPublic: false, publishedAt: null },
       });
-      await tx.bet.updateMany({ where: { bankrollId }, data: { certificationLockedAt: null } });
     }
     return null;
   });
@@ -49,5 +52,5 @@ export async function setBankrollPublication(_state: PublicationState, form: For
 
   revalidatePath("/[locale]/bankrolls/[id]", "page");
   revalidatePath("/[locale]/bankrolls", "page");
-  return { success: publish ? "Certification activée pour les prochains paris publics." : "Bankroll repassée en privé." };
+  return { success: publish ? "Bankroll publiée avec son historique de certification." : "Page publique masquée. L’historique de certification reste conservé." };
 }

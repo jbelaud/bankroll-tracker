@@ -166,7 +166,7 @@ async function getOwnedBet(betId: string, userId: string) {
       stake: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true, boosted: true,
       originalOdds: true, freebet: true, live: true, initialProofAt: true,
       initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true,
-      certificationLockedAt: true, bankroll: { select: { isPublic: true } },
+      certificationLockedAt: true,
     },
   });
   if (!bet) {
@@ -181,8 +181,8 @@ async function getOwnedBet(betId: string, userId: string) {
 export async function deleteBet(betId: string) {
   const user = await requireUser();
   const bet = await getOwnedBet(betId, user.id);
-  if (bet.bankroll.isPublic && bet.certificationLockedAt) {
-    throw new Error("Un pari suivi par la certification ne peut pas être supprimé pendant sa publication. Repasse d’abord la bankroll en privé.");
+  if (bet.certificationLockedAt) {
+    throw new Error("Un pari entré dans l’historique de certification ne peut pas être supprimé.");
   }
 
   await prisma.bet.delete({ where: { id: betId } });
@@ -194,10 +194,10 @@ export async function deleteBets(betIds: string[]) {
 
   const targetedBets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
-    select: { bankrollId: true, certificationLockedAt: true, bankroll: { select: { isPublic: true } } },
+    select: { bankrollId: true, certificationLockedAt: true },
   });
-  if (targetedBets.some((bet) => bet.bankroll.isPublic && bet.certificationLockedAt)) {
-    throw new Error("Les paris suivis par la certification ne peuvent pas être supprimés pendant leur publication.");
+  if (targetedBets.some((bet) => bet.certificationLockedAt)) {
+    throw new Error("Les paris entrés dans l’historique de certification ne peuvent pas être supprimés.");
   }
   const lockedResults = await Promise.all(
     targetedBets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
@@ -237,10 +237,10 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
     : null;
   const bets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
-    select: { id: true, bankrollId: true, certificationLockedAt: true, bankroll: { select: { isPublic: true } } },
+    select: { id: true, bankrollId: true, certificationLockedAt: true },
   });
-  if (bets.some((bet) => bet.bankroll.isPublic && bet.certificationLockedAt)) {
-    throw new Error("Un pari suivi par la certification ne peut pas être déplacé pendant sa publication.");
+  if (bets.some((bet) => bet.certificationLockedAt)) {
+    throw new Error("Un pari entré dans l’historique de certification ne peut pas être déplacé.");
   }
   const sourceLocked = await Promise.all(
     bets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
@@ -295,7 +295,7 @@ export async function updateBetResult(
         resultEntryMethod: result === "EN_ATTENTE" ? "UNKNOWN" : "MANUAL",
       },
     });
-    if (existing.bankroll.isPublic && existing.certificationLockedAt
+    if (existing.certificationLockedAt
       && (existing.result !== result || existing.cashOutAmount !== normalizedCashOut)) {
       await tx.betCorrection.create({ data: {
         betId,
@@ -357,7 +357,7 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
     { allowArchivedById: input.tipsterId !== null && input.tipsterId === existing.tipsterId }
   );
 
-  const isCertifiedCorrection = existing.bankroll.isPublic && existing.certificationLockedAt !== null;
+  const isCertifiedCorrection = existing.certificationLockedAt !== null;
   const correctionReason = input.correctionReason?.normalize("NFKC").trim().slice(0, 500) ?? "";
   if (isCertifiedCorrection && correctionReason.length < 3) {
     throw new Error("Indique la raison de cette correction : elle sera visible dans le journal de transparence.");

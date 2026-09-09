@@ -111,7 +111,9 @@ export async function createOwnedBet(
     }) : null;
     const recordedAt = new Date();
     const referenceDate = referenceDateForImport(input.date, source.entryMethod === "FILE", recordedAt);
-    const certificationActive = bankrollState.isPublic && bankrollState.certificationStartedAt !== null;
+    // Une fois démarrée, la certification suit définitivement la bankroll,
+    // même si sa page publique est temporairement masquée.
+    const certificationActive = bankrollState.certificationStartedAt !== null;
     const pendingScan = certificationActive && source.entryMethod === "SCAN" && input.result === "EN_ATTENTE" && scanProof;
     const settledScan = certificationActive && source.entryMethod === "SCAN" && input.result !== "EN_ATTENTE" && scanProof;
     return tx.bet.create({

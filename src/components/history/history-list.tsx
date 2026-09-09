@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { BetFormat, BetResult, Currency } from "@prisma/client";
-import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
+import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, ShieldCheck, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
 import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
@@ -480,11 +480,12 @@ function DesktopHistoryTable({
                       <button
                         type="button"
                         onClick={() => onToggleSelect(bet.id)}
+                        disabled={Boolean(bet.certificationLockedAt)}
                         aria-pressed={selectedIds.has(bet.id)}
                         aria-label={`${t("select")} ${event}`}
-                        className={selectedIds.has(bet.id) ? "flex min-h-touch min-w-touch items-center justify-center rounded border border-primary bg-primary text-primary-foreground" : "flex min-h-touch min-w-touch items-center justify-center rounded border border-input bg-background"}
+                        className={selectedIds.has(bet.id) ? "flex min-h-touch min-w-touch items-center justify-center rounded border border-primary bg-primary text-primary-foreground" : "flex min-h-touch min-w-touch items-center justify-center rounded border border-input bg-background disabled:cursor-not-allowed disabled:text-muted-foreground"}
                       >
-                        {selectedIds.has(bet.id) ? "✓" : null}
+                        {bet.certificationLockedAt ? <ShieldCheck size={16} weight="fill" aria-hidden /> : selectedIds.has(bet.id) ? "✓" : null}
                       </button>
                     </td>
                   )}
@@ -523,9 +524,9 @@ function DesktopHistoryTable({
                       <button type="button" onClick={() => onRequestEdit(bet.id)} aria-label={t("editAriaLabel")} className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                         <PencilSimple size={17} aria-hidden />
                       </button>
-                      <button type="button" onClick={() => onRequestDelete(bet.id)} aria-label={t("deleteAriaLabel")} className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-loss-muted hover:text-loss">
+                      {!bet.certificationLockedAt ? <button type="button" onClick={() => onRequestDelete(bet.id)} aria-label={t("deleteAriaLabel")} className="flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-loss-muted hover:text-loss">
                         <TrashSimple size={17} aria-hidden />
-                      </button>
+                      </button> : <span title="Pari conservé dans l’historique de certification" className="inline-flex min-h-touch min-w-touch items-center justify-center text-muted-foreground"><ShieldCheck size={17} weight="fill" aria-label="Pari certifié verrouillé" /></span>}
                     </div>
                   </td>
                 </tr>
