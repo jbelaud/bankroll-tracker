@@ -28,7 +28,7 @@ const FORMAT_LABELS = { SIMPLE: "Simple", COMBINE: "Combiné", SYSTEME: "Systèm
 
 export default async function PublicBankrollPage({ params, searchParams }: {
   params: Promise<{ locale: string; slug: string }>;
-  searchParams: Promise<{ convertWith?: string | string[] }>;
+  searchParams: Promise<{ convertWith?: string | string[]; view?: string | string[] }>;
 }) {
   const [{ locale, slug }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
@@ -101,7 +101,21 @@ export default async function PublicBankrollPage({ params, searchParams }: {
   const chartDate = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short" });
   const month = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" });
   const chartPoints = [{ label: "Départ", value: 0 }, ...curve.points.map((point) => ({ label: chartDate.format(point.date), value: point.value }))];
-  const monthGroups = Map.groupBy(bankroll.bets, (bet) => `${bet.date.getUTCFullYear()}-${String(bet.date.getUTCMonth() + 1).padStart(2, "0")}`);
+  const requestedView = Array.isArray(query.view) ? query.view[0] : query.view;
+  const pendingBetCount = bankroll.bets.filter((bet) => bet.result === "EN_ATTENTE").length;
+  const settledBetCount = bankroll.bets.length - pendingBetCount;
+  const activeView: BetView = requestedView === "pending" || requestedView === "settled" || requestedView === "all"
+    ? requestedView
+    : pendingBetCount > 0 ? "pending" : "all";
+  const visibleBets = activeView === "pending"
+    ? bankroll.bets.filter((bet) => bet.result === "EN_ATTENTE")
+    : activeView === "settled" ? bankroll.bets.filter((bet) => bet.result !== "EN_ATTENTE") : bankroll.bets;
+  const monthGroups = Map.groupBy(visibleBets, (bet) => `${bet.date.getUTCFullYear()}-${String(bet.date.getUTCMonth() + 1).padStart(2, "0")}`);
+  const viewHref = (view: BetView) => {
+    const search = new URLSearchParams({ view });
+    if (selectedConversion) search.set("convertWith", selectedConversion.id);
+    return `/p/${slug}?${search.toString()}`;
+  };
 
   return <main className="min-h-dvh bg-background px-3 py-4 text-foreground sm:px-6 lg:px-8">
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
@@ -186,7 +200,13 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           <div className="flex flex-wrap gap-2 text-xs"><ResultPill label="Gagnés" value={performance.results.won} tone="profit" /><ResultPill label="Perdus" value={performance.results.lost} tone="loss" /><ResultPill label="En attente" value={performance.results.pending} tone="warning" /></div>
         </div>
 
-        {bankroll.bets.length === 0 ? <div className="glass-card rounded-2xl p-10 text-center text-sm text-muted-foreground">Aucun pari publié pour le moment.</div> : Array.from(monthGroups.entries()).map(([monthKey, bets], index) => {
+        <nav aria-label="Filtrer les paris" className="grid grid-cols-3 gap-1 rounded-2xl border border-border bg-card/40 p-1 sm:flex sm:w-fit">
+          <ViewTab href={viewHref("pending")} active={activeView === "pending"} label="En cours" count={pendingBetCount} />
+          <ViewTab href={viewHref("settled")} active={activeView === "settled"} label="Résultats" count={settledBetCount} />
+          <ViewTab href={viewHref("all")} active={activeView === "all"} label="Tous" count={bankroll.bets.length} />
+        </nav>
+
+        {visibleBets.length === 0 ? <div className="glass-card rounded-2xl p-10 text-center text-sm text-muted-foreground">{activeView === "pending" ? "Aucun pari en cours pour le moment." : activeView === "settled" ? "Aucun résultat publié pour le moment." : "Aucun pari publié pour le moment."}</div> : Array.from(monthGroups.entries()).map(([monthKey, bets], index) => {
           const monthProfits = bets.map((bet) => {
             const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
             return canCalculateProfit ? profitInUnits(bet) : null;
@@ -231,10 +251,12 @@ export default async function PublicBankrollPage({ params, searchParams }: {
 }
 
 type Tone = "neutral" | "profit" | "loss" | "warning";
+type BetView = "pending" | "settled" | "all";
 function textTone(tone: Tone) { return tone === "profit" ? "text-profit" : tone === "loss" ? "text-loss" : tone === "warning" ? "text-warning" : "text-foreground"; }
 function Kpi({ label, value, tone = "neutral" }: { label: string; value: string; tone?: Tone }) { return <div className="glass-card rounded-2xl p-4 text-center sm:p-5"><span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</span><strong className={`num mt-2 block text-2xl sm:text-3xl ${textTone(tone)}`}>{value}</strong></div>; }
 function SmallStat({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-border bg-background/30 p-3"><span className="block text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className="num mt-1 block text-sm">{value}</strong></div>; }
 function ResultPill({ label, value, tone }: { label: string; value: number; tone: Tone }) { return <span className={`rounded-full bg-muted px-3 py-1.5 font-semibold ${textTone(tone)}`}>{label} {value}</span>; }
+function ViewTab({ href, active, label, count }: { href: string; active: boolean; label: string; count: number }) { return <Link href={href} aria-current={active ? "page" : undefined} className={`flex min-h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-semibold transition-colors ${active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}><span>{label}</span><span className={`num rounded-full px-1.5 py-0.5 text-[0.6rem] ${active ? "bg-primary-foreground/15" : "bg-muted"}`}>{count}</span></Link>; }
 function BetValue({ label, value, tone = "neutral", detail }: { label: string; value: string; tone?: Tone; detail?: string }) { return <div className="flex min-w-0 flex-col items-center justify-center border-r border-border p-3 text-center last:border-r-0"><span className="text-[0.6rem] uppercase text-muted-foreground">{label}</span><strong className={`num mt-1 truncate text-sm ${textTone(tone)}`}>{value}</strong>{detail ? <span className="mt-1 text-[0.65rem] font-semibold text-primary">{detail}</span> : null}</div>; }
 function proofTone(status: CertificationStatus) { return status === "STRONG" ? "bg-profit/15 text-profit" : status === "EXCLUDED" ? "bg-muted text-muted-foreground" : "bg-primary/10 text-primary"; }
 function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" | "CASHE") { return result === "GAGNE" ? "bg-profit/15 text-profit" : result === "PERDU" ? "bg-loss/15 text-loss" : result === "EN_ATTENTE" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary"; }
