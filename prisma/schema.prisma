@@ -32,6 +32,7 @@ model User {
   publicBio        String?
   publicAvatarUrl  String?
   publicXHandle    String?
+  followingLastViewedAt DateTime @default(now())
 
   // Parrainage bêta : le code est créé avec le profil, tandis que la relation
   // de parrainage reste irréversible et entièrement gérée côté serveur.
@@ -375,6 +376,7 @@ model Bet {
   cashOutAmount Float? // montant encaissé si result = CASHE
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   entryMethod   BetEntryMethod @default(UNKNOWN)
   format        BetFormat      @default(SIMPLE)
