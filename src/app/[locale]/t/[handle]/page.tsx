@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BookmarkSimple, CaretDown, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicActivityCard } from "@/components/following/public-activity-card";
 import { CertificationExplainer } from "@/components/bankrolls/certification-explainer";
+import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { Link } from "@/i18n/navigation";
@@ -16,7 +17,24 @@ import { profitInUnits, publicPerformance } from "@/lib/public-bankroll";
 import { normalizePublicHandle, validPublicHandle } from "@/lib/public-tipster-profile";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; handle: string }> }): Promise<Metadata> {
+  const { locale, handle: rawHandle } = await params;
+  const handle = normalizePublicHandle(rawHandle);
+  const tipster = validPublicHandle(handle) ? await prisma.user.findFirst({
+    where: { publicHandle: handle, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
+    select: { name: true, publicDisplayName: true, publicBio: true },
+  }) : null;
+  if (!tipster) return { title: "Tipster Kalivoa", robots: { index: false, follow: false } };
+  const displayName = tipster.publicDisplayName || tipster.name || "Tipster Kalivoa";
+  const title = `${displayName} — profil public`;
+  const description = tipster.publicBio || "Découvre ses bankrolls, ses résultats en unités et le niveau de preuve de ses paris sur Kalivoa.";
+  return {
+    title, description, robots: { index: false, follow: false },
+    alternates: { canonical: `/${locale}/t/${handle}` },
+    openGraph: { title, description, type: "profile", url: `/${locale}/t/${handle}`, siteName: "Kalivoa" },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 const LEVEL_LABELS: Record<string, string> = {
   OBSERVATION: "En observation", GOLD: "Gold", SILVER: "Silver",
@@ -149,7 +167,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
             <PublicAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} className="size-20 text-2xl" />
             <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="break-words text-2xl font-bold sm:text-3xl">{displayName}</h1>{tipster.publicXHandle ? <a href={`https://x.com/${tipster.publicXHandle}`} target="_blank" rel="noopener noreferrer" aria-label={`Compte X de ${displayName}`} className="text-muted-foreground hover:text-foreground"><XLogo size={19} aria-hidden /></a> : null}</div><p className="mt-1 text-sm font-semibold text-primary">@{tipster.publicHandle}</p><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Retrouve toutes les bankrolls publiques et les performances certifiées de ce tipster."}</p></div>
           </div>
-          <div className="shrink-0">{isOwner ? <div className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {tipster._count.tipsterFollowers} abonné(s)</div> : viewer ? <PublicTipsterFollowButton handle={tipster.publicHandle} locale={locale} initialFollowing={Boolean(follow)} initialFollowerCount={tipster._count.tipsterFollowers} /> : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}</div>
+          <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end"><PublicShareButton locale={locale} path={`/t/${tipster.publicHandle}`} title={`${displayName} sur Kalivoa`} text="Découvre ses bankrolls publiques, ses résultats en unités et le niveau de preuve de ses paris." />{isOwner ? <div className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {tipster._count.tipsterFollowers} abonné(s)</div> : viewer ? <PublicTipsterFollowButton handle={tipster.publicHandle} locale={locale} initialFollowing={Boolean(follow)} initialFollowerCount={tipster._count.tipsterFollowers} /> : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}</div>
         </div>
       </section>
 

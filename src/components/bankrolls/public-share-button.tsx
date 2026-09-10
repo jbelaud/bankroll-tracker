@@ -4,14 +4,14 @@ import { useState } from "react";
 import { Check, ShareNetwork } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 
-export function PublicShareButton({ locale, slug, bankrollName }: { locale: string; slug: string; bankrollName: string }) {
+export function PublicShareButton({ locale, slug, bankrollName, path, title, text }: { locale: string; slug?: string; bankrollName?: string; path?: string; title?: string; text?: string }) {
   const [copied, setCopied] = useState(false);
 
   const share = async () => {
-    const url = `${window.location.origin}/${locale}/p/${slug}`;
+    const url = `${window.location.origin}/${locale}${path ?? `/p/${slug}`}`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: `${bankrollName} sur Kalivoa`, text: "Suis cette bankroll publique et ses performances certifiées sur Kalivoa.", url });
+        await navigator.share({ title: title ?? `${bankrollName} sur Kalivoa`, text: text ?? "Suis cette bankroll publique et ses performances certifiées sur Kalivoa.", url });
         return;
       }
       await navigator.clipboard.writeText(url);

@@ -16,7 +16,23 @@ import { prisma } from "@/lib/prisma";
 import { profitInUnits, publicPerformance, publicPerformanceSeries } from "@/lib/public-bankroll";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const bankroll = await prisma.bankroll.findFirst({
+    where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
+    select: { name: true, publicDescription: true, user: { select: { name: true, publicDisplayName: true } } },
+  });
+  if (!bankroll) return { title: "Bankroll publique", robots: { index: false, follow: false } };
+  const tipster = bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa";
+  const title = `${bankroll.name} par ${tipster}`;
+  const description = bankroll.publicDescription || "Résultats en unités et niveau de preuve visible pour chaque pari sur Kalivoa.";
+  return {
+    title, description, robots: { index: false, follow: false },
+    alternates: { canonical: `/${locale}/p/${slug}` },
+    openGraph: { title, description, type: "website", url: `/${locale}/p/${slug}`, siteName: "Kalivoa" },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 const STATUS_LABELS: Record<CertificationStatus, string> = {
   EXCLUDED: "Hors certification", AWAITING_RESULT: "Preuve reçue",
