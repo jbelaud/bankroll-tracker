@@ -170,7 +170,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
       <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary"><BookmarkSimple size={25} weight="fill" aria-hidden /></span>
       <h2 className="mt-4 font-semibold">Aucun suivi pour le moment</h2>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">Lorsque tu suivras un tipster ou l’une de ses bankrolls publiques, tu le retrouveras ici.</p>
-      <Link href="/bankrolls" className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-border px-4 text-sm font-semibold transition-colors hover:bg-muted">Retour à mes bankrolls</Link>
+      <Link href="/discover" className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90">Découvrir des tipsters</Link>
     </section> : <>
       {tipsterFollows.length > 0 ? <section className="space-y-3">
         <div><h2 className="font-semibold">Tipsters suivis</h2><p className="mt-1 text-xs text-muted-foreground">Leurs bankrolls publiques actuelles et futures restent regroupées sur leur profil.</p></div>

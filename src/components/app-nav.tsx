@@ -15,6 +15,7 @@ import {
   UserList,
   FileArrowUp,
   Gauge,
+  Compass,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -30,6 +31,7 @@ const NAV_ITEMS = [
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
   { href: "/following", key: "following", icon: BookmarksSimple },
+  { href: "/discover", key: "discover", icon: Compass },
   { href: "/tipsters", key: "tipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },

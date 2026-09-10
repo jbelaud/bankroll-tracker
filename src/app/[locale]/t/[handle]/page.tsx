@@ -138,7 +138,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
       <header className="flex items-center justify-between gap-4 py-1">
         <Link href="/" className="text-xl font-black tracking-tight">Kalivoa</Link>
-        {viewer ? <Link href="/dashboard" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">Mon espace</Link> : <div className="flex items-center gap-2"><Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Se connecter</Link><Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">Créer un compte</Link></div>}
+        <div className="flex items-center gap-2"><Link href="/discover" className="hidden rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted sm:inline-flex">Découvrir</Link>{viewer ? <Link href="/dashboard" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">Mon espace</Link> : <><Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Se connecter</Link><Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">Créer un compte</Link></>}</div>
       </header>
 
       <section className="glass-card rounded-3xl p-5 sm:p-6">
