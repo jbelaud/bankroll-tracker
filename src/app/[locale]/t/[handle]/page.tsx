@@ -3,6 +3,7 @@ import type { BetEntryMethod, BetResult } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { ArrowRight, BookmarkSimple, CaretDown, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicActivityCard } from "@/components/following/public-activity-card";
+import { CertificationExplainer } from "@/components/bankrolls/certification-explainer";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { Link } from "@/i18n/navigation";
@@ -167,6 +168,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
 
       {activeTab === "bets" ? <section className="space-y-3 pb-8">
         <ConversionBar locale={locale} handle={handle} viewer={Boolean(viewer)} currency={viewerSettings?.currency} profiles={conversionProfiles.map((item) => ({ id: item.id, name: item.name, referenceCapital: item.stakingProfile!.referenceCapital }))} selectedId={selectedConversion?.id} selectedProfile={selectedProfile} />
+        <CertificationExplainer />
         <div><h2 className="text-lg font-semibold">Historique du tipster</h2><p className="mt-1 text-sm text-muted-foreground">Tous les paris publics, avec leur bankroll et leur niveau de preuve.</p></div>
         <nav aria-label="Filtrer l’historique" className="grid grid-cols-2 gap-1 rounded-2xl border border-border bg-card/40 p-1 sm:flex sm:w-fit">
           <FilterLink href={href("bets", "all")} active={activeView === "all"} label="Tous" count={allBets.length} />

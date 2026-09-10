@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BookmarkSimple, CaretDown, ChartLineUp, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicFollowButton } from "@/components/bankrolls/public-follow-button";
 import { PublicPerformanceChart } from "@/components/bankrolls/public-performance-chart";
+import { CertificationExplainer } from "@/components/bankrolls/certification-explainer";
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
@@ -245,6 +246,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Kalivoa certifie le niveau de preuve de chaque pari, pas le montant réel détenu par le tipster.</p>
         </aside>
       </section>
+      <CertificationExplainer />
 
       {performance.missingUnitCount > 0 ? <div className="rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">{performance.missingUnitCount} ancien(s) pari(s) restent visibles mais attendent leur conversion en unités par le tipster.</div> : null}
 
