@@ -14,17 +14,21 @@ export const metadata: Metadata = {
 };
 
 type DirectorySort = "popular" | "recent" | "active";
+type ProofFilter = "all" | "verified" | "strong";
 
 export default async function DiscoverPage({ params, searchParams }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string | string[]; sort?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; sort?: string | string[]; sport?: string | string[]; proof?: string | string[] }>;
 }) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   const search = first(query.q)?.normalize("NFKC").trim().slice(0, 60) ?? "";
   const requestedSort = first(query.sort);
   const activeSort: DirectorySort = requestedSort === "recent" || requestedSort === "active" ? requestedSort : "popular";
+  const requestedSport = first(query.sport)?.normalize("NFKC").trim().slice(0, 40) ?? "";
+  const requestedProof = first(query.proof);
+  const activeProof: ProofFilter = requestedProof === "verified" || requestedProof === "strong" ? requestedProof : "all";
   const supabase = await createClient();
-  const [authResult, publicTipsters] = await Promise.all([
+  const [authResult, publicTipsters, publicSportRows] = await Promise.all([
     supabase.auth.getUser(),
     prisma.user.findMany({
       where: {
@@ -35,7 +39,9 @@ export default async function DiscoverPage({ params, searchParams }: {
           { publicDisplayName: { contains: search, mode: "insensitive" as const } },
           { publicHandle: { contains: search, mode: "insensitive" as const } },
           { publicBio: { contains: search, mode: "insensitive" as const } },
+          { bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null }, publicDescription: { contains: search, mode: "insensitive" as const } } } },
         ] } : {}),
+        ...(requestedSport ? { bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null }, publicSports: { has: requestedSport } } } } : {}),
       },
       take: 60,
       select: {
@@ -60,6 +66,11 @@ export default async function DiscoverPage({ params, searchParams }: {
         },
       },
     }),
+    prisma.bankroll.findMany({
+      where: { isPublic: true, certificationStartedAt: { not: null }, publicSports: { isEmpty: false } },
+      select: { publicSports: true },
+      take: 500,
+    }),
   ]);
 
   const cards = publicTipsters.map((tipster) => {
@@ -75,16 +86,19 @@ export default async function DiscoverPage({ params, searchParams }: {
     const latestPublication = Math.max(...tipster.bankrolls.map((bankroll) => bankroll.publishedAt?.getTime() ?? 0));
     const latestActivity = Math.max(0, ...bets.map((bet) => bet.updatedAt.getTime()));
     return { ...tipster, bets, performance, proofScore, latestPublication, latestActivity };
-  }).toSorted((left, right) => {
+  }).filter((card) => activeProof === "all" || (card.proofScore ?? 0) >= (activeProof === "strong" ? 80 : 60)).toSorted((left, right) => {
     if (activeSort === "recent") return right.latestPublication - left.latestPublication;
     if (activeSort === "active") return right.latestActivity - left.latestActivity;
     return right._count.tipsterFollowers - left._count.tipsterFollowers || right.latestActivity - left.latestActivity;
   });
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
   const viewer = authResult.data.user;
+  const sportOptions = [...new Set(publicSportRows.flatMap((row) => row.publicSports))].sort((left, right) => left.localeCompare(right, locale));
   const sortHref = (sort: DirectorySort) => {
     const next = new URLSearchParams({ sort });
     if (search) next.set("q", search);
+    if (requestedSport) next.set("sport", requestedSport);
+    if (activeProof !== "all") next.set("proof", activeProof);
     return `/discover?${next.toString()}`;
   };
 
@@ -106,20 +120,23 @@ export default async function DiscoverPage({ params, searchParams }: {
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Découvre des tipsters transparents</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">Compare leurs résultats en unités, leur activité et le niveau de preuve de leurs paris sans jamais voir leur bankroll réelle.</p>
         </div>
-        <form action={`/${locale}/discover`} method="get" className="mt-6 flex max-w-2xl flex-col gap-2 sm:flex-row">
+        <form action={`/${locale}/discover`} method="get" className="mt-6 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
           <label className="relative flex-1">
             <span className="sr-only">Rechercher un tipster</span>
             <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <input name="q" defaultValue={search} maxLength={60} placeholder="Nom, @identifiant…" className="min-h-12 w-full rounded-xl border border-input bg-input/30 pl-11 pr-4 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
           </label>
           <input type="hidden" name="sort" value={activeSort} />
+          <label><span className="sr-only">Filtrer par sport</span><select name="sport" defaultValue={requestedSport} className="min-h-12 w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="">Tous les sports</option>{sportOptions.map((sport) => <option key={sport} value={sport}>{sport}</option>)}</select></label>
+          <label><span className="sr-only">Filtrer par niveau de preuve</span><select name="proof" defaultValue={activeProof} className="min-h-12 w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="all">Tous les niveaux de preuve</option><option value="verified">Score de preuve ≥ 60</option><option value="strong">Score de preuve ≥ 80</option></select></label>
           <button type="submit" className="min-h-12 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90">Rechercher</button>
         </form>
+        {(search || requestedSport || activeProof !== "all") ? <Link href="/discover" className="mt-3 inline-flex text-xs font-semibold text-primary hover:underline">Effacer tous les filtres</Link> : null}
       </section>
 
       <section className="space-y-4 pb-10">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div><h2 className="text-lg font-semibold">Tipsters publics</h2><p className="mt-1 text-xs text-muted-foreground">{cards.length} profil(s){search ? ` pour « ${search} »` : " disponibles"}</p></div>
+          <div><h2 className="text-lg font-semibold">Tipsters publics</h2><p className="mt-1 text-xs text-muted-foreground">{cards.length} profil(s){search ? ` pour « ${search} »` : " disponibles"}{requestedSport ? ` · ${requestedSport}` : ""}</p></div>
           <nav aria-label="Trier les tipsters" className="grid grid-cols-3 gap-1 rounded-xl border border-border bg-card/40 p-1">
             <SortLink href={sortHref("popular")} active={activeSort === "popular"}>Plus suivis</SortLink>
             <SortLink href={sortHref("recent")} active={activeSort === "recent"}>Récents</SortLink>
