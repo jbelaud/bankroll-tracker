@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { savePublicTipsterProfile } from "@/lib/actions/public-tipster-profile";
 
 export function PublicTipsterProfileForm({ profile, googleAvatarUrl }: {
-  profile: { publicDisplayName: string | null; publicHandle: string | null; publicBio: string | null; publicAvatarUrl: string | null; publicXHandle: string | null };
+  profile: { publicDisplayName: string | null; publicHandle: string | null; publicBio: string | null; publicAvatarUrl: string | null; publicBannerUrl: string | null; publicXHandle: string | null };
   googleAvatarUrl: string | null;
 }) {
   const [state, action, pending] = useActionState(savePublicTipsterProfile, {});
@@ -33,6 +33,10 @@ export function PublicTipsterProfileForm({ profile, googleAvatarUrl }: {
       </label>
       <label className="grid gap-1.5 text-xs font-medium">Compte X (optionnel)
         <span className="relative"><At size={16} className="pointer-events-none absolute left-3 top-3.5 text-muted-foreground" aria-hidden /><Input name="publicXHandle" defaultValue={profile.publicXHandle ?? ""} placeholder="egs_betting" className="h-11 rounded-xl pl-9 pr-3 text-sm" /></span>
+      </label>
+      <label className="grid gap-1.5 text-xs font-medium md:col-span-2">Bannière du profil (URL HTTPS, optionnel)
+        <span className="relative"><ImageSquare size={16} className="pointer-events-none absolute left-3 top-3.5 text-muted-foreground" aria-hidden /><Input name="publicBannerUrl" type="url" defaultValue={profile.publicBannerUrl ?? ""} placeholder="https://… · format horizontal conseillé" className="h-11 rounded-xl pl-9 pr-3 text-sm" /></span>
+        <span className="font-normal text-muted-foreground">Elle habille ton profil et toutes tes pages de bankroll sans afficher tes montants privés.</span>
       </label>
       <div className="flex flex-col gap-2 md:col-span-2 sm:flex-row sm:items-center sm:justify-between">
         <div>{state.error ? <p role="alert" className="text-xs text-loss">{state.error}</p> : null}{state.success ? <p role="status" className="text-xs text-profit">{state.success}</p> : null}</div>

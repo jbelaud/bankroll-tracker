@@ -91,6 +91,7 @@ export default async function AccountPage({
         publicHandle: dbUser?.publicHandle ?? null,
         publicBio: dbUser?.publicBio ?? null,
         publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
+        publicBannerUrl: dbUser?.publicBannerUrl ?? null,
         publicXHandle: dbUser?.publicXHandle ?? null,
       }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
       <PublicBankrollOrder bankrolls={publicBankrolls} />

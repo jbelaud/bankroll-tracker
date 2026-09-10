@@ -18,6 +18,10 @@ export function validXHandle(value: string | null) {
 }
 
 export function validPublicAvatarUrl(value: string | null) {
+  return validPublicImageUrl(value);
+}
+
+export function validPublicImageUrl(value: string | null) {
   if (value === null) return true;
   try {
     const url = new URL(value);

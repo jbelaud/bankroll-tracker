@@ -26,7 +26,7 @@ export async function toggleBankrollFollow(previous: BankrollFollowState, form: 
 
   const result = await prisma.$transaction(async (tx) => {
     const bankroll = await tx.bankroll.findFirst({
-      where: { publicSlug: slug, isPublic: true },
+      where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
       select: { id: true, userId: true },
     });
     if (!bankroll) return { error: "Cette bankroll n’est plus publique." } as const;

@@ -6,6 +6,7 @@ import { PublicActivityCard } from "@/components/following/public-activity-card"
 import { CertificationExplainer } from "@/components/bankrolls/certification-explainer";
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
+import { PublicBanner } from "@/components/tipsters/public-banner";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
@@ -68,7 +69,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
       },
       select: {
         id: true, name: true, publicDisplayName: true, publicHandle: true,
-        publicBio: true, publicAvatarUrl: true, publicXHandle: true,
+        publicBio: true, publicAvatarUrl: true, publicBannerUrl: true, publicXHandle: true,
         _count: { select: { tipsterFollowers: true } },
         bankrolls: {
           where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
@@ -141,6 +142,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
   const visibleBets = filteredBets.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const monthGroups = Map.groupBy(visibleBets, (bet) => `${bet.date.getUTCFullYear()}-${String(bet.date.getUTCMonth() + 1).padStart(2, "0")}`);
   const displayName = tipster.publicDisplayName || tipster.name || "Tipster Kalivoa";
+  const tipsterSports = [...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].slice(0, 8);
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
   const date = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
   const month = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" });
@@ -161,11 +163,12 @@ export default async function PublicTipsterPage({ params, searchParams }: {
         <div className="flex items-center gap-2"><Link href="/discover" className="hidden rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted sm:inline-flex">Découvrir</Link>{viewer ? <Link href="/dashboard" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold transition-colors hover:bg-muted">Mon espace</Link> : <><Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Se connecter</Link><Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground">Créer un compte</Link></>}</div>
       </header>
 
-      <section className="glass-card rounded-3xl p-5 sm:p-6">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <section className="glass-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
+        <PublicBanner url={tipster.publicBannerUrl} />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 items-start gap-4">
             <PublicAvatar name={displayName} avatarUrl={tipster.publicAvatarUrl} className="size-20 text-2xl" />
-            <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="break-words text-2xl font-bold sm:text-3xl">{displayName}</h1>{tipster.publicXHandle ? <a href={`https://x.com/${tipster.publicXHandle}`} target="_blank" rel="noopener noreferrer" aria-label={`Compte X de ${displayName}`} className="text-muted-foreground hover:text-foreground"><XLogo size={19} aria-hidden /></a> : null}</div><p className="mt-1 text-sm font-semibold text-primary">@{tipster.publicHandle}</p><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Retrouve toutes les bankrolls publiques et les performances certifiées de ce tipster."}</p></div>
+            <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="break-words text-2xl font-bold sm:text-3xl">{displayName}</h1>{tipster.publicXHandle ? <a href={`https://x.com/${tipster.publicXHandle}`} target="_blank" rel="noopener noreferrer" aria-label={`Compte X de ${displayName}`} className="text-muted-foreground hover:text-foreground"><XLogo size={19} aria-hidden /></a> : null}</div><p className="mt-1 text-sm font-semibold text-primary">@{tipster.publicHandle}</p><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Retrouve toutes les bankrolls publiques et les performances certifiées de ce tipster."}</p>{tipsterSports.length ? <div className="mt-3 flex flex-wrap gap-1.5">{tipsterSports.map((sport) => <span key={sport} className="rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary">{sport}</span>)}</div> : null}</div>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end"><PublicShareButton locale={locale} path={`/t/${tipster.publicHandle}`} title={`${displayName} sur Kalivoa`} text="Découvre ses bankrolls publiques, ses résultats en unités et le niveau de preuve de ses paris." />{isOwner ? <div className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold"><UsersThree size={18} aria-hidden /> {tipster._count.tipsterFollowers} abonné(s)</div> : viewer ? <PublicTipsterFollowButton handle={tipster.publicHandle} locale={locale} initialFollowing={Boolean(follow)} initialFollowerCount={tipster._count.tipsterFollowers} /> : <Link href="/signup" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"><BookmarkSimple size={18} weight="bold" aria-hidden /> Créer un compte pour suivre</Link>}</div>
         </div>

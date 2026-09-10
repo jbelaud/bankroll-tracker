@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { publicPerformance } from "@/lib/public-bankroll";
 import { createClient } from "@/lib/supabase/server";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
+import { PublicBanner } from "@/components/tipsters/public-banner";
 
 export const metadata: Metadata = {
   title: "Découvrir les tipsters",
@@ -45,7 +46,7 @@ export default async function DiscoverPage({ params, searchParams }: {
       },
       take: 60,
       select: {
-        id: true, publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true,
+        id: true, publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true, publicBannerUrl: true,
         _count: { select: { tipsterFollowers: true } },
         bankrolls: {
           where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
@@ -145,24 +146,25 @@ export default async function DiscoverPage({ params, searchParams }: {
         </div>
 
         {cards.length > 0 ? <ul className="grid gap-4 xl:grid-cols-2">
-          {cards.map((tipster) => <li key={tipster.id} className="glass-card flex flex-col rounded-2xl p-5">
-            <div className="flex items-start gap-3">
+          {cards.map((tipster) => <li key={tipster.id} className="glass-card relative flex flex-col overflow-hidden rounded-2xl p-5">
+            <PublicBanner url={tipster.publicBannerUrl} />
+            <div className="relative flex items-start gap-3">
               <PublicAvatar name={tipster.publicDisplayName!} avatarUrl={tipster.publicAvatarUrl} className="size-12 text-base" />
               <div className="min-w-0 flex-1"><h3 className="truncate text-lg font-semibold">{tipster.publicDisplayName}</h3><p className="truncate text-xs font-semibold text-primary">@{tipster.publicHandle}</p></div>
               <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground"><UsersThree size={15} aria-hidden /> {tipster._count.tipsterFollowers}</span>
             </div>
-            <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Suivi public en unités avec niveau de preuve visible sur chaque pari."}</p>
-            {[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].length ? <div className="mt-3 flex flex-wrap gap-1.5">{[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].slice(0, 5).map((sport) => <span key={sport} className="rounded-full bg-primary/10 px-2 py-1 text-[0.65rem] font-semibold text-primary">{sport}</span>)}</div> : null}
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <p className="relative mt-3 line-clamp-2 min-h-10 text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Suivi public en unités avec niveau de preuve visible sur chaque pari."}</p>
+            {[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].length ? <div className="relative mt-3 flex flex-wrap gap-1.5">{[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].slice(0, 5).map((sport) => <span key={sport} className="rounded-full bg-primary/10 px-2 py-1 text-[0.65rem] font-semibold text-primary">{sport}</span>)}</div> : null}
+            <div className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Metric label="Bankrolls" value={String(tipster.bankrolls.length)} icon={<Wallet size={14} aria-hidden />} />
               <Metric label="Paris" value={String(tipster.bets.length)} />
               <Metric label="Bénéfice" value={tipster.performance.profit === null ? "—" : `${tipster.performance.profit >= 0 ? "+" : ""}${number.format(tipster.performance.profit)}u`} tone={tipster.performance.profit === null ? undefined : tipster.performance.profit >= 0 ? "profit" : "loss"} />
               <Metric label="Preuve" value={tipster.proofScore === null ? "Observation" : `${tipster.proofScore}/100`} icon={<ShieldCheck size={14} weight="fill" aria-hidden />} />
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="relative mt-4 flex flex-wrap gap-2">
               {tipster.bankrolls.slice(0, 3).map((bankroll) => <Link key={bankroll.id} href={`/p/${bankroll.publicSlug}`} className="rounded-lg border border-border bg-background/30 px-2.5 py-1.5 text-xs font-medium hover:border-primary/40 hover:text-primary">{bankroll.name}</Link>)}
             </div>
-            <Link href={`/t/${tipster.publicHandle}`} className="mt-5 inline-flex min-h-11 items-center justify-between border-t border-border pt-4 text-sm font-semibold text-primary">Voir le profil et les paris <ArrowRight size={17} aria-hidden /></Link>
+            <Link href={`/t/${tipster.publicHandle}`} className="relative mt-5 inline-flex min-h-11 items-center justify-between border-t border-border pt-4 text-sm font-semibold text-primary">Voir le profil et les paris <ArrowRight size={17} aria-hidden /></Link>
           </li>)}
         </ul> : <div className="glass-card flex min-h-56 flex-col items-center justify-center rounded-2xl p-8 text-center">
           <MagnifyingGlass size={30} className="text-muted-foreground" aria-hidden />

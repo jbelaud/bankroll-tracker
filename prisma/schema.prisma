@@ -31,6 +31,7 @@ model User {
   publicHandle      String? @unique
   publicBio        String?
   publicAvatarUrl  String?
+  publicBannerUrl  String?
   publicXHandle    String?
   followingLastViewedAt DateTime @default(now())
 

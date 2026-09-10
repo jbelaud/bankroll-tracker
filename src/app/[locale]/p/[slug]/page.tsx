@@ -7,6 +7,7 @@ import { CertificationExplainer } from "@/components/bankrolls/certification-exp
 import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
+import { PublicBanner } from "@/components/tipsters/public-banner";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
 import { personalStake } from "@/lib/bankroll-units";
@@ -65,6 +66,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           publicHandle: true,
           publicBio: true,
           publicAvatarUrl: true,
+          publicBannerUrl: true,
           publicXHandle: true,
           _count: { select: { tipsterFollowers: true } },
           bankrolls: {
@@ -171,8 +173,9 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         </>}</div>
       </header>
 
-      <section className="glass-card rounded-3xl p-5 sm:p-6">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <section className="glass-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
+        <PublicBanner url={bankroll.user.publicBannerUrl} />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <PublicIdentity
             displayName={bankroll.user.publicDisplayName || bankroll.user.name || "Tipster Kalivoa"}
             handle={bankroll.user.publicHandle}
