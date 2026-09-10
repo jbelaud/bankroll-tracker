@@ -41,6 +41,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
       where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
       select: {
         id: true, userId: true, name: true, certificationStartedAt: true,
+        publicDescription: true, publicSports: true,
         user: { select: {
           name: true,
           publicDisplayName: true,
@@ -51,8 +52,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           _count: { select: { tipsterFollowers: true } },
           bankrolls: {
             where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
-            orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-            select: { id: true, name: true, publicSlug: true, _count: { select: { followers: true } } },
+            orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
+            select: { id: true, name: true, publicSlug: true, publicDescription: true, publicSports: true, _count: { select: { followers: true } } },
           },
         } },
         _count: { select: { followers: true } },
@@ -162,6 +163,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             avatarUrl={bankroll.user.publicAvatarUrl}
             xHandle={bankroll.user.publicXHandle}
             bankrollName={bankroll.name}
+            bankrollDescription={bankroll.publicDescription}
+            sports={bankroll.publicSports}
             tipsterFollowerCount={bankroll.user._count.tipsterFollowers}
             publicBankrollCount={bankroll.user.bankrolls.length}
           />
@@ -341,13 +344,15 @@ function isJsonObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankrollName, tipsterFollowerCount, publicBankrollCount }: {
+function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankrollName, bankrollDescription, sports, tipsterFollowerCount, publicBankrollCount }: {
   displayName: string;
   handle: string | null;
   bio: string | null;
   avatarUrl: string | null;
   xHandle: string | null;
   bankrollName: string;
+  bankrollDescription: string | null;
+  sports: string[];
   tipsterFollowerCount: number;
   publicBankrollCount: number;
 }) {
@@ -361,7 +366,8 @@ function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankroll
         <span className="inline-flex items-center gap-1 text-xs font-semibold text-profit"><ShieldCheck size={15} weight="fill" aria-hidden /> Bankroll publique</span>
       </div>
       <h1 className="mt-2 break-words text-2xl font-bold sm:text-3xl">{bankrollName}</h1>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{bio || "Suivi transparent en unités. Les montants réels du tipster restent privés."}</p>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{bankrollDescription || bio || "Suivi transparent en unités. Les montants réels du tipster restent privés."}</p>
+      {sports.length ? <div className="mt-3 flex flex-wrap gap-1.5">{sports.map((sport) => <span key={sport} className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">{sport}</span>)}</div> : null}
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span><strong className="num text-foreground">{tipsterFollowerCount}</strong> abonné(s) au tipster</span>
         <span><strong className="num text-foreground">{publicBankrollCount}</strong> bankroll(s) publique(s)</span>

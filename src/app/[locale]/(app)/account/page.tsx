@@ -19,6 +19,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 import { ScanQualityReports } from "@/components/account/scan-quality-reports";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
+import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
 
 export default async function AccountPage({
   params,
@@ -36,11 +37,16 @@ export default async function AccountPage({
     return null;
   }
 
-  const [dbUser, bets, qualityReports, betaProgram] = await Promise.all([
+  const [dbUser, bets, qualityReports, betaProgram, publicBankrolls] = await Promise.all([
     prisma.user.findUnique({ where: { id: user.id } }),
     listAllBets(),
     prisma.scanQualityReport.findMany({ where: { userId: user.id }, select: { id: true, bookmaker: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
     prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
+    prisma.bankroll.findMany({
+      where: { userId: user.id, certificationStartedAt: { not: null } },
+      orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }, { id: "asc" }],
+      select: { id: true, name: true, isPublic: true },
+    }),
   ]);
 
   const now = new Date();
@@ -87,6 +93,7 @@ export default async function AccountPage({
         publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
         publicXHandle: dbUser?.publicXHandle ?? null,
       }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
+      <PublicBankrollOrder bankrolls={publicBankrolls} />
 
       <div className="xl:col-span-6"><AccountGoalsCard
           monthProfit={monthProfit}

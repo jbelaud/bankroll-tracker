@@ -160,6 +160,9 @@ model Bankroll {
   referenceCapital Float? // 1 u = 1 % de ce montant de référence
   isPublic         Boolean      @default(false)
   publicSlug       String?      @unique
+  publicDescription String?
+  publicSports     String[]     @default([])
+  publicOrder      Int          @default(0)
   publishedAt      DateTime?
   certificationStartedAt DateTime?
   createdAt        DateTime     @default(now())
@@ -174,6 +177,7 @@ model Bankroll {
   followers          BankrollFollow[]
 
   @@index([userId])
+  @@index([userId, isPublic, publicOrder])
   @@map("bankrolls")
 }
 

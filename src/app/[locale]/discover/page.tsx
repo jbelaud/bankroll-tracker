@@ -43,9 +43,10 @@ export default async function DiscoverPage({ params, searchParams }: {
         _count: { select: { tipsterFollowers: true } },
         bankrolls: {
           where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
-          orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+          orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
           select: {
             id: true, name: true, publicSlug: true, publishedAt: true, certificationStartedAt: true,
+            publicDescription: true, publicSports: true,
             _count: { select: { followers: true } },
             bets: {
               select: {
@@ -134,6 +135,7 @@ export default async function DiscoverPage({ params, searchParams }: {
               <span className="inline-flex shrink-0 items-center gap-1 text-xs text-muted-foreground"><UsersThree size={15} aria-hidden /> {tipster._count.tipsterFollowers}</span>
             </div>
             <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-relaxed text-muted-foreground">{tipster.publicBio || "Suivi public en unités avec niveau de preuve visible sur chaque pari."}</p>
+            {[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].length ? <div className="mt-3 flex flex-wrap gap-1.5">{[...new Set(tipster.bankrolls.flatMap((bankroll) => bankroll.publicSports))].slice(0, 5).map((sport) => <span key={sport} className="rounded-full bg-primary/10 px-2 py-1 text-[0.65rem] font-semibold text-primary">{sport}</span>)}</div> : null}
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Metric label="Bankrolls" value={String(tipster.bankrolls.length)} icon={<Wallet size={14} aria-hidden />} />
               <Metric label="Paris" value={String(tipster.bets.length)} />

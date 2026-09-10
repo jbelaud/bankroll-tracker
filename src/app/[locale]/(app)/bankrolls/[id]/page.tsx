@@ -22,6 +22,7 @@ import { prisma } from "@/lib/prisma";
 import { ReferenceHistory } from "@/components/bankrolls/reference-history";
 import { PersonalStaking } from "@/components/bankrolls/personal-staking";
 import { CertificationPanel } from "@/components/bankrolls/certification-panel";
+import { PublicBankrollSettings } from "@/components/bankrolls/public-bankroll-settings";
 import { certificationSummary } from "@/lib/certification";
 
 export default async function BankrollDetailPage({
@@ -149,6 +150,12 @@ export default async function BankrollDetailPage({
         missingUnitCount={bets.filter((bet) => bet.stakeUnits === null).length}
         pendingProofBetId={bets.find((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null)?.id}
         pendingProofCount={bets.filter((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null).length}
+      />
+      <PublicBankrollSettings
+        bankrollId={id}
+        description={bankroll.publicDescription}
+        selectedSports={bankroll.publicSports}
+        availableSports={[...new Set(bets.map((bet) => bet.sport).filter(Boolean))].sort((left, right) => left.localeCompare(right, "fr"))}
       />
       <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
         <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
