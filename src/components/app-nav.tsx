@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
@@ -16,6 +17,7 @@ import {
   FileArrowUp,
   Gauge,
   Compass,
+  CaretDown,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -30,12 +32,16 @@ const NAV_ITEMS = [
   { href: "/import-history", key: "fileImport", icon: FileArrowUp },
   { href: "/stats", key: "stats", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
-  { href: "/following", key: "following", icon: BookmarksSimple },
-  { href: "/discover", key: "discover", icon: Compass },
   { href: "/tipsters", key: "tipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },
   { href: "/admin", key: "admin", icon: Gauge, adminOnly: true },
+] as const;
+
+const TIPSTER_SUB_ITEMS = [
+  { href: "/discover", key: "discover", icon: Compass },
+  { href: "/following", key: "following", icon: BookmarksSimple },
+  { href: "/tipsters", key: "myTipsters", icon: UserList },
 ] as const;
 
 const DESKTOP_NAV_GROUPS = [
@@ -64,6 +70,12 @@ export function AppNav({
 }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const tipsterSectionActive = TIPSTER_SUB_ITEMS.some((item) => pathname.startsWith(item.href));
+  const [tipstersOpen, setTipstersOpen] = useState(tipsterSectionActive);
+
+  useEffect(() => {
+    if (tipsterSectionActive) setTipstersOpen(true);
+  }, [tipsterSectionActive]);
 
   return (
     <>
@@ -86,6 +98,31 @@ export function AppNav({
                     const label = t("desktopKey" in item ? item.desktopKey : key);
                     const active = pathname.startsWith(href);
                     const isPrimary = "primary" in item && item.primary;
+
+                    if (key === "tipsters") {
+                      return <li key={href}>
+                        <button
+                          type="button"
+                          aria-expanded={tipstersOpen}
+                          aria-controls="tipsters-submenu"
+                          onClick={() => setTipstersOpen((open) => !open)}
+                          className={cn(
+                            "flex min-h-touch w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            tipsterSectionActive ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+                          )}
+                        >
+                          <Icon size={20} weight={tipsterSectionActive ? "fill" : "regular"} aria-hidden />
+                          <span className="flex-1 text-left">{label}</span>
+                          <CaretDown size={15} className={cn("transition-transform", tipstersOpen && "rotate-180")} aria-hidden />
+                        </button>
+                        {tipstersOpen ? <ul id="tipsters-submenu" className="ml-5 mt-1 flex flex-col gap-1 border-l border-border pl-3">
+                          {TIPSTER_SUB_ITEMS.map(({ href: childHref, key: childKey, icon: ChildIcon }) => {
+                            const childActive = pathname.startsWith(childHref);
+                            return <li key={childHref}><Link href={childHref} aria-current={childActive ? "page" : undefined} className={cn("flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", childActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground")}><ChildIcon size={17} weight={childActive ? "fill" : "regular"} aria-hidden /><span>{t(childKey)}</span></Link></li>;
+                          })}
+                        </ul> : null}
+                      </li>;
+                    }
 
                     return (
                       <li key={href}>
@@ -169,10 +206,13 @@ export function AppNav({
 export function AppTopBar() {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const currentTipsterItem = TIPSTER_SUB_ITEMS.find((item) => pathname.startsWith(item.href));
   const currentItem = NAV_ITEMS.find((item) => pathname.startsWith(item.href));
-  const currentLabel = currentItem
-    ? t("desktopKey" in currentItem ? currentItem.desktopKey : currentItem.key)
-    : "Kalivoa";
+  const currentLabel = currentTipsterItem
+    ? `${t("tipsters")} · ${t(currentTipsterItem.key)}`
+    : currentItem
+      ? t("desktopKey" in currentItem ? currentItem.desktopKey : currentItem.key)
+      : "Kalivoa";
 
   return (
     <header className="sticky top-0 z-30 hidden h-20 items-center justify-between border-b border-border bg-background/88 px-6 backdrop-blur-xl lg:flex xl:px-8">
