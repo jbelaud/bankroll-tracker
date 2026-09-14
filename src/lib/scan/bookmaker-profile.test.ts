@@ -42,6 +42,15 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("Utilise Golf uniquement si des indices textuels propres au golf sont visibles");
   });
 
+  it("classifies PMU national teams with a set handicap as volleyball", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("« Vainqueur avec set(s) de handicap »");
+    expect(prompt).toContain("« Suisse - Roumanie » avec « Suisse -1,5 »");
+    expect(prompt).toContain('"sport": "Volleyball" et "betType": "Handicap", jamais Tennis');
+    expect(prompt).toContain("Cette règle exige des équipes nationales");
+    expect(prompt).toContain("ne remplace jamais une mention visible explicite de Tennis");
+  });
+
   it("settles completed Unibet cards from the visible thumb and gains pair", () => {
     const prompt = buildExtractionPrompt();
     expect(prompt).toContain("un pouce vert accompagné d'un montant « Gains » strictement positif");
