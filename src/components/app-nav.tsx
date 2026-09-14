@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
@@ -71,14 +71,40 @@ export function AppNav({
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tipsterSectionActive = TIPSTER_SUB_ITEMS.some((item) => pathname.startsWith(item.href));
-  const [tipstersOpen, setTipstersOpen] = useState(tipsterSectionActive);
-
-  useEffect(() => {
-    if (tipsterSectionActive) setTipstersOpen(true);
-  }, [tipsterSectionActive]);
+  const [desktopMenuState, setDesktopMenuState] = useState<{ path: string; open: boolean } | null>(null);
+  const [mobileMenuState, setMobileMenuState] = useState<{ path: string; open: boolean } | null>(null);
+  const tipstersOpen = desktopMenuState?.path === pathname ? desktopMenuState.open : tipsterSectionActive;
+  const mobileTipstersOpen = mobileMenuState?.path === pathname ? mobileMenuState.open : tipsterSectionActive;
 
   return (
     <>
+      <div className="sticky top-0 z-40 flex min-h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur-xl lg:hidden">
+        <Link href="/dashboard" aria-label="Kalivoa">
+          <Brand compact />
+        </Link>
+        <nav aria-label={`${t("tipsters")} · ${t("ariaLabel")}`} className="relative">
+          <button
+            type="button"
+            aria-expanded={mobileTipstersOpen}
+            aria-controls="mobile-tipsters-submenu"
+            onClick={() => setMobileMenuState({ path: pathname, open: !mobileTipstersOpen })}
+            className={cn(
+              "flex min-h-touch items-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              tipsterSectionActive ? "bg-primary/12 text-primary" : "bg-card/60 text-foreground",
+            )}
+          >
+            <UserList size={19} weight={tipsterSectionActive ? "fill" : "regular"} aria-hidden />
+            <span>{t("tipsters")}</span>
+            <CaretDown size={15} className={cn("transition-transform", mobileTipstersOpen && "rotate-180")} aria-hidden />
+          </button>
+          {mobileTipstersOpen ? <ul id="mobile-tipsters-submenu" className="absolute right-0 top-full mt-2 w-56 space-y-1 rounded-2xl border border-border bg-background/98 p-2 shadow-xl backdrop-blur-xl">
+            {TIPSTER_SUB_ITEMS.map(({ href, key, icon: Icon }) => {
+              const active = pathname.startsWith(href);
+              return <li key={href}><Link href={href} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
+            })}
+          </ul> : null}
+        </nav>
+      </div>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-sidebar/95 pb-[var(--rg-footer-h)] backdrop-blur-xl lg:flex">
         <div className="flex min-h-20 items-center border-b border-border px-5">
           <Link href="/dashboard" aria-label="Kalivoa">
@@ -105,7 +131,7 @@ export function AppNav({
                           type="button"
                           aria-expanded={tipstersOpen}
                           aria-controls="tipsters-submenu"
-                          onClick={() => setTipstersOpen((open) => !open)}
+                          onClick={() => setDesktopMenuState({ path: pathname, open: !tipstersOpen })}
                           className={cn(
                             "flex min-h-touch w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             tipsterSectionActive ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",

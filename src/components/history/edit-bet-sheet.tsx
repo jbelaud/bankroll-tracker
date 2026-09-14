@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { BetResult, Currency } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
@@ -42,22 +42,17 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
   const tBetTypes = useTranslations("betTypes");
   const tResults = useTranslations("results");
 
-  // Le panneau reste monté entre deux ouvertures : on resynchronise donc le
-  // formulaire lorsque l'utilisateur choisit un autre pari dans l'historique.
-  useEffect(() => {
-    if (bet && open) {
-      setValue({ ...bet, date: bet.date.toISOString().slice(0, 10) });
-      setError("");
-      setCorrectionReason("");
-    }
-  }, [bet, open]);
-
   if (!bet || !value) return null;
   const sportList = Object.keys(taxonomy);
   const betTypes = taxonomy[value.sport] ?? [value.betType];
   const patch = (changes: Partial<EditableBet>) => setValue((previous) => previous ? { ...previous, ...changes } : previous);
 
   const save = async () => {
+    if (bet.certificationLockedAt && correctionReason.normalize("NFKC").trim().length < 3) {
+      setError("Indique la raison de cette correction : elle sera conservée dans le journal de transparence.");
+      return;
+    }
+
     setSaving(true);
     setError("");
     try {

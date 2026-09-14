@@ -311,8 +311,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
                     </div>
                     <strong className="mt-2 block break-words text-sm sm:text-base">{bet.description || `${bet.sport} · ${bet.betType}`}</strong>
                     <p className="mt-1 text-xs text-muted-foreground">{date.format(bet.date)} · {bet.sport} · {bet.betType}{bet.eventResult ? ` · ${bet.eventResult}` : ""}</p>
-                    {bet.corrections.length > 0 ? <details className="mt-2 rounded-lg border border-warning/25 bg-warning/5 px-3 py-2">
-                      <summary className="cursor-pointer text-[0.7rem] font-semibold text-warning">Journal de transparence · {bet.corrections.length} correction(s)</summary>
+                    {bet.corrections.length > 0 ? <details className="mt-2 rounded-lg border border-warning/25 bg-warning/5 px-1">
+                      <summary className="flex min-h-touch cursor-pointer list-none items-center rounded-md px-2 text-[0.7rem] font-semibold text-warning marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-warning [&::-webkit-details-marker]:hidden">Journal de transparence · {bet.corrections.length} correction(s)</summary>
                       <ul className="mt-2 space-y-1.5 border-t border-warning/20 pt-2">
                         {bet.corrections.map((correction, correctionIndex) => {
                           const fields = correctionFields(correction.before, correction.after);

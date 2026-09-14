@@ -7,6 +7,9 @@ import { publicPerformance } from "@/lib/public-bankroll";
 import { createClient } from "@/lib/supabase/server";
 import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { PublicBanner } from "@/components/tipsters/public-banner";
+import { AppShell } from "@/components/app-shell";
+import { isAdminEmail } from "@/lib/admin";
+import { normalizeDiscoverSearch } from "@/lib/tipsters/discover-search";
 
 export const metadata: Metadata = {
   title: "Découvrir les tipsters",
@@ -22,7 +25,7 @@ export default async function DiscoverPage({ params, searchParams }: {
   searchParams: Promise<{ q?: string | string[]; sort?: string | string[]; sport?: string | string[]; proof?: string | string[] }>;
 }) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
-  const search = first(query.q)?.normalize("NFKC").trim().slice(0, 60) ?? "";
+  const { search, handleSearch } = normalizeDiscoverSearch(query.q);
   const requestedSort = first(query.sort);
   const activeSort: DirectorySort = requestedSort === "recent" || requestedSort === "active" ? requestedSort : "popular";
   const requestedSport = first(query.sport)?.normalize("NFKC").trim().slice(0, 40) ?? "";
@@ -38,7 +41,7 @@ export default async function DiscoverPage({ params, searchParams }: {
         bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } } },
         ...(search ? { OR: [
           { publicDisplayName: { contains: search, mode: "insensitive" as const } },
-          { publicHandle: { contains: search, mode: "insensitive" as const } },
+          { publicHandle: { contains: handleSearch || search, mode: "insensitive" as const } },
           { publicBio: { contains: search, mode: "insensitive" as const } },
           { bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null }, publicDescription: { contains: search, mode: "insensitive" as const } } } },
         ] } : {}),
@@ -94,6 +97,10 @@ export default async function DiscoverPage({ params, searchParams }: {
   });
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
   const viewer = authResult.data.user;
+  const dbUser = viewer ? await prisma.user.findUnique({
+    where: { id: viewer.id },
+    select: { plan: true, subscriptionCurrentPeriodEnd: true },
+  }) : null;
   const sportOptions = [...new Set(publicSportRows.flatMap((row) => row.publicSports))].sort((left, right) => left.localeCompare(right, locale));
   const sortHref = (sort: DirectorySort) => {
     const next = new URLSearchParams({ sort });
@@ -103,17 +110,14 @@ export default async function DiscoverPage({ params, searchParams }: {
     return `/discover?${next.toString()}`;
   };
 
-  return <main className="min-h-dvh bg-background px-3 py-4 text-foreground sm:px-6 lg:px-8">
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
-      <header className="flex items-center justify-between gap-4 py-1">
+  const directory = <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
+      {!viewer ? <header className="flex items-center justify-between gap-4 py-1">
         <Link href="/" className="text-xl font-black tracking-tight">Kalivoa</Link>
         <div className="flex items-center gap-2">
-          {viewer ? <Link href="/dashboard" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Mon espace</Link> : <>
-            <Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Se connecter</Link>
-            <Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90">Créer un compte</Link>
-          </>}
+          <Link href="/login" className="rounded-xl border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">Se connecter</Link>
+          <Link href="/signup" className="rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90">Créer un compte</Link>
         </div>
-      </header>
+      </header> : null}
 
       <section className="glass-card overflow-hidden rounded-3xl p-5 sm:p-8">
         <div className="max-w-3xl">
@@ -121,7 +125,7 @@ export default async function DiscoverPage({ params, searchParams }: {
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Découvre des tipsters transparents</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">Compare leurs résultats en unités, leur activité et le niveau de preuve de leurs paris sans jamais voir leur bankroll réelle.</p>
         </div>
-        <form action={`/${locale}/discover`} method="get" className="mt-6 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
+        <form key={`${search}:${requestedSport}:${activeProof}:${activeSort}`} action={`/${locale}/discover`} method="get" className="mt-6 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
           <label className="relative flex-1">
             <span className="sr-only">Rechercher un tipster</span>
             <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
@@ -161,9 +165,9 @@ export default async function DiscoverPage({ params, searchParams }: {
               <Metric label="Bénéfice" value={tipster.performance.profit === null ? "—" : `${tipster.performance.profit >= 0 ? "+" : ""}${number.format(tipster.performance.profit)}u`} tone={tipster.performance.profit === null ? undefined : tipster.performance.profit >= 0 ? "profit" : "loss"} />
               <Metric label="Preuve" value={tipster.proofScore === null ? "Observation" : `${tipster.proofScore}/100`} icon={<ShieldCheck size={14} weight="fill" aria-hidden />} />
             </div>
-            <div className="relative mt-4 flex flex-wrap gap-2">
-              {tipster.bankrolls.slice(0, 3).map((bankroll) => <Link key={bankroll.id} href={`/p/${bankroll.publicSlug}`} className="rounded-lg border border-border bg-background/30 px-2.5 py-1.5 text-xs font-medium hover:border-primary/40 hover:text-primary">{bankroll.name}</Link>)}
-            </div>
+            <ul className="relative mt-4 grid gap-2 sm:grid-cols-2">
+              {tipster.bankrolls.slice(0, 4).map((bankroll) => <li key={bankroll.id}><Link href={`/p/${bankroll.publicSlug}`} className="flex min-h-11 flex-col justify-center rounded-xl border border-border bg-background/30 px-3 py-2 text-xs hover:border-primary/40"><strong className="font-semibold text-foreground hover:text-primary">{bankroll.name}</strong>{bankroll.publicDescription ? <span className="mt-1 line-clamp-2 leading-relaxed text-muted-foreground">{bankroll.publicDescription}</span> : null}</Link></li>)}
+            </ul>
             <Link href={`/t/${tipster.publicHandle}`} className="relative mt-5 inline-flex min-h-11 items-center justify-between border-t border-border pt-4 text-sm font-semibold text-primary">Voir le profil et les paris <ArrowRight size={17} aria-hidden /></Link>
           </li>)}
         </ul> : <div className="glass-card flex min-h-56 flex-col items-center justify-center rounded-2xl p-8 text-center">
@@ -173,7 +177,20 @@ export default async function DiscoverPage({ params, searchParams }: {
           <Link href="/discover" className="mt-4 text-sm font-semibold text-primary hover:underline">Effacer la recherche</Link>
         </div>}
       </section>
-    </div>
+    </div>;
+
+  if (viewer) {
+    return <AppShell
+      plan={dbUser?.plan ?? "FREE"}
+      currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
+      isAdmin={isAdminEmail(viewer.email)}
+    >
+      {directory}
+    </AppShell>;
+  }
+
+  return <main className="min-h-dvh bg-background px-3 py-4 text-foreground sm:px-6 lg:px-8">
+    {directory}
   </main>;
 }
 

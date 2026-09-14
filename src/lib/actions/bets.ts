@@ -336,11 +336,16 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   const user = await requireUser();
   const existing = await getOwnedBet(betId, user.id);
   const t = await getErrorsT();
-  const date = new Date(`${input.date}T12:00:00.000Z`);
+  const requestedDate = new Date(`${input.date}T12:00:00.000Z`);
+  // Le champ HTML ne contient qu'un jour. Si ce jour n'a pas changé, garder
+  // l'instant historique exact évite qu'une simple correction déplace l'heure.
+  const date = input.date === existing.date.toISOString().slice(0, 10)
+    ? existing.date
+    : requestedDate;
   const taxonomy = await getUserTaxonomy(user.id, false);
   const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, input.sport, input.betType);
 
-  if (Number.isNaN(date.getTime())) throw new Error(t("invalidDate"));
+  if (Number.isNaN(requestedDate.getTime())) throw new Error(t("invalidDate"));
   if (!Number.isFinite(input.stake) || input.stake <= 0) throw new Error(t("stakePositive"));
   if (!isBetResult(input.result)) throw new Error(t("invalidResult"));
   if (input.odds === null && input.result !== "REMBOURSE") throw new Error(t("oddsPositive"));
@@ -360,7 +365,7 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   const isCertifiedCorrection = existing.certificationLockedAt !== null;
   const correctionReason = input.correctionReason?.normalize("NFKC").trim().slice(0, 500) ?? "";
   if (isCertifiedCorrection && correctionReason.length < 3) {
-    throw new Error("Indique la raison de cette correction : elle sera visible dans le journal de transparence.");
+    throw new Error("Indique la raison de cette correction : elle sera conservée dans le journal de transparence.");
   }
 
   const initialProofChanged = existing.sport !== normalizedTaxonomy.sport

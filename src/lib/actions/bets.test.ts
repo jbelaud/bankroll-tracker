@@ -156,6 +156,30 @@ describe("association Bet / Tipster", () => {
     }));
   });
 
+  it("conserve l'heure historique quand le jour du pari n'est pas modifié", async () => {
+    const historicalDate = new Date("2026-08-27T00:00:00.000Z");
+    mocks.betFindFirst.mockResolvedValue(ownedBet({
+      date: historicalDate,
+      certificationLockedAt: new Date("2026-08-01T00:00:00Z"),
+    }));
+
+    await updateBet("bet-a", {
+      ...updateInput,
+      description: "Sélection corrigée",
+      correctionReason: "Sélection mal détectée",
+    });
+
+    expect(mocks.betUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ date: historicalDate }),
+    }));
+    expect(mocks.betCorrectionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        before: expect.objectContaining({ date: "2026-08-27T00:00:00.000Z" }),
+        after: expect.objectContaining({ date: "2026-08-27T00:00:00.000Z" }),
+      }),
+    }));
+  });
+
   it("refuse le Tipster d'un autre utilisateur", async () => {
     mocks.tipsterFindFirst.mockResolvedValue(null);
 
