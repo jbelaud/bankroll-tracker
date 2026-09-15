@@ -258,7 +258,12 @@ export async function signInWithGoogle(formData: FormData) {
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: callbackUrl },
+    options: {
+      redirectTo: callbackUrl,
+      // Google réutilise sinon silencieusement le dernier compte connecté,
+      // même après une déconnexion de Kalivoa.
+      queryParams: { prompt: "select_account" },
+    },
   });
 
   const url = data?.url;
