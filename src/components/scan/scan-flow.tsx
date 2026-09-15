@@ -47,7 +47,7 @@ type FlowState =
   | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
   | { step: "empty"; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
   | { step: "importing"; draftId: string | null; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
-  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number };
+  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number };
 
 export function ScanFlow({
   bankrolls,
@@ -180,6 +180,7 @@ export function ScanFlow({
         imported: result.imported,
         firstImport: result.firstImport,
         earnedReferralScans: scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0),
+        resultProofsUpdated: result.resultProofsUpdated ?? 0,
       });
     },
     [bankrollId, flow, resultProofTarget?.betId]
@@ -268,9 +269,16 @@ export function ScanFlow({
   }
 
   if (flow.step === "completed") {
-    const title = resultProofTarget ? "Preuve du résultat enregistrée" : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
+    const automaticResultUpdate = !resultProofTarget && flow.resultProofsUpdated > 0;
+    const title = resultProofTarget || automaticResultUpdate
+      ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
+      : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
     const description = resultProofTarget
       ? "Le pari existant a été clôturé avec sa preuve Scan. Son niveau de certification et les statistiques publiques sont à jour."
+      : automaticResultUpdate
+      ? flow.resultProofsUpdated > 1
+        ? `${flow.resultProofsUpdated} paris existants ont été clôturés avec leur preuve Scan, sans créer de doublon.`
+        : "Le pari en attente correspondant a été clôturé avec sa preuve Scan, sans créer de doublon."
       : flow.firstImport
       ? tComplete("firstDescription", { count: flow.imported })
       : tComplete("description", { count: flow.imported });

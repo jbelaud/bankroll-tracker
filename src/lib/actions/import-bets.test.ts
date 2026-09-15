@@ -9,7 +9,11 @@ const mocks = vi.hoisted(() => ({
   bankrollFindFirst: vi.fn(),
   betFindMany: vi.fn(),
   betCount: vi.fn(),
+  betUpdateMany: vi.fn(),
   betCreateMany: vi.fn(),
+  scanUsageFindMany: vi.fn(),
+  scanUsageUpdate: vi.fn(),
+  createOwnedBet: vi.fn(),
   taxonomyCreateMany: vi.fn(),
   importBatchCreate: vi.fn(),
   tipsterCreateMany: vi.fn(),
@@ -25,9 +29,10 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/billing/bankroll-access", () => ({ isBankrollLockedForUser: mocks.isLocked }));
 vi.mock("@/lib/growth/events", () => ({ recordGrowthEventSafely: mocks.recordEvent }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
-vi.mock("next-intl/server", () => ({ getTranslations: vi.fn() }));
-vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn() }));
+vi.mock("next-intl/server", () => ({ getTranslations: vi.fn().mockResolvedValue((key: string) => key) }));
+vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn().mockResolvedValue("fr") }));
 vi.mock("@/lib/actions/bets", () => ({ createBet: vi.fn() }));
+vi.mock("@/lib/bets/create", () => ({ createOwnedBet: mocks.createOwnedBet }));
 vi.mock("@/lib/taxonomy", () => ({
   getUserTaxonomy: vi.fn().mockResolvedValue({}),
   normalizeTaxonomyPair: mocks.taxonomyNormalize,
@@ -36,7 +41,8 @@ vi.mock("@/lib/taxonomy", () => ({
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     bankroll: { findFirst: mocks.bankrollFindFirst },
-    bet: { findMany: mocks.betFindMany, count: mocks.betCount, createMany: mocks.betCreateMany },
+    bet: { findMany: mocks.betFindMany, count: mocks.betCount, updateMany: mocks.betUpdateMany, createMany: mocks.betCreateMany },
+    scanUsage: { findMany: mocks.scanUsageFindMany, update: mocks.scanUsageUpdate },
     userTaxonomyEntry: { createMany: mocks.taxonomyCreateMany },
     importBatch: { create: mocks.importBatchCreate },
     tipster: { createMany: mocks.tipsterCreateMany, findMany: mocks.tipsterFindMany },
@@ -45,7 +51,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-const { importExternalBets } = await import("./import-bets");
+const { importBets, importExternalBets } = await import("./import-bets");
 
 function bet(overrides: Partial<ParsedBet> = {}): ParsedBet {
   return {
@@ -79,7 +85,11 @@ describe("importExternalBets", () => {
     });
     mocks.betFindMany.mockResolvedValue([]);
     mocks.betCount.mockResolvedValue(0);
+    mocks.betUpdateMany.mockResolvedValue({ count: 1 });
     mocks.betCreateMany.mockReturnValue(Promise.resolve({ count: 1 }));
+    mocks.scanUsageFindMany.mockResolvedValue([]);
+    mocks.scanUsageUpdate.mockResolvedValue({});
+    mocks.createOwnedBet.mockResolvedValue({ id: "created-bet" });
     mocks.taxonomyCreateMany.mockReturnValue(Promise.resolve({ count: 1 }));
     mocks.importBatchCreate.mockResolvedValue({ id: "batch-1" });
     mocks.tipsterCreateMany.mockResolvedValue({ count: 0 });
@@ -256,5 +266,69 @@ describe("importExternalBets", () => {
     mocks.tipsterFindMany.mockResolvedValueOnce([]);
     await expect(importExternalBets("bankroll-1", [bet({ tipsterId: "tipster-other" })], "CSV"))
       .resolves.toEqual({ error: "Tipster introuvable." });
+  });
+});
+
+describe("importBets", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.requireUser.mockResolvedValue({ id: "user-1" });
+    mocks.isLocked.mockResolvedValue(false);
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-1",
+      mode: "SINGLE",
+      allocations: [],
+    });
+    mocks.betCount.mockResolvedValue(1);
+    mocks.betUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result",
+      detectedBookmaker: "Winamax",
+      createdAt: new Date("2026-09-15T23:26:48.475Z"),
+    }]);
+    mocks.scanUsageUpdate.mockResolvedValue({});
+    mocks.tipsterFindMany.mockResolvedValue([]);
+    mocks.recordEvent.mockResolvedValue(undefined);
+    mocks.taxonomyNormalize.mockImplementation((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false }));
+    mocks.sportContextNormalize.mockImplementation((_taxonomy, sport: string) => ({ sport, competition: null }));
+  });
+
+  it("met à jour le pari en attente correspondant au lieu de créer un doublon", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "pending-bet",
+      ticketRef: "6IZ7I0Y",
+      date: new Date("2026-09-15T00:00:00.000Z"),
+      stake: 5,
+      odds: 2.55,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "6IZ7T10Y",
+      date: "2026-09-15",
+      stake: 5,
+      odds: 2.55,
+      result: "PERDU",
+      eventResult: "West Ham 2 - 3 Fulham",
+      sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toEqual({
+      imported: 1,
+      firstImport: false,
+      resultProofsUpdated: 1,
+    });
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith({
+      where: {
+        id: "pending-bet",
+        result: "EN_ATTENTE",
+        bankroll: { userId: "user-1" },
+      },
+      data: expect.objectContaining({
+        result: "PERDU",
+        eventResult: "West Ham 2 - 3 Fulham",
+        resultEntryMethod: "SCAN",
+      }),
+    });
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
 });

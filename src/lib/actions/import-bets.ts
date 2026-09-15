@@ -19,7 +19,7 @@ import {
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
-import { resultProofMatches } from "@/lib/result-proof";
+import { findAutomaticResultProofTarget, resultProofMatches } from "@/lib/result-proof";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -29,7 +29,7 @@ export type ScanImportMeasurement = {
 };
 
 export type ImportResult =
-  | { imported: number; firstImport: boolean; error?: undefined }
+  | { imported: number; firstImport: boolean; resultProofsUpdated?: number; error?: undefined }
   | { error: string; imported?: undefined };
 
 export type FileImportResult =
@@ -300,7 +300,10 @@ export async function importExternalBets(
 
   revalidatePath("/[locale]/dashboard", "page");
   revalidatePath("/[locale]/bankrolls", "page");
+  revalidatePath("/[locale]/bankrolls/[id]", "page");
   revalidatePath("/[locale]/history", "page");
+  revalidatePath("/[locale]/p/[slug]", "page");
+  revalidatePath("/[locale]/t/[handle]", "page");
   return { imported: rows.length, skippedDuplicates, firstImport: totalBets === 0 && rows.length > 0 };
 }
 
@@ -329,6 +332,7 @@ export async function importBets(
   }
 
   let existingBets = 0;
+  let resultProofsUpdated = 0;
   try {
     const bankroll = await prisma.bankroll.findFirst({
       where: { id: bankrollId, userId: user.id },
@@ -416,7 +420,7 @@ export async function importBets(
       revalidatePath("/[locale]/bankrolls/[id]", "page");
       revalidatePath("/[locale]/history", "page");
       revalidatePath("/[locale]/p/[slug]", "page");
-      return { imported: 1, firstImport: false };
+      return { imported: 1, firstImport: false, resultProofsUpdated: 1 };
     }
     const allocationByBookmaker = new Map(bankroll.allocations.map((allocation) => [
       normalizeBookmaker(allocation.bookmaker).toLocaleLowerCase("fr"),
@@ -428,9 +432,59 @@ export async function importBets(
     const existingScanImports = await prisma.bet.count({
       where: { bankroll: { userId: user.id }, entryMethod: "SCAN" },
     });
+    const pendingResultTargets = await prisma.bet.findMany({
+      where: {
+        bankrollId,
+        result: "EN_ATTENTE",
+        certificationLockedAt: { not: null },
+        bankroll: {
+          userId: user.id,
+          certificationStartedAt: { not: null },
+        },
+      },
+      select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+    });
+    const matchedResultTargetIds = new Set<string>();
     for (const [index, bet] of bets.entries()) {
       const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
+      const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
+      const automaticResultTarget = scanProof
+        ? findAutomaticResultProofTarget(
+            pendingResultTargets.filter((target) => !matchedResultTargetIds.has(target.id)),
+            bet
+          )
+        : null;
+      if (automaticResultTarget && scanProof) {
+        const updated = await prisma.bet.updateMany({
+          where: {
+            id: automaticResultTarget.id,
+            result: "EN_ATTENTE",
+            bankroll: { userId: user.id },
+          },
+          data: {
+            result: bet.result,
+            cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+            eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
+            resultProofAt: scanProof.createdAt,
+            resultEntryMethod: "SCAN",
+          },
+        });
+        if (updated.count !== 1) {
+          return {
+            error: "Ce pari vient déjà d’être mis à jour. Actualise la page avant de recommencer.",
+          };
+        }
+        matchedResultTargetIds.add(automaticResultTarget.id);
+        resultProofsUpdated += 1;
+        console.info("[scan-result] existing pending bet updated", {
+          userId: user.id,
+          bankrollId,
+          betId: automaticResultTarget.id,
+          scanUsageId,
+        });
+        continue;
+      }
       const detectedAllocation = detectedBookmaker
         ? allocationByBookmaker.get(normalizeBookmaker(detectedBookmaker).toLocaleLowerCase("fr"))
         : undefined;
@@ -547,5 +601,9 @@ export async function importBets(
   revalidatePath("/[locale]/dashboard", "page");
   revalidatePath("/[locale]/bankrolls", "page");
   revalidatePath("/[locale]/history", "page");
-  return { imported: bets.length, firstImport: existingBets === 0 };
+  return {
+    imported: bets.length,
+    firstImport: existingBets === 0,
+    resultProofsUpdated,
+  };
 }
