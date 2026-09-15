@@ -19,7 +19,7 @@ const PROOF_LABELS: Record<CertificationStatus, string> = {
   LIMITED: "Preuve limitée", UNVERIFIED: "Non certifié",
 };
 
-export default async function FollowingPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ activity?: string | string[]; convertWith?: string | string[] }> }) {
+export default async function FollowingPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ activity?: string | string[] }> }) {
   const [{ locale }, user, query] = await Promise.all([params, requireUser(), searchParams]);
   const [bankrollFollows, tipsterFollows, viewerSettings] = await Promise.all([
     prisma.bankrollFollow.findMany({
@@ -77,20 +77,15 @@ export default async function FollowingPage({ params, searchParams }: { params: 
       select: {
         currency: true,
         followingLastViewedAt: true,
-        bankrolls: {
-          where: { stakingProfile: { isNot: null } },
-          orderBy: { createdAt: "asc" },
-          select: { id: true, name: true, stakingProfile: { select: { referenceCapital: true, unitPercent: true, rounding: true } } },
+        personalConversion: {
+          select: { referenceCapital: true, unitPercent: true, rounding: true },
         },
       },
     }),
   ]);
   const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 2 });
   const date = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit", year: "numeric" });
-  const requestedProfileId = first(query.convertWith);
-  const conversionProfiles = viewerSettings?.bankrolls.filter((item) => item.stakingProfile !== null) ?? [];
-  const selectedConversion = conversionProfiles.find((item) => item.id === requestedProfileId) ?? conversionProfiles[0] ?? null;
-  const selectedProfile = selectedConversion?.stakingProfile ?? null;
+  const selectedProfile = viewerSettings?.personalConversion ?? null;
   const followedBankrollIds = bankrollFollows.map(({ bankroll }) => bankroll.id);
   const followedTipsterIds = tipsterFollows.map(({ tipster }) => tipster.id);
   const activity = followedBankrollIds.length > 0 || followedTipsterIds.length > 0 ? await prisma.bet.findMany({
@@ -133,7 +128,6 @@ export default async function FollowingPage({ params, searchParams }: { params: 
   const newActivityCount = activity.filter(isNewActivity).length;
   const activityHref = (view: "all" | "pending" | "settled" | "new") => {
     const search = new URLSearchParams({ activity: view });
-    if (selectedConversion) search.set("convertWith", selectedConversion.id);
     return `/following?${search.toString()}`;
   };
 
@@ -146,7 +140,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
     {bankrollFollows.length > 0 || tipsterFollows.length > 0 ? <section className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h2 className="text-lg font-semibold">Fil d’activité</h2><p className="mt-1 text-xs text-muted-foreground">Les derniers paris de tous tes suivis, réunis au même endroit.</p></div>
-        <div className="flex flex-wrap items-center justify-end gap-3"><MarkFollowingViewed locale={locale} newCount={newActivityCount} />{selectedProfile && viewerSettings ? <strong className="rounded-full bg-primary/10 px-3 py-1.5 text-xs text-primary">1u = {fmtMoney(personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)} pour toi</strong> : <Link href="/bankrolls" className="text-xs font-semibold text-primary hover:underline">Configurer ma conversion</Link>}</div>
+        <div className="flex flex-wrap items-center justify-end gap-3"><MarkFollowingViewed locale={locale} newCount={newActivityCount} />{selectedProfile && viewerSettings ? <strong className="rounded-full bg-primary/10 px-3 py-1.5 text-xs text-primary">1u = {fmtMoney(personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)} pour toi</strong> : <Link href="/account#personal-conversion" className="text-xs font-semibold text-primary hover:underline">Configurer ma conversion globale</Link>}</div>
       </div>
       <nav aria-label="Filtrer l’activité" className="grid grid-cols-2 gap-1 rounded-2xl border border-border bg-card/40 p-1 sm:flex sm:w-fit">
         <ActivityFilter href={activityHref("all")} active={activityView === "all"} label="Tout" count={activity.length} />

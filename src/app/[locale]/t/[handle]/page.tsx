@@ -53,7 +53,7 @@ type BetView = "pending" | "settled" | "all" | "since";
 
 export default async function PublicTipsterPage({ params, searchParams }: {
   params: Promise<{ locale: string; handle: string }>;
-  searchParams: Promise<{ tab?: string | string[]; view?: string | string[]; convertWith?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{ tab?: string | string[]; view?: string | string[]; page?: string | string[] }>;
 }) {
   const [{ locale, handle: rawHandle }, query] = await Promise.all([params, searchParams]);
   const handle = normalizePublicHandle(rawHandle);
@@ -107,19 +107,14 @@ export default async function PublicTipsterPage({ params, searchParams }: {
       where: { id: viewer.id },
       select: {
         currency: true,
-        bankrolls: {
-          where: { stakingProfile: { isNot: null } },
-          orderBy: { createdAt: "asc" },
-          select: { id: true, name: true, stakingProfile: { select: { referenceCapital: true, unitPercent: true, rounding: true } } },
+        personalConversion: {
+          select: { referenceCapital: true, unitPercent: true, rounding: true },
         },
       },
     }) : null,
   ]);
 
-  const requestedProfileId = first(query.convertWith);
-  const conversionProfiles = viewerSettings?.bankrolls.filter((item) => item.stakingProfile !== null) ?? [];
-  const selectedConversion = conversionProfiles.find((item) => item.id === requestedProfileId) ?? conversionProfiles[0] ?? null;
-  const selectedProfile = selectedConversion?.stakingProfile ?? null;
+  const selectedProfile = viewerSettings?.personalConversion ?? null;
   const requestedTab = first(query.tab);
   const activeTab: ProfileTab = requestedTab === "bets" || requestedTab === "bankrolls" ? requestedTab : "overview";
   const requestedView = first(query.view);
@@ -152,7 +147,6 @@ export default async function PublicTipsterPage({ params, searchParams }: {
     const search = new URLSearchParams({ tab });
     if (view) search.set("view", view);
     if (page && page > 1) search.set("page", String(page));
-    if (selectedConversion) search.set("convertWith", selectedConversion.id);
     return `/t/${handle}?${search.toString()}`;
   };
 
@@ -188,7 +182,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
       </div> : null}
 
       {activeTab === "bets" ? <section className="space-y-3 pb-8">
-        <ConversionBar locale={locale} handle={handle} viewer={Boolean(viewer)} currency={viewerSettings?.currency} profiles={conversionProfiles.map((item) => ({ id: item.id, name: item.name, referenceCapital: item.stakingProfile!.referenceCapital }))} selectedId={selectedConversion?.id} selectedProfile={selectedProfile} />
+        <ConversionBar locale={locale} viewer={Boolean(viewer)} currency={viewerSettings?.currency} selectedProfile={selectedProfile} />
         <CertificationExplainer />
         <div><h2 className="text-lg font-semibold">Historique du tipster</h2><p className="mt-1 text-sm text-muted-foreground">Tous les paris publics, avec leur bankroll et leur niveau de preuve.</p></div>
         <nav aria-label="Filtrer l’historique" className="grid grid-cols-2 gap-1 rounded-2xl border border-border bg-card/40 p-1 sm:flex sm:w-fit">
@@ -231,7 +225,7 @@ type PublicBet = {
   resultProofAt: Date | null; resultEntryMethod: BetEntryMethod; _count: { corrections: number };
   bankrollId: string; bankrollName: string; bankrollSlug: string; certificationStartedAt: Date | null;
 };
-type ViewerSettings = { currency: "EUR" | "USD" | "GBP" } | null;
+type ViewerSettings = { currency: "EUR" | "USD" | "GBP"; personalConversion: StakingSettings } | null;
 type StakingSettings = { referenceCapital: number; unitPercent: number; rounding: number } | null;
 
 function BankrollCard({ bankroll, number, compact = false }: { bankroll: BankrollSummary; number: Intl.NumberFormat; compact?: boolean }) {
@@ -246,11 +240,11 @@ type BankrollSummary = {
   bets: Array<Omit<PublicBet, "bankrollId" | "bankrollName" | "bankrollSlug" | "certificationStartedAt">>;
 };
 
-function ConversionBar({ locale, handle, viewer, currency, profiles, selectedId, selectedProfile }: { locale: string; handle: string; viewer: boolean; currency?: "EUR" | "USD" | "GBP"; profiles: Array<{ id: string; name: string; referenceCapital: number }>; selectedId?: string; selectedProfile: StakingSettings }) {
+function ConversionBar({ locale, viewer, currency, selectedProfile }: { locale: string; viewer: boolean; currency?: "EUR" | "USD" | "GBP"; selectedProfile: StakingSettings }) {
   if (!viewer) return <div className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="text-sm font-semibold">Affiche ta mise personnelle</h3><p className="mt-1 text-xs text-muted-foreground">Crée ton compte pour convertir automatiquement les unités en euros.</p></div><Link href="/signup" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Créer mon compte</Link></div>;
-  if (!selectedId || !selectedProfile || !currency) return <div className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="text-sm font-semibold">Configure ta référence personnelle</h3><p className="mt-1 text-xs text-muted-foreground">Kalivoa affichera ensuite ton équivalent en euros sur chaque pari.</p></div><Link href="/bankrolls" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer</Link></div>;
+  if (!selectedProfile || !currency) return <div className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between"><div><h3 className="text-sm font-semibold">Configure ta conversion personnelle</h3><p className="mt-1 text-xs text-muted-foreground">Kalivoa utilisera la même référence privée sur tous les tipsters.</p></div><Link href="/account#personal-conversion" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer dans mon compte</Link></div>;
   const oneUnit = personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded;
-  return <div className="glass-card flex flex-col gap-3 rounded-2xl border-primary/20 p-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-xs font-semibold uppercase tracking-wide text-primary">Ma conversion privée</p><strong className="mt-1 block">1u du tipster = {fmtMoney(oneUnit, locale, currency)} pour toi</strong></div>{profiles.length > 1 ? <form action={`/${locale}/t/${handle}`} method="get" className="flex items-end gap-2"><input type="hidden" name="tab" value="bets" /><label className="grid gap-1 text-xs font-medium">Calculer avec<select name="convertWith" defaultValue={selectedId} className="min-h-11 rounded-xl border border-border bg-popover px-3 text-sm">{profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · {fmtMoney(profile.referenceCapital, locale, currency)}</option>)}</select></label><button type="submit" className="min-h-11 rounded-xl border border-border px-3 text-sm font-semibold">Utiliser</button></form> : null}</div>;
+  return <div className="glass-card rounded-2xl border-primary/20 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Ma conversion privée globale</p><strong className="mt-1 block">1u du tipster = {fmtMoney(oneUnit, locale, currency)} pour toi</strong></div>;
 }
 
 function ProfileTabLink({ href, active, label, count }: { href: string; active: boolean; label: string; count?: number }) { return <Link href={href} aria-current={active ? "page" : undefined} className={`flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-semibold transition-colors sm:text-sm ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{label}{count !== undefined ? <span className={`num rounded-full px-1.5 py-0.5 text-[0.6rem] ${active ? "bg-primary-foreground/15" : "bg-muted"}`}>{count}</span> : null}</Link>; }

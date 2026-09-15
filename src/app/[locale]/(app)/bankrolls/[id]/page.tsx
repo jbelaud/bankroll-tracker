@@ -20,7 +20,6 @@ import { getUserTaxonomy } from "@/lib/taxonomy";
 import { listTipsters } from "@/lib/actions/tipsters";
 import { prisma } from "@/lib/prisma";
 import { ReferenceHistory } from "@/components/bankrolls/reference-history";
-import { PersonalStaking } from "@/components/bankrolls/personal-staking";
 import { CertificationPanel } from "@/components/bankrolls/certification-panel";
 import { PublicBankrollSettings } from "@/components/bankrolls/public-bankroll-settings";
 import { certificationSummary } from "@/lib/certification";
@@ -66,7 +65,6 @@ export default async function BankrollDetailPage({
   const movements = await listBankrollMovements(id);
   const taxonomy = await getUserTaxonomy(user.id);
   const tipsters = await listTipsters();
-  const stakingProfile = await prisma.stakingProfile.findUnique({ where: { bankrollId: id } });
   const correctionCount = await prisma.betCorrection.count({ where: { bet: { bankrollId: id } } });
 
   // Même sémantique que le Dashboard : seuls les paris réglés comptent dans
@@ -190,11 +188,13 @@ export default async function BankrollDetailPage({
           allocations={bankroll.mode === "DISTRIBUTED" ? bankroll.allocations.map(({ id: allocationId, bookmaker }) => ({ id: allocationId, bookmaker })) : []}
         />
       </div>
-      <PersonalStaking bankrollId={id} balance={balance} settings={stakingProfile ? {
-        referenceCapital: stakingProfile.referenceCapital, unitPercent: stakingProfile.unitPercent,
-        rounding: stakingProfile.rounding, recommendationsEnabled: stakingProfile.recommendationsEnabled,
-        decreaseThreshold: stakingProfile.decreaseThreshold, increaseThreshold: stakingProfile.increaseThreshold,
-      } : { referenceCapital: bankroll.referenceCapital ?? bankroll.initial, unitPercent: 1, rounding: 0, recommendationsEnabled: false, decreaseThreshold: 5, increaseThreshold: 25 }} />
+      <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-6">
+        <h2 className="text-base font-semibold">Conversion personnelle des tipsters</h2>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          La référence de cette bankroll sert uniquement à figer ses mises en unités. Ton équivalent privé en euros est un réglage global commun à toutes les pages publiques.
+        </p>
+        <Link href="/account#personal-conversion" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Gérer dans mon compte</Link>
+      </section>
 
       {curve.length >= 2 && (
         <div className="glass-card rounded-xl p-4 lg:col-span-12">

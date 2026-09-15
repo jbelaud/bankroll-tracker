@@ -82,6 +82,7 @@ model User {
   monthlyScanWindowStart DateTime @default(now())
 
   bankrolls             Bankroll[]
+  personalConversion   PersonalConversionProfile?
   insight               Insight?
   scanUsages            ScanUsage[]
   growthEvents          GrowthEvent[]
@@ -239,6 +240,20 @@ model StakingProfile {
   updatedAt        DateTime @updatedAt
 
   @@map("staking_profiles")
+}
+
+// Réglage privé et global du parieur connecté. Il sert uniquement à convertir
+// les unités publiées par les tipsters en un montant personnel indicatif.
+// Il reste indépendant des références historiques propres à chaque bankroll.
+model PersonalConversionProfile {
+  userId           String   @id
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  referenceCapital Float
+  unitPercent      Float    @default(1)
+  rounding         Float    @default(0)
+  updatedAt        DateTime @updatedAt
+
+  @@map("personal_conversion_profiles")
 }
 
 // Ventilation facultative d'un capital entre plusieurs bookmakers. Elle est

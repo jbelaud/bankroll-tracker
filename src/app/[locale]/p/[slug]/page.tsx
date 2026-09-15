@@ -49,7 +49,7 @@ const FORMAT_LABELS = { SIMPLE: "Simple", COMBINE: "Combiné", SYSTEME: "Systèm
 
 export default async function PublicBankrollPage({ params, searchParams }: {
   params: Promise<{ locale: string; slug: string }>;
-  searchParams: Promise<{ convertWith?: string | string[]; view?: string | string[] }>;
+  searchParams: Promise<{ view?: string | string[] }>;
 }) {
   const [{ locale, slug }, query] = await Promise.all([params, searchParams]);
   const supabase = await createClient();
@@ -110,16 +110,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         where: { id: viewer.id },
         select: {
           currency: true,
-          bankrolls: {
-            where: { stakingProfile: { isNot: null } },
-            orderBy: { createdAt: "asc" },
-            select: {
-              id: true,
-              name: true,
-              stakingProfile: {
-                select: { referenceCapital: true, unitPercent: true, rounding: true },
-              },
-            },
+          personalConversion: {
+            select: { referenceCapital: true, unitPercent: true, rounding: true },
           },
         },
       })
@@ -132,10 +124,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
       : null,
   ]);
   const isFollowing = Boolean(follow);
-  const requestedProfileId = Array.isArray(query.convertWith) ? query.convertWith[0] : query.convertWith;
-  const conversionProfiles = viewerSettings?.bankrolls.filter((item) => item.stakingProfile !== null) ?? [];
-  const selectedConversion = conversionProfiles.find((item) => item.id === requestedProfileId) ?? conversionProfiles[0] ?? null;
-  const selectedProfile = selectedConversion?.stakingProfile ?? null;
+  const selectedProfile = viewerSettings?.personalConversion ?? null;
   const oneUnitForViewer = selectedProfile
     ? personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded
     : null;
@@ -159,7 +148,6 @@ export default async function PublicBankrollPage({ params, searchParams }: {
   const monthGroups = Map.groupBy(visibleBets, (bet) => `${bet.date.getUTCFullYear()}-${String(bet.date.getUTCMonth() + 1).padStart(2, "0")}`);
   const viewHref = (view: BetView) => {
     const search = new URLSearchParams({ view });
-    if (selectedConversion) search.set("convertWith", selectedConversion.id);
     return `/p/${slug}?${search.toString()}`;
   };
 
@@ -229,15 +217,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
 
       <PersonalConversionPanel
         locale={locale}
-        slug={slug}
         viewer={Boolean(viewer)}
         currency={viewerSettings?.currency}
-        profiles={conversionProfiles.map((item) => ({
-          id: item.id,
-          name: item.name,
-          referenceCapital: item.stakingProfile!.referenceCapital,
-        }))}
-        selectedId={selectedConversion?.id}
         selectedReference={selectedProfile?.referenceCapital}
         oneUnit={oneUnitForViewer}
       />
@@ -397,13 +378,10 @@ function PublicIdentity({ displayName, handle, bio, avatarUrl, xHandle, bankroll
   </div>;
 }
 
-function PersonalConversionPanel({ locale, slug, viewer, currency, profiles, selectedId, selectedReference, oneUnit }: {
+function PersonalConversionPanel({ locale, viewer, currency, selectedReference, oneUnit }: {
   locale: string;
-  slug: string;
   viewer: boolean;
   currency?: "EUR" | "USD" | "GBP";
-  profiles: Array<{ id: string; name: string; referenceCapital: number }>;
-  selectedId?: string;
   selectedReference?: number;
   oneUnit: number | null;
 }) {
@@ -412,26 +390,16 @@ function PersonalConversionPanel({ locale, slug, viewer, currency, profiles, sel
     <Link href="/signup" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Créer mon compte</Link>
   </section>;
 
-  if (!selectedId || !selectedReference || oneUnit === null || !currency) return <section className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-    <div><h2 className="text-sm font-semibold">Configure tes mises personnalisées</h2><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Ajoute un montant de référence privé pour voir ton équivalent en euros sur les paris de ce tipster.</p></div>
-    <Link href="/bankrolls" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer ma référence</Link>
+  if (!selectedReference || oneUnit === null || !currency) return <section className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div><h2 className="text-sm font-semibold">Configure ta conversion personnelle</h2><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Ajoute une référence globale privée pour voir ton équivalent sur tous les paris publics.</p></div>
+    <Link href="/account#personal-conversion" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer dans mon compte</Link>
   </section>;
 
   return <section className="glass-card rounded-2xl border-primary/20 p-4 sm:p-5">
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ma conversion privée</p>
-        <h2 className="mt-1 text-lg font-semibold">1u du tipster = {fmtMoney(oneUnit, locale, currency)} pour toi</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Référence utilisée : {fmtMoney(selectedReference, locale, currency)}. Ce réglage n’est jamais visible par le tipster.</p>
-      </div>
-      {profiles.length > 1 ? <form action={`/${locale}/p/${slug}`} method="get" className="flex flex-col gap-2 sm:flex-row sm:items-end">
-        <label className="grid gap-1.5 text-xs font-medium">Calculer avec ma bankroll
-          <select name="convertWith" defaultValue={selectedId} className="min-h-11 min-w-60 rounded-xl border border-border bg-popover px-3 text-sm text-popover-foreground">
-            {profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · {fmtMoney(profile.referenceCapital, locale, currency)}</option>)}
-          </select>
-        </label>
-        <button type="submit" className="min-h-11 rounded-xl border border-border px-4 text-sm font-semibold transition-colors hover:bg-muted">Utiliser</button>
-      </form> : null}
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-primary">Ma conversion privée globale</p>
+      <h2 className="mt-1 text-lg font-semibold">1u du tipster = {fmtMoney(oneUnit, locale, currency)} pour toi</h2>
+      <p className="mt-1 text-xs text-muted-foreground">Référence de compte utilisée : {fmtMoney(selectedReference, locale, currency)}. Elle n’est jamais visible par le tipster.</p>
     </div>
   </section>;
 }

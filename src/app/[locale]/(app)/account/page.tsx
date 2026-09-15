@@ -20,6 +20,7 @@ import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 import { ScanQualityReports } from "@/components/account/scan-quality-reports";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
 import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
+import { PersonalConversionForm } from "@/components/account/personal-conversion-form";
 
 export default async function AccountPage({
   params,
@@ -38,7 +39,7 @@ export default async function AccountPage({
   }
 
   const [dbUser, bets, qualityReports, betaProgram, publicBankrolls] = await Promise.all([
-    prisma.user.findUnique({ where: { id: user.id } }),
+    prisma.user.findUnique({ where: { id: user.id }, include: { personalConversion: true } }),
     listAllBets(),
     prisma.scanQualityReport.findMany({ where: { userId: user.id }, select: { id: true, bookmaker: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
     prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
@@ -95,6 +96,11 @@ export default async function AccountPage({
         publicXHandle: dbUser?.publicXHandle ?? null,
       }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
       <PublicBankrollOrder bankrolls={publicBankrolls} />
+      <PersonalConversionForm
+        settings={dbUser?.personalConversion ?? null}
+        currency={dbUser?.currency ?? "EUR"}
+        locale={locale}
+      />
 
       <div className="xl:col-span-6"><AccountGoalsCard
           monthProfit={monthProfit}
