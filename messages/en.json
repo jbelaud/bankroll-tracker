@@ -194,6 +194,15 @@
       "referralCta": "Refer friends",
       "upgradeCta": "Unlock more scans"
     },
+    "personalConversion": {
+      "title": "Personal reference amount",
+      "privateBadge": "Private",
+      "reference": "{amount} reference",
+      "oneUnit": "1u = {amount} for you",
+      "missing": "Set your global reference to convert tipsters' units.",
+      "edit": "Edit",
+      "configure": "Configure"
+    },
     "hero": {
       "ariaLabel": "Total balance",
       "label": "Total balance",

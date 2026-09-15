@@ -17,6 +17,7 @@ import { PerformancePanel } from "@/components/dashboard/performance-panel";
 import { OnboardingCard } from "@/components/dashboard/onboarding-card";
 import { CapitalFlowCard } from "@/components/dashboard/capital-flow-card";
 import { DiscordCommunityCard } from "@/components/dashboard/discord-community-card";
+import { PersonalConversionCard } from "@/components/dashboard/personal-conversion-card";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +57,10 @@ export default async function DashboardPage() {
     // bêta à quelques millisecondes de parallélisme théorique.
     bankrolls = await listBankrolls();
     bets = await listAllBets();
-    dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { personalConversion: true },
+    });
     betaProgram = await prisma.betaProgram.findUnique({
       where: { id: "global" },
       select: { phase: true },
@@ -201,6 +205,13 @@ export default async function DashboardPage() {
         </Reveal>
 
         <Reveal index={4}>
+          <PersonalConversionCard
+            conversion={dbUser?.personalConversion ?? null}
+            currency={currency}
+          />
+        </Reveal>
+
+        <Reveal index={5}>
           <QuotaCard
             plan={plan}
             scansUsed={quota.used}
@@ -213,13 +224,13 @@ export default async function DashboardPage() {
         </Reveal>
 
         {bets.length > 0 && (
-          <Reveal index={5}>
+          <Reveal index={6}>
             <DiscordCommunityCard />
           </Reveal>
         )}
       </div>
 
-      <Reveal index={6} className="xl:order-4 xl:col-span-4">
+      <Reveal index={7} className="xl:order-4 xl:col-span-4">
         <GoalsCard
           monthProfit={monthProfit}
           profitGoal={dbUser?.monthlyProfitGoal ?? 0}
@@ -227,11 +238,11 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={7} className="xl:order-5 xl:col-start-1 xl:col-span-5">
+      <Reveal index={8} className="xl:order-5 xl:col-start-1 xl:col-span-5">
         <BankrollCards bankrolls={bankrollSummaries} />
       </Reveal>
 
-      <Reveal index={8} className="xl:order-6 xl:col-span-7">
+      <Reveal index={9} className="xl:order-6 xl:col-span-7">
         <RecentBets bets={recentBets} />
       </Reveal>
     </div>

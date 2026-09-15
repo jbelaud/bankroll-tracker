@@ -194,6 +194,15 @@
       "referralCta": "Parrainer des amis",
       "upgradeCta": "Débloquer plus de scans"
     },
+    "personalConversion": {
+      "title": "Montant de référence personnel",
+      "privateBadge": "Privé",
+      "reference": "{amount} de référence",
+      "oneUnit": "1u = {amount} pour toi",
+      "missing": "Configure ta référence globale pour convertir les unités des tipsters.",
+      "edit": "Éditer",
+      "configure": "Configurer"
+    },
     "hero": {
       "ariaLabel": "Solde total",
       "label": "Solde total",
