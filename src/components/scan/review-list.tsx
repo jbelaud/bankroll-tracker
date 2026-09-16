@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
-import { Warning, Lightbulb, ArrowCounterClockwise } from "@phosphor-icons/react";
+import { Warning, Lightbulb, ArrowCounterClockwise, CheckCircle } from "@phosphor-icons/react";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
 import { normalizeBookmaker } from "@/lib/bookmakers";
 import { Button } from "@/components/ui/button";
@@ -84,8 +84,16 @@ export function ReviewList({
 
   const patchBet = (index: number, patch: Partial<ParsedBet>) =>
     setBets((prev) =>
-      prev.map((b, i) => (i === index ? { ...b, ...patch } : b))
+      prev.map((b, i) => (i === index ? { ...b, ...patch, updatesExistingBet: undefined } : b))
     );
+
+  const changeBankroll = (id: string) => {
+    // Le rapprochement a été calculé pour la bankroll analysée. Dès qu'elle
+    // change, on retire la promesse visuelle ; le serveur décidera à nouveau
+    // au moment de l'import selon les données réellement sélectionnées.
+    setBets((prev) => prev.map((bet) => ({ ...bet, updatesExistingBet: undefined })));
+    onBankrollChange(id);
+  };
 
   const toggleExcluded = (index: number) =>
     setExcluded((prev) => {
@@ -100,6 +108,7 @@ export function ReviewList({
     [bets, excluded]
   );
   const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
+  const existingUpdateCount = kept.filter((b) => b.updatesExistingBet).length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
@@ -156,6 +165,16 @@ export function ReviewList({
         </Button>
       </div>
 
+      {existingUpdateCount > 0 && (
+        <section role="status" className="flex items-start gap-2 rounded-xl border border-profit/35 bg-profit/10 p-3 text-sm text-profit lg:col-span-12">
+          <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+          <div>
+            <p className="font-semibold">{t("existingResultUpdateTitle", { count: existingUpdateCount })}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-foreground/80">{t("existingResultUpdateDescription")}</p>
+          </div>
+        </section>
+      )}
+
       {duplicateCount > 0 && (
         <p className="flex items-start gap-1.5 text-xs text-warning lg:col-span-12">
           <Warning size={14} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
@@ -188,7 +207,7 @@ export function ReviewList({
         </label>
         <Select
           value={bankrollId}
-          onValueChange={(value) => onBankrollChange(value as string)}
+          onValueChange={(value) => changeBankroll(value as string)}
           disabled={importing}
           items={Object.fromEntries(
             bankrolls.map((bankroll) => [bankroll.id, bankrollOptionLabel(bankroll)])

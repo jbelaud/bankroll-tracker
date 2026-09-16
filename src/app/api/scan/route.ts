@@ -25,6 +25,7 @@ import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
+import { findAutomaticResultProofTarget } from "@/lib/result-proof";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -310,10 +311,21 @@ export async function POST(request: NextRequest) {
   }
 
   // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
-  const existing = await prisma.bet.findMany({
-    where: { bankroll: { userId: user.id } },
-    select: { date: true, stake: true, odds: true, description: true, ticketRef: true },
-  });
+  const [existing, pendingResultTargets] = await Promise.all([
+    prisma.bet.findMany({
+      where: { bankroll: { userId: user.id } },
+      select: { date: true, stake: true, odds: true, description: true, ticketRef: true },
+    }),
+    prisma.bet.findMany({
+      where: {
+        bankrollId,
+        result: "EN_ATTENTE",
+        certificationLockedAt: { not: null },
+        bankroll: { userId: user.id, certificationStartedAt: { not: null } },
+      },
+      select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+    }),
+  ]);
   const existingCandidates = existing.map((b) => ({
     date: b.date.toISOString().slice(0, 10),
     stake: b.stake,
@@ -401,6 +413,22 @@ export async function POST(request: NextRequest) {
     }
     return bet;
   });
+
+  // Informe la revue avant toute validation : un ticket clôturé reconnu mettra
+  // à jour le pari en attente au lieu de créer une seconde ligne. La Server
+  // Action refait le même contrôle au moment de l'écriture pour éviter les
+  // courses et ne fait jamais confiance à cet indicateur d'interface.
+  const previewMatchedTargetIds = new Set<string>();
+  for (const bet of bets) {
+    const target = findAutomaticResultProofTarget(
+      pendingResultTargets.filter(({ id }) => !previewMatchedTargetIds.has(id)),
+      bet
+    );
+    if (!target) continue;
+    previewMatchedTargetIds.add(target.id);
+    bet.updatesExistingBet = true;
+    delete bet.possibleDuplicate;
+  }
 
   const referralEligible = !isRescanAfterUnimportedAnalysis && hasValidReferralScan(bets);
   let scanUsage;

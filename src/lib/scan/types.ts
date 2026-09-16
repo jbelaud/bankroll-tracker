@@ -39,6 +39,8 @@ export type ParsedBet = {
   closingOdds?: number | null;
   selections?: ParsedBetSelection[];
   possibleDuplicate?: boolean;
+  /** Ce résultat correspond sans ambiguïté à un pari en attente de la bankroll. */
+  updatesExistingBet?: boolean;
   /** Index de la capture source, uniquement durant la revue côté client. */
   sourceScanIndex?: number;
   /** Le modèle a renvoyé un type incompatible avec le sport : validation manuelle requise. */

@@ -513,6 +513,8 @@
     "review": {
       "title": "Bets detected ({count})",
       "restart": "Start over",
+      "existingResultUpdateTitle": "{count, plural, one {This result will update the existing bet} other {These # results will update the existing bets}}",
+      "existingResultUpdateDescription": "After confirmation, Kalivoa will settle the previously recorded bet and add its Scan proof. No new bet will be created.",
       "duplicateWarning": "Bets outlined in orange: no reference on the ticket, but date/stake/odds/description match a bet you already have — check it isn't a duplicate before confirming.",
       "duplicateScanSkipped": "Already analyzed screenshot skipped: {files}. The other screenshots in this batch were analyzed.",
       "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
@@ -539,6 +541,7 @@
         "excludeAriaLabel": "Exclude bet {index}",
         "reintegrate": "Restore",
         "duplicateBadge": "Possible duplicate — check before importing",
+        "existingResultUpdateBadge": "Same bet recognized — result will be updated",
         "suggestedBadge": "Bet type not recognized — suggestion in the description",
         "taxonomyMismatchBadge": "Sport/type mismatch — check it",
         "sportLabel": "Sport",

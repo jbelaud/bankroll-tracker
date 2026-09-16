@@ -6,6 +6,7 @@ import {
   X,
   Warning,
   Lightbulb,
+  CheckCircle,
   ArrowCounterClockwise,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -92,6 +93,7 @@ export function ReviewBetCard({
         "glass-card flex flex-col gap-3 rounded-xl p-4",
         // !border : l'utilitaire .glass-card pose déjà un border (raccourci)
         // dans le même layer ; on force la couleur d'avertissement.
+        bet.updatesExistingBet && "!border-profit/50",
         (bet.possibleDuplicate || bet.taxonomyMismatch) && "!border-warning"
       )}
     >
@@ -110,6 +112,12 @@ export function ReviewBetCard({
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
               {t("duplicateBadge")}
+            </span>
+          )}
+          {bet.updatesExistingBet && (
+            <span className="flex items-center gap-1 text-xs font-medium text-profit">
+              <CheckCircle size={13} weight="fill" aria-hidden />
+              {t("existingResultUpdateBadge")}
             </span>
           )}
           {bet.taxonomyMismatch && (
