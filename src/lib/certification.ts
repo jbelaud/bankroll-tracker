@@ -12,6 +12,7 @@ export type CertificationStatus =
 
 export type CertificationBet = {
   createdAt: Date;
+  date: Date;
   result: BetResult;
   stakeUnits: number | null;
   entryMethod: BetEntryMethod;
@@ -33,6 +34,13 @@ export const CERTIFICATION_WEIGHTS: Record<Extract<CertificationStatus, "STRONG"
 
 export function certificationStatus(bet: CertificationBet, startedAt: Date | null): CertificationStatus {
   if (!startedAt || bet.createdAt < startedAt) return "EXCLUDED";
+  // La date du ticket n'indique pas l'heure de l'événement. Un événement
+  // datant d'un jour entièrement écoulé avant la publication est néanmoins
+  // forcément historique, même si son pari a été importé ensuite.
+  const eventDayEnd = Date.UTC(
+    bet.date.getUTCFullYear(), bet.date.getUTCMonth(), bet.date.getUTCDate() + 1
+  );
+  if (eventDayEnd <= startedAt.getTime()) return "EXCLUDED";
   if (bet.result === "EN_ATTENTE") {
     if (bet.initialProofAt && bet.initialProofBeforeEvent === true) return "AWAITING_RESULT";
     if (bet.initialProofAt) return "TIMING_UNCONFIRMED";

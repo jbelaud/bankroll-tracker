@@ -15,7 +15,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     select: {
       name: true, certificationStartedAt: true, publicSports: true,
       user: { select: { name: true, publicDisplayName: true, publicHandle: true } },
-      bets: { select: { createdAt: true, result: true, stakeUnits: true, odds: true, cashOutAmount: true, referenceCapitalAtBet: true, freebet: true, entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true } },
+      bets: { select: { createdAt: true, date: true, result: true, stakeUnits: true, odds: true, cashOutAmount: true, referenceCapitalAtBet: true, freebet: true, entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true } },
     },
   });
   const displayName = bankroll?.user.publicDisplayName || bankroll?.user.name || "Tipster Kalivoa";
