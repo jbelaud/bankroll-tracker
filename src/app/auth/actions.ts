@@ -254,15 +254,16 @@ export async function signInWithGoogle(formData: FormData) {
     vercelEnvironment: process.env.VERCEL_ENV ?? null,
     gitBranch: process.env.VERCEL_GIT_COMMIT_REF ?? null,
     hasConfiguredAppUrl: Boolean(process.env.NEXT_PUBLIC_APP_URL),
+    accountChooserEnforced: true,
   });
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
       redirectTo: callbackUrl,
-      // Google réutilise sinon silencieusement le dernier compte connecté,
-      // même après une déconnexion de Kalivoa.
-      queryParams: { prompt: "select_account" },
+      // Google peut réutiliser silencieusement le dernier compte connecté malgré
+      // select_account seul. Le consentement force une interaction avant le retour.
+      queryParams: { prompt: "consent select_account" },
     },
   });
 
