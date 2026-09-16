@@ -29,6 +29,7 @@ import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
+import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -339,11 +340,12 @@ export async function POST(request: NextRequest) {
     const financials = normalizeExtractedFinancials(r.stake, r.odds);
     const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
     const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
-    const { sport, betType, taxonomyMismatch } = normalizeTaxonomyPair(
+    const initialPair = normalizeTaxonomyPair(
       taxonomy,
       sportContext.sport,
       String(r.betType ?? "Autre")
     );
+    const { sport, betType } = initialPair;
     const selections = Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
       if (!rawSelection || typeof rawSelection !== "object") return [];
       const selection = rawSelection as Record<string, unknown>;
@@ -379,16 +381,21 @@ export async function POST(request: NextRequest) {
         result,
       });
     }
+    const format = betFormat(r.format);
+    const resolvedSport = resolveHomogeneousCombineSport(taxonomy, format, sport, selections);
+    const resolvedPair = resolvedSport === sport
+      ? initialPair
+      : normalizeTaxonomyPair(taxonomy, resolvedSport, "Combiné");
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: normalizeExtractedTicketDate(r.dateText, r.date, {
         requireVisibleText: requiresVisibleDateText,
       }),
-      sport,
+      sport: resolvedPair.sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
       // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont signalés
       // pour vérification sans perdre le libellé détecté.
-      betType,
+      betType: resolvedPair.betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
       stake: financials.stake,
@@ -399,7 +406,7 @@ export async function POST(request: NextRequest) {
       live: Boolean(r.live),
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
-      format: betFormat(r.format),
+      format,
       tipster: tipsterFromVisibleEvidence({
         candidate: r.tipster,
         evidence: r.tipsterEvidence,
@@ -408,7 +415,7 @@ export async function POST(request: NextRequest) {
       }),
       closingOdds: numOrNull(r.closingOdds),
       selections,
-      taxonomyMismatch,
+      taxonomyMismatch: resolvedPair.taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.
     if (
