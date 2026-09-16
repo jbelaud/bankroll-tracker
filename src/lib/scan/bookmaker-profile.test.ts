@@ -51,6 +51,16 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain("ne remplace jamais une mention visible explicite de Tennis");
   });
 
+  it("keeps Betclic scorer, stake and odds separate from live score and possible winnings", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("« Gains possibles », « Gains » ou un retour potentiel ne sont JAMAIS la mise");
+    expect(prompt).toContain("« Buteur ou son remplaçant (t. rég) » est la SÉLECTION jouée");
+    expect(prompt).toContain('"betType": "Buteur"');
+    expect(prompt).toContain('"stake": 7.5, "odds": 3.5, jamais 26.25 en mise');
+    expect(prompt).toContain('"eventResult": null et "result": "En attente"');
+    expect(prompt).toContain("pas simplement parce que le match est maintenant en cours");
+  });
+
   it("settles completed Unibet cards from the visible thumb and gains pair", () => {
     const prompt = buildExtractionPrompt();
     expect(prompt).toContain("un pouce vert accompagné d'un montant « Gains » strictement positif");

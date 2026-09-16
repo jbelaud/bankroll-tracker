@@ -28,6 +28,7 @@ import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
+import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -335,6 +336,7 @@ export async function POST(request: NextRequest) {
   const bets: ParsedBet[] = rawBets.map((raw) => {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
+    const financials = normalizeExtractedFinancials(r.stake, r.odds);
     const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
     const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
     const { sport, betType, taxonomyMismatch } = normalizeTaxonomyPair(
@@ -363,7 +365,7 @@ export async function POST(request: NextRequest) {
           : selectionContext.competition,
         betType: typeof selection.betType === "string" ? normalizedSelection.betType : null,
         label,
-        odds: numOrNull(selection.odds),
+        odds: normalizeExtractedOdds(selection.odds),
         result: selectionResult,
       }];
     }) : [];
@@ -373,7 +375,7 @@ export async function POST(request: NextRequest) {
         competition: sportContext.competition,
         betType,
         label: String(r.description ?? "").trim() || betType,
-        odds: numOrNull(r.odds),
+        odds: normalizeExtractedOdds(r.odds),
         result,
       });
     }
@@ -389,8 +391,8 @@ export async function POST(request: NextRequest) {
       betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
-      stake: numOrNull(r.stake),
-      odds: numOrNull(r.odds),
+      stake: financials.stake,
+      odds: financials.odds,
       boosted,
       originalOdds: boosted ? numOrNull(r.originalOdds) : null,
       freebet: Boolean(r.freebet),
