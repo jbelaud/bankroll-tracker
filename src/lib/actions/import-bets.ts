@@ -19,7 +19,7 @@ import {
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
-import { findAutomaticResultProofTarget, resultProofMatches } from "@/lib/result-proof";
+import { findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -444,6 +444,9 @@ export async function importBets(
       },
       select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
     });
+    if (bets.some((bet) => bet.sourceScanIndex !== undefined && findPendingTicketMatch(pendingResultTargets, bet))) {
+      return { error: "Ce ticket est déjà enregistré en cours. Vérifie le statut sur la capture : si le résultat est visible, choisis-le avant d’importer pour mettre à jour le pari existant." };
+    }
     const matchedResultTargetIds = new Set<string>();
     for (const [index, bet] of bets.entries()) {
       const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;

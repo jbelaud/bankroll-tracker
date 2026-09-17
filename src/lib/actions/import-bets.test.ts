@@ -331,4 +331,25 @@ describe("importBets", () => {
     });
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
+
+  it("refuse de créer un second pari en attente avec la même référence PMU", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "pending-pmu",
+      ticketRef: "11559614",
+      date: new Date("2026-09-17T00:00:00.000Z"),
+      stake: 5,
+      odds: 2.63,
+    }]);
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "1311559614",
+      date: "2026-09-14",
+      stake: 5,
+      odds: 2.63,
+      result: "EN_ATTENTE",
+      sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toEqual({ error: expect.stringContaining("déjà enregistré en cours") });
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
 });

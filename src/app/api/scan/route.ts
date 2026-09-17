@@ -25,7 +25,7 @@ import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
-import { findAutomaticResultProofTarget } from "@/lib/result-proof";
+import { findAutomaticResultProofTarget, findPendingTicketMatch } from "@/lib/result-proof";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -420,6 +420,9 @@ export async function POST(request: NextRequest) {
   // courses et ne fait jamais confiance à cet indicateur d'interface.
   const previewMatchedTargetIds = new Set<string>();
   for (const bet of bets) {
+    if (bet.result === "EN_ATTENTE" && findPendingTicketMatch(pendingResultTargets, bet)) {
+      bet.pendingTicketAlreadyExists = true;
+    }
     const target = findAutomaticResultProofTarget(
       pendingResultTargets.filter(({ id }) => !previewMatchedTargetIds.has(id)),
       bet

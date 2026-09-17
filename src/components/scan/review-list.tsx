@@ -91,7 +91,7 @@ export function ReviewList({
     // Le rapprochement a été calculé pour la bankroll analysée. Dès qu'elle
     // change, on retire la promesse visuelle ; le serveur décidera à nouveau
     // au moment de l'import selon les données réellement sélectionnées.
-    setBets((prev) => prev.map((bet) => ({ ...bet, updatesExistingBet: undefined })));
+    setBets((prev) => prev.map((bet) => ({ ...bet, updatesExistingBet: undefined, pendingTicketAlreadyExists: undefined })));
     onBankrollChange(id);
   };
 
@@ -109,6 +109,7 @@ export function ReviewList({
   );
   const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
   const existingUpdateCount = kept.filter((b) => b.updatesExistingBet).length;
+  const pendingTicketCount = kept.filter((b) => b.pendingTicketAlreadyExists && b.result === "EN_ATTENTE").length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
@@ -172,6 +173,13 @@ export function ReviewList({
             <p className="font-semibold">{t("existingResultUpdateTitle", { count: existingUpdateCount })}</p>
             <p className="mt-0.5 text-xs leading-relaxed text-foreground/80">{t("existingResultUpdateDescription")}</p>
           </div>
+        </section>
+      )}
+
+      {pendingTicketCount > 0 && (
+        <section role="alert" className="flex items-start gap-2 rounded-xl border border-warning/50 bg-warning/10 p-3 text-sm text-warning lg:col-span-12">
+          <Warning size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+          <p>{t("pendingTicketWarning")}</p>
         </section>
       )}
 

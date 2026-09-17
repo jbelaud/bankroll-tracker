@@ -94,7 +94,7 @@ export function ReviewBetCard({
         // !border : l'utilitaire .glass-card pose déjà un border (raccourci)
         // dans le même layer ; on force la couleur d'avertissement.
         bet.updatesExistingBet && "!border-profit/50",
-        (bet.possibleDuplicate || bet.taxonomyMismatch) && "!border-warning"
+        (bet.possibleDuplicate || bet.taxonomyMismatch || (bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE")) && "!border-warning"
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -118,6 +118,12 @@ export function ReviewBetCard({
             <span className="flex items-center gap-1 text-xs font-medium text-profit">
               <CheckCircle size={13} weight="fill" aria-hidden />
               {t("existingResultUpdateBadge")}
+            </span>
+          )}
+          {bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE" && (
+            <span className="flex items-center gap-1 text-xs font-medium text-warning">
+              <Warning size={13} weight="fill" aria-hidden />
+              {t("pendingTicketBadge")}
             </span>
           )}
           {bet.taxonomyMismatch && (
