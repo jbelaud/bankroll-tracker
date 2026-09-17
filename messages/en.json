@@ -903,6 +903,9 @@
     "editBet": {
       "title": "Edit bet",
       "description": "Correct all the bet details. Statistics will be recalculated.",
+      "bookmaker": "Bookmaker",
+      "ticketRef": "Ticket reference",
+      "ticketRefPrivate": "This reference stays private.",
       "sport": "Sport",
       "betType": "Bet type",
       "descriptionLabel": "Description",

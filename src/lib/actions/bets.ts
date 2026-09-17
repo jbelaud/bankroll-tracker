@@ -17,6 +17,7 @@ import {
 import type { ParsedBetSelection } from "@/lib/scan/types";
 import { resolveOwnedTipsterId } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
+import { normalizeBookmaker } from "@/lib/bookmakers";
 
 // Revalidation commune : tous les écrans qui affichent des paris ou des
 // soldes dérivés (Dashboard, Bankrolls, Historique) doivent refléter le
@@ -163,6 +164,7 @@ async function getOwnedBet(betId: string, userId: string) {
     select: {
       id: true, bankrollId: true, tipsterId: true, referenceCapitalAtBet: true,
       sport: true, betType: true, description: true, eventResult: true, date: true,
+      bookmaker: true, ticketRef: true,
       stake: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true, boosted: true,
       originalOdds: true, freebet: true, live: true, initialProofAt: true,
       initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true,
@@ -312,6 +314,8 @@ export async function updateBetResult(
 }
 
 export type UpdateBetInput = {
+  bookmaker?: string | null;
+  ticketRef?: string | null;
   sport: string;
   betType: string;
   description: string;
@@ -344,6 +348,10 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
     : requestedDate;
   const taxonomy = await getUserTaxonomy(user.id, false);
   const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, input.sport, input.betType);
+  const bookmaker = input.bookmaker === undefined ? existing.bookmaker
+    : input.bookmaker?.trim() ? normalizeBookmaker(input.bookmaker).slice(0, 120) : null;
+  const ticketRef = input.ticketRef === undefined ? existing.ticketRef
+    : input.ticketRef?.normalize("NFKC").trim().slice(0, 255) || null;
 
   if (Number.isNaN(requestedDate.getTime())) throw new Error(t("invalidDate"));
   if (!Number.isFinite(input.stake) || input.stake <= 0) throw new Error(t("stakePositive"));
@@ -369,6 +377,8 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   }
 
   const initialProofChanged = existing.sport !== normalizedTaxonomy.sport
+    || existing.bookmaker !== bookmaker
+    || existing.ticketRef !== ticketRef
     || existing.betType !== normalizedTaxonomy.betType
     || (existing.description ?? "") !== input.description.trim()
     || existing.date.getTime() !== date.getTime()
@@ -382,6 +392,8 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   const updated = await prisma.$transaction(async (tx) => {
     const bet = await tx.bet.update({ where: { id: existing.id }, data: {
       sport: normalizedTaxonomy.sport,
+      bookmaker,
+      ticketRef,
       betType: normalizedTaxonomy.betType,
       description: input.description.trim() || null,
       eventResult: input.eventResult.trim() || null,
@@ -410,8 +422,8 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       await tx.betCorrection.create({ data: {
         betId: existing.id,
         kind: "DETAILS_EDITED",
-        before: auditSnapshot(existing),
-        after: auditSnapshot(bet),
+        before: { ...auditSnapshot(existing), ticketReferenceCorrected: false },
+        after: { ...auditSnapshot(bet), ticketReferenceCorrected: existing.ticketRef !== ticketRef },
         reason: correctionReason,
       } });
     }
@@ -423,12 +435,14 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
 }
 
 function auditSnapshot(bet: {
+  bookmaker: string | null;
   sport: string; betType: string; description: string | null; eventResult: string | null;
   date: Date; stakeUnits: number | null; odds: number | null; result: BetResult; cashOutAmount: number | null;
   referenceCapitalAtBet: number | null;
   boosted: boolean; originalOdds: number | null; freebet: boolean; live: boolean;
 }) {
   return {
+    bookmaker: bet.bookmaker,
     sport: bet.sport, betType: bet.betType, description: bet.description, eventResult: bet.eventResult,
     date: bet.date.toISOString(), stakeUnits: bet.stakeUnits, odds: bet.odds, result: bet.result,
     cashOutUnits: cashOutInUnits(bet.cashOutAmount, bet.referenceCapitalAtBet), boosted: bet.boosted, originalOdds: bet.originalOdds,

@@ -903,6 +903,9 @@
     "editBet": {
       "title": "Modifier le pari",
       "description": "Corrige toutes les informations de ce pari. Les statistiques seront recalculées.",
+      "bookmaker": "Bookmaker",
+      "ticketRef": "Référence du ticket",
+      "ticketRefPrivate": "Cette référence reste privée.",
       "sport": "Sport",
       "betType": "Type de pari",
       "descriptionLabel": "Description",

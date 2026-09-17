@@ -74,6 +74,8 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
     bankrollName: bankrollName.get(bet.bankrollId) ?? "—",
     referenceCapital: bet.referenceCapitalAtBet,
     certificationLockedAt: bet.certificationLockedAt,
+    bookmaker: bet.bookmaker,
+    ticketRef: bet.ticketRef,
     date: bet.date,
     sport: bet.sport,
     betType: bet.betType,

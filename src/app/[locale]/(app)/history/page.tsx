@@ -28,6 +28,8 @@ export default async function HistoryPage() {
     bankrollName: bankrollName(b.bankrollId),
     referenceCapital: b.referenceCapitalAtBet,
     certificationLockedAt: b.certificationLockedAt,
+    bookmaker: b.bookmaker,
+    ticketRef: b.ticketRef,
     date: b.date,
     sport: b.sport,
     betType: b.betType,

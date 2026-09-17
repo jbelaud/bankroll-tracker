@@ -88,6 +88,8 @@ export default async function BankrollDetailPage({
     bankrollName: bankroll.name,
     referenceCapital: b.referenceCapitalAtBet,
     certificationLockedAt: b.certificationLockedAt,
+    bookmaker: b.bookmaker,
+    ticketRef: b.ticketRef,
     date: b.date,
     sport: b.sport,
     betType: b.betType,

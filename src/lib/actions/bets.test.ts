@@ -76,6 +76,7 @@ const updateInput = {
 
 const ownedBet = (overrides = {}) => ({
   id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000,
+  bookmaker: null, ticketRef: null,
   sport: "Football", betType: "Résultat du match", description: "Paris gagne", eventResult: null,
   date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, result: "EN_ATTENTE",
   cashOutAmount: null, boosted: false, originalOdds: null, freebet: false, live: false,
@@ -178,6 +179,32 @@ describe("association Bet / Tipster", () => {
         after: expect.objectContaining({ date: "2026-08-27T00:00:00.000Z" }),
       }),
     }));
+  });
+
+  it("corrige le bookmaker et la référence d'un ticket verrouillé sans publier la référence", async () => {
+    mocks.betFindFirst.mockResolvedValue(ownedBet({
+      bookmaker: "Winamax",
+      ticketRef: "11559614",
+      initialProofAt: new Date("2026-08-27T08:00:00Z"),
+      certificationLockedAt: new Date("2026-08-01T00:00:00Z"),
+    }));
+    mocks.betUpdate.mockImplementationOnce(async ({ data }) => ({ ...ownedBet(), ...data, selections: [], tipster: null }));
+
+    await updateBet("bet-a", {
+      ...updateInput,
+      bookmaker: "PMU",
+      ticketRef: "13115596142",
+      correctionReason: "Ticket initial mal lu",
+    });
+
+    expect(mocks.betUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ bookmaker: "PMU", ticketRef: "13115596142", initialProofAt: null }),
+    }));
+    const correction = mocks.betCorrectionCreate.mock.calls[0][0].data;
+    expect(correction.before).toEqual(expect.objectContaining({ bookmaker: "Winamax", ticketReferenceCorrected: false }));
+    expect(correction.after).toEqual(expect.objectContaining({ bookmaker: "PMU", ticketReferenceCorrected: true }));
+    expect(JSON.stringify({ before: correction.before, after: correction.after })).not.toContain("13115596142");
+    expect(JSON.stringify({ before: correction.before, after: correction.after })).not.toContain("11559614");
   });
 
   it("refuse le Tipster d'un autre utilisateur", async () => {

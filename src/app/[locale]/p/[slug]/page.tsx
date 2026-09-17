@@ -330,6 +330,7 @@ function proofTone(status: CertificationStatus) { return status === "STRONG" ? "
 function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" | "CASHE") { return result === "GAGNE" ? "bg-profit/15 text-profit" : result === "PERDU" ? "bg-loss/15 text-loss" : result === "EN_ATTENTE" ? "bg-warning/15 text-warning" : "bg-primary/15 text-primary"; }
 
 const CORRECTION_FIELD_LABELS: Record<string, string> = {
+  bookmaker: "bookmaker", ticketReferenceCorrected: "référence du ticket",
   sport: "sport", betType: "type de pari", description: "sélection", eventResult: "résultat de l’événement",
   date: "date", stakeUnits: "mise en unités", odds: "cote", result: "résultat", cashOutUnits: "cash out en unités",
   boosted: "boost", originalOdds: "cote initiale", freebet: "freebet", live: "pari en direct",

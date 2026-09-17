@@ -57,6 +57,8 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
     setError("");
     try {
       const updated = await updateBet(bet.id, {
+        bookmaker: value.bookmaker,
+        ticketRef: value.ticketRef,
         sport: value.sport, betType: value.betType, description: value.description ?? "", eventResult: value.eventResult ?? "",
         date: value.date, stake: value.stake, odds: value.odds, result: value.result, cashOutAmount: value.cashOutAmount,
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
@@ -85,6 +87,10 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
             <div className="flex flex-col gap-1"><Label>{t("betType")}</Label><Select value={value.betType} onValueChange={(betType) => { if (betType) patch({ betType }); }} items={Object.fromEntries(betTypes.map((betType) => [betType, translateTaxonomy(tBetTypes, betType)]))}><SelectTrigger className="min-h-touch rounded-lg"><SelectValue /></SelectTrigger><SelectContent>{betTypes.map((betType) => <SelectItem key={betType} value={betType}>{translateTaxonomy(tBetTypes, betType)}</SelectItem>)}</SelectContent></Select></div>
           </div>
           <div className="flex flex-col gap-1"><Label htmlFor="edit-description">{t("descriptionLabel")}</Label><Input id="edit-description" value={value.description ?? ""} onChange={(e) => patch({ description: e.target.value })} /></div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="flex flex-col gap-1"><Label htmlFor="edit-bookmaker">{t("bookmaker")}</Label><Input id="edit-bookmaker" maxLength={120} value={value.bookmaker ?? ""} onChange={(event) => patch({ bookmaker: event.target.value })} /></div>
+            <div className="flex flex-col gap-1"><Label htmlFor="edit-ticket-ref">{t("ticketRef")}</Label><Input id="edit-ticket-ref" maxLength={255} value={value.ticketRef ?? ""} onChange={(event) => patch({ ticketRef: event.target.value })} /><p className="text-xs text-muted-foreground">{t("ticketRefPrivate")}</p></div>
+          </div>
           <div className="flex flex-col gap-1"><Label htmlFor="edit-event-result">{t("eventResultLabel")}</Label><Input id="edit-event-result" value={value.eventResult ?? ""} onChange={(e) => patch({ eventResult: e.target.value })} /></div>
           <TipsterSelector
             id="edit-tipster"
