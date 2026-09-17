@@ -22,6 +22,8 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte avant ou après,
 }
 Identifie le bookmaker uniquement à partir d'indices visibles. Règle de sécurité : n'indique un bookmaker que si son nom, son logo ou une marque textuelle propre à ce bookmaker est lisible sur la capture. La palette, la mise en page, la couleur des cotes, les statuts « Gagné » / « Perdu » ou la structure générale d'un ticket ne suffisent jamais à identifier un bookmaker. Ne déduis jamais le bookmaker depuis la bankroll fournie. Si le nom ou logo n'est pas lisible, retourne null pour les deux champs — même si un bookmaker est plausible. Cette prudence est particulièrement obligatoire avant de signaler un bookmaker différent de la bankroll sélectionnée. Si la confiance est inférieure à 0,75, retourne null pour les deux champs. Un objet par ticket de pari visible sur l'image. Si l'image ne contient aucun ticket de pari lisible, réponds avec "bets": [].
 
+Exemple de prudence : un ticket recadré avec « Simple @ 2,63 », « Référence Du Pari », « Sélection gagnante » et aucun nom/logo de bookmaker visible doit retourner "detectedBookmaker": null et "detectionConfidence": null. Ces éléments ne prouvent ni PMU ni Winamax ; ils servent seulement à lire le pari.
+
 Schéma attendu pour chaque pari :
 {
   "date": "AAAA-MM-JJ, ou null si l'année ou la date complète ne sont pas visibles",

@@ -33,6 +33,7 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain('"Simple @ 2,63 • Gagné" impose "result": "Gagné"');
     expect(prompt).toContain('"Simple @ 2,63 • En cours" impose "result": "En attente"');
     expect(prompt).toContain('Ne tronque pas le début ou la fin');
+    expect(prompt).toContain('Ces éléments ne prouvent ni PMU ni Winamax');
   });
 
   it("classifies a same-sport accumulator with the shared sport taxonomy", () => {
