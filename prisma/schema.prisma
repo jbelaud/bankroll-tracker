@@ -575,8 +575,9 @@ model ScanUsage {
   referralEligible        Boolean      @default(false)
   referralProcessedAt     DateTime?
   // Champs P0 : uniquement des métadonnées agrégées, jamais la capture ou
-  // son texte OCR. outcome est null pour les scans historiques afin de ne pas
-  // fabriquer une mesure de qualité rétroactive.
+  // son texte OCR. L'exception proofEvidence ci-dessous conserve seulement
+  // des preuves structurées minimales pour les nouveaux scans. outcome reste
+  // null pour les scans historiques, sans qualité fabriquée rétroactivement.
   outcome                 ScanOutcome?
   selectedBookmaker       String?
   detectedBookmaker       String?
@@ -588,6 +589,9 @@ model ScanUsage {
   betsExcluded            Int          @default(0)
   fieldsCorrectedCount    Int          @default(0)
   correctedFields         Json?
+  // Données structurées minimales par ticket (référence hachée, statut d'en-tête,
+  // horaire d'événement), jamais la capture ni le texte OCR brut.
+  proofEvidence           Json?
   verificationCompletedAt DateTime?
   createdAt               DateTime     @default(now())
 

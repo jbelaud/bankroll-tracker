@@ -59,6 +59,12 @@ describe("Kalivoa certification", () => {
     expect(certificationStatus(bet({ initialProofBeforeEvent: null, resultProofAt: null, resultEntryMethod: "MANUAL" }), startedAt)).toBe("UNVERIFIED");
   });
 
+  it("keeps a result-only scan limited and does not certify an older unpublished ticket retroactively", () => {
+    const resultOnly = bet({ initialProofAt: null, initialProofBeforeEvent: null });
+    expect(certificationStatus(resultOnly, startedAt)).toBe("LIMITED");
+    expect(certificationStatus({ ...resultOnly, date: new Date("2026-08-31T00:00:00Z") }, startedAt)).toBe("EXCLUDED");
+  });
+
   it("weights the score by unit volume and keeps small samples in observation", () => {
     const summary = certificationSummary([
       bet({ stakeUnits: 3 }),

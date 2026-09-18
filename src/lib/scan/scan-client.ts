@@ -24,7 +24,7 @@ export async function scanTickets(
 ): Promise<{ bets: ParsedBet[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }> {
   const total = images.length;
   const all: ParsedBet[] = [];
-  const seenRefs = new Set<string>();
+  const seenRefs = new Map<string, number>();
   const scans: ScanTicketResult[] = [];
   const skippedDuplicateFiles: string[] = [];
 
@@ -74,11 +74,21 @@ export async function scanTickets(
       outcome: scan.outcome ?? "READY",
     });
 
-    // Dédup intra-lot par référence de ticket (une même ref sur deux captures).
+    // Dédup intra-lot par référence : si deux états du même ticket sont
+    // fournis ensemble, conserver l'état clôturé, jamais l'état en cours.
+    // Cela ne fabrique pas une preuve initiale : seule l'image retenue sera
+    // importée et le résultat restera en preuve limitée.
     for (const bet of sourcedBets) {
       if (bet.ticketRef) {
-        if (seenRefs.has(bet.ticketRef)) continue;
-        seenRefs.add(bet.ticketRef);
+        const reference = bet.ticketRef.normalize("NFKC").toLocaleUpperCase("fr").replace(/[^A-Z0-9]/g, "");
+        const existingIndex = seenRefs.get(reference);
+        if (existingIndex !== undefined) {
+          if (all[existingIndex].result === "EN_ATTENTE" && bet.result !== "EN_ATTENTE") {
+            all[existingIndex] = bet;
+          }
+          continue;
+        }
+        seenRefs.set(reference, all.length);
       }
       all.push(bet);
     }

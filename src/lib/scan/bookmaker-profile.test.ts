@@ -34,6 +34,10 @@ describe("bookmaker scan profile rules", () => {
     expect(prompt).toContain('"Simple @ 2,63 • En cours" impose "result": "En attente"');
     expect(prompt).toContain('Ne tronque pas le début ou la fin');
     expect(prompt).toContain('Ces éléments ne prouvent ni PMU ni Winamax');
+    expect(prompt).toContain('"ticketHeaderText"');
+    expect(prompt).toContain('"ticketPlacedAtText"');
+    expect(prompt).toContain('"eventStartText"');
+    expect(prompt).toContain("Le statut de chaque sélection ne remplace jamais le statut de l'en-tête.");
   });
 
   it("classifies a same-sport accumulator with the shared sport taxonomy", () => {

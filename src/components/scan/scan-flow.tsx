@@ -146,7 +146,9 @@ export function ScanFlow({
       const result = await importBets(
         bankrollId,
         bets,
-        scans.map((scan) => scan.usageId),
+        // Les index des paris sont ceux des fichiers, y compris si un fichier
+        // précédent a été ignoré comme doublon.
+        files.map((_, fileIndex) => scans.find((scan) => scan.sourceFileIndex === fileIndex)?.usageId ?? ""),
         scanMeasurements,
         resultProofTarget?.betId
       );
@@ -274,11 +276,11 @@ export function ScanFlow({
       ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
       : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
     const description = resultProofTarget
-      ? "Le pari existant a été clôturé avec sa preuve Scan. Son niveau de certification et les statistiques publiques sont à jour."
+      ? "Le résultat du pari existant a été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur la capture."
       : automaticResultUpdate
       ? flow.resultProofsUpdated > 1
-        ? `${flow.resultProofsUpdated} paris existants ont été clôturés avec leur preuve Scan, sans créer de doublon.`
-        : "Le pari en attente correspondant a été clôturé avec sa preuve Scan, sans créer de doublon."
+        ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon.`
+        : "Le résultat du pari existant a été mis à jour sans créer de doublon."
       : flow.firstImport
       ? tComplete("firstDescription", { count: flow.imported })
       : tComplete("description", { count: flow.imported });

@@ -26,6 +26,8 @@ import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch } from "@/lib/result-proof";
+import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
+import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -320,8 +322,7 @@ export async function POST(request: NextRequest) {
       where: {
         bankrollId,
         result: "EN_ATTENTE",
-        certificationLockedAt: { not: null },
-        bankroll: { userId: user.id, certificationStartedAt: { not: null } },
+        bankroll: { userId: user.id },
       },
       select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
     }),
@@ -338,13 +339,14 @@ export async function POST(request: NextRequest) {
   const bets: ParsedBet[] = rawBets.map((raw) => {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
-    const result = labelToBetResult(String(r.result ?? "")) ?? "EN_ATTENTE";
+    const result = resolveScannedTicketResult(r.ticketHeaderText, r.result);
     const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
-    const { sport, betType, taxonomyMismatch } = normalizeTaxonomyPair(
+    const initialPair = normalizeTaxonomyPair(
       taxonomy,
       sportContext.sport,
       String(r.betType ?? "Autre")
     );
+    const { sport, betType } = initialPair;
     const selections = Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
       if (!rawSelection || typeof rawSelection !== "object") return [];
       const selection = rawSelection as Record<string, unknown>;
@@ -380,14 +382,22 @@ export async function POST(request: NextRequest) {
         result,
       });
     }
+    const format = betFormat(r.format);
+    const resolvedSport = resolveHomogeneousCombineSport(taxonomy, format, sport, selections);
+    const resolvedPair = resolvedSport === sport
+      ? initialPair
+      : normalizeTaxonomyPair(taxonomy, resolvedSport, "Combiné");
+    const placedAt = parseVisibleParisDateTime(r.ticketPlacedAtText);
+    const eventStartAt = parseVisibleParisDateTime(r.eventStartText);
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
-      date: isoDateOrNull(r.date),
-      sport,
+      date: placedAt ? parisCalendarDate(placedAt) : r.ticketPlacedAtText ? null : isoDateOrNull(r.date),
+      eventStartAt: eventStartAt?.toISOString() ?? null,
+      sport: resolvedPair.sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
       // mélanges connus et incohérents (ex. Cyclisme + Buteur) sont signalés
       // pour vérification sans perdre le libellé détecté.
-      betType,
+      betType: resolvedPair.betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
       stake: numOrNull(r.stake),
@@ -398,11 +408,11 @@ export async function POST(request: NextRequest) {
       live: Boolean(r.live),
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
-      format: betFormat(r.format),
+      format,
       tipster: typeof r.tipster === "string" ? r.tipster.trim().slice(0, 120) || null : null,
       closingOdds: numOrNull(r.closingOdds),
       selections,
-      taxonomyMismatch,
+      taxonomyMismatch: resolvedPair.taxonomyMismatch,
     };
     // Doublon potentiel : uniquement pour les paris sans référence de ticket.
     if (
@@ -419,10 +429,16 @@ export async function POST(request: NextRequest) {
   // Action refait le même contrôle au moment de l'écriture pour éviter les
   // courses et ne fait jamais confiance à cet indicateur d'interface.
   const previewMatchedTargetIds = new Set<string>();
-  for (const bet of bets) {
+  for (const [index, bet] of bets.entries()) {
     if (bet.result === "EN_ATTENTE" && findPendingTicketMatch(pendingResultTargets, bet)) {
       bet.pendingTicketAlreadyExists = true;
     }
+    const raw = rawBets[index] as Record<string, unknown>;
+    if (!canAutomaticallyUpdateResult(
+      normalizedBookmaker,
+      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
+      bet.result
+    )) continue;
     const target = findAutomaticResultProofTarget(
       pendingResultTargets.filter(({ id }) => !previewMatchedTargetIds.has(id)),
       bet
@@ -434,6 +450,11 @@ export async function POST(request: NextRequest) {
   }
 
   const referralEligible = !isRescanAfterUnimportedAnalysis && hasValidReferralScan(bets);
+  const proofEvidence = bets.flatMap((bet, index) => {
+    const raw = rawBets[index] as Record<string, unknown>;
+    const evidence = makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText);
+    return evidence ? [evidence] : [];
+  });
   let scanUsage;
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
@@ -456,6 +477,7 @@ export async function POST(request: NextRequest) {
         promptVersion: SCAN_PROMPT_VERSION,
         durationMs: Date.now() - scanStartedAt,
         betsDetected: bets.length,
+        proofEvidence,
       },
       select: { id: true },
     });

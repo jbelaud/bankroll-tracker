@@ -292,6 +292,16 @@ export function ReviewBetCard({
             onChange={(e) => onPatch({ date: e.target.value || null })}
             className="num min-h-touch rounded-lg px-3 text-sm"
           />
+          {bet.result === "EN_ATTENTE" && bet.eventStartAt !== undefined ? (
+            <p className="text-[0.7rem] leading-relaxed text-muted-foreground">
+              {bet.eventStartAt
+                ? t("eventStartDetected", { date: new Intl.DateTimeFormat(locale, {
+                  timeZone: "Europe/Paris", day: "2-digit", month: "2-digit", year: "numeric",
+                  hour: "2-digit", minute: "2-digit",
+                }).format(new Date(bet.eventStartAt)) })
+                : t("eventStartUncertain")}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor={uid("stake")} className="text-xs">

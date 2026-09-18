@@ -25,6 +25,9 @@ const BET_RESPONSE_SCHEMA = {
   additionalProperties: false,
   properties: {
     date: { type: ["string", "null"] },
+    ticketPlacedAtText: { type: ["string", "null"] },
+    ticketHeaderText: { type: ["string", "null"] },
+    eventStartText: { type: ["string", "null"] },
     ticketRef: { type: ["string", "null"] },
     sport: { type: "string" },
     betType: { type: "string" },
@@ -44,7 +47,8 @@ const BET_RESPONSE_SCHEMA = {
     selections: { type: "array", items: BET_SELECTION_RESPONSE_SCHEMA },
   },
   required: [
-    "date", "ticketRef", "sport", "betType", "description", "eventResult",
+    "date", "ticketPlacedAtText", "ticketHeaderText", "eventStartText",
+    "ticketRef", "sport", "betType", "description", "eventResult",
     "stake", "odds", "boosted", "originalOdds", "freebet", "live", "result", "cashOutAmount",
     "format", "tipster", "closingOdds", "selections",
   ],

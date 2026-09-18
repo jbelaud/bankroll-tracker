@@ -19,6 +19,10 @@ function normalizedTicketRef(value: string | null | undefined) {
   return normalized || null;
 }
 
+function exactTicketRef(value: string | null | undefined) {
+  return value?.normalize("NFKC").toLocaleUpperCase("fr").replace(/[^A-Z0-9]/g, "") || null;
+}
+
 function editDistance(left: string, right: string) {
   let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
   for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
@@ -72,49 +76,17 @@ export function resultProofMatches(existing: ExistingPendingBet, scanned: Parsed
   return !existingRef || !scannedRef || referencesLookLikeSameTicket(existingRef, scannedRef);
 }
 
-/**
- * Résout un résultat scanné vers un seul pari en attente. Une référence exacte
- * est prioritaire ; une petite erreur OCR est tolérée si la mise et la cote
- * concordent. Une date discordante exige une longue référence concordante.
- * Aucun choix n'est fait si plusieurs paris ont le même niveau de confiance.
- */
-function findMatchingPendingTicket<T extends ExistingPendingBet>(
-  pendingBets: T[],
-  scanned: ParsedBet
-): T | null {
-  const candidates = pendingBets.filter((candidate) => financialFieldsMatch(candidate, scanned));
-  if (candidates.length === 0) return null;
-
-  const scannedRef = normalizedTicketRef(scanned.ticketRef);
-  if (scannedRef) {
-    const exact = candidates.filter(
-      (candidate) => normalizedTicketRef(candidate.ticketRef) === scannedRef
-        && (sameTicketDate(candidate, scanned) || scannedRef.length >= 8)
-    );
-    if (exact.length === 1) return exact[0];
-    if (exact.length > 1) return null;
-
-    const fuzzy = candidates.filter((candidate) => {
-      const candidateRef = normalizedTicketRef(candidate.ticketRef);
-      return candidateRef !== null && referencesLookLikeSameTicket(candidateRef, scannedRef)
-        && (sameTicketDate(candidate, scanned) || Math.min(candidateRef.length, scannedRef.length) >= 8);
-    });
-    if (fuzzy.length === 1) return fuzzy[0];
-    if (fuzzy.length > 1) return null;
-  }
-
-  if (candidates.length === 1) {
-    const candidateRef = normalizedTicketRef(candidates[0].ticketRef);
-    if ((!candidateRef || !scannedRef) && sameTicketDate(candidates[0], scanned)) return candidates[0];
-  }
-  return null;
-}
-
+/** Automatic updates require an exact reference (ignoring separators/case). */
 export function findAutomaticResultProofTarget<T extends ExistingPendingBet>(
   pendingBets: T[],
   scanned: ParsedBet
 ): T | null {
-  return scanned.result === "EN_ATTENTE" ? null : findMatchingPendingTicket(pendingBets, scanned);
+  if (scanned.result === "EN_ATTENTE") return null;
+  const reference = exactTicketRef(scanned.ticketRef);
+  if (!reference) return null;
+  const matches = pendingBets.filter((bet) => exactTicketRef(bet.ticketRef) === reference
+    && financialFieldsMatch(bet, scanned) && (reference.length >= 8 || sameTicketDate(bet, scanned)));
+  return matches.length === 1 ? matches[0] : null;
 }
 
 /** Prevent a second pending import of a ticket that is already recorded. */
@@ -122,13 +94,16 @@ export function findPendingTicketMatch<T extends ExistingPendingBet>(
   pendingBets: T[],
   scanned: ParsedBet
 ): T | null {
-  if (scanned.result !== "EN_ATTENTE" || !scanned.ticketRef) return null;
-  const target = findMatchingPendingTicket(pendingBets, scanned);
-  return target && target.ticketRef && resultProofMatches(target, scanned) ? target : null;
+  if (scanned.result !== "EN_ATTENTE") return null;
+  const reference = exactTicketRef(scanned.ticketRef);
+  if (!reference) return null;
+  const matches = pendingBets.filter((bet) => exactTicketRef(bet.ticketRef) === reference
+    && financialFieldsMatch(bet, scanned) && (reference.length >= 8 || sameTicketDate(bet, scanned)));
+  return matches.length === 1 ? matches[0] : null;
 }
 
-export function initialProofTiming(proofAt: Date, eventDate: Date, live: boolean): boolean | null {
+export function initialProofTiming(proofAt: Date, eventStartAt: Date | null, live: boolean): boolean | null {
   if (live) return false;
-  const eventDayStart = new Date(Date.UTC(eventDate.getUTCFullYear(), eventDate.getUTCMonth(), eventDate.getUTCDate()));
-  return proofAt < eventDayStart ? true : null;
+  if (!eventStartAt || Number.isNaN(eventStartAt.getTime())) return null;
+  return proofAt < eventStartAt;
 }

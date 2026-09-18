@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ParsedBet } from "@/lib/scan/types";
+import { makeScanProofEvidence } from "@/lib/scan/ticket-evidence";
 
 const mocks = vi.hoisted(() => ({
   requireUser: vi.fn(),
@@ -285,6 +286,7 @@ describe("importBets", () => {
       id: "scan-result",
       detectedBookmaker: "Winamax",
       createdAt: new Date("2026-09-15T23:26:48.475Z"),
+      proofEvidence: [makeScanProofEvidence("6IZ7T10Y", "Simple @ 2,55 • Perdu", null)],
     }]);
     mocks.scanUsageUpdate.mockResolvedValue({});
     mocks.tipsterFindMany.mockResolvedValue([]);
@@ -296,7 +298,7 @@ describe("importBets", () => {
   it("met à jour le pari en attente correspondant au lieu de créer un doublon", async () => {
     mocks.betFindMany.mockResolvedValue([{
       id: "pending-bet",
-      ticketRef: "6IZ7I0Y",
+      ticketRef: "6IZ7T10Y",
       date: new Date("2026-09-15T00:00:00.000Z"),
       stake: 5,
       odds: 2.55,
@@ -335,7 +337,7 @@ describe("importBets", () => {
   it("refuse de créer un second pari en attente avec la même référence PMU", async () => {
     mocks.betFindMany.mockResolvedValue([{
       id: "pending-pmu",
-      ticketRef: "11559614",
+      ticketRef: "1311559614",
       date: new Date("2026-09-17T00:00:00.000Z"),
       stake: 5,
       odds: 2.63,
@@ -350,6 +352,77 @@ describe("importBets", () => {
     })], ["scan-result"]);
 
     expect(response).toEqual({ error: expect.stringContaining("déjà enregistré en cours") });
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("met à jour le même ticket PMU gagné, sans doublon ni nouvelle preuve initiale", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "existing-pmu", ticketRef: "REF-000001",
+      date: new Date("2026-09-14T00:00:00Z"), stake: 1, odds: 2.63,
+    }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: null, selectedBookmaker: "PMU",
+      createdAt: new Date("2026-09-17T20:58:00Z"),
+      proofEvidence: [makeScanProofEvidence("REF-000001", "Simple @ 2,63 • Gagné", "17 sept. 2026, 21:00")],
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "REF-000001", date: "2026-09-14", stake: 1, odds: 2.63,
+      result: "GAGNE", sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 1 });
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ result: "GAGNE", resultProofAt: new Date("2026-09-17T20:58:00Z"), resultEntryMethod: "SCAN" }),
+    }));
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("refuses an automatic PMU result update without the ticket header evidence", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "existing-pmu", ticketRef: "REF-000001",
+      date: new Date("2026-09-14T00:00:00Z"), stake: 1, odds: 2.63,
+    }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: null, selectedBookmaker: "PMU",
+      createdAt: new Date("2026-09-17T20:58:00Z"),
+      proofEvidence: [makeScanProofEvidence("REF-000001", null, null)],
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({ ticketRef: "REF-000001", date: "2026-09-14", stake: 1, odds: 2.63, result: "GAGNE", sourceScanIndex: 0 })], ["scan-result"]);
+
+    expect(response).toEqual({ error: expect.stringContaining("déjà enregistré") });
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("preserves the source scan index after a skipped earlier file", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-second", detectedBookmaker: null, selectedBookmaker: "PMU",
+      createdAt: new Date("2026-09-17T18:26:00Z"),
+      proofEvidence: [makeScanProofEvidence("REF-000002", "Simple @ 2,63 • En cours", "17 sept. 2026, 21:00")],
+    }]);
+    mocks.createOwnedBet.mockResolvedValue({ id: "new-pmu" });
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "REF-000002", date: "2026-09-14", stake: 1, odds: 2.63,
+      result: "EN_ATTENTE", sourceScanIndex: 1,
+    })], ["", "scan-second"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 0 });
+    expect(mocks.createOwnedBet).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      source: expect.objectContaining({ scanUsageId: "scan-second", eventStartAt: new Date("2026-09-17T19:00:00Z") }),
+    }), expect.anything(), expect.anything());
+  });
+
+  it("rejects an ambiguous existing reference before creating a duplicate", async () => {
+    mocks.betFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([{
+      id: "settled-pmu", ticketRef: "REF-000001",
+      date: new Date("2026-09-14T00:00:00Z"), stake: 1, odds: 2.63,
+    }]);
+    const response = await importBets("bankroll-1", [bet({ ticketRef: "REF-000001", date: "2026-09-14", stake: 1, odds: 2.63, result: "GAGNE", sourceScanIndex: 0 })], ["scan-result"]);
+    expect(response).toEqual({ error: expect.stringContaining("déjà enregistré") });
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
 });

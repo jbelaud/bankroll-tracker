@@ -45,6 +45,7 @@ export type CreateOwnedBetInput = {
   source?: {
     entryMethod?: BetEntryMethod;
     scanUsageId?: string | null;
+    eventStartAt?: Date | null;
     format?: BetFormat;
     resolvedTipsterId?: string | null;
     closingOdds?: number | null;
@@ -143,9 +144,9 @@ export async function createOwnedBet(
       tipsterId: source.resolvedTipsterId ?? null,
       scanUsageId: source.scanUsageId ?? null,
       initialProofAt: pendingScan ? scanProof.createdAt : null,
-      // Sans heure fiable, seul un scan réalisé avant le jour de l'événement
-      // constitue une preuve forte. Un scan le jour même reste à confirmer.
-      initialProofBeforeEvent: pendingScan ? initialProofTiming(scanProof.createdAt, input.date, input.live) : null,
+      // L'heure provient des métadonnées de preuve du scan vérifiées côté
+      // serveur, jamais d'une valeur corrigée librement dans la revue.
+      initialProofBeforeEvent: pendingScan ? initialProofTiming(scanProof.createdAt, source.eventStartAt ?? null, input.live) : null,
       resultProofAt: settledScan ? scanProof.createdAt : null,
       resultEntryMethod: input.result === "EN_ATTENTE" ? "UNKNOWN" : settledScan ? "SCAN" : source.entryMethod === "MANUAL" ? "MANUAL" : "UNKNOWN",
       certificationLockedAt: certificationActive ? recordedAt : null,

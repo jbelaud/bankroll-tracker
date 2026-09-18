@@ -20,6 +20,7 @@ import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
 import { findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
+import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -362,7 +363,7 @@ export async function importBets(
     const scanUsages = uniqueScanUsageIds.length
       ? await prisma.scanUsage.findMany({
           where: { id: { in: uniqueScanUsageIds }, userId: user.id, outcome: "READY" },
-          select: { id: true, detectedBookmaker: true, createdAt: true },
+          select: { id: true, detectedBookmaker: true, selectedBookmaker: true, createdAt: true, proofEvidence: true },
         })
       : [];
     if (scanUsages.length !== uniqueScanUsageIds.length) {
@@ -373,7 +374,7 @@ export async function importBets(
     if (resultForBetId) {
       if (bets.length !== 1 || uniqueScanUsageIds.length !== 1) return { error: "Sélectionne une seule capture contenant un seul pari pour ajouter cette preuve de résultat." };
       const scanned = bets[0];
-      const scanUsageId = scanned.sourceScanIndex === undefined ? null : uniqueScanUsageIds[scanned.sourceScanIndex] ?? null;
+      const scanUsageId = scanned.sourceScanIndex === undefined ? null : scanUsageIds[scanned.sourceScanIndex] || null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       if (!scanUsageId || !scanProof || scanned.result === "EN_ATTENTE") {
         return { error: "Le scan doit afficher clairement le résultat final de ce pari." };
@@ -393,6 +394,8 @@ export async function importBets(
       if (!resultProofMatches(target, scanned)) {
         return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
       }
+      const evidence = findScanProofEvidence(scanProof.proofEvidence, scanned.ticketRef);
+      const verifiedResultProof = scanProof.selectedBookmaker !== "PMU" || evidence?.headerResult === scanned.result;
       await prisma.$transaction(async (tx) => {
         await tx.bet.update({
           where: { id: target.id },
@@ -400,8 +403,8 @@ export async function importBets(
             result: scanned.result,
             cashOutAmount: scanned.result === "CASHE" ? scanned.cashOutAmount : null,
             eventResult: scanned.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-            resultProofAt: scanProof.createdAt,
-            resultEntryMethod: "SCAN",
+            resultProofAt: verifiedResultProof ? scanProof.createdAt : null,
+            resultEntryMethod: verifiedResultProof ? "SCAN" : "MANUAL",
           },
         });
         const measurement = scanMeasurements.find((item) => item.scanUsageId === verifiedScanUsageId);
@@ -436,29 +439,50 @@ export async function importBets(
       where: {
         bankrollId,
         result: "EN_ATTENTE",
-        certificationLockedAt: { not: null },
-        bankroll: {
-          userId: user.id,
-          certificationStartedAt: { not: null },
-        },
+        bankroll: { userId: user.id },
       },
       select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+    });
+    const recordedReferences = await prisma.bet.findMany({
+      where: { bankrollId, ticketRef: { not: null }, bankroll: { userId: user.id } },
+      select: { ticketRef: true },
     });
     if (bets.some((bet) => bet.sourceScanIndex !== undefined && findPendingTicketMatch(pendingResultTargets, bet))) {
       return { error: "Ce ticket est déjà enregistré en cours. Vérifie le statut sur la capture : si le résultat est visible, choisis-le avant d’importer pour mettre à jour le pari existant." };
     }
+    // Contrôle avant toute écriture : une ambiguïté de référence ne doit pas
+    // créer un doublon, ni laisser un lot partiellement importé.
+    const incomingReferences: string[] = [];
+    for (const bet of bets) {
+      if (!bet.ticketRef) continue;
+      if (incomingReferences.some((reference) => sameTicketReference(reference, bet.ticketRef))) {
+        return { error: "Cette référence apparaît plusieurs fois dans le lot. Garde une seule version du ticket." };
+      }
+      incomingReferences.push(bet.ticketRef);
+      const matchesRecorded = recordedReferences.some((row) => sameTicketReference(row.ticketRef, bet.ticketRef));
+      if (!matchesRecorded) continue;
+      const scanProof = bet.sourceScanIndex === undefined ? null : scanUsageById.get(scanUsageIds[bet.sourceScanIndex]);
+      const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
+      if (!scanProof || !canAutomaticallyUpdateResult(scanProof.selectedBookmaker, evidence, bet.result)
+        || !findAutomaticResultProofTarget(pendingResultTargets, bet)) {
+        return { error: "Ce ticket est déjà enregistré. Aucun doublon n’a été créé ; vérifie le résultat du pari existant." };
+      }
+    }
     const matchedResultTargetIds = new Set<string>();
     for (const [index, bet] of bets.entries()) {
-      const scanUsageId = bet.sourceScanIndex === undefined ? null : uniqueScanUsageIds[bet.sourceScanIndex] ?? null;
+      const scanUsageId = bet.sourceScanIndex === undefined ? null : scanUsageIds[bet.sourceScanIndex] || null;
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       const automaticResultTarget = scanProof
+        && canAutomaticallyUpdateResult(scanProof.selectedBookmaker, findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef), bet.result)
         ? findAutomaticResultProofTarget(
             pendingResultTargets.filter((target) => !matchedResultTargetIds.has(target.id)),
             bet
           )
         : null;
       if (automaticResultTarget && scanProof) {
+        const evidence = findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef);
+        const verifiedResultProof = scanProof.selectedBookmaker !== "PMU" || evidence?.headerResult === bet.result;
         const updated = await prisma.bet.updateMany({
           where: {
             id: automaticResultTarget.id,
@@ -469,8 +493,8 @@ export async function importBets(
             result: bet.result,
             cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
             eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-            resultProofAt: scanProof.createdAt,
-            resultEntryMethod: "SCAN",
+            resultProofAt: verifiedResultProof ? scanProof.createdAt : null,
+            resultEntryMethod: verifiedResultProof ? "SCAN" : "MANUAL",
           },
         });
         if (updated.count !== 1) {
@@ -513,6 +537,11 @@ export async function importBets(
         source: {
           entryMethod: scanUsageId ? "SCAN" : "MANUAL",
           scanUsageId,
+          eventStartAt: (() => {
+            const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
+            return bet.result === "EN_ATTENTE" && evidence?.headerResult === "EN_ATTENTE" && evidence.eventStartAt
+              ? new Date(evidence.eventStartAt) : null;
+          })(),
           format: bet.format,
           resolvedTipsterId: resolvedTipsterIds[index],
           closingOdds: bet.closingOdds,
@@ -542,7 +571,7 @@ export async function importBets(
       const importedByScan = new Map<string, number>();
       for (const bet of bets) {
         if (bet.sourceScanIndex === undefined) continue;
-        const scanUsageId = uniqueScanUsageIds[bet.sourceScanIndex];
+        const scanUsageId = scanUsageIds[bet.sourceScanIndex];
         if (scanUsageId) importedByScan.set(scanUsageId, (importedByScan.get(scanUsageId) ?? 0) + 1);
       }
       const measurementByScan = new Map(scanMeasurements.map((item) => [item.scanUsageId, item]));
