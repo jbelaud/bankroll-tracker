@@ -41,7 +41,14 @@ export function certificationStatus(bet: CertificationBet, startedAt: Date | nul
   const hasQualifiedInitialProof = bet.initialProofAt !== null
     && bet.initialProofAt >= startedAt
     && bet.initialProofBeforeEvent === true;
-  if (bet.date < startedAt && !hasQualifiedInitialProof) return "EXCLUDED";
+  // La saisie manuelle ne demande qu'un jour : sa date est stockée à minuit.
+  // Un pari ajouté après l'activation le même jour ne doit pas paraître ancien
+  // simplement parce que l'heure de début du suivi est postérieure à minuit.
+  if (bet.date < startedAt && !hasQualifiedInitialProof) {
+    const publicationDay = startedAt.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
+    const ticketDay = bet.date.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
+    if (bet.entryMethod !== "MANUAL" || ticketDay !== publicationDay) return "EXCLUDED";
+  }
   if (bet.result === "EN_ATTENTE") {
     if (hasQualifiedInitialProof) return "AWAITING_RESULT";
     if (bet.initialProofAt) return "TIMING_UNCONFIRMED";
