@@ -298,7 +298,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
                         {bet.corrections.map((correction, correctionIndex) => {
                           const fields = correctionFields(correction.before, correction.after);
                           return <li key={`${correction.createdAt.toISOString()}-${correctionIndex}`} className="text-[0.65rem] leading-relaxed text-muted-foreground">
-                            <strong className="text-foreground">{correction.kind === "RESULT_MANUAL" ? "Résultat renseigné manuellement" : "Pari corrigé"}</strong>
+                            <strong className="text-foreground">{correction.kind === "RESULT_MANUAL" ? "Résultat renseigné manuellement" : isJsonObject(correction.after) && correction.after.proofReviewVerified === true ? "Preuves du scan vérifiées" : "Pari corrigé"}</strong>
                             {` le ${date.format(correction.createdAt)}`}
                             {fields.length > 0 ? ` · ${fields.join(", ")}` : ""}
                           </li>;
@@ -331,6 +331,7 @@ function resultBlockTone(result: "EN_ATTENTE" | "GAGNE" | "PERDU" | "REMBOURSE" 
 
 const CORRECTION_FIELD_LABELS: Record<string, string> = {
   bookmaker: "bookmaker", ticketReferenceCorrected: "référence du ticket",
+  initialProofAt: "scan initial", initialProofBeforeEvent: "avant l’événement", resultProofReviewed: "résultat scanné",
   sport: "sport", betType: "type de pari", description: "sélection", eventResult: "résultat de l’événement",
   date: "date", stakeUnits: "mise en unités", odds: "cote", result: "résultat", cashOutUnits: "cash out en unités",
   boosted: "boost", originalOdds: "cote initiale", freebet: "freebet", live: "pari en direct",

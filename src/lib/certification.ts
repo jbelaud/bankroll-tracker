@@ -34,21 +34,23 @@ export const CERTIFICATION_WEIGHTS: Record<Extract<CertificationStatus, "STRONG"
 
 export function certificationStatus(bet: CertificationBet, startedAt: Date | null): CertificationStatus {
   if (!startedAt || bet.createdAt < startedAt) return "EXCLUDED";
-  // La date du ticket n'indique pas l'heure de l'événement. Un événement
-  // datant d'un jour entièrement écoulé avant la publication est néanmoins
-  // forcément historique, même si son pari a été importé ensuite.
-  const eventDayEnd = Date.UTC(
-    bet.date.getUTCFullYear(), bet.date.getUTCMonth(), bet.date.getUTCDate() + 1
-  );
-  if (eventDayEnd <= startedAt.getTime()) return "EXCLUDED";
+  // bet.date est la date de PRISE du ticket, pas celle du match. Un ticket
+  // ancien ne devient éligible que si sa preuve initiale a été enregistrée
+  // après l'activation et avant l'événement. La simple importation d'un
+  // ancien résultat ne crée donc jamais de certification rétroactive.
+  const hasQualifiedInitialProof = bet.initialProofAt !== null
+    && bet.initialProofAt >= startedAt
+    && bet.initialProofBeforeEvent === true;
+  if (bet.date < startedAt && !hasQualifiedInitialProof) return "EXCLUDED";
   if (bet.result === "EN_ATTENTE") {
-    if (bet.initialProofAt && bet.initialProofBeforeEvent === true) return "AWAITING_RESULT";
+    if (hasQualifiedInitialProof) return "AWAITING_RESULT";
     if (bet.initialProofAt) return "TIMING_UNCONFIRMED";
     return "UNVERIFIED";
   }
 
-  const hasQualifiedInitialProof = Boolean(bet.initialProofAt) && bet.initialProofBeforeEvent === true;
-  const hasResultProof = Boolean(bet.resultProofAt) && bet.resultEntryMethod === "SCAN";
+  const hasResultProof = bet.resultProofAt !== null
+    && bet.resultProofAt >= startedAt
+    && bet.resultEntryMethod === "SCAN";
   if (hasQualifiedInitialProof && hasResultProof) return "STRONG";
   if (hasQualifiedInitialProof && bet.resultEntryMethod === "MANUAL") return "PARTIAL";
   if (bet.entryMethod === "MANUAL" && hasResultProof) return "WEAK";
