@@ -1,4 +1,5 @@
 import type { ParsedBet } from "./types";
+import { prepareClientScanImage } from "./image-preparation-client";
 
 export type ScanTicketResult = {
   /** Index de la capture d'origine, conservé si une autre capture du lot est ignorée. */
@@ -31,6 +32,8 @@ export async function scanTickets(
   for (let i = 0; i < total; i++) {
     const form = new FormData();
     form.append("image", images[i]);
+    const preparedImage = await prepareClientScanImage(images[i]);
+    if (preparedImage) form.append("preparedImage", preparedImage);
     form.append("bankrollId", bankrollId);
 
     const res = await fetch("/api/scan", { method: "POST", body: form });

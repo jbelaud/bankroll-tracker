@@ -28,7 +28,6 @@ import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
-import { prepareScanImage } from "@/lib/scan/image-preparation";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -114,6 +113,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: t("imageTooLarge") }, { status: 413 });
   }
   const imageBuffer = Buffer.from(bytes);
+  const preparedImage = formData.get("preparedImage");
+  let analysisBuffer = imageBuffer;
+  let analysisMediaType = mediaType;
+  if (preparedImage instanceof File) {
+    if (!ALLOWED_MEDIA.includes(preparedImage.type as Media)) {
+      return NextResponse.json({ error: t("unsupportedImage") }, { status: 415 });
+    }
+    const preparedBytes = await preparedImage.arrayBuffer();
+    if (preparedBytes.byteLength === 0) {
+      return NextResponse.json({ error: t("emptyImage") }, { status: 400 });
+    }
+    if (preparedBytes.byteLength > MAX_IMAGE_BYTES) {
+      return NextResponse.json({ error: t("imageTooLarge") }, { status: 413 });
+    }
+    analysisBuffer = Buffer.from(preparedBytes);
+    analysisMediaType = preparedImage.type as ScanMediaType;
+  }
   // Une même capture ne peut pas être rejouée pour faire progresser un
   // parrainage. Le hash ne quitte jamais le serveur et ne conserve pas l'image.
   const sourceHash = createHash("sha256").update(imageBuffer).digest("hex");
@@ -207,7 +223,7 @@ export async function POST(request: NextRequest) {
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
-  // 4. Appel IA côté serveur uniquement (Gemini prioritaire, Anthropic en repli).
+  // 4. Appel au fournisseur IA configuré, exclusivement côté serveur.
   let rawBets: unknown[];
   let rawExtraction: unknown;
   let detectedBookmaker: string | null = null;
@@ -216,10 +232,9 @@ export async function POST(request: NextRequest) {
   let scanInputTokens = 0;
   let scanOutputTokens = 0;
   try {
-    const scanImage = await prepareScanImage(imageBuffer, mediaType);
     const response = await analyzeTicketImage({
-      base64: scanImage.base64,
-      mediaType: scanImage.mediaType,
+      base64: analysisBuffer.toString("base64"),
+      mediaType: analysisMediaType,
       taxonomy,
       bookmaker: normalizedBookmaker,
       bookmakerRules: rulesForTestedProfile(profile),
