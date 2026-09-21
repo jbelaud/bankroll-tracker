@@ -34,6 +34,19 @@ describe("scan response bookmaker detection", () => {
     });
   });
 
+  it.each(["Pariuret", "Pariubet"])("rejects the invented bookmaker %s", (bookmaker) => {
+    expect(parseScanAnalysis(JSON.stringify({
+      detectedBookmaker: bookmaker,
+      detectionConfidence: 0.99,
+      bets: [],
+    }))).toEqual({ detectedBookmaker: null, detectionConfidence: null, bets: [] });
+  });
+
+  it("canonicalizes a known bookmaker instead of trusting the model casing", () => {
+    expect(parseScanAnalysis('{"detectedBookmaker":"betclic","detectionConfidence":0.96,"bets":[]}'))
+      .toEqual({ detectedBookmaker: "Betclic", detectionConfidence: 0.96, bets: [] });
+  });
+
   it("never manufactures a detection from the legacy extraction array", () => {
     expect(parseScanAnalysis("[]")).toEqual({ bets: [], detectedBookmaker: null, detectionConfidence: null });
   });

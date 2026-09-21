@@ -21,6 +21,7 @@ import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
 import { findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
+import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -374,7 +375,7 @@ export async function importBets(
     if (resultForBetId) {
       if (bets.length !== 1 || uniqueScanUsageIds.length !== 1) return { error: "Sélectionne une seule capture contenant un seul pari pour ajouter cette preuve de résultat." };
       const scanned = bets[0];
-      const scanUsageId = scanned.sourceScanIndex === undefined ? null : scanUsageIds[scanned.sourceScanIndex] || null;
+      const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, scanned.sourceScanIndex);
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       if (!scanUsageId || !scanProof || scanned.result === "EN_ATTENTE") {
         return { error: "Le scan doit afficher clairement le résultat final de ce pari." };
@@ -463,7 +464,8 @@ export async function importBets(
       incomingReferences.push(bet.ticketRef);
       const matchesRecorded = recordedReferences.some((row) => sameTicketReference(row.ticketRef, bet.ticketRef));
       if (!matchesRecorded) continue;
-      const scanProof = bet.sourceScanIndex === undefined ? null : scanUsageById.get(scanUsageIds[bet.sourceScanIndex]);
+      const sourceScanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
+      const scanProof = sourceScanUsageId ? scanUsageById.get(sourceScanUsageId) : null;
       const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
       if (!scanProof || !canAutomaticallyUpdateResult(scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result)
         || !findAutomaticResultProofTarget(pendingResultTargets, bet)) {
@@ -472,7 +474,7 @@ export async function importBets(
     }
     const matchedResultTargetIds = new Set<string>();
     for (const [index, bet] of bets.entries()) {
-      const scanUsageId = bet.sourceScanIndex === undefined ? null : scanUsageIds[bet.sourceScanIndex] || null;
+      const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       const automaticResultTarget = scanProof
@@ -575,7 +577,7 @@ export async function importBets(
       const importedByScan = new Map<string, number>();
       for (const bet of bets) {
         if (bet.sourceScanIndex === undefined) continue;
-        const scanUsageId = scanUsageIds[bet.sourceScanIndex];
+        const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
         if (scanUsageId) importedByScan.set(scanUsageId, (importedByScan.get(scanUsageId) ?? 0) + 1);
       }
       const measurementByScan = new Map(scanMeasurements.map((item) => [item.scanUsageId, item]));

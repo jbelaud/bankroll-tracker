@@ -1,4 +1,4 @@
-import { normalizeBookmaker } from "@/lib/bookmakers";
+import { canonicalKnownBookmaker } from "@/lib/bookmakers";
 
 export const MIN_BOOKMAKER_DETECTION_CONFIDENCE = 0.75;
 
@@ -40,7 +40,12 @@ export function normalizeBookmakerDetection(
     return { detectedBookmaker: null, detectionConfidence: null };
   }
 
-  return { detectedBookmaker: normalizeBookmaker(bookmaker), detectionConfidence: confidence };
+  const canonicalBookmaker = canonicalKnownBookmaker(bookmaker);
+  if (!canonicalBookmaker) {
+    return { detectedBookmaker: null, detectionConfidence: null };
+  }
+
+  return { detectedBookmaker: canonicalBookmaker, detectionConfidence: confidence };
 }
 
 /** Parses the AI envelope while accepting legacy array responses during rollout. */

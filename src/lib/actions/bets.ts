@@ -162,7 +162,7 @@ async function getOwnedBet(betId: string, userId: string) {
   const bet = await prisma.bet.findFirst({
     where: { id: betId, bankroll: { userId } },
     select: {
-      id: true, bankrollId: true, tipsterId: true, referenceCapitalAtBet: true,
+      id: true, bankrollId: true, tipsterId: true, format: true, referenceCapitalAtBet: true,
       sport: true, betType: true, description: true, eventResult: true, date: true,
       bookmaker: true, ticketRef: true,
       stake: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true, boosted: true,
@@ -295,6 +295,9 @@ export async function updateBetResult(
         cashOutAmount: normalizedCashOut,
         resultProofAt: null,
         resultEntryMethod: result === "EN_ATTENTE" ? "UNKNOWN" : "MANUAL",
+        ...(existing.format === "SIMPLE" ? {
+          selections: { updateMany: { where: {}, data: { result } } },
+        } : {}),
       },
     });
     if (existing.certificationLockedAt
@@ -412,6 +415,18 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       initialProofBeforeEvent: isCertifiedCorrection && initialProofChanged ? null : undefined,
       resultProofAt: isCertifiedCorrection && resultChanged ? null : undefined,
       resultEntryMethod: resultChanged ? (input.result === "EN_ATTENTE" ? "UNKNOWN" : "MANUAL") : undefined,
+      ...(existing.format === "SIMPLE" ? {
+        selections: {
+          updateMany: {
+            where: {},
+            data: {
+              sport: normalizedTaxonomy.sport,
+              betType: normalizedTaxonomy.betType,
+              result: input.result,
+            },
+          },
+        },
+      } : {}),
     },
     include: {
       tipster: { select: { id: true, name: true, normalizedName: true, status: true } },

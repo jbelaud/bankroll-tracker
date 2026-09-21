@@ -20,6 +20,7 @@ import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
 import { bookmakerKind, normalizeBookmaker } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
+import { tipsterFromVisibleEvidence } from "@/lib/scan/tipster-evidence";
 import { rulesForTestedProfile } from "@/lib/scan/bookmaker-profile";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
@@ -27,6 +28,9 @@ import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
+import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
+import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
+import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
@@ -55,12 +59,6 @@ function numOrNull(v: unknown): number | null {
   if (v == null || v === "") return null;
   const n = Number(v);
   return Number.isFinite(n) ? n : null;
-}
-
-function isoDateOrNull(value: unknown): string | null {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const parsed = new Date(`${value}T00:00:00.000Z`);
-  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value ? null : value;
 }
 
 function betFormat(value: unknown): ParsedBet["format"] {
@@ -159,43 +157,50 @@ export async function POST(request: NextRequest) {
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true, betsImported: true },
+    select: { id: true, betsImported: true, promptVersion: true },
   });
-  // Une analyse ne devient un doublon bloquant que lorsque ses paris ont
-  // réellement été importés. Un brouillon peut être repris ; une ancienne
-  // analyse sans import ni brouillon est libérée pour que l'utilisateur puisse
-  // l'analyser de nouveau, sans créer une seconde récompense de parrainage.
-  let isRescanAfterUnimportedAnalysis = false;
+  // Une analyse de la version courante devient un doublon bloquant lorsque ses
+  // paris ont été importés ou que son brouillon existe encore. Après une mise
+  // à niveau du prompt, la même image peut être retraitée une fois afin de
+  // bénéficier des nouvelles règles, sans seconde récompense de parrainage.
+  let isRepeatAnalysis = false;
   if (duplicateScan) {
-    if (duplicateScan.betsImported > 0) {
+    const promptWasUpgraded = canRescanAfterPromptUpgrade(
+      duplicateScan.promptVersion,
+      SCAN_PROMPT_VERSION
+    );
+    if (duplicateScan.betsImported > 0 && !promptWasUpgraded) {
       return NextResponse.json(
         { error: t("duplicateScanImported", { count: duplicateScan.betsImported }) },
         { status: 409 }
       );
     }
 
-    const drafts = await prisma.scanDraft.findMany({
-      where: { userId: user.id },
-      select: { payload: true },
-      take: 20,
-    });
-    const hasPendingDraft = drafts.some(({ payload }) => {
-      const scans = (payload as { scans?: unknown }).scans;
-      return Array.isArray(scans) && scans.some(
-        (scan) => typeof scan === "object" && scan !== null && (scan as { usageId?: unknown }).usageId === duplicateScan.id
-      );
-    });
-    if (hasPendingDraft) {
-      return NextResponse.json({ error: t("duplicateScanPending") }, { status: 409 });
+    if (!promptWasUpgraded) {
+      const drafts = await prisma.scanDraft.findMany({
+        where: { userId: user.id },
+        select: { payload: true },
+        take: 20,
+      });
+      const hasPendingDraft = drafts.some(({ payload }) => {
+        const scans = (payload as { scans?: unknown }).scans;
+        return Array.isArray(scans) && scans.some(
+          (scan) => typeof scan === "object" && scan !== null && (scan as { usageId?: unknown }).usageId === duplicateScan.id
+        );
+      });
+      if (hasPendingDraft) {
+        return NextResponse.json({ error: t("duplicateScanPending") }, { status: 409 });
+      }
     }
 
-    // On garde la ligne de coût historique, mais son hash est libéré : aucun
-    // import n'a eu lieu et l'utilisateur n'a plus de brouillon à reprendre.
+    // On garde la ligne de coût historique, mais son hash est libéré. Une
+    // nouvelle version du prompt peut ainsi corriger une capture déjà importée
+    // sans rendre le même fichier rescannable plusieurs fois avec cette version.
     await prisma.scanUsage.update({
       where: { id: duplicateScan.id },
       data: { sourceHash: null },
     });
-    isRescanAfterUnimportedAnalysis = true;
+    isRepeatAnalysis = true;
   }
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
@@ -223,7 +228,7 @@ export async function POST(request: NextRequest) {
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
-  // 4. Appel au fournisseur IA configuré, exclusivement côté serveur.
+  // 4. Appel IA côté serveur uniquement (Anthropic prioritaire pour le scan).
   let rawBets: unknown[];
   let rawExtraction: unknown;
   let detectedBookmaker: string | null = null;
@@ -249,7 +254,8 @@ export async function POST(request: NextRequest) {
     detectionConfidence = analysis.detectionConfidence;
 
   } catch (e) {
-    await releaseQuota();
+    console.error("[scan] extraction échouée", e);
+    await releaseQuota().catch((quotaError) => console.error("[scan] échec restitution quota", quotaError));
     await prisma.scanUsage.create({
       data: {
         userId: user.id,
@@ -257,7 +263,11 @@ export async function POST(request: NextRequest) {
         plan: dbUser.plan,
         inputTokens: scanInputTokens,
         outputTokens: scanOutputTokens,
-        costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
+        // Le fournisseur peut échouer avant de retourner son modèle et ses
+        // tokens. La télémétrie ne doit jamais masquer l'erreur d'origine.
+        costUsd: scanModel === "unknown"
+          ? 0
+          : calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
         outcome: "TECHNICAL_FAILURE",
         selectedBookmaker: normalizedBookmaker,
         promptVersion: SCAN_PROMPT_VERSION,
@@ -269,7 +279,6 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       properties: { bookmaker: normalizedBookmaker, scan_duration_ms: Date.now() - scanStartedAt },
     });
-    console.error("[scan] extraction échouée", e);
     return NextResponse.json({ error: t("analysisFailed") }, { status: 502 });
   }
 
@@ -351,11 +360,14 @@ export async function POST(request: NextRequest) {
     description: b.description ?? "",
   }));
   const existingTicketRefs = existing.map((bet) => bet.ticketRef);
+  const requiresVisibleDateText = [normalizedBookmaker, detectedBookmaker]
+    .some((bookmaker) => normalizeBookmaker(bookmaker ?? "") === "Unibet");
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
     const r = raw as Record<string, unknown>;
     const boosted = Boolean(r.boosted);
+    const financials = normalizeExtractedFinancials(r.stake, r.odds);
     const result = resolveScannedTicketResult(r.ticketHeaderText, r.result);
     const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
     const initialPair = normalizeTaxonomyPair(
@@ -385,7 +397,7 @@ export async function POST(request: NextRequest) {
           : selectionContext.competition,
         betType: typeof selection.betType === "string" ? normalizedSelection.betType : null,
         label,
-        odds: numOrNull(selection.odds),
+        odds: normalizeExtractedOdds(selection.odds),
         result: selectionResult,
       }];
     }) : [];
@@ -395,7 +407,7 @@ export async function POST(request: NextRequest) {
         competition: sportContext.competition,
         betType,
         label: String(r.description ?? "").trim() || betType,
-        odds: numOrNull(r.odds),
+        odds: normalizeExtractedOdds(r.odds),
         result,
       });
     }
@@ -408,7 +420,8 @@ export async function POST(request: NextRequest) {
     const eventStartAt = parseVisibleParisDateTime(r.eventStartText);
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
-      date: placedAt ? parisCalendarDate(placedAt) : r.ticketPlacedAtText ? null : isoDateOrNull(r.date),
+      date: placedAt ? parisCalendarDate(placedAt) : r.ticketPlacedAtText ? null
+        : normalizeExtractedTicketDate(r.dateText, r.date, { requireVisibleText: requiresVisibleDateText }),
       eventStartAt: eventStartAt?.toISOString() ?? null,
       sport: resolvedPair.sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les
@@ -417,8 +430,8 @@ export async function POST(request: NextRequest) {
       betType: resolvedPair.betType,
       description: String(r.description ?? ""),
       eventResult: r.eventResult ? String(r.eventResult).trim() || null : null,
-      stake: numOrNull(r.stake),
-      odds: numOrNull(r.odds),
+      stake: financials.stake,
+      odds: financials.odds,
       boosted,
       originalOdds: boosted ? numOrNull(r.originalOdds) : null,
       freebet: Boolean(r.freebet),
@@ -426,7 +439,12 @@ export async function POST(request: NextRequest) {
       result,
       cashOutAmount: result === "CASHE" ? numOrNull(r.cashOutAmount) : null,
       format,
-      tipster: typeof r.tipster === "string" ? r.tipster.trim().slice(0, 120) || null : null,
+      tipster: tipsterFromVisibleEvidence({
+        candidate: r.tipster,
+        evidence: r.tipsterEvidence,
+        description: String(r.description ?? ""),
+        selectionLabels: selections.map((selection) => selection.label),
+      }),
       closingOdds: numOrNull(r.closingOdds),
       selections,
       taxonomyMismatch: resolvedPair.taxonomyMismatch,
@@ -466,7 +484,7 @@ export async function POST(request: NextRequest) {
     delete bet.possibleDuplicate;
   }
 
-  const referralEligible = !isRescanAfterUnimportedAnalysis && hasValidReferralScan(bets);
+  const referralEligible = !isRepeatAnalysis && hasValidReferralScan(bets);
   const proofEvidence = bets.flatMap((bet, index) => {
     const raw = rawBets[index] as Record<string, unknown>;
     const evidence = makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText);

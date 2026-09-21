@@ -1,6 +1,6 @@
 import type { Taxonomy } from "@/lib/taxonomy";
 
-/** A unanimous set of known leg sports is stronger than a contradictory ticket label. */
+/** Recover a sport from unanimous known legs, without overruling a short specific ticket. */
 export function resolveHomogeneousCombineSport(
   taxonomy: Taxonomy,
   format: string | null | undefined,
@@ -8,7 +8,8 @@ export function resolveHomogeneousCombineSport(
   selections: ReadonlyArray<{ sport: string }>
 ): string {
   if (format !== "COMBINE" || selections.length < 2) return sport;
-  const shared = selections[0]?.sport;
-  if (!shared || shared === "Autre sport" || !taxonomy[shared]) return sport;
-  return selections.every((selection) => selection.sport === shared) ? shared : sport;
+  if (sport !== "Autre sport" && selections.length < 3) return sport;
+  const sharedSport = selections[0]?.sport;
+  if (!sharedSport || sharedSport === "Autre sport" || !taxonomy[sharedSport]) return sport;
+  return selections.every((selection) => selection.sport === sharedSport) ? sharedSport : sport;
 }

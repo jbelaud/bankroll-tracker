@@ -55,7 +55,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-const { createBet, moveBets, updateBet } = await import("@/lib/actions/bets");
+const { createBet, moveBets, updateBet, updateBetResult } = await import("@/lib/actions/bets");
 
 const updateInput = {
   sport: "Football",
@@ -75,7 +75,7 @@ const updateInput = {
 };
 
 const ownedBet = (overrides = {}) => ({
-  id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, referenceCapitalAtBet: 1000,
+  id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, format: "SIMPLE", referenceCapitalAtBet: 1000,
   bookmaker: null, ticketRef: null,
   sport: "Football", betType: "Résultat du match", description: "Paris gagne", eventResult: null,
   date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, result: "EN_ATTENTE",
@@ -229,6 +229,30 @@ describe("association Bet / Tipster", () => {
     await updateBet("bet-a", { ...updateInput, tipsterId: null });
     expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
       data: expect.objectContaining({ tipsterId: null }),
+    }));
+  });
+
+  it("synchronise le sport et le résultat d'une sélection simple corrigée", async () => {
+    await updateBet("bet-a", { ...updateInput, sport: "Tennis", betType: "Vainqueur du match" });
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        sport: "Tennis",
+        betType: "Vainqueur du match",
+        selections: {
+          updateMany: {
+            where: {},
+            data: { sport: "Tennis", betType: "Vainqueur du match", result: "EN_ATTENTE" },
+          },
+        },
+      }),
+    }));
+
+    await updateBetResult("bet-a", "PERDU", null);
+    expect(mocks.betUpdate).toHaveBeenLastCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        result: "PERDU",
+        selections: { updateMany: { where: {}, data: { result: "PERDU" } } },
+      }),
     }));
   });
 

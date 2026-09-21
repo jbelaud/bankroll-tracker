@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { prisma } from "@/lib/prisma";
 import type { ScanTicketResult } from "@/lib/scan/scan-client";
+import { isCurrentScanDraft } from "@/lib/scan/scan-draft-version";
 import type { ParsedBet } from "@/lib/scan/types";
 
 export type ScanDraftPayload = {
@@ -101,7 +102,11 @@ export async function listPendingScanDrafts(): Promise<PendingScanDraft[]> {
   return unlockedDrafts.flatMap(({ draft, locked }) => {
     if (locked) return [];
     const payload = draft.payload as Partial<ScanDraftPayload>;
-    if (!Array.isArray(payload.bets) || !Array.isArray(payload.scans)) return [];
+    if (
+      !Array.isArray(payload.bets) ||
+      !Array.isArray(payload.scans) ||
+      !isCurrentScanDraft(payload.scans as Array<Partial<ScanTicketResult>>)
+    ) return [];
     return [{
       id: draft.id,
       bankrollId: draft.bankrollId,

@@ -3,6 +3,7 @@
 // réécrive jamais l'historique financier.
 const PRICES_PER_MILLION_TOKENS_USD: Record<string, { input: number; output: number }> = {
   "claude-haiku-4-5": { input: 1, output: 5 },
+  "claude-sonnet-4-6": { input: 3, output: 15 },
   "gemini-3.6-flash": { input: 1.5, output: 7.5 },
   "gemini-3.5-flash-lite": { input: 0.3, output: 2.5 },
 };
