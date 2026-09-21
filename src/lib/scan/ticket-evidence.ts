@@ -109,6 +109,8 @@ export function canAutomaticallyUpdateResult(
 ): boolean {
   if (result === "EN_ATTENTE") return false;
   // A PMU terminal result without a readable ticket header can be a selection
-  // result or a potential gain. Do not silently settle a recorded bet from it.
-  return selectedBookmaker !== "PMU" || evidence?.headerResult === result;
+  // result or a potential gain. The same caution applies when the bankroll has
+  // no bookmaker and detection cannot identify one from the screenshot.
+  if (!selectedBookmaker || selectedBookmaker === "PMU") return evidence?.headerResult === result;
+  return true;
 }

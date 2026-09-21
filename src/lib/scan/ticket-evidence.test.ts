@@ -48,5 +48,8 @@ describe("PMU ticket evidence (anonymized)", () => {
     expect(canAutomaticallyUpdateResult("PMU", null, "GAGNE")).toBe(false);
     expect(canAutomaticallyUpdateResult("PMU", won, "GAGNE")).toBe(true);
     expect(canAutomaticallyUpdateResult("PMU", won, "EN_ATTENTE")).toBe(false);
+    expect(canAutomaticallyUpdateResult(null, null, "GAGNE")).toBe(false);
+    expect(canAutomaticallyUpdateResult(null, pending, "GAGNE")).toBe(false);
+    expect(canAutomaticallyUpdateResult(null, won, "GAGNE")).toBe(true);
   });
 });

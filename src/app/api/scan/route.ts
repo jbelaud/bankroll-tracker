@@ -452,7 +452,7 @@ export async function POST(request: NextRequest) {
     }
     const raw = rawBets[index] as Record<string, unknown>;
     if (!canAutomaticallyUpdateResult(
-      normalizedBookmaker,
+      normalizedBookmaker ?? detectedBookmaker,
       makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
       bet.result
     )) continue;

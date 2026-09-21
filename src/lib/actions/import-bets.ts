@@ -395,7 +395,9 @@ export async function importBets(
         return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
       }
       const evidence = findScanProofEvidence(scanProof.proofEvidence, scanned.ticketRef);
-      const verifiedResultProof = scanProof.selectedBookmaker !== "PMU" || evidence?.headerResult === scanned.result;
+      const verifiedResultProof = canAutomaticallyUpdateResult(
+        scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, scanned.result
+      );
       await prisma.$transaction(async (tx) => {
         await tx.bet.update({
           where: { id: target.id },
@@ -463,7 +465,7 @@ export async function importBets(
       if (!matchesRecorded) continue;
       const scanProof = bet.sourceScanIndex === undefined ? null : scanUsageById.get(scanUsageIds[bet.sourceScanIndex]);
       const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
-      if (!scanProof || !canAutomaticallyUpdateResult(scanProof.selectedBookmaker, evidence, bet.result)
+      if (!scanProof || !canAutomaticallyUpdateResult(scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result)
         || !findAutomaticResultProofTarget(pendingResultTargets, bet)) {
         return { error: "Ce ticket est déjà enregistré. Aucun doublon n’a été créé ; vérifie le résultat du pari existant." };
       }
@@ -474,7 +476,7 @@ export async function importBets(
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       const automaticResultTarget = scanProof
-        && canAutomaticallyUpdateResult(scanProof.selectedBookmaker, findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef), bet.result)
+        && canAutomaticallyUpdateResult(scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef), bet.result)
         ? findAutomaticResultProofTarget(
             pendingResultTargets.filter((target) => !matchedResultTargetIds.has(target.id)),
             bet
@@ -482,7 +484,9 @@ export async function importBets(
         : null;
       if (automaticResultTarget && scanProof) {
         const evidence = findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef);
-        const verifiedResultProof = scanProof.selectedBookmaker !== "PMU" || evidence?.headerResult === bet.result;
+        const verifiedResultProof = canAutomaticallyUpdateResult(
+          scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result
+        );
         const updated = await prisma.bet.updateMany({
           where: {
             id: automaticResultTarget.id,

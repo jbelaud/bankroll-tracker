@@ -396,6 +396,26 @@ describe("importBets", () => {
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
 
+  it("refuses a result update without header proof when the bookmaker is unidentified", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "existing-pmu", ticketRef: "13115596142",
+      date: new Date("2026-09-14T00:00:00Z"), stake: 5, odds: 2.63,
+    }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: null, selectedBookmaker: null,
+      createdAt: new Date("2026-09-17T20:58:00Z"), proofEvidence: null,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "13115596142", date: "2026-09-14", stake: 5, odds: 2.63,
+      result: "GAGNE", sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toEqual({ error: expect.stringContaining("déjà enregistré") });
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
   it("preserves the source scan index after a skipped earlier file", async () => {
     mocks.betFindMany.mockResolvedValue([]);
     mocks.scanUsageFindMany.mockResolvedValue([{
