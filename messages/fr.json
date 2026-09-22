@@ -971,6 +971,13 @@
     "title": "Compte",
     "intro": "Retrouve tes réglages au même endroit.",
     "navigation": {
+      "shortOverview": "Vue d’ensemble",
+      "shortProfile": "Mon profil",
+      "shortSubscription": "Abonnement",
+      "shortTracking": "Mon suivi",
+      "shortPublic": "Profil public",
+      "shortData": "Données",
+      "shortHelp": "Aide",
       "overview": "Vue d’ensemble",
       "overviewIntro": "L’essentiel de ton compte, sans te perdre dans les réglages.",
       "essential": "Réglages essentiels",

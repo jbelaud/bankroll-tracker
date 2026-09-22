@@ -971,6 +971,13 @@
     "title": "Account",
     "intro": "Find all your settings in one place.",
     "navigation": {
+      "shortOverview": "Overview",
+      "shortProfile": "My profile",
+      "shortSubscription": "Subscription",
+      "shortTracking": "My tracking",
+      "shortPublic": "Public profile",
+      "shortData": "Data",
+      "shortHelp": "Help",
       "overview": "Overview",
       "overviewIntro": "The essentials of your account, without the clutter.",
       "essential": "Essential settings",
