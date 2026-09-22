@@ -148,7 +148,6 @@ export default async function StatsPage({
   const cooldownUntil = visibleInsight
     ? visibleInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS
     : null;
-  const onCooldown = cooldownUntil != null && Date.now() < cooldownUntil;
 
   const hasActiveFilters = Boolean(
     from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet ||
@@ -168,16 +167,6 @@ export default async function StatsPage({
       }
       calendar={<ProfitCalendar entries={daily} currency={currency} />}
     >
-      {paidPlan ? (
-        <InsightsCard
-          settledCount={settledCount}
-          initialInsight={onCooldown ? (visibleInsight!.data as unknown as InsightResult) : null}
-          initialCooldownUntil={onCooldown ? cooldownUntil : null}
-        />
-      ) : (
-        <PremiumInsightsCard />
-      )}
-
       <section aria-label={t("overview.ariaLabel")} className="flex flex-col gap-3">
         <div>
           <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
@@ -185,6 +174,16 @@ export default async function StatsPage({
         </div>
         <OverviewGrid stats={stats} currency={currency} />
       </section>
+
+      {paidPlan ? (
+        <InsightsCard
+          settledCount={settledCount}
+          initialInsight={visibleInsight ? (visibleInsight.data as unknown as InsightResult) : null}
+          initialCooldownUntil={cooldownUntil}
+        />
+      ) : (
+        <PremiumInsightsCard />
+      )}
 
       <section aria-label={t("chartsAriaLabel")} className="flex flex-col gap-3">
         <div>

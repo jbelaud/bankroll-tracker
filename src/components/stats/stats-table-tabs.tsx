@@ -22,7 +22,7 @@ export function StatsTableTabs({
 
   return (
     <Tabs defaultValue="sport" className="flex flex-col gap-3">
-      <TabsList className="grid min-h-touch w-full grid-cols-4 gap-1 bg-transparent p-0">
+      <TabsList className="no-scrollbar flex min-h-touch w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
         {[
           { value: "sport", label: t("sport") },
           { value: "type", label: t("type") },
@@ -32,7 +32,7 @@ export function StatsTableTabs({
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="min-h-touch rounded-lg border border-input bg-transparent px-1 text-xs data-active:border-primary/50 data-active:bg-primary/10 data-active:text-primary"
+            className="min-h-touch min-w-28 shrink-0 rounded-lg border border-input bg-transparent px-3 text-xs data-active:border-primary/50 data-active:bg-primary/10 data-active:text-primary"
           >
             {tab.label}
           </TabsTrigger>

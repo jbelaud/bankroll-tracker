@@ -32,7 +32,29 @@ export async function StatsTable({
   }
 
   return (
-    <div className="no-scrollbar -mx-4 overflow-x-auto px-4">
+    <>
+      <ul className="divide-y divide-border sm:hidden">
+        {rows.map((row) => {
+          const winRate = row.settled > 0 ? fmtPct((row.won / row.settled) * 100, locale, 0) : "—";
+          return (
+            <li key={row.name} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex items-baseline justify-between gap-3">
+                <strong className="min-w-0 truncate text-sm">{displayName(row.name)}</strong>
+                <span className={`num shrink-0 text-sm font-semibold ${row.profit >= 0 ? "text-profit" : "text-loss"}`}>
+                  {fmtMoneySigned(row.profit, locale, currency)}
+                </span>
+              </div>
+              <dl className="mt-2 grid grid-cols-4 gap-2 text-xs">
+                <MobileMetric label={t("bets")} value={String(row.count)} />
+                <MobileMetric label={t("winRate")} value={winRate} />
+                <MobileMetric label={t("avgOdds")} value={row.avgOdds.toFixed(2)} />
+                <MobileMetric label={t("staked")} value={fmtMoney(row.staked, locale, currency)} />
+              </dl>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="hidden overflow-x-auto sm:block">
       <table className="w-full min-w-[480px] text-xs">
         <thead>
           <tr className="border-b border-border text-left uppercase tracking-wide text-muted-foreground">
@@ -61,6 +83,16 @@ export async function StatsTable({
           ))}
         </tbody>
       </table>
+      </div>
+    </>
+  );
+}
+
+function MobileMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <dt className="truncate text-[0.65rem] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="num mt-0.5 truncate font-medium">{value}</dd>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export function StatsTabs({
 
   return (
     <Tabs defaultValue="odds" className="flex flex-col gap-3">
-      <TabsList className="grid min-h-touch w-full grid-cols-5 gap-1 bg-transparent p-0">
+      <TabsList className="no-scrollbar flex min-h-touch w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
         {[
           { value: "odds", label: t("odds") },
           { value: "stake", label: t("stake") },
@@ -37,7 +37,7 @@ export function StatsTabs({
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="min-h-touch flex-col rounded-lg border border-input bg-transparent px-1 text-[0.7rem] data-active:border-primary/50 data-active:bg-primary/10 data-active:text-primary"
+            className="min-h-touch min-w-24 shrink-0 rounded-lg border border-input bg-transparent px-3 text-xs data-active:border-primary/50 data-active:bg-primary/10 data-active:text-primary"
           >
             {tab.label}
           </TabsTrigger>

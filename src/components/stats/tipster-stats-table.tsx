@@ -28,7 +28,30 @@ export async function TipsterStatsTable({
   const suffix = query.size > 0 ? `?${query}` : "";
 
   return (
-    <div className="no-scrollbar -mx-4 overflow-x-auto px-4">
+    <>
+      <ul className="divide-y divide-border sm:hidden">
+        {rows.map((row) => {
+          const netProfit = row.netProfit === null ? "—" : fmtMoneySigned(row.netProfit, locale, row.currency);
+          return (
+            <li key={row.tipsterId} className="py-3 first:pt-0 last:pb-0">
+              <div className="flex items-baseline justify-between gap-3">
+                <Link href={`/tipsters/${row.tipsterId}${suffix}`} className="min-w-0 truncate text-sm font-semibold text-primary underline-offset-4 hover:underline">
+                  {row.tipsterName}
+                </Link>
+                <span className={`num shrink-0 text-sm font-semibold ${row.netProfit === null ? "text-muted-foreground" : row.netProfit >= 0 ? "text-profit" : "text-loss"}`}>
+                  {netProfit}
+                </span>
+              </div>
+              <dl className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                <MobileMetric label={tableT("bets")} value={String(row.settledBetCount)} />
+                <MobileMetric label={tableT("winRate")} value={row.winRate === null ? "—" : fmtPct(row.winRate, locale, 0)} />
+                <MobileMetric label={t("roi")} value={row.roi === null ? "—" : fmtPct(row.roi, locale, 1)} />
+              </dl>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="hidden overflow-x-auto sm:block">
       <table className="w-full min-w-[860px] text-xs">
         <thead>
           <tr className="border-b border-border text-left uppercase tracking-wide text-muted-foreground">
@@ -67,6 +90,16 @@ export async function TipsterStatsTable({
           ))}
         </tbody>
       </table>
+      </div>
+    </>
+  );
+}
+
+function MobileMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <dt className="truncate text-[0.65rem] uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="num mt-0.5 truncate font-medium">{value}</dd>
     </div>
   );
 }

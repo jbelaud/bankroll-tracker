@@ -44,16 +44,8 @@ export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; cu
 
   const locale = await getLocale();
   const t = await getTranslations("stats.overview");
-
-  return (
-    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      <StatCard label={t("totalBets")} value={String(stats.totalBets)} />
-      <StatCard
-        label={t("avgOdds")}
-        value={stats.avgOdds.toFixed(2)}
-        sub={t("avgOddsWeighted", { value: stats.avgOddsWeighted.toFixed(2) })}
-      />
-      <StatCard label={t("avgStake")} value={fmtMoney(stats.avgStake, locale, currency)} />
+  const secondaryStats = (
+    <>
       <StatCard
         label={t("biggestWin")}
         value={biggestWinAmount != null ? fmtMoneySigned(biggestWinAmount, locale, currency) : "—"}
@@ -63,11 +55,6 @@ export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; cu
         label={t("biggestLoss")}
         value={biggestLossAmount != null ? fmtMoneySigned(biggestLossAmount, locale, currency) : "—"}
         trend={biggestLossAmount != null ? "down" : undefined}
-      />
-      <StatCard
-        label={t("currentStreak")}
-        value={String(stats.curStreak)}
-        trend={stats.curType === "PERDU" ? "down" : stats.curType === "GAGNE" ? "up" : undefined}
       />
       <StatCard
         label={t("bestStreak")}
@@ -81,6 +68,38 @@ export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; cu
         trend={stats.worstLossStreak > 0 ? "down" : undefined}
         sub={t("worstStreakSub")}
       />
+    </>
+  );
+
+  return (
+    <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <StatCard label={t("totalBets")} value={String(stats.totalBets)} />
+        <StatCard
+          label={t("avgOdds")}
+          value={stats.avgOdds.toFixed(2)}
+          sub={t("avgOddsWeighted", { value: stats.avgOddsWeighted.toFixed(2) })}
+        />
+        <StatCard label={t("avgStake")} value={fmtMoney(stats.avgStake, locale, currency)} />
+        <StatCard
+          label={t("currentStreak")}
+          value={String(stats.curStreak)}
+          trend={stats.curType === "PERDU" ? "down" : stats.curType === "GAGNE" ? "up" : undefined}
+        />
+      </div>
+
+      <details className="group sm:hidden">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-xl border border-border text-xs font-semibold text-primary marker:content-none">
+          <span className="group-open:hidden">{t("showMore")}</span>
+          <span className="hidden group-open:inline">{t("showLess")}</span>
+        </summary>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {secondaryStats}
+        </div>
+      </details>
+      <div className="hidden grid-cols-4 gap-2 sm:grid">
+        {secondaryStats}
+      </div>
     </section>
   );
 }

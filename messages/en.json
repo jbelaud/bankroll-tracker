@@ -800,7 +800,9 @@
       "bestStreak": "Best streak",
       "bestStreakSub": "wins",
       "worstStreak": "Worst streak",
-      "worstStreakSub": "losses"
+      "worstStreakSub": "losses",
+      "showMore": "Show records and extremes",
+      "showLess": "Hide extra metrics"
     },
     "tabs": {
       "odds": "Odds",

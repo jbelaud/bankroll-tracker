@@ -800,7 +800,9 @@
       "bestStreak": "Meilleure série",
       "bestStreakSub": "victoires",
       "worstStreak": "Pire série",
-      "worstStreakSub": "défaites"
+      "worstStreakSub": "défaites",
+      "showMore": "Voir les records et extrêmes",
+      "showLess": "Réduire les indicateurs"
     },
     "tabs": {
       "odds": "Cotes",
