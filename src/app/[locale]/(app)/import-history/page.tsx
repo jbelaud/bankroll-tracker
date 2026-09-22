@@ -25,7 +25,7 @@ export default async function ImportHistoryPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-1">
+    <div className="flex min-w-0 flex-1 flex-col gap-1 overflow-x-hidden">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <p className="mb-4 text-sm leading-6 text-muted-foreground">{t("description")}</p>
       <FileImportFlow

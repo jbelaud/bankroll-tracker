@@ -668,6 +668,7 @@
       "title": "Format et modèle d’import",
       "description": "Les colonnes peuvent être en français ou en anglais et dans n’importe quel ordre. Le séparateur CSV est détecté automatiquement.",
       "downloadTemplate": "Télécharger le modèle CSV",
+      "detailsLabel": "Règles et compatibilité détaillées",
       "requiredTitle": "Données indispensables",
       "requiredFields": "Date, mise et cote. La cote peut être absente pour un remboursement. Sport, type, libellé et résultat sont recommandés pour conserver un historique exploitable.",
       "resultsTitle": "États reconnus",

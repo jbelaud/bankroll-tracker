@@ -10,6 +10,7 @@ import {
   FileCsv,
   FileJs,
   Info,
+  CaretDown,
   WarningCircle,
 } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
@@ -223,9 +224,9 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-5">
-      <div className="grid gap-4 lg:max-w-3xl lg:grid-cols-2">
-        <div className="grid gap-1.5">
+    <div className="flex min-w-0 flex-1 flex-col gap-5">
+      <div className="grid min-w-0 max-w-full gap-4 lg:max-w-3xl lg:grid-cols-2">
+        <div className="grid min-w-0 gap-1.5">
         <Label htmlFor="file-import-bankroll" className="text-xs">{t("bankrollLabel")}</Label>
         <Select
           value={bankrollId}
@@ -237,7 +238,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           }}
           items={Object.fromEntries(bankrolls.map((bankroll) => [bankroll.id, bankrollLabel(bankroll)]))}
         >
-          <SelectTrigger id="file-import-bankroll" className="min-h-touch w-full rounded-lg px-3 text-sm">
+          <SelectTrigger id="file-import-bankroll" className="min-h-touch min-w-0 max-w-full rounded-lg px-3 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -250,14 +251,14 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
         </Select>
         </div>
         {selectedBankroll?.mode === "DISTRIBUTED" ? (
-          <div className="grid gap-1.5">
+          <div className="grid min-w-0 gap-1.5">
             <Label htmlFor="file-import-allocation" className="text-xs">{t("allocationLabel")}</Label>
             <Select
               value={allocationId}
               onValueChange={(value) => setAllocationId(value as string)}
               items={Object.fromEntries(selectedBankroll.allocations.map((allocation) => [allocation.id, allocation.bookmaker]))}
             >
-              <SelectTrigger id="file-import-allocation" className="min-h-touch w-full rounded-lg px-3 text-sm">
+              <SelectTrigger id="file-import-allocation" className="min-h-touch min-w-0 max-w-full rounded-lg px-3 text-sm">
                 <SelectValue placeholder={t("allocationPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -270,14 +271,14 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             </Select>
           </div>
         ) : null}
-        <div className="grid gap-1.5">
+        <div className="grid min-w-0 gap-1.5">
           <Label htmlFor="file-import-date-order" className="text-xs">{t("dateOrder.label")}</Label>
           <Select
             value={dateOrder}
             onValueChange={changeDateOrder}
             items={{ AUTO: t("dateOrder.auto"), DMY: t("dateOrder.dmy"), MDY: t("dateOrder.mdy") }}
           >
-            <SelectTrigger id="file-import-date-order" className="min-h-touch w-full rounded-lg px-3 text-sm">
+            <SelectTrigger id="file-import-date-order" className="min-h-touch min-w-0 max-w-full rounded-lg px-3 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -309,7 +310,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             setIsDragging(false);
             void readFile(event.dataTransfer.files[0]);
           }}
-          className={`flex min-h-[25rem] flex-1 flex-col items-center justify-center rounded-2xl border border-dashed p-6 text-center transition-colors animate-fade-in-up ${isDragging ? "border-primary bg-primary/10" : "border-border bg-muted/15"}`}
+          className={`flex min-h-72 min-w-0 flex-1 flex-col items-center justify-center rounded-2xl border border-dashed p-4 text-center transition-colors animate-fade-in-up sm:min-h-[25rem] sm:p-6 ${isDragging ? "border-primary bg-primary/10" : "border-border bg-muted/15"}`}
         >
           <span className="flex size-20 items-center justify-center rounded-2xl bg-primary/12 text-primary">
             <FileArrowUp size={40} weight="duotone" aria-hidden />
@@ -443,24 +444,30 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
               {t("documentation.downloadTemplate")}
             </Button>
           </div>
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-border bg-muted/25 p-4">
-              <h3 className="text-sm font-semibold">{t("documentation.requiredTitle")}</h3>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.requiredFields")}</p>
+          <details className="group mt-4 rounded-xl border border-border bg-muted/20">
+            <summary className="flex min-h-touch cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+              {t("documentation.detailsLabel")}
+              <CaretDown size={16} className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
+            </summary>
+            <div className="grid gap-3 border-t border-border p-3 md:grid-cols-2">
+              <div className="rounded-xl border border-border bg-background/70 p-4">
+                <h3 className="text-sm font-semibold">{t("documentation.requiredTitle")}</h3>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.requiredFields")}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-background/70 p-4">
+                <h3 className="text-sm font-semibold">{t("documentation.resultsTitle")}</h3>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.resultsValues")}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-background/70 p-4 md:col-span-2">
+                <h3 className="text-sm font-semibold">{t("documentation.betAnalytixTitle")}</h3>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.betAnalytixDescription")}</p>
+              </div>
+              <div className="rounded-xl border border-border bg-background/70 p-4 md:col-span-2">
+                <h3 className="text-sm font-semibold">{t("documentation.notImportedTitle")}</h3>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.notImportedDescription")}</p>
+              </div>
             </div>
-            <div className="rounded-xl border border-border bg-muted/25 p-4">
-              <h3 className="text-sm font-semibold">{t("documentation.resultsTitle")}</h3>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.resultsValues")}</p>
-            </div>
-            <div className="rounded-xl border border-border bg-muted/25 p-4 md:col-span-2">
-              <h3 className="text-sm font-semibold">{t("documentation.betAnalytixTitle")}</h3>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.betAnalytixDescription")}</p>
-            </div>
-            <div className="rounded-xl border border-border bg-muted/25 p-4 md:col-span-2">
-              <h3 className="text-sm font-semibold">{t("documentation.notImportedTitle")}</h3>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("documentation.notImportedDescription")}</p>
-            </div>
-          </div>
+          </details>
         </section>
       ) : null}
 

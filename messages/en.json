@@ -668,6 +668,7 @@
       "title": "Import format and template",
       "description": "Columns may be in English or French and in any order. The CSV delimiter is detected automatically.",
       "downloadTemplate": "Download CSV template",
+      "detailsLabel": "Detailed rules and compatibility",
       "requiredTitle": "Required data",
       "requiredFields": "Date, stake and odds. Odds may be omitted for a refund. Sport, type, label and result are recommended to preserve a useful history.",
       "resultsTitle": "Recognized statuses",
