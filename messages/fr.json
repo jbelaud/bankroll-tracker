@@ -45,6 +45,7 @@
     "referrals": "Parrainage",
     "admin": "Administration",
     "account": "Compte",
+    "moreNavigation": "Menu",
     "groups": {
       "tracking": "Suivi",
       "analysis": "Analyse",
@@ -968,6 +969,15 @@
 
   "account": {
     "title": "Compte",
+    "intro": "Retrouve tes réglages au même endroit.",
+    "sections": {
+      "overview": "Vue d’ensemble",
+      "tracking": "Mon suivi",
+      "public": "Mon profil public",
+      "preferences": "Préférences",
+      "help": "Aide et communauté",
+      "privacy": "Données et sécurité"
+    },
     "tipstersLink": "Gérer mes tipsters",
     "adminLink": "Administration",
     "referralLink": "Parrainer des amis",

@@ -18,6 +18,7 @@ import {
   Gauge,
   Compass,
   CaretDown,
+  List,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -74,7 +75,13 @@ export function AppNav({
   const [desktopMenuState, setDesktopMenuState] = useState<{ path: string; open: boolean } | null>(null);
   const [mobileMenuState, setMobileMenuState] = useState<{ path: string; open: boolean } | null>(null);
   const tipstersOpen = desktopMenuState?.path === pathname ? desktopMenuState.open : tipsterSectionActive;
-  const mobileTipstersOpen = mobileMenuState?.path === pathname ? mobileMenuState.open : tipsterSectionActive;
+  const mobileMenuOpen = mobileMenuState?.path === pathname && mobileMenuState.open;
+  const mobileMenuItems = [
+    NAV_ITEMS[1], NAV_ITEMS[3], NAV_ITEMS[5],
+    ...TIPSTER_SUB_ITEMS,
+    NAV_ITEMS[7],
+    ...(isAdmin ? [NAV_ITEMS[9]] : []),
+  ];
 
   return (
     <>
@@ -82,25 +89,25 @@ export function AppNav({
         <Link href="/dashboard" aria-label="Kalivoa">
           <Brand compact />
         </Link>
-        <nav aria-label={`${t("tipsters")} · ${t("ariaLabel")}`} className="relative">
+        <nav aria-label={t("moreNavigation")} className="relative">
           <button
             type="button"
-            aria-expanded={mobileTipstersOpen}
-            aria-controls="mobile-tipsters-submenu"
-            onClick={() => setMobileMenuState({ path: pathname, open: !mobileTipstersOpen })}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-more-menu"
+            onClick={() => setMobileMenuState({ path: pathname, open: !mobileMenuOpen })}
             className={cn(
               "flex min-h-touch items-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              tipsterSectionActive ? "bg-primary/12 text-primary" : "bg-card/60 text-foreground",
+              mobileMenuOpen || mobileMenuItems.some((item) => pathname.startsWith(item.href)) ? "bg-primary/12 text-primary" : "bg-card/60 text-foreground",
             )}
           >
-            <UserList size={19} weight={tipsterSectionActive ? "fill" : "regular"} aria-hidden />
-            <span>{t("tipsters")}</span>
-            <CaretDown size={15} className={cn("transition-transform", mobileTipstersOpen && "rotate-180")} aria-hidden />
+            <List size={19} aria-hidden />
+            <span>{t("moreNavigation")}</span>
+            <CaretDown size={15} className={cn("transition-transform", mobileMenuOpen && "rotate-180")} aria-hidden />
           </button>
-          {mobileTipstersOpen ? <ul id="mobile-tipsters-submenu" className="absolute right-0 top-full mt-2 w-56 space-y-1 rounded-2xl border border-border bg-background/98 p-2 shadow-xl backdrop-blur-xl">
-            {TIPSTER_SUB_ITEMS.map(({ href, key, icon: Icon }) => {
+          {mobileMenuOpen ? <ul id="mobile-more-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-10rem)] w-[min(19rem,calc(100vw-2rem))] space-y-1 overflow-y-auto rounded-2xl border border-border bg-background p-2 shadow-xl">
+            {mobileMenuItems.map(({ href, key, icon: Icon }) => {
               const active = pathname.startsWith(href);
-              return <li key={href}><Link href={href} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
+              return <li key={href}><Link href={href} onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
             })}
           </ul> : null}
         </nav>
@@ -112,7 +119,7 @@ export function AppNav({
           </Link>
         </div>
 
-        <nav aria-label={t("ariaLabel")} className="flex flex-1 flex-col px-3 py-5">
+        <nav aria-label={t("ariaLabel")} className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-5">
           <div className="flex flex-col gap-5">
             {DESKTOP_NAV_GROUPS.map(({ key: groupKey, items }) => (
               <div key={groupKey}>
@@ -210,14 +217,14 @@ export function AppNav({
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-touch flex-col items-center justify-center gap-0.5 py-2 text-[0.65rem] font-medium transition-colors",
+                  "flex min-h-touch min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-[0.65rem] font-medium transition-colors",
                   active
                     ? "text-primary"
                     : "text-muted-foreground active:text-foreground"
                 )}
               >
                 <Icon size={22} weight={active ? "fill" : "regular"} />
-                {label}
+                <span className="max-w-full truncate">{label}</span>
               </Link>
             </li>
           );

@@ -33,10 +33,12 @@ export function ScanQualityQueue({
   reports,
   counts,
   profiles,
+  locale,
 }: {
   reports: Report[];
   counts: { bookmaker: string; count: number }[];
   profiles: Profile[];
+  locale: string;
 }) {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState<string | null>(null);
@@ -45,6 +47,7 @@ export function ScanQualityQueue({
   const [examples, setExamples] = useState("");
   const [formError, setFormError] = useState("");
   const editingProfile = profiles.find((profile) => profile.bookmaker === bookmaker.trim().replace(/\s+/g, " "));
+  const dateFormat = new Intl.DateTimeFormat(locale, { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Paris" });
 
   const openEditor = (target: string) => {
     const profile = profiles.find((item) => item.bookmaker === target);
@@ -107,7 +110,7 @@ export function ScanQualityQueue({
       {reports.length === 0 ? <p className="glass-card rounded-xl p-4 text-sm text-muted-foreground">Aucun rapport à examiner.</p> : reports.map((report) => (
         <article key={report.id} className="glass-card flex flex-col gap-3 rounded-xl p-3 text-xs">
           <div className="flex items-center justify-between gap-2"><strong>{report.bookmaker}</strong><span>{report.status} · {report.correctionCount} correction(s)</span></div>
-          <p className="text-muted-foreground">{new Date(report.createdAt).toLocaleString()} · {report.model}{report.correctionTypes.length ? ` · ${report.correctionTypes.join(", ")}` : ""}</p>
+          <p className="text-muted-foreground">{dateFormat.format(new Date(report.createdAt))} · {report.model}{report.correctionTypes.length ? ` · ${report.correctionTypes.join(", ")}` : ""}</p>
           <a href={`/api/admin/scan-quality/${encodeURIComponent(report.id)}/image`} target="_blank" rel="noreferrer" className="text-primary underline">Ouvrir la capture sécurisée</a>
           <details><summary className="cursor-pointer font-medium">Comparer l&apos;extraction et la correction</summary><div className="mt-2 grid gap-2 md:grid-cols-2"><pre className="overflow-auto rounded bg-muted p-2">{JSON.stringify(report.rawExtraction, null, 2)}</pre><pre className="overflow-auto rounded bg-muted p-2">{JSON.stringify(report.finalExtraction, null, 2)}</pre></div></details>
           <div className="flex flex-wrap gap-2">

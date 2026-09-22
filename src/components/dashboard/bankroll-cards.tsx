@@ -22,7 +22,7 @@ export async function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[
   const tCommon = await getTranslations("common");
 
   return (
-    <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
+    <section aria-label={t("ariaLabel")} className="flex min-w-0 flex-col gap-2">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">{t("title")}</h2>
         <Link
@@ -32,7 +32,7 @@ export async function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[
           {tCommon("seeAll")}
         </Link>
       </div>
-      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-2 lg:overflow-visible lg:px-0">
+      <div className="no-scrollbar -mx-4 flex min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:grid lg:grid-cols-2 lg:overflow-visible lg:px-0">
         {bankrolls.map((br) => (
           <Link
             key={br.id}

@@ -13,7 +13,7 @@ export function ScanQualityReports({ reports }: { reports: { id: string; bookmak
   return (
     <section className="glass-card flex flex-col gap-3 rounded-xl p-4">
       <div><h2 className="text-sm font-semibold">{t("title")}</h2><p className="mt-1 text-xs text-muted-foreground">{t("description")}</p></div>
-      {reports.map((report) => <div key={report.id} className="flex items-center justify-between gap-2 text-xs"><span>{report.bookmaker} · {new Intl.DateTimeFormat(locale).format(new Date(report.createdAt))}</span><Button size="xs" variant="destructive" disabled={pending} onClick={() => startTransition(() => deleteOwnScanQualityReport(report.id))}>{t("delete")}</Button></div>)}
+      {reports.map((report) => <div key={report.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs"><span className="min-w-0 break-words">{report.bookmaker} · {new Intl.DateTimeFormat(locale).format(new Date(report.createdAt))}</span><Button size="xs" variant="destructive" disabled={pending} onClick={() => startTransition(() => deleteOwnScanQualityReport(report.id))}>{t("delete")}</Button></div>)}
     </section>
   );
 }

@@ -45,6 +45,7 @@
     "referrals": "Referrals",
     "admin": "Administration",
     "account": "Account",
+    "moreNavigation": "Menu",
     "groups": {
       "tracking": "Tracking",
       "analysis": "Analysis",
@@ -968,6 +969,15 @@
 
   "account": {
     "title": "Account",
+    "intro": "Find all your settings in one place.",
+    "sections": {
+      "overview": "Overview",
+      "tracking": "My tracking",
+      "public": "My public profile",
+      "preferences": "Preferences",
+      "help": "Help and community",
+      "privacy": "Data and security"
+    },
     "tipstersLink": "Manage my tipsters",
     "adminLink": "Administration",
     "referralLink": "Refer friends",

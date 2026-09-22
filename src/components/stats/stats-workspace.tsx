@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { CalendarBlank, FunnelSimple, X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import {
@@ -68,7 +68,7 @@ export function StatsWorkspace({
       </div>
 
       <Drawer open={filtersOpen} onOpenChange={setFiltersOpen} swipeDirection="left">
-        <DrawerContent className="overflow-y-auto border-border">
+        <DrawerContent className="overflow-y-auto border-border" style={{ "--drawer-content-width": "min(100vw, 24rem)" } as CSSProperties}>
           <DrawerHeader className="flex-row items-center justify-between border-b border-border p-4">
             <DrawerTitle className="text-base">{t("filters")}</DrawerTitle>
             <button

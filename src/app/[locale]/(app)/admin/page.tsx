@@ -724,6 +724,7 @@ export default async function AdminPage({
         </div>
 
         <ScanQualityQueue
+          locale={locale}
           reports={queueReports}
           counts={qualityCounts.map((item) => ({ bookmaker: item.bookmaker, count: item._count._all }))}
           profiles={bookmakerProfiles.map((profile) => ({

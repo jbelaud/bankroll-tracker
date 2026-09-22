@@ -83,7 +83,10 @@ export function ProfitCalendar({
       </div>
       <div className="mt-1 grid grid-cols-7 gap-1">
         {days.map((day) => {
-          const key = day.toISOString().slice(0, 10);
+          // Les cases utilisent une date civile locale : toISOString() les
+          // décalait d'un jour dans les fuseaux positifs, et divergeait entre
+          // le rendu serveur (UTC) et le navigateur (Europe/Paris).
+          const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
           const entry = byDate.get(key);
           const currentMonth = day.getMonth() === month.getMonth();
 

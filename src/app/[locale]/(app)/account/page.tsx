@@ -61,110 +61,89 @@ export default async function AccountPage({
     .reduce((s, b) => s + computeProfit(b), 0);
 
   const t = await getTranslations("account");
+  const sections = ["tracking", "public", "preferences", "help", "privacy"] as const;
 
   return (
-    <div className="flex flex-col gap-4 xl:grid xl:grid-cols-12 xl:items-start xl:gap-6">
-      <h1 className="text-xl font-semibold xl:col-span-12">{t("title")}</h1>
+    <div className="min-w-0 space-y-8 pb-4">
+      <header className="space-y-3">
+        <div><h1 className="text-2xl font-semibold">{t("title")}</h1><p className="mt-1 text-sm text-muted-foreground">{t("intro")}</p></div>
+        <ProfileHeader email={user.email ?? ""} />
+        <nav aria-label={t("sections.overview")} className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+          {sections.map((section) => <a key={section} href={`#${section}`} className="flex min-h-touch shrink-0 items-center rounded-full border border-border bg-card/60 px-4 text-xs font-semibold hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t(`sections.${section}`)}</a>)}
+        </nav>
+      </header>
 
-      <div className="xl:col-span-7"><ProfileHeader email={user.email ?? ""} /></div>
-
-      <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-5">
-        <div className="flex gap-3">
-          <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
-          <div>
-            <h2 className="text-sm font-semibold">{t("discord.sectionTitle")}</h2>
-            <p className="mt-1 text-xs text-muted-foreground">{t("discord.sectionDescription")}</p>
-          </div>
+      <section id="tracking" aria-labelledby="tracking-title" className="scroll-mt-20 space-y-3">
+        <h2 id="tracking-title" className="text-base font-semibold">{t("sections.tracking")}</h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <AccountGoalsCard monthProfit={monthProfit} initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0} initialLossLimit={dbUser?.monthlyLossLimit ?? 0} currency={dbUser?.currency ?? "EUR"} />
+          <PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null })} initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0} initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null} betaPhaseActive={betaProgram?.phase !== "ENDED"} />
         </div>
-        <a
-          href="https://discord.gg/aMc8jDAAx"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex min-h-touch items-center justify-center gap-2 rounded-lg border border-primary/35 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
-        >
-          {t("discord.join")}
-          <ArrowSquareOutIcon size={16} aria-hidden />
-        </a>
+        <PersonalConversionForm settings={dbUser?.personalConversion ?? null} currency={dbUser?.currency ?? "EUR"} locale={locale} />
       </section>
 
-      <PublicTipsterProfileForm profile={{
-        publicDisplayName: dbUser?.publicDisplayName ?? null,
-        publicHandle: dbUser?.publicHandle ?? null,
-        publicBio: dbUser?.publicBio ?? null,
-        publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
-        publicBannerUrl: dbUser?.publicBannerUrl ?? null,
-        publicXHandle: dbUser?.publicXHandle ?? null,
-      }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
-      <PublicBankrollOrder bankrolls={publicBankrolls} />
-      <PersonalConversionForm
-        settings={dbUser?.personalConversion ?? null}
-        currency={dbUser?.currency ?? "EUR"}
-        locale={locale}
-      />
-
-      <div className="xl:col-span-6"><AccountGoalsCard
-          monthProfit={monthProfit}
-          initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0}
-          initialLossLimit={dbUser?.monthlyLossLimit ?? 0}
-          currency={dbUser?.currency ?? "EUR"}
-        /></div>
-
-      <div className="xl:col-span-6"><PlanCard
-          plan={dbUser?.plan ?? "FREE"}
-          currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
-          betaOfferEligible={canUseBetaOffer({
-            email: user.email,
-            betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null,
-          })}
-          initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0}
-          initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null}
-          betaPhaseActive={betaProgram?.phase !== "ENDED"}
-        /></div>
-
-      <div className="xl:col-span-3"><LanguageSwitcher /></div>
-      <div className="xl:col-span-3"><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
-
-      <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
-        <div>
-          <h2 className="text-sm font-semibold">{t("feedback.sectionTitle")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("feedback.sectionDescription")}</p>
+      <section id="public" aria-labelledby="public-title" className="scroll-mt-20 space-y-3">
+        <h2 id="public-title" className="text-base font-semibold">{t("sections.public")}</h2>
+        <PublicTipsterProfileForm profile={{
+          publicDisplayName: dbUser?.publicDisplayName ?? null,
+          publicHandle: dbUser?.publicHandle ?? null,
+          publicBio: dbUser?.publicBio ?? null,
+          publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
+          publicBannerUrl: dbUser?.publicBannerUrl ?? null,
+          publicXHandle: dbUser?.publicXHandle ?? null,
+        }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
+        <PublicBankrollOrder bankrolls={publicBankrolls} />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link href="/tipsters" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary">{t("tipstersLink")}</Link>
+          <Link href="/referrals" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary">{t("referralLink")}</Link>
         </div>
-        <FeedbackButton />
       </section>
 
-      <Link
-        href="/tipsters"
-        className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
-      >
-        {t("tipstersLink")}
-      </Link>
-
-      <Link
-        href="/referrals"
-        className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
-      >
-        {t("referralLink")}
-      </Link>
-
-      {isAdminEmail(user.email) && (
-        <Link
-          href="/admin"
-          className="glass-card min-h-touch rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary xl:col-span-6"
-        >
-          {t("adminLink")}
-        </Link>
-      )}
-
-      <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
-        <h2 className="text-sm font-semibold">{t("data.title")}</h2>
-        <ExportDataButton />
+      <section id="preferences" aria-labelledby="preferences-title" className="scroll-mt-20 space-y-3">
+        <h2 id="preferences-title" className="text-base font-semibold">{t("sections.preferences")}</h2>
+        <div className="grid gap-4 sm:grid-cols-2"><LanguageSwitcher /><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
       </section>
 
-      <div className="xl:col-span-12"><ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} /></div>
+      <section id="help" aria-labelledby="help-title" className="scroll-mt-20 space-y-3">
+        <h2 id="help-title" className="text-base font-semibold">{t("sections.help")}</h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+            <div className="flex gap-3">
+              <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
+              <div>
+                <h3 className="text-sm font-semibold">{t("discord.sectionTitle")}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{t("discord.sectionDescription")}</p>
+              </div>
+            </div>
+            <a href="https://discord.gg/aMc8jDAAx" target="_blank" rel="noopener noreferrer" className="flex min-h-touch items-center justify-center gap-2 rounded-lg border border-primary/35 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10">
+              {t("discord.join")}
+              <ArrowSquareOutIcon size={16} aria-hidden />
+            </a>
+          </section>
+          <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+            <div>
+              <h3 className="text-sm font-semibold">{t("feedback.sectionTitle")}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{t("feedback.sectionDescription")}</p>
+            </div>
+            <FeedbackButton />
+          </section>
+        </div>
+      </section>
 
-      <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4 xl:col-span-6">
-        <h2 className="text-sm font-semibold">{t("security.title")}</h2>
-        <SignOutButton />
+      <section id="privacy" aria-labelledby="privacy-title" className="scroll-mt-20 space-y-3">
+        <h2 id="privacy-title" className="text-base font-semibold">{t("sections.privacy")}</h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+            <h3 className="text-sm font-semibold">{t("data.title")}</h3>
+            <ExportDataButton />
+          </section>
+          <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
+            <h3 className="text-sm font-semibold">{t("security.title")}</h3>
+            <SignOutButton />
+          </section>
+        </div>
+        <ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} />
+        {isAdminEmail(user.email) && <Link href="/admin" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-primary">{t("adminLink")}</Link>}
       </section>
     </div>
   );

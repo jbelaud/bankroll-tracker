@@ -33,7 +33,7 @@ function Reveal({
 }) {
   return (
     <div
-      className={cn("animate-fade-in-up", className)}
+      className={cn("min-w-0 animate-fade-in-up", className)}
       style={{ animationDelay: `${index * 70}ms` }}
     >
       {children}
@@ -167,7 +167,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 xl:grid xl:grid-cols-12 xl:items-start">
+    <div className="flex min-w-0 flex-col gap-6 xl:grid xl:grid-cols-12 xl:items-start">
       <h1 className="sr-only">{t("title")}</h1>
       {bets.length === 0 && (
         <Reveal index={0} className="xl:col-span-12">

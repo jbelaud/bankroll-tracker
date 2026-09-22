@@ -36,7 +36,7 @@ export function StatsFilters({
   const availableTypes = sport ? typesBySport[sport] ?? [] : [];
 
   return (
-      <form method="get" className="grid grid-cols-2 gap-2">
+      <form method="get" className="grid min-w-0 grid-cols-2 gap-2 [&>input]:min-w-0 [&>select]:min-w-0">
         <input name="from" type="date" defaultValue={values.from} aria-label={t("startDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="to" type="date" defaultValue={values.to} aria-label={t("endDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="q" defaultValue={values.q} placeholder={t("search")} className="col-span-2 h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
