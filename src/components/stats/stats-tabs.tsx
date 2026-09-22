@@ -25,8 +25,8 @@ export function StatsTabs({
   const t = useTranslations("stats.tabs");
 
   return (
-    <Tabs defaultValue="odds" className="flex flex-col gap-3">
-      <TabsList className="no-scrollbar flex min-h-touch w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
+    <Tabs defaultValue="odds" className="flex min-w-0 flex-col gap-3">
+      <TabsList className="no-scrollbar flex min-h-touch w-full max-w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
         {[
           { value: "odds", label: t("odds") },
           { value: "stake", label: t("stake") },

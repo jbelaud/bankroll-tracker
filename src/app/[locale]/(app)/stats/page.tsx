@@ -190,12 +190,12 @@ export default async function StatsPage({
           <h2 className="text-sm font-semibold">{t("sections.analysis")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("sections.analysisDescription")}</p>
         </div>
-        <div className="grid gap-3 xl:grid-cols-2">
-          <div className="glass-card rounded-xl p-3 lg:p-4">
+        <div className="grid min-w-0 gap-3 xl:grid-cols-2">
+          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
             <h3 className="text-sm font-semibold">{t("curve.title")}</h3>
             <ProfitCurve data={cumulativeProfit} currency={currency} />
           </div>
-          <div className="glass-card rounded-xl p-3 lg:p-4">
+          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
             <StatsTabs
               oddsData={oddsData}
               stakeData={stakeData}
@@ -213,7 +213,7 @@ export default async function StatsPage({
           <h2 className="text-sm font-semibold">{t("sections.breakdown")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("sections.breakdownDescription")}</p>
         </div>
-        <div className="glass-card rounded-xl p-3">
+        <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3">
           <StatsTableTabs
             sportTable={<StatsTable rows={bySport} kind="sport" currency={currency} />}
             typeTable={

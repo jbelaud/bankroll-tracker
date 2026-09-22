@@ -21,8 +21,8 @@ export function StatsTableTabs({
   const t = useTranslations("stats.tableTabs");
 
   return (
-    <Tabs defaultValue="sport" className="flex flex-col gap-3">
-      <TabsList className="no-scrollbar flex min-h-touch w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
+    <Tabs defaultValue="sport" className="flex min-w-0 flex-col gap-3">
+      <TabsList className="no-scrollbar flex min-h-touch w-full max-w-full justify-start gap-2 overflow-x-auto bg-transparent p-0 pb-1">
         {[
           { value: "sport", label: t("sport") },
           { value: "type", label: t("type") },
