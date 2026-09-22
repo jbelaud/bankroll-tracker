@@ -59,7 +59,7 @@ export default async function ScanPage({ searchParams }: { searchParams: Promise
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex min-w-0 flex-1 flex-col gap-4">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <ScanFlow
         bankrolls={activeBankrolls.map((br) => ({
