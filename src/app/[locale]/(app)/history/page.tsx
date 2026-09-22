@@ -54,7 +54,7 @@ export default async function HistoryPage() {
   const currency = await getServerCurrency();
 
   return (
-    <div className="flex min-w-0 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4 overflow-x-hidden">
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <HistoryList
         bets={items}
