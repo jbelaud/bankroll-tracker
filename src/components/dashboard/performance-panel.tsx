@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CalendarBlank, ChartLine, FunnelSimple } from "@phosphor-icons/react";
+import { CalendarBlank, ChartLine } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import { fmtMoney } from "@/lib/format";
 
@@ -47,20 +47,11 @@ export function PerformancePanel({
 
   return (
     <section aria-label={t("ariaLabel")} className="overflow-hidden rounded-2xl border border-border bg-linear-to-br from-primary/12 via-background to-profit/10 p-4 lg:p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            {t("eyebrow")}
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight">{fmtMoney(balance, locale, currency)}</h2>
-        </div>
-        <Link
-          href="/stats"
-          aria-label={t("filtersAriaLabel")}
-          className="flex size-9 items-center justify-center rounded-full border border-border bg-background/60 text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <FunnelSimple size={17} weight="bold" />
-        </Link>
+      <div>
+        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+          {t("eyebrow")}
+        </p>
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight">{fmtMoney(balance, locale, currency)}</h2>
       </div>
 
       <div className="mt-3 h-52 lg:h-72">
@@ -97,7 +88,8 @@ export function PerformancePanel({
             key={value}
             type="button"
             onClick={() => setPeriod(value)}
-            className={`min-h-9 rounded-lg border text-xs font-semibold transition-colors ${
+            aria-pressed={period === value}
+            className={`min-h-11 rounded-lg border text-xs font-semibold transition-colors ${
               period === value
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-background/50 text-muted-foreground hover:text-foreground"

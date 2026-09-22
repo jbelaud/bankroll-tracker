@@ -160,6 +160,7 @@
 
   "dashboard": {
     "title": "Tableau de bord",
+    "resources": "Outils et ressources",
     "welcomeTitle": "Bienvenue sur Kalivoa",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
     "onboarding": {
@@ -230,12 +231,13 @@
     },
     "capital": {
       "ariaLabel": "Synthèse de la bankroll globale",
-      "eyebrow": "Bankroll globale",
-      "title": "Vue d'ensemble de tes bankrolls",
+      "eyebrow": "Composition du capital",
+      "title": "D'où viennent tes fonds",
+      "initial": "Capital initial",
       "netFunding": "Fonds nets",
       "deposits": "Dépôts",
       "withdrawals": "Retraits",
-      "performance": "Performance globale sur fonds nets : {value}",
+      "performance": "Bénéfice / fonds nets : {value}",
       "performanceUnavailable": "Ajoute des fonds pour calculer une performance."
     },
     "bankrollCards": {

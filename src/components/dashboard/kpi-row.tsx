@@ -15,19 +15,19 @@ function KpiTile({
   sub?: string;
 }) {
   return (
-    <div className="glass-card flex min-h-28 flex-col items-center justify-center gap-1 rounded-2xl p-3 text-center">
+    <div className="glass-card flex min-h-24 min-w-0 flex-col items-start justify-center gap-1 rounded-xl p-3 sm:min-h-28 sm:p-4">
       <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
       <span
         className={cn(
-          "num text-2xl font-bold tracking-tight whitespace-nowrap",
+          "num max-w-full text-lg font-bold tracking-tight sm:text-xl 2xl:text-2xl",
           trend !== undefined && (trend >= 0 ? "text-profit" : "text-loss")
         )}
       >
         {value}
       </span>
-      {sub && <span className="text-[0.65rem] text-muted-foreground">{sub}</span>}
+      {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
     </div>
   );
 }
