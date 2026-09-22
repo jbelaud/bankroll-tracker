@@ -122,7 +122,7 @@ export default async function DiscoverPage({ params, searchParams }: {
       <section className="glass-card overflow-hidden rounded-3xl p-5 sm:p-8">
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"><UsersThree size={15} weight="fill" aria-hidden /> Communauté Kalivoa</span>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Découvre des tipsters transparents</h1>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Suivez les résultats, pas les promesses.</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">Compare leurs résultats en unités, leur activité et le niveau de preuve de leurs paris sans jamais voir leur bankroll réelle.</p>
         </div>
         <form key={`${search}:${requestedSport}:${activeProof}:${activeSort}`} action={`/${locale}/discover`} method="get" className="mt-6 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
