@@ -37,7 +37,7 @@ export async function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[
           <Link
             key={br.id}
             href={`/bankrolls/${br.id}`}
-            className="glass-card flex w-40 shrink-0 snap-start flex-col gap-2 rounded-xl p-4 transition-transform active:scale-[0.97] lg:w-auto lg:shrink"
+            className="glass-card relative flex w-40 shrink-0 snap-start flex-col gap-2 rounded-xl p-4 transition-transform active:scale-[0.97] lg:w-auto lg:shrink"
           >
             <div className="flex flex-col">
               <span className="truncate text-sm font-medium">{br.name}</span>
