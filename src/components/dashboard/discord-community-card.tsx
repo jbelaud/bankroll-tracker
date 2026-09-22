@@ -7,7 +7,7 @@ export async function DiscordCommunityCard() {
   const t = await getTranslations("dashboard.community");
 
   return (
-    <section aria-label={t("title")} className="glass-card flex items-center justify-between gap-3 rounded-xl p-4">
+    <section aria-label={t("title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
       <div className="flex min-w-0 gap-3">
         <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
         <div>
@@ -19,7 +19,7 @@ export async function DiscordCommunityCard() {
         href={DISCORD_INVITE_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex min-h-touch shrink-0 items-center gap-1.5 rounded-lg border border-primary/35 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
+        className="flex min-h-touch items-center justify-center gap-1.5 rounded-lg border border-primary/35 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
       >
         {t("join")}
         <ArrowSquareOutIcon size={15} aria-hidden />
