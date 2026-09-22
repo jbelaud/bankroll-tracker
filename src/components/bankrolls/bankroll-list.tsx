@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Plus, PencilSimple, Wallet, LockKey, Crown } from "@phosphor-icons/react";
+import { ArrowRight, Plus, Wallet, LockKey, Crown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { fmtMoney, fmtMoneySigned } from "@/lib/format";
@@ -53,7 +53,7 @@ export function BankrollList({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <Button
         onClick={openCreate}
         className="min-h-touch w-full rounded-lg text-sm font-semibold animate-fade-in-up sm:w-auto"
@@ -95,57 +95,51 @@ export function BankrollList({
                   </Link>
                 </div>
               ) : (
-                <>
-                  <Link
-                href={`/bankrolls/${br.id}`}
-                aria-label={t("openAriaLabel", { name: br.name })}
-                className="flex min-w-0 flex-1 flex-col gap-4"
-              >
-                <div className="min-w-0 pr-10">
-                  <div className="min-w-0">
-                    <h2 className="truncate text-sm font-semibold">{br.name}</h2>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {br.mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: br.allocations.length })}
+                <Link
+                  href={`/bankrolls/${br.id}`}
+                  className="group flex min-w-0 flex-1 flex-col gap-4 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+                >
+                  <span className="sr-only">{t("openAriaLabel", { name: br.name })}. </span>
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="truncate text-sm font-semibold">{br.name}</h2>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {br.mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: br.allocations.length })}
+                      </p>
+                      {br.referenceCapital ? <p className="num mt-1 text-[0.65rem] text-primary">{t("referenceUnit", { value: fmtMoney(br.referenceCapital / 100, locale, currency) })}</p> : null}
+                    </div>
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary group-focus-visible:bg-primary/10 group-focus-visible:text-primary">
+                      <ArrowRight size={17} weight="bold" aria-hidden />
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">{t("balance")}</span>
+                    <p className="num mt-1 text-2xl font-semibold tracking-tight">
+                      {fmtMoney(br.balance, locale, currency)}
                     </p>
-                    {br.referenceCapital ? <p className="num mt-1 text-[0.65rem] text-primary">{t("referenceUnit", { value: fmtMoney(br.referenceCapital / 100, locale, currency) })}</p> : null}
                   </div>
-                </div>
 
-                <div>
-                  <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">{t("balance")}</span>
-                  <p className="num mt-1 text-2xl font-semibold tracking-tight">
-                    {fmtMoney(br.balance, locale, currency)}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
-                  <div className="min-w-0">
-                    <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("profit")}</span>
-                    <strong className={br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
-                      {fmtMoneySigned(br.profit, locale, currency)}
-                    </strong>
+                  <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
+                    <div className="min-w-0">
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("profit")}</span>
+                      <strong className={br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
+                        {fmtMoneySigned(br.profit, locale, currency)}
+                      </strong>
+                    </div>
+                    <div className="min-w-0">
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span>
+                      <strong className={br.profit >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
+                        {br.initial > 0 ? `${br.profit >= 0 ? "+" : ""}${((br.profit / br.initial) * 100).toFixed(1)}%` : "—"}
+                      </strong>
+                    </div>
+                    <div className="min-w-0">
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("bets")}</span>
+                      <strong className="num mt-1 block text-xs">{br.betCount}</strong>
+                      {br.pendingCount > 0 && <span className="mt-0.5 block truncate text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span>}
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span>
-                    <strong className={br.profit >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
-                      {br.initial > 0 ? `${br.profit >= 0 ? "+" : ""}${((br.profit / br.initial) * 100).toFixed(1)}%` : "—"}
-                    </strong>
-                  </div>
-                  <div className="min-w-0">
-                    <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("bets")}</span>
-                    <strong className="num mt-1 block text-xs">{br.betCount}</strong>
-                    {br.pendingCount > 0 && <span className="mt-0.5 block truncate text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span>}
-                  </div>
-                </div>
-              </Link>
-                  <Link
-                    href={`/bankrolls/${br.id}`}
-                    aria-label={t("openAriaLabel", { name: br.name })}
-                    className="absolute right-3 top-3 flex min-h-touch min-w-touch items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    <PencilSimple size={18} aria-hidden />
-                  </Link>
-                </>
+                </Link>
               )}
             </li>
           ))}

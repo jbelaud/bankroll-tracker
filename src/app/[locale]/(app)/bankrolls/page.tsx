@@ -47,7 +47,7 @@ export default async function BankrollsPage({
   const currency = await getServerCurrency();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <header>
         <h1 className="text-xl font-semibold">{t("title")}</h1>
         <p className="mt-1 text-xs text-muted-foreground">{t("subtitle", { count: bankrolls.length })}</p>
