@@ -44,7 +44,7 @@ export async function StatsTable({
                   {fmtMoneySigned(row.profit, locale, currency)}
                 </span>
               </div>
-              <dl className="mt-2 grid grid-cols-4 gap-2 text-xs">
+              <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
                 <MobileMetric label={t("bets")} value={String(row.count)} />
                 <MobileMetric label={t("winRate")} value={winRate} />
                 <MobileMetric label={t("avgOdds")} value={row.avgOdds.toFixed(2)} />
