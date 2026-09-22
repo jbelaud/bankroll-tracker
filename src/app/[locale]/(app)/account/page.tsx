@@ -1,150 +1,64 @@
 import { getTranslations } from "next-intl/server";
-import { ArrowSquareOutIcon, DiscordLogoIcon } from "@phosphor-icons/react/dist/ssr";
-import { redirect } from "@/i18n/navigation";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-import { listAllBets } from "@/lib/actions/bets";
-import { computeProfit } from "@/lib/profit";
-import { ProfileHeader } from "@/components/account/profile-header";
-import { AccountGoalsCard } from "@/components/account/account-goals-card";
-import { ExportDataButton } from "@/components/account/export-data-button";
-import { SignOutButton } from "@/components/account/sign-out-button";
-import { LanguageSwitcher } from "@/components/account/language-switcher";
-import { CurrencySwitcher } from "@/components/account/currency-switcher";
-import { PlanCard } from "@/components/account/plan-card";
-import { FeedbackButton } from "@/components/account/feedback-button";
-import { isAdminEmail } from "@/lib/admin";
-import { canUseBetaOffer } from "@/lib/billing/beta-offer";
-import { ScanQualityReports } from "@/components/account/scan-quality-reports";
-import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
-import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
-import { PersonalConversionForm } from "@/components/account/personal-conversion-form";
+import { PlanStatusSummary } from "@/components/account/plan-status-summary";
 
-export default async function AccountPage({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = await params;
+export default async function AccountPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
 
-  if (!user) {
-    redirect({ href: "/login", locale });
-    return null;
-  }
-
-  const [dbUser, bets, qualityReports, betaProgram, publicBankrolls] = await Promise.all([
-    prisma.user.findUnique({ where: { id: user.id }, include: { personalConversion: true } }),
-    listAllBets(),
-    prisma.scanQualityReport.findMany({ where: { userId: user.id }, select: { id: true, bookmaker: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
-    prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
-    prisma.bankroll.findMany({
-      where: { userId: user.id, certificationStartedAt: { not: null } },
-      orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }, { id: "asc" }],
-      select: { id: true, name: true, isPublic: true },
+  const [dbUser, t] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: user.id },
+      select: { plan: true, subscriptionCurrentPeriodEnd: true, publicDisplayName: true },
     }),
+    getTranslations("account"),
   ]);
 
-  const now = new Date();
-  const monthProfit = bets
-    .filter(
-      (b) =>
-        b.result !== "EN_ATTENTE" &&
-        b.date.getFullYear() === now.getFullYear() &&
-        b.date.getMonth() === now.getMonth()
-    )
-    .reduce((s, b) => s + computeProfit(b), 0);
-
-  const t = await getTranslations("account");
-  const sections = ["tracking", "public", "preferences", "help", "privacy"] as const;
+  const rows = [
+    { href: "/account/profile", label: t("navigation.profile"), detail: user.email ?? "" },
+    { href: "/account/tracking", label: t("navigation.tracking"), detail: t("navigation.trackingDetail") },
+    { href: "/account/public-profile", label: t("navigation.public"), detail: dbUser?.publicDisplayName || t("navigation.publicEmpty") },
+    { href: "/account/data", label: t("navigation.data"), detail: t("navigation.dataDetail") },
+  ];
 
   return (
-    <div className="min-w-0 space-y-8 pb-4">
-      <header className="space-y-3">
-        <div><h1 className="text-2xl font-semibold">{t("title")}</h1><p className="mt-1 text-sm text-muted-foreground">{t("intro")}</p></div>
-        <ProfileHeader email={user.email ?? ""} />
-        <nav aria-label={t("sections.overview")} className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-          {sections.map((section) => <a key={section} href={`#${section}`} className="flex min-h-touch shrink-0 items-center rounded-full border border-border bg-card/60 px-4 text-xs font-semibold hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t(`sections.${section}`)}</a>)}
-        </nav>
+    <div className="min-w-0 space-y-7">
+      <header>
+        <p className="text-xs font-medium text-primary">{t("title")}</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{t("navigation.overview")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("navigation.overviewIntro")}</p>
       </header>
 
-      <section id="tracking" aria-labelledby="tracking-title" className="scroll-mt-20 space-y-3">
-        <h2 id="tracking-title" className="text-base font-semibold">{t("sections.tracking")}</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <AccountGoalsCard monthProfit={monthProfit} initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0} initialLossLimit={dbUser?.monthlyLossLimit ?? 0} currency={dbUser?.currency ?? "EUR"} />
-          <PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null })} initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0} initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null} betaPhaseActive={betaProgram?.phase !== "ENDED"} />
+      <div className="flex min-w-0 items-center gap-3 border-b border-border pb-5">
+        <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-base font-semibold text-primary">{user.email?.charAt(0).toUpperCase() || "?"}</span>
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground">{t("connectedAs")}</p>
+          <p className="truncate text-sm font-semibold">{user.email}</p>
         </div>
-        <PersonalConversionForm settings={dbUser?.personalConversion ?? null} currency={dbUser?.currency ?? "EUR"} locale={locale} />
-      </section>
+      </div>
 
-      <section id="public" aria-labelledby="public-title" className="scroll-mt-20 space-y-3">
-        <h2 id="public-title" className="text-base font-semibold">{t("sections.public")}</h2>
-        <PublicTipsterProfileForm profile={{
-          publicDisplayName: dbUser?.publicDisplayName ?? null,
-          publicHandle: dbUser?.publicHandle ?? null,
-          publicBio: dbUser?.publicBio ?? null,
-          publicAvatarUrl: dbUser?.publicAvatarUrl ?? null,
-          publicBannerUrl: dbUser?.publicBannerUrl ?? null,
-          publicXHandle: dbUser?.publicXHandle ?? null,
-        }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
-        <PublicBankrollOrder bankrolls={publicBankrolls} />
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Link href="/tipsters" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary">{t("tipstersLink")}</Link>
-          <Link href="/referrals" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-center text-sm font-semibold text-primary">{t("referralLink")}</Link>
-        </div>
-      </section>
+      <Link href="/account/subscription" className="group flex min-w-0 items-center gap-3 rounded-xl border border-primary/25 bg-primary/[0.06] p-4 transition-colors hover:bg-primary/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <div className="min-w-0 flex-1"><PlanStatusSummary plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} variant="overview" /></div>
+        <ArrowRightIcon size={18} className="shrink-0 text-primary transition-transform group-hover:translate-x-1" aria-hidden />
+      </Link>
 
-      <section id="preferences" aria-labelledby="preferences-title" className="scroll-mt-20 space-y-3">
-        <h2 id="preferences-title" className="text-base font-semibold">{t("sections.preferences")}</h2>
-        <div className="grid gap-4 sm:grid-cols-2"><LanguageSwitcher /><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
-      </section>
-
-      <section id="help" aria-labelledby="help-title" className="scroll-mt-20 space-y-3">
-        <h2 id="help-title" className="text-base font-semibold">{t("sections.help")}</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <section aria-label={t("discord.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
-            <div className="flex gap-3">
-              <DiscordLogoIcon size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
-              <div>
-                <h3 className="text-sm font-semibold">{t("discord.sectionTitle")}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{t("discord.sectionDescription")}</p>
-              </div>
-            </div>
-            <a href="https://discord.gg/aMc8jDAAx" target="_blank" rel="noopener noreferrer" className="flex min-h-touch items-center justify-center gap-2 rounded-lg border border-primary/35 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10">
-              {t("discord.join")}
-              <ArrowSquareOutIcon size={16} aria-hidden />
-            </a>
-          </section>
-          <section aria-label={t("feedback.sectionTitle")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
-            <div>
-              <h3 className="text-sm font-semibold">{t("feedback.sectionTitle")}</h3>
-              <p className="mt-1 text-xs text-muted-foreground">{t("feedback.sectionDescription")}</p>
-            </div>
-            <FeedbackButton />
-          </section>
+      <section aria-labelledby="settings-title">
+        <h2 id="settings-title" className="mb-2 text-sm font-semibold">{t("navigation.essential")}</h2>
+        <div className="divide-y divide-border border-y border-border">
+          {rows.map((row) => (
+            <Link key={row.href} href={row.href} className="group flex min-h-16 min-w-0 items-center gap-3 py-3 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <span className="min-w-0 flex-1 text-sm font-medium">{row.label}</span>
+              <span className="max-w-[45%] truncate text-right text-xs text-muted-foreground group-hover:text-primary sm:text-sm">{row.detail}</span>
+              <ArrowRightIcon size={16} className="shrink-0 text-muted-foreground group-hover:text-primary" aria-hidden />
+            </Link>
+          ))}
         </div>
       </section>
-
-      <section id="privacy" aria-labelledby="privacy-title" className="scroll-mt-20 space-y-3">
-        <h2 id="privacy-title" className="text-base font-semibold">{t("sections.privacy")}</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <section aria-label={t("data.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
-            <h3 className="text-sm font-semibold">{t("data.title")}</h3>
-            <ExportDataButton />
-          </section>
-          <section aria-label={t("security.title")} className="glass-card flex flex-col gap-3 rounded-xl p-4">
-            <h3 className="text-sm font-semibold">{t("security.title")}</h3>
-            <SignOutButton />
-          </section>
-        </div>
-        <ScanQualityReports reports={qualityReports.map((report) => ({ ...report, createdAt: report.createdAt.toISOString() }))} />
-        {isAdminEmail(user.email) && <Link href="/admin" className="glass-card flex min-h-touch items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-primary">{t("adminLink")}</Link>}
-      </section>
+      <Link href="/account/help" className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline lg:hidden">{t("navigation.help")}</Link>
     </div>
   );
 }

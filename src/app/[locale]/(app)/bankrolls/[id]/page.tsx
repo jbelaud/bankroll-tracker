@@ -195,7 +195,7 @@ export default async function BankrollDetailPage({
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
           La référence de cette bankroll sert uniquement à figer ses mises en unités. Ton équivalent privé en euros est un réglage global commun à toutes les pages publiques.
         </p>
-        <Link href="/account#personal-conversion" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Gérer dans mon compte</Link>
+        <Link href="/account/tracking#personal-conversion" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Gérer dans mon compte</Link>
       </section>
 
       {curve.length >= 2 && (

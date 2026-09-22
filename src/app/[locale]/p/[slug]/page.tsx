@@ -371,7 +371,7 @@ function PersonalConversionPanel({ locale, viewer, currency, selectedReference, 
 
   if (!selectedReference || oneUnit === null || !currency) return <section className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
     <div><h2 className="text-sm font-semibold">Configure ta conversion personnelle</h2><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Ajoute une référence globale privée pour voir ton équivalent sur tous les paris publics.</p></div>
-    <Link href="/account#personal-conversion" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer dans mon compte</Link>
+    <Link href="/account/tracking#personal-conversion" className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Configurer dans mon compte</Link>
   </section>;
 
   return <section className="glass-card rounded-2xl border-primary/20 p-4 sm:p-5">

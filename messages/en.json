@@ -970,6 +970,28 @@
   "account": {
     "title": "Account",
     "intro": "Find all your settings in one place.",
+    "navigation": {
+      "overview": "Overview",
+      "overviewIntro": "The essentials of your account, without the clutter.",
+      "essential": "Essential settings",
+      "profile": "Profile and preferences",
+      "profileIntro": "Your private information and display preferences.",
+      "privateIdentity": "Private identity",
+      "subscription": "Subscription",
+      "subscriptionIntro": "Your plan and subscription management options.",
+      "tracking": "Personal tracking",
+      "trackingIntro": "Your goals and personal unit conversion.",
+      "trackingDetail": "Goals and conversion",
+      "public": "Public profile",
+      "publicIntro": "Your tipster identity, separate from your private account.",
+      "publicEmpty": "Not set up",
+      "data": "Data and privacy",
+      "dataIntro": "Export your data and control your shares.",
+      "dataDetail": "Exports and shares",
+      "help": "Help and support",
+      "helpIntro": "Have a question, idea, or issue to report?",
+      "back": "Back to account"
+    },
     "sections": {
       "overview": "Overview",
       "tracking": "My tracking",

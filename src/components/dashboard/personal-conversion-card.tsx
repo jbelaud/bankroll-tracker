@@ -71,7 +71,7 @@ export async function PersonalConversionCard({
       </div>
 
       <Link
-        href="/account#personal-conversion"
+        href="/account/tracking#personal-conversion"
         className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-primary/35 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {conversion ? t("edit") : t("configure")}

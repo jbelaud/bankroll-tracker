@@ -18,7 +18,7 @@ import {
 function revalidateBetaViews() {
   revalidatePath("/[locale]/admin", "page");
   revalidatePath("/[locale]/dashboard", "page");
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
 }
 
 async function inviteBaseUrl(): Promise<string> {

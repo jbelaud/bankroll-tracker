@@ -41,7 +41,7 @@ export async function deleteOwnScanQualityReport(id: string) {
   const report = await prisma.scanQualityReport.findFirst({ where: { id, userId: user.id }, select: { id: true, storagePath: true } });
   if (!report) throw new Error("Rapport introuvable.");
   await removeReport(report);
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
 }
 
 export async function updateScanQualityReport(id: string, status: ScanQualityReportStatus, note?: string) {

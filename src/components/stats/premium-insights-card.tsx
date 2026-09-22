@@ -38,7 +38,7 @@ export async function PremiumInsightsCard() {
         <h2 className="mt-2 text-lg font-semibold tracking-tight sm:text-xl">{t("premiumTitle")}</h2>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">{t("premiumDescription")}</p>
         <Link
-          href="/account"
+          href="/account/subscription"
           className="mt-5 inline-flex min-h-touch items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Crown size={17} weight="fill" aria-hidden />

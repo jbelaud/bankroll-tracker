@@ -35,7 +35,7 @@ export async function savePublicTipsterProfile(_state: PublicTipsterProfileState
     return { error: "Impossible d’enregistrer ton profil public pour le moment." };
   }
 
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
   revalidatePath("/[locale]/p/[slug]", "page");
   return { success: "Profil public enregistré." };
 }

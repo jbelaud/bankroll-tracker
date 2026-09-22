@@ -6,7 +6,7 @@ import { ArrowUpRight, Crown, Sparkle, Wallet } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-type PlanStatusVariant = "sidebar" | "mobile" | "card";
+type PlanStatusVariant = "sidebar" | "mobile" | "card" | "overview";
 
 function formatPeriodEnd(date: Date, locale: string) {
   return new Intl.DateTimeFormat(locale, {
@@ -78,7 +78,7 @@ export function PlanStatusSummary({
   if (variant === "sidebar") {
     return (
       <Link
-        href="/account"
+        href="/account/subscription"
         aria-label={t("ariaLabel")}
         className="group rounded-xl border border-primary/20 bg-primary/[0.06] p-3.5 transition-colors hover:bg-primary/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
@@ -118,9 +118,19 @@ export function PlanStatusSummary({
     return <div className="flex items-center gap-3 rounded-lg bg-muted/55 px-3 py-2.5">{content}</div>;
   }
 
+  if (variant === "overview") {
+    return <div className="flex min-w-0 items-center gap-3">
+      <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", paidPlan ? "bg-primary/15 text-primary" : isBeta ? "bg-warning-muted text-warning" : "bg-muted text-muted-foreground")}>{icon}</span>
+      <span className="min-w-0">
+        <span className="block text-sm font-semibold">{title}</span>
+        <span className="block text-xs leading-relaxed text-muted-foreground">{detail}</span>
+      </span>
+    </div>;
+  }
+
   return (
     <Link
-      href="/account"
+      href="/account/subscription"
       aria-label={t("ariaLabel")}
       className={cn(
         "flex items-center gap-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

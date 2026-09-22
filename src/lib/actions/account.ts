@@ -25,10 +25,9 @@ export async function updateGoals(profitGoal: number, lossLimit: number) {
     data: { monthlyProfitGoal: profitGoal, monthlyLossLimit: lossLimit },
   });
 
-  // Route dynamique [locale] : le pattern avec crochets revalide toutes les
-  // locales d'un coup (sinon revalidatePath("/account") ne matcherait ni
-  // /fr/account ni /en/account, qui sont les vrais chemins rendus).
-  revalidatePath("/[locale]/account", "page");
+  // Le layout compte couvre la vue d’ensemble et toutes ses sous-pages,
+  // pour les deux locales via le segment dynamique [locale].
+  revalidatePath("/[locale]/account", "layout");
   revalidatePath("/[locale]/dashboard", "page");
 }
 
@@ -47,7 +46,7 @@ export async function updateCurrency(currency: Currency) {
     data: { currency },
   });
 
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
   revalidatePath("/[locale]/dashboard", "page");
   revalidatePath("/[locale]/stats", "page");
   revalidatePath("/[locale]/history", "page");

@@ -970,6 +970,28 @@
   "account": {
     "title": "Compte",
     "intro": "Retrouve tes réglages au même endroit.",
+    "navigation": {
+      "overview": "Vue d’ensemble",
+      "overviewIntro": "L’essentiel de ton compte, sans te perdre dans les réglages.",
+      "essential": "Réglages essentiels",
+      "profile": "Profil et préférences",
+      "profileIntro": "Tes informations privées et tes préférences d’affichage.",
+      "privateIdentity": "Identité privée",
+      "subscription": "Abonnement",
+      "subscriptionIntro": "Ton forfait et les options de gestion de l’abonnement.",
+      "tracking": "Suivi personnel",
+      "trackingIntro": "Tes objectifs et ta conversion personnelle des unités.",
+      "trackingDetail": "Objectifs et conversion",
+      "public": "Profil public",
+      "publicIntro": "Ton identité de tipster, distincte de ton compte privé.",
+      "publicEmpty": "À compléter",
+      "data": "Données et confidentialité",
+      "dataIntro": "Exporte tes données et contrôle tes partages.",
+      "dataDetail": "Exports et partages",
+      "help": "Aide et support",
+      "helpIntro": "Une question, une idée ou un problème à signaler ?",
+      "back": "Retour au compte"
+    },
     "sections": {
       "overview": "Vue d’ensemble",
       "tracking": "Mon suivi",

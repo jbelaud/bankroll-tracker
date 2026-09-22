@@ -67,7 +67,7 @@ export async function movePublicBankroll(form: FormData) {
     }
   });
 
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
   revalidatePath("/[locale]/p/[slug]", "page");
   revalidatePath("/[locale]/t/[handle]", "page");
   revalidatePath("/[locale]/discover", "page");

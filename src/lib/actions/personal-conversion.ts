@@ -29,6 +29,6 @@ export async function savePersonalConversion(
     create: { userId: user.id, ...data },
     update: data,
   });
-  revalidatePath("/[locale]/account", "page");
+  revalidatePath("/[locale]/account", "layout");
   return { success: "Conversion personnelle enregistrée pour tout ton compte." };
 }
