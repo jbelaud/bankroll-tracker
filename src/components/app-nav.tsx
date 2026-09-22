@@ -43,12 +43,23 @@ const TIPSTER_SUB_ITEMS = [
   { href: "/discover", key: "discover", icon: Compass },
   { href: "/following", key: "following", icon: BookmarksSimple },
   { href: "/tipsters", key: "myTipsters", icon: UserList },
+  { href: "/referrals", key: "referrals", icon: UsersThree },
+] as const;
+
+const BET_SUB_ITEMS = [
+  { href: "/history", key: "history", icon: ListBullets },
+  { href: "/import-history", key: "fileImport", icon: FileArrowUp },
 ] as const;
 
 const DESKTOP_NAV_GROUPS = [
-  { key: "tracking", items: NAV_ITEMS.slice(0, 4) },
-  { key: "analysis", items: NAV_ITEMS.slice(4, 5) },
-  { key: "manage", items: NAV_ITEMS.slice(5) },
+  { key: "tracking", items: [NAV_ITEMS[0], NAV_ITEMS[2], { key: "bets", icon: ListBullets, children: BET_SUB_ITEMS }] },
+  { key: "analysis", items: [NAV_ITEMS[4]] },
+  { key: "manage", items: [NAV_ITEMS[5], { key: "tipsters", icon: UserList, children: TIPSTER_SUB_ITEMS }, NAV_ITEMS[8], NAV_ITEMS[9]] },
+] as const;
+
+const MOBILE_MORE_GROUPS = [
+  { key: "bets", items: BET_SUB_ITEMS },
+  { key: "tipsters", items: TIPSTER_SUB_ITEMS },
 ] as const;
 
 // Le Scan est l'action principale sur mobile : il doit rester au centre de la
@@ -72,14 +83,14 @@ export function AppNav({
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tipsterSectionActive = TIPSTER_SUB_ITEMS.some((item) => pathname.startsWith(item.href));
-  const [desktopMenuState, setDesktopMenuState] = useState<{ path: string; open: boolean } | null>(null);
+  const betsSectionActive = BET_SUB_ITEMS.some((item) => pathname.startsWith(item.href));
+  const [desktopMenuState, setDesktopMenuState] = useState<{ path: string; key: "bets" | "tipsters" | null } | null>(null);
   const [mobileMenuState, setMobileMenuState] = useState<{ path: string; open: boolean } | null>(null);
-  const tipstersOpen = desktopMenuState?.path === pathname ? desktopMenuState.open : tipsterSectionActive;
+  const expandedDesktopMenu = desktopMenuState?.path === pathname ? desktopMenuState.key : betsSectionActive ? "bets" : tipsterSectionActive ? "tipsters" : null;
   const mobileMenuOpen = mobileMenuState?.path === pathname && mobileMenuState.open;
   const mobileMenuItems = [
-    NAV_ITEMS[1], NAV_ITEMS[3], NAV_ITEMS[5],
+    ...BET_SUB_ITEMS,
     ...TIPSTER_SUB_ITEMS,
-    NAV_ITEMS[7],
     ...(isAdmin ? [NAV_ITEMS[9]] : []),
   ];
 
@@ -104,12 +115,16 @@ export function AppNav({
             <span>{t("moreNavigation")}</span>
             <CaretDown size={15} className={cn("transition-transform", mobileMenuOpen && "rotate-180")} aria-hidden />
           </button>
-          {mobileMenuOpen ? <ul id="mobile-more-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-10rem)] w-[min(19rem,calc(100vw-2rem))] space-y-1 overflow-y-auto rounded-2xl border border-border bg-background p-2 shadow-xl">
-            {mobileMenuItems.map(({ href, key, icon: Icon }) => {
-              const active = pathname.startsWith(href);
-              return <li key={href}><Link href={href} onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
-            })}
-          </ul> : null}
+          {mobileMenuOpen ? <div id="mobile-more-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-10rem)] w-[min(19rem,calc(100vw-2rem))] space-y-3 overflow-y-auto rounded-2xl border border-border bg-background p-2 shadow-xl">
+            {MOBILE_MORE_GROUPS.map(({ key: groupKey, items }) => <div key={groupKey}>
+              <p className="px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">{t(groupKey)}</p>
+              <ul className="space-y-1">{items.map(({ href, key, icon: Icon }) => {
+                const active = pathname.startsWith(href);
+                return <li key={href}><Link href={href} onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
+              })}</ul>
+            </div>)}
+            {isAdmin ? <div className="border-t border-border pt-2"><Link href="/admin" onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={pathname.startsWith("/admin") ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", pathname.startsWith("/admin") ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Gauge size={18} aria-hidden /><span>{t("admin")}</span></Link></div> : null}
+          </div> : null}
         </nav>
       </div>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border bg-sidebar/95 pb-[var(--rg-footer-h)] backdrop-blur-xl lg:flex">
@@ -127,35 +142,40 @@ export function AppNav({
                   {t(`groups.${groupKey}`)}
                 </p>
                 <ul className="mt-2 flex flex-col gap-1">
-                  {items.filter((item) => !("adminOnly" in item) || !item.adminOnly || isAdmin).map(({ href, key, icon: Icon, ...item }) => {
+                  {items.filter((item) => !("adminOnly" in item) || !item.adminOnly || isAdmin).map((item) => {
+                    const { key, icon: Icon } = item;
                     const label = t("desktopKey" in item ? item.desktopKey : key);
-                    const active = pathname.startsWith(href);
-                    const isPrimary = "primary" in item && item.primary;
 
-                    if (key === "tipsters") {
-                      return <li key={href}>
+                    if ("children" in item) {
+                      const groupActive = item.children.some((child) => pathname.startsWith(child.href));
+                      const groupOpen = expandedDesktopMenu === item.key;
+                      return <li key={item.key}>
                         <button
                           type="button"
-                          aria-expanded={tipstersOpen}
-                          aria-controls="tipsters-submenu"
-                          onClick={() => setDesktopMenuState({ path: pathname, open: !tipstersOpen })}
+                          aria-expanded={groupOpen}
+                          aria-controls={`${item.key}-submenu`}
+                          onClick={() => setDesktopMenuState({ path: pathname, key: groupOpen ? null : item.key })}
                           className={cn(
                             "flex min-h-touch w-full items-center gap-3 rounded-xl px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            tipsterSectionActive ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+                            groupActive ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
                           )}
                         >
-                          <Icon size={20} weight={tipsterSectionActive ? "fill" : "regular"} aria-hidden />
+                          <Icon size={20} weight={groupActive ? "fill" : "regular"} aria-hidden />
                           <span className="flex-1 text-left">{label}</span>
-                          <CaretDown size={15} className={cn("transition-transform", tipstersOpen && "rotate-180")} aria-hidden />
+                          <CaretDown size={15} className={cn("transition-transform", groupOpen && "rotate-180")} aria-hidden />
                         </button>
-                        {tipstersOpen ? <ul id="tipsters-submenu" className="ml-5 mt-1 flex flex-col gap-1 border-l border-border pl-3">
-                          {TIPSTER_SUB_ITEMS.map(({ href: childHref, key: childKey, icon: ChildIcon }) => {
+                        {groupOpen ? <ul id={`${item.key}-submenu`} className="ml-5 mt-1 flex flex-col gap-1 border-l border-border pl-3">
+                          {item.children.map(({ href: childHref, key: childKey, icon: ChildIcon }) => {
                             const childActive = pathname.startsWith(childHref);
-                            return <li key={childHref}><Link href={childHref} aria-current={childActive ? "page" : undefined} className={cn("flex min-h-10 items-center gap-2.5 rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", childActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground")}><ChildIcon size={17} weight={childActive ? "fill" : "regular"} aria-hidden /><span>{t(childKey)}</span></Link></li>;
+                            return <li key={childHref}><Link href={childHref} aria-current={childActive ? "page" : undefined} className={cn("flex min-h-11 items-center gap-2.5 rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", childActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground")}><ChildIcon size={17} weight={childActive ? "fill" : "regular"} aria-hidden /><span>{t(childKey)}</span></Link></li>;
                           })}
                         </ul> : null}
                       </li>;
                     }
+
+                    const { href } = item;
+                    const active = pathname.startsWith(href);
+                    const isPrimary = "primary" in item && item.primary;
 
                     return (
                       <li key={href}>
