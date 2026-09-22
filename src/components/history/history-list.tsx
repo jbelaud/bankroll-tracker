@@ -210,7 +210,7 @@ export function HistoryList({
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-3">
       {selectionMode ? (
         <div className="glass-card flex items-center justify-between gap-2 rounded-xl p-3">
           <span className="text-sm font-medium">
@@ -452,7 +452,7 @@ function DesktopHistoryTable({
   const tBetTypes = useTranslations("betTypes");
 
   return (
-    <div className="hidden overflow-hidden rounded-xl border border-border lg:block">
+    <div className="hidden min-w-0 overflow-hidden rounded-xl border border-border lg:block">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[860px] border-collapse text-left text-xs">
           <thead className="bg-muted/45 text-[0.65rem] uppercase tracking-wider text-muted-foreground">
