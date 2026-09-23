@@ -1719,17 +1719,17 @@
         "notice": { "title": "Un outil de contrôle", "description": "Les indicateurs servent à mieux comprendre l’activité passée, pas à prédire des gains ou recommander une mise." }
       },
       "pricing": {
-        "eyebrow": "Tarifs Kalivoa",
-        "title": "Aucun prix non validé ne sera affiché comme une offre publique.",
-        "description": "Le dépôt contient une configuration de facturation, mais l’offre de lancement et ses prix publics restent à confirmer.",
-        "sectionTitle": "Ce qui sera affiché avant paiement",
-        "intro": "Toute offre payante doit présenter son prix, sa fréquence de renouvellement, ses limites d’import et ses fonctionnalités avant l’accès au paiement.",
+        "eyebrow": "Tarifs et accès",
+        "title": "Commencez gratuitement, sans carte bancaire.",
+        "description": "Créer un compte n’active aucun abonnement payant. Les offres payantes et leur prix seront présentés ici dès qu’ils seront disponibles.",
+        "sectionTitle": "Toujours clair avant de payer",
+        "intro": "Si vous choisissez plus tard une offre payante, vous connaîtrez son prix, ses limites et son renouvellement avant d’accéder au paiement.",
         "points": {
-          "one": { "title": "Prix transparent", "description": "Le montant applicable sera présenté avant la validation d’un abonnement." },
-          "two": { "title": "Limites explicites", "description": "Les limites d’import et les éventuels crédits seront indiqués avec l’offre concernée." },
-          "three": { "title": "Renouvellement clair", "description": "Les conditions de renouvellement seront visibles avant tout paiement." }
+          "one": { "title": "Compte gratuit", "description": "Découvrez Kalivoa sans renseigner de carte bancaire et sans déclencher de paiement." },
+          "two": { "title": "Prix et limites visibles", "description": "Chaque offre indiquera clairement ses fonctionnalités, ses limites d’import et son prix." },
+          "three": { "title": "Renouvellement maîtrisé", "description": "La fréquence et les conditions de renouvellement seront visibles avant toute souscription." }
         },
-        "notice": { "title": "État actuel", "description": "Aucun prix public n’est affiché ici tant que la décision commerciale n’est pas approuvée. Créer un compte ne vaut pas souscription à une offre payante." }
+        "notice": { "title": "Offres payantes en préparation", "description": "La tarification publique n’est pas encore ouverte. Vous pouvez créer votre compte gratuitement : cette inscription ne vaut jamais souscription à une offre payante." }
       },
       "bookmakers": {
         "eyebrow": "Compatibilité bookmaker",

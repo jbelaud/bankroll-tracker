@@ -1720,17 +1720,17 @@
         "notice": { "title": "A tool for perspective", "description": "Indicators help understand past activity. They do not predict gains or recommend a stake." }
       },
       "pricing": {
-        "eyebrow": "Kalivoa pricing",
-        "title": "No unapproved price is presented as a public offer.",
-        "description": "The repository contains billing configuration, but its public launch plan and prices still need confirmation.",
-        "sectionTitle": "What will be shown before payment",
-        "intro": "Any paid plan must show its price, renewal frequency, import limits and included features before access to payment.",
+        "eyebrow": "Pricing and access",
+        "title": "Start for free, without a credit card.",
+        "description": "Creating an account does not activate a paid subscription. Paid plans and their prices will appear here once they are available.",
+        "sectionTitle": "Always clear before you pay",
+        "intro": "If you later choose a paid plan, you will see its price, limits and renewal terms before reaching payment.",
         "points": {
-          "one": { "title": "Transparent price", "description": "The applicable amount will be shown before subscription is confirmed." },
-          "two": { "title": "Explicit limits", "description": "Import limits and any credits will be shown with the relevant plan." },
-          "three": { "title": "Clear renewal", "description": "Renewal terms will be visible before payment." }
+          "one": { "title": "Free account", "description": "Explore Kalivoa without entering a credit card or triggering a payment." },
+          "two": { "title": "Visible prices and limits", "description": "Every plan will clearly show its features, import limits and price." },
+          "three": { "title": "Controlled renewal", "description": "The billing frequency and renewal terms will be visible before you subscribe." }
         },
-        "notice": { "title": "Current status", "description": "No public price is shown here while the commercial decision is awaiting approval. Creating an account is not subscribing to a paid plan." }
+        "notice": { "title": "Paid plans are being prepared", "description": "Public pricing is not open yet. You can create your account for free: signing up never constitutes subscribing to a paid plan." }
       },
       "bookmakers": {
         "eyebrow": "Bookmaker compatibility",

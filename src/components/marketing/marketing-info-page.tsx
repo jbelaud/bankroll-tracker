@@ -38,6 +38,8 @@ export async function MarketingInfoPage({
   const common = await getTranslations({ locale, namespace: "marketing.info" });
   const path = pagePaths[page];
   const isImportJourney = page === "import";
+  const isPricingJourney = page === "pricing";
+  const isProductJourney = isImportJourney || isPricingJourney;
   const homeHref = "/" + locale;
   const currentHref = homeHref + path;
   const jsonLd = {
@@ -62,7 +64,7 @@ export async function MarketingInfoPage({
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <article className={isImportJourney ? "py-12 sm:py-20 lg:py-24" : "marketing-section"}>
+      <article className={isProductJourney ? "py-12 sm:py-20 lg:py-24" : "marketing-section"}>
         <div className="marketing-container">
           <nav aria-label={common("breadcrumbAriaLabel")} className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
             <Link href="/" locale={locale} className="inline-flex items-center gap-1 hover:text-foreground">
@@ -70,48 +72,50 @@ export async function MarketingInfoPage({
               {common("home")}
             </Link>
             <span aria-hidden>/</span>
-            <span aria-current="page" className="truncate">{text(pageKey + (isImportJourney ? "eyebrow" : "title"))}</span>
+            <span aria-current="page" className="truncate">{text(pageKey + (isProductJourney ? "eyebrow" : "title"))}</span>
           </nav>
-          <header className={`${isImportJourney ? "mt-6 sm:mt-10" : "mt-10"} max-w-3xl`}>
+          <header className={`${isProductJourney ? "mt-6 sm:mt-10" : "mt-10"} max-w-3xl`}>
             <p className="marketing-eyebrow">{text(pageKey + "eyebrow")}</p>
-            <h1 className={`${isImportJourney ? "mt-3 text-3xl sm:mt-4" : "mt-4 text-4xl"} text-balance font-semibold tracking-[-0.04em] sm:text-5xl`}>{text(pageKey + "title")}</h1>
-            <p className={`${isImportJourney ? "mt-4 text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8" : "mt-6 text-lg leading-8"} text-pretty text-muted-foreground`}>{text(pageKey + "description")}</p>
-            {isImportJourney ? (
+            <h1 className={`${isProductJourney ? "mt-3 text-3xl sm:mt-4" : "mt-4 text-4xl"} text-balance font-semibold tracking-[-0.04em] sm:text-5xl`}>{text(pageKey + "title")}</h1>
+            <p className={`${isProductJourney ? "mt-4 text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8" : "mt-6 text-lg leading-8"} text-pretty text-muted-foreground`}>{text(pageKey + "description")}</p>
+            {isProductJourney ? (
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link href="/signup" locale={locale} className="marketing-primary-cta">
                   {common("cta")}
                   <ArrowRight size={18} weight="bold" aria-hidden />
                 </Link>
-                <Link href="/bookmakers" locale={locale} className="marketing-secondary-cta">
-                  {locale === "fr" ? "Voir les bookmakers compatibles" : "View compatible bookmakers"}
+                <Link href={isImportJourney ? "/bookmakers" : "/features"} locale={locale} className="marketing-secondary-cta">
+                  {isImportJourney
+                    ? locale === "fr" ? "Voir les bookmakers compatibles" : "View compatible bookmakers"
+                    : locale === "fr" ? "Voir les fonctionnalités" : "View features"}
                 </Link>
               </div>
             ) : null}
           </header>
 
-          <section className={`${isImportJourney ? "mt-10 sm:mt-14" : "mt-14"} max-w-3xl`}>
+          <section className={`${isProductJourney ? "mt-10 sm:mt-14" : "mt-14"} max-w-3xl`}>
             <h2 className="text-2xl font-semibold tracking-[-0.025em]">{text(pageKey + "sectionTitle")}</h2>
             <p className="mt-3 text-base leading-7 text-muted-foreground sm:mt-4">{text(pageKey + "intro")}</p>
           </section>
 
-          <section className={`${isImportJourney ? "mt-5 gap-3" : "mt-8 gap-4"} grid md:grid-cols-3`}>
+          <section className={`${isProductJourney ? "mt-5 gap-3" : "mt-8 gap-4"} grid md:grid-cols-3`}>
             {["one", "two", "three"].map((key) => (
-              <article key={key} className={`marketing-card ${isImportJourney ? "flex gap-3 p-4 md:block md:p-6" : "p-6"}`}>
-                <CheckCircle size={21} className={`${isImportJourney ? "mt-0.5 shrink-0" : ""} text-profit`} weight="fill" aria-hidden />
+              <article key={key} className={`marketing-card ${isProductJourney ? "flex gap-3 p-4 md:block md:p-6" : "p-6"}`}>
+                <CheckCircle size={21} className={`${isProductJourney ? "mt-0.5 shrink-0" : ""} text-profit`} weight="fill" aria-hidden />
                 <div>
-                  <h3 className={`${isImportJourney ? "md:mt-5" : "mt-5"} text-base font-semibold`}>{text(pageKey + "points." + key + ".title")}</h3>
-                  <p className={`${isImportJourney ? "mt-1.5 md:mt-3" : "mt-3"} text-sm leading-6 text-muted-foreground`}>{text(pageKey + "points." + key + ".description")}</p>
+                  <h3 className={`${isProductJourney ? "md:mt-5" : "mt-5"} text-base font-semibold`}>{text(pageKey + "points." + key + ".title")}</h3>
+                  <p className={`${isProductJourney ? "mt-1.5 md:mt-3" : "mt-3"} text-sm leading-6 text-muted-foreground`}>{text(pageKey + "points." + key + ".description")}</p>
                 </div>
               </article>
             ))}
           </section>
 
-          <section className={`marketing-solution max-w-4xl ${isImportJourney ? "mt-4 p-5 sm:mt-8 sm:p-8" : "mt-8 p-6 sm:p-8"}`}>
+          <section className={`marketing-solution max-w-4xl ${isProductJourney ? "mt-4 p-5 sm:mt-8 sm:p-8" : "mt-8 p-6 sm:p-8"}`}>
             <h2 className="text-xl font-semibold">{text(pageKey + "notice.title")}</h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">{text(pageKey + "notice.description")}</p>
           </section>
 
-          {!isImportJourney ? (
+          {!isProductJourney ? (
             <Link href="/signup" locale={locale} className="marketing-primary-cta mt-10">
               {common("cta")}
               <ArrowRight size={18} weight="bold" aria-hidden />
