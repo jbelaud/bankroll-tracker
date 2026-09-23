@@ -57,7 +57,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       <LandingViewTracker locale={locale} />
       <HomeJsonLd locale={locale} />
       <section className="marketing-hero">
-        <div className="marketing-container grid items-center gap-12 py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(34rem,1.1fr)] lg:py-24">
+        <div className="kalivoa-content-frame grid items-center gap-12 py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(34rem,1.1fr)] lg:py-24">
           <div className="max-w-2xl">
             <p className="marketing-eyebrow">
               <Sparkle size={15} weight="fill" aria-hidden />
@@ -97,7 +97,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section className="border-y border-border bg-card/30">
-        <div className="marketing-container grid gap-4 py-6 sm:grid-cols-3">
+        <div className="kalivoa-content-frame grid gap-4 py-6 sm:grid-cols-3">
           {["trustOne", "trustTwo", "trustThree"].map((key) => (
             <p key={key} className="flex items-center justify-center gap-2 text-center text-sm font-medium text-muted-foreground">
               <CheckCircle size={18} className="shrink-0 text-profit" weight="fill" aria-hidden />
@@ -108,7 +108,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section id="features" className="marketing-section">
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <SectionIntro eyebrow={t("problem.eyebrow")} title={t("problem.title")} description={t("problem.description")} />
           <div className="mt-10 grid gap-4 lg:grid-cols-3">
             {["manual", "history", "visibility"].map((key) => (
@@ -132,7 +132,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section id="how-it-works" className="marketing-section border-y border-border bg-card/20">
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <SectionIntro eyebrow={t("steps.eyebrow")} title={t("steps.title")} description={t("steps.description")} />
           <ol className="mt-10 grid gap-4 lg:grid-cols-3">
             {stepItems.map((item, index) => {
@@ -153,7 +153,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section className="marketing-section">
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <SectionIntro eyebrow={t("features.eyebrow")} title={t("features.title")} description={t("features.description")} />
           <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {featureItems.map((item) => {
@@ -177,7 +177,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section className="marketing-section border-y border-border bg-card/20">
-        <div className="marketing-container grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div className="kalivoa-content-frame grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
           <div>
             <p className="marketing-eyebrow">{t("bookmakers.eyebrow")}</p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">{t("bookmakers.title")}</h2>
@@ -199,7 +199,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section id="pricing" className="marketing-section">
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <div className="mx-auto max-w-2xl text-center">
             <p className="marketing-eyebrow justify-center">{t("pricing.eyebrow")}</p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">{t("pricing.title")}</h2>
@@ -221,7 +221,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section id="faq" className="marketing-section border-y border-border bg-card/20">
-        <div className="marketing-container grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+        <div className="kalivoa-content-frame grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
           <div>
             <p className="marketing-eyebrow">{t("faq.eyebrow")}</p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">{t("faq.title")}</h2>
@@ -246,7 +246,7 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
       </section>
 
       <section className="marketing-section">
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <div className="marketing-final-cta overflow-hidden p-8 text-center sm:p-12">
             <Wallet size={28} className="mx-auto text-primary" weight="fill" aria-hidden />
             <h2 className="mx-auto mt-5 max-w-2xl text-balance text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">{t("finalCta.title")}</h2>

@@ -20,7 +20,7 @@ export async function MarketingHeader({ locale }: { locale: Locale }) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/88 backdrop-blur-xl">
-      <div className="marketing-container flex min-h-16 items-center justify-between gap-3">
+      <div className="kalivoa-content-frame flex min-h-16 items-center justify-between gap-3">
         <Link href="/" locale={locale} aria-label={t("homeAriaLabel")}>
           <Brand />
         </Link>

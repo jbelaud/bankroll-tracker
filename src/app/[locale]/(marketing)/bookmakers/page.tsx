@@ -45,7 +45,7 @@ export default async function BookmakersPage({ params }: { params: Promise<{ loc
 
   return (
     <article className="py-12 sm:py-20 lg:py-24">
-      <div className="marketing-container">
+      <div className="kalivoa-content-frame">
         <header className="mx-auto max-w-3xl sm:text-center">
           <p className="marketing-eyebrow">{locale === "fr" ? "Compatibilité bookmaker" : "Bookmaker compatibility"}</p>
           <h1 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.04em] sm:mt-4 sm:text-5xl">

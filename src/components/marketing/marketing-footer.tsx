@@ -10,7 +10,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="border-t border-border bg-card/30">
-      <div className="marketing-container py-12 sm:py-16">
+      <div className="kalivoa-content-frame py-12 sm:py-16">
         <div className="grid gap-10 md:grid-cols-[1.5fr_repeat(3,minmax(0,1fr))]">
           <section>
             <Brand />

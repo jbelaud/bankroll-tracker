@@ -297,8 +297,9 @@
 }
 
 /* Public marketing surfaces — the tokens above remain the single source of
-   truth. These utilities only establish the larger, editorial layout. */
-.marketing-container {
+   truth. Keep the shared content wrapper site-specific: generic "marketing"
+   selectors in cosmetic blockers can hide every public page section. */
+.kalivoa-content-frame {
   width: min(100% - 2rem, 76rem);
   margin-inline: auto;
 }
@@ -399,7 +400,7 @@
 }
 
 @media (max-width: 40rem) {
-  .marketing-container {
+  .kalivoa-content-frame {
     width: min(100% - 1.5rem, 76rem);
   }
 }

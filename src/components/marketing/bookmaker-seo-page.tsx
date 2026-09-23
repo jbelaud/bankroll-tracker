@@ -146,7 +146,7 @@ export function BookmakerSeoPage({
   return (
     <article className="py-12 sm:py-20 lg:py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="marketing-container">
+      <div className="kalivoa-content-frame">
         <Link href="/bookmakers" locale={locale} className="marketing-text-link mb-6 text-sm">
           <ArrowLeft size={16} weight="bold" aria-hidden />
           {locale === "fr" ? "Tous les bookmakers" : "All bookmakers"}

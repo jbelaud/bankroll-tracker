@@ -74,7 +74,7 @@ export async function MarketingInfoPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <article className={isProductJourney ? "py-12 sm:py-20 lg:py-24" : "marketing-section"}>
-        <div className="marketing-container">
+        <div className="kalivoa-content-frame">
           <nav aria-label={common("breadcrumbAriaLabel")} className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
             <Link href="/" locale={locale} className="inline-flex items-center gap-1 hover:text-foreground">
               <House size={14} aria-hidden />

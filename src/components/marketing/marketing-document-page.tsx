@@ -100,7 +100,7 @@ export function MarketingDocumentPage({ locale, kind }: { locale: Locale; kind: 
 
   return (
     <article className="py-12 sm:py-20 lg:py-24">
-      <div className="marketing-container max-w-5xl">
+      <div className="kalivoa-content-frame max-w-5xl">
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
           <Link href="/" locale={locale} className="inline-flex items-center gap-1 hover:text-foreground"><House size={14} aria-hidden />{page.home}</Link>
           <span aria-hidden>/</span><span aria-current="page" className="truncate">{page.eyebrow}</span>
