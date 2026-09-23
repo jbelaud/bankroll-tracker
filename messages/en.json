@@ -313,6 +313,15 @@
 
   "bankrollDetail": {
     "ariaLabel": "Bankroll detail",
+    "backToBankrolls": "All bankrolls",
+    "balanceEvolution": "Balance evolution",
+    "settingsTitle": "Bankroll settings",
+    "settingsDescription": "Publishing, units, presentation and management",
+    "personalConversionTitle": "Personal tipster conversion",
+    "personalConversionDescription": "This bankroll's reference only locks its stakes in units. Your private euro equivalent is a global setting shared by all public pages.",
+    "personalConversionAction": "Manage in my account",
+    "managementTitle": "Bankroll management",
+    "managementDescription": "Edit its setup or delete it permanently.",
     "singleMode": "Single balance",
     "distributedMode": "Split across {count, plural, one {# bookmaker} other {# bookmakers}}",
     "referenceUnit": "1 u = {value}",

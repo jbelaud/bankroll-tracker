@@ -313,6 +313,15 @@
 
   "bankrollDetail": {
     "ariaLabel": "Détail de la bankroll",
+    "backToBankrolls": "Toutes les bankrolls",
+    "balanceEvolution": "Évolution du solde",
+    "settingsTitle": "Réglages de la bankroll",
+    "settingsDescription": "Publication, unités, présentation et gestion",
+    "personalConversionTitle": "Conversion personnelle des tipsters",
+    "personalConversionDescription": "La référence de cette bankroll sert uniquement à figer ses mises en unités. Ton équivalent privé en euros est un réglage global commun à toutes les pages publiques.",
+    "personalConversionAction": "Gérer dans mon compte",
+    "managementTitle": "Gestion de la bankroll",
+    "managementDescription": "Modifie sa configuration ou supprime-la définitivement.",
     "singleMode": "Solde unique",
     "distributedMode": "Répartie sur {count, plural, one {# bookmaker} other {# bookmakers}}",
     "referenceUnit": "1 u = {value}",

@@ -14,7 +14,7 @@ import { BankrollCapitalStats } from "@/components/bankrolls/bankroll-capital-st
 import { BankrollMovementPanel } from "@/components/bankrolls/bankroll-movement-panel";
 import { BankrollAllocationList } from "@/components/bankrolls/bankroll-allocation-list";
 import { Link } from "@/i18n/navigation";
-import { LockKey } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, CaretDown, LockKey } from "@phosphor-icons/react/dist/ssr";
 import { requireUser } from "@/lib/auth";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { listTipsters } from "@/lib/actions/tipsters";
@@ -124,6 +124,10 @@ export default async function BankrollDetailPage({
   return (
     <div className="flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6">
       <div className="lg:col-span-12">
+        <Link href="/bankrolls" className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <ArrowLeft size={16} aria-hidden />
+          {t("backToBankrolls")}
+        </Link>
         <BankrollDetailHeader
           name={bankroll.name}
           mode={bankroll.mode}
@@ -139,46 +143,13 @@ export default async function BankrollDetailPage({
       </div>
 
       {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
-      <CertificationPanel
-        bankrollId={id}
-        isPublic={bankroll.isPublic}
-        publicSlug={bankroll.publicSlug}
-        startedAt={bankroll.certificationStartedAt?.toISOString() ?? null}
-        summary={certification}
-        correctionCount={correctionCount}
-        referenceCapital={bankroll.referenceCapital}
-        missingUnitCount={bets.filter((bet) => bet.stakeUnits === null).length}
-        pendingProofBetId={bets.find((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null)?.id}
-        pendingProofCount={bets.filter((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null).length}
-      />
-      <PublicBankrollSettings
-        bankrollId={id}
-        description={bankroll.publicDescription}
-        selectedSports={bankroll.publicSports}
-        availableSports={[...new Set(bets.map((bet) => bet.sport).filter(Boolean))].sort((left, right) => left.localeCompare(right, "fr"))}
-      />
       <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
-        <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
         <BankrollCapitalStats
           deposits={capital.deposits}
           withdrawals={capital.withdrawals}
           netFunding={capital.netFunding}
           profit={capital.profit}
           performancePct={capital.performancePct}
-          currency={currency}
-        />
-        <BankrollDetailActions
-          bankroll={{
-            id: bankroll.id,
-            name: bankroll.name,
-            mode: bankroll.mode,
-            bookmaker: bankroll.bookmaker,
-            initial: bankroll.initial,
-            referenceCapital: bankroll.referenceCapital,
-            allocations: bankroll.allocations,
-          }}
-          betCount={bets.length}
-          deleteAction={deleteThisBankroll}
           currency={currency}
         />
         <BankrollMovementPanel
@@ -190,19 +161,69 @@ export default async function BankrollDetailPage({
           allocations={bankroll.mode === "DISTRIBUTED" ? bankroll.allocations.map(({ id: allocationId, bookmaker }) => ({ id: allocationId, bookmaker })) : []}
         />
       </div>
-      <section className="glass-card rounded-2xl p-4 sm:p-5 lg:col-span-6">
-        <h2 className="text-base font-semibold">Conversion personnelle des tipsters</h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          La référence de cette bankroll sert uniquement à figer ses mises en unités. Ton équivalent privé en euros est un réglage global commun à toutes les pages publiques.
-        </p>
-        <Link href="/account/tracking#personal-conversion" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Gérer dans mon compte</Link>
-      </section>
 
       {curve.length >= 2 && (
-        <div className="glass-card rounded-xl p-4 lg:col-span-12">
+        <section className="glass-card rounded-xl p-4 lg:col-span-6" aria-labelledby="bankroll-balance-chart-title">
+          <h2 id="bankroll-balance-chart-title" className="mb-3 text-sm font-semibold">{t("balanceEvolution")}</h2>
           <Sparkline points={curve} />
-        </div>
+        </section>
       )}
+
+      <details className="group glass-card rounded-2xl lg:col-span-12">
+        <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl p-4 marker:content-none sm:p-5 [&::-webkit-details-marker]:hidden">
+          <span className="min-w-0">
+            <span className="block text-base font-semibold">{t("settingsTitle")}</span>
+            <span className="mt-1 block text-sm text-muted-foreground">{t("settingsDescription")}</span>
+          </span>
+          <CaretDown className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180" size={20} aria-hidden />
+        </summary>
+        <div className="grid gap-4 border-t border-border/60 p-4 sm:p-5 lg:grid-cols-12">
+          <CertificationPanel
+            bankrollId={id}
+            isPublic={bankroll.isPublic}
+            publicSlug={bankroll.publicSlug}
+            startedAt={bankroll.certificationStartedAt?.toISOString() ?? null}
+            summary={certification}
+            correctionCount={correctionCount}
+            referenceCapital={bankroll.referenceCapital}
+            missingUnitCount={bets.filter((bet) => bet.stakeUnits === null).length}
+            pendingProofBetId={bets.find((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null)?.id}
+            pendingProofCount={bets.filter((bet) => bet.result === "EN_ATTENTE" && bet.certificationLockedAt !== null).length}
+          />
+          <PublicBankrollSettings
+            bankrollId={id}
+            description={bankroll.publicDescription}
+            selectedSports={bankroll.publicSports}
+            availableSports={[...new Set(bets.map((bet) => bet.sport).filter(Boolean))].sort((left, right) => left.localeCompare(right, "fr"))}
+          />
+          <div className="lg:col-span-12">
+            <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
+          </div>
+          <section className="rounded-2xl border border-border bg-background/30 p-4 sm:p-5 lg:col-span-6">
+            <h2 className="text-base font-semibold">{t("personalConversionTitle")}</h2>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t("personalConversionDescription")}</p>
+            <Link href="/account/tracking#personal-conversion" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">{t("personalConversionAction")}</Link>
+          </section>
+          <section className="rounded-2xl border border-border bg-background/30 p-4 sm:p-5 lg:col-span-6">
+            <h2 className="text-base font-semibold">{t("managementTitle")}</h2>
+            <p className="mb-4 mt-1 text-sm leading-relaxed text-muted-foreground">{t("managementDescription")}</p>
+            <BankrollDetailActions
+              bankroll={{
+                id: bankroll.id,
+                name: bankroll.name,
+                mode: bankroll.mode,
+                bookmaker: bankroll.bookmaker,
+                initial: bankroll.initial,
+                referenceCapital: bankroll.referenceCapital,
+                allocations: bankroll.allocations,
+              }}
+              betCount={bets.length}
+              deleteAction={deleteThisBankroll}
+              currency={currency}
+            />
+          </section>
+        </div>
+      </details>
 
       <section className="flex flex-col gap-2 lg:col-span-12">
         <h2 className="text-sm font-semibold">{t("historyTitle")}</h2>
