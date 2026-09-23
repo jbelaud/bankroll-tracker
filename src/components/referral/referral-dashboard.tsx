@@ -88,7 +88,7 @@ export function ReferralDashboard({
               </div>
               {feedback && <p role={feedback === "failed" ? "alert" : "status"} className={`mt-2 text-xs ${feedback === "failed" ? "text-loss" : "text-profit"}`}>{feedback === "copied" ? t("copied") : t("copyFailed")}</p>}
               <details className="group mt-3 border-t border-border pt-3">
-                <summary className="cursor-pointer list-none text-xs font-semibold text-primary marker:hidden">{t("moreShareOptions")} <span aria-hidden className="inline-block transition-transform group-open:rotate-180">↓</span></summary>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-xs font-semibold text-primary marker:hidden"><span>{t("moreShareOptions")}</span><span aria-hidden className="shrink-0 transition-transform group-open:rotate-180">↓</span></summary>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button variant="outline" size="sm" onClick={() => copyText(shareText)} className="min-h-touch rounded-xl">{t("shareDiscord")}</Button>
                   <a href={`https://wa.me/?text=${encodedText}`} target="_blank" rel="noreferrer" className="inline-flex min-h-touch items-center rounded-xl border border-border px-3 text-xs font-medium hover:bg-muted">WhatsApp</a>
@@ -99,7 +99,7 @@ export function ReferralDashboard({
               </details>
             </div>
             <details className="group mt-4">
-              <summary className="cursor-pointer list-none text-sm font-semibold marker:hidden">{t("howItWorks")} <span aria-hidden className="inline-block transition-transform group-open:rotate-180">↓</span></summary>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold marker:hidden"><span>{t("howItWorks")}</span><span aria-hidden className="shrink-0 transition-transform group-open:rotate-180">↓</span></summary>
               <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
                 {(["first", "second", "cumulative", "lifetime"] as const).map((benefit) => (
                   <li key={benefit} className="rounded-xl border border-border bg-muted/35 px-3 py-2.5 font-medium">
