@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle, Info, WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, ArrowRight, CheckCircle, Info, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import type { BookmakerSupportStatus } from "@/lib/scan/bookmaker-profile";
@@ -144,16 +144,20 @@ export function BookmakerSeoPage({
   };
 
   return (
-    <article className="marketing-section">
+    <article className="py-12 sm:py-20 lg:py-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="marketing-container">
-        <header className="mx-auto max-w-4xl text-center">
+        <Link href="/bookmakers" locale={locale} className="marketing-text-link mb-6 text-sm">
+          <ArrowLeft size={16} weight="bold" aria-hidden />
+          {locale === "fr" ? "Tous les bookmakers" : "All bookmakers"}
+        </Link>
+        <header className="mx-auto max-w-4xl sm:text-center">
           <p className="marketing-eyebrow">{copy.eyebrow}</p>
-          <h1 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">{copy.title}</h1>
-          <p className="mx-auto mt-6 max-w-3xl text-pretty text-lg leading-8 text-muted-foreground">{copy.lead}</p>
+          <h1 className="mt-3 text-balance text-3xl font-semibold tracking-[-0.04em] sm:mt-4 sm:text-5xl">{copy.title}</h1>
+          <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-7 text-muted-foreground sm:mt-6 sm:text-lg sm:leading-8">{copy.lead}</p>
         </header>
 
-        <section className={`mx-auto mt-10 flex max-w-4xl gap-3 rounded-2xl border p-5 text-sm leading-6 ${status.className}`}>
+        <section className={`mx-auto mt-7 flex max-w-4xl gap-3 rounded-2xl border p-4 text-sm leading-6 sm:mt-10 sm:p-5 ${status.className}`}>
           <div className="mt-0.5 shrink-0">{statusIcon}</div>
           <div>
             <h2 className="font-semibold">{status.label}</h2>
@@ -161,41 +165,64 @@ export function BookmakerSeoPage({
           </div>
         </section>
 
-        <section className="mx-auto mt-16 max-w-4xl">
-          <h2 className="text-2xl font-semibold tracking-[-0.025em]">{copy.problemTitle}</h2>
-          <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">{copy.problem}</p>
-          <h2 className="mt-10 text-2xl font-semibold tracking-[-0.025em]">{copy.scanTitle}</h2>
-          <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">{copy.scan}</p>
+        <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-3 sm:flex-row sm:justify-center">
+          <Link href="/signup" locale={locale} className="marketing-primary-cta">
+            {copy.cta}
+            <ArrowRight size={18} weight="bold" aria-hidden />
+          </Link>
+          <Link href="/screenshot-import" locale={locale} className="marketing-secondary-cta">
+            {locale === "fr" ? "Voir comment ça marche" : "See how it works"}
+          </Link>
+        </div>
+
+        <section className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-2 sm:mt-14">
+          <article className="marketing-card p-5 sm:p-6">
+            <h2 className="text-xl font-semibold tracking-[-0.025em]">{copy.problemTitle}</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{copy.problem}</p>
+          </article>
+          <article className="marketing-card border-primary/25 p-5 sm:p-6">
+            <h2 className="text-xl font-semibold tracking-[-0.025em]">{copy.scanTitle}</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{copy.scan}</p>
+          </article>
         </section>
 
-        <section className="mt-16">
+        <section className="mt-10 sm:mt-14">
           <h2 className="text-center text-2xl font-semibold tracking-[-0.025em]">{copy.stepsTitle}</h2>
-          <div className="mt-7 grid gap-4 md:grid-cols-3">
+          <div className="mt-5 grid gap-3 md:grid-cols-3 md:gap-4">
             {copy.steps.map((step) => (
-              <article key={step.title} className="marketing-card p-6">
-                <CheckCircle size={21} className="text-profit" weight="fill" aria-hidden />
-                <h3 className="mt-5 font-semibold">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{step.description}</p>
+              <article key={step.title} className="marketing-card flex gap-3 p-4 md:block md:p-6">
+                <CheckCircle size={21} className="mt-0.5 shrink-0 text-profit" weight="fill" aria-hidden />
+                <div>
+                  <h3 className="font-semibold md:mt-5">{step.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-muted-foreground md:mt-3">{step.description}</p>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="marketing-solution mt-8 p-6 sm:p-8">
+        <section className="marketing-solution mt-4 p-5 sm:mt-8 sm:p-8">
           <h2 className="text-xl font-semibold">{copy.demoTitle}</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{copy.demo}</p>
         </section>
 
-        <section className="mx-auto mt-16 max-w-4xl">
-          <h2 className="text-2xl font-semibold tracking-[-0.025em]">{copy.formatsTitle}</h2>
-          <p className="mt-4 leading-7 text-muted-foreground">{copy.formats}</p>
+        <section className="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-2 sm:mt-14">
+          <article className="rounded-2xl border border-border bg-card/40 p-5 sm:p-6">
+            <h2 className="text-xl font-semibold tracking-[-0.025em]">{copy.formatsTitle}</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.formats}</p>
+          </article>
+          <article className="rounded-2xl border border-border bg-card/40 p-5 sm:p-6">
+            <h2 className="text-xl font-semibold">{copy.dataTitle}</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.data}</p>
+            <p className="mt-4 text-xs leading-5 text-muted-foreground">{copy.independent}</p>
+          </article>
         </section>
 
-        <section className="mx-auto mt-16 max-w-4xl">
+        <section className="mx-auto mt-10 max-w-4xl sm:mt-14">
           <h2 className="text-2xl font-semibold tracking-[-0.025em]">{copy.faqTitle}</h2>
-          <div className="mt-7 space-y-4">
+          <div className="mt-5 space-y-3">
             {copy.faq.map((item) => (
-              <details key={item.question} className="marketing-card p-5">
+              <details key={item.question} className="marketing-card p-4 sm:p-5">
                 <summary className="cursor-pointer font-semibold">{item.question}</summary>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.answer}</p>
               </details>
@@ -203,18 +230,9 @@ export function BookmakerSeoPage({
           </div>
         </section>
 
-        <section className="mx-auto mt-16 max-w-4xl rounded-2xl border border-border bg-card p-6 sm:p-8">
-          <h2 className="text-xl font-semibold">{copy.dataTitle}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.data}</p>
-          <p className="mt-4 text-xs leading-5 text-muted-foreground">{copy.independent}</p>
-        </section>
-
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link href="/signup" locale={locale} className="marketing-primary-cta">
-            {copy.cta}
-            <ArrowRight size={18} weight="bold" aria-hidden />
-          </Link>
-          <Link href="/bookmakers" locale={locale} className="marketing-secondary-cta">
+        <div className="mt-8 flex justify-center sm:mt-10">
+          <Link href="/bookmakers" locale={locale} className="marketing-text-link text-sm">
+            <ArrowLeft size={16} weight="bold" aria-hidden />
             {locale === "fr" ? "Voir les autres bookmakers" : "View other bookmakers"}
           </Link>
         </div>
