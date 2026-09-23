@@ -126,18 +126,23 @@ export default async function FollowingPage({ params, searchParams }: { params: 
     : activityView === "settled" ? activity.filter((bet) => bet.result !== "EN_ATTENTE")
       : activityView === "new" ? activity.filter(isNewActivity) : activity;
   const newActivityCount = activity.filter(isNewActivity).length;
+  const hasFollows = bankrollFollows.length > 0 || tipsterFollows.length > 0;
   const activityHref = (view: "all" | "pending" | "settled" | "new") => {
     const search = new URLSearchParams({ activity: view });
     return `/following?${search.toString()}`;
   };
 
   return <div className="flex flex-col gap-5">
-    <header>
-      <h1 className="text-xl font-semibold">Mes suivis</h1>
-      <p className="mt-1 text-xs text-muted-foreground">Retrouve les tipsters et les bankrolls publiques que tu suis.</p>
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 className="text-xl font-semibold">Mes suivis</h1>
+        <p className="mt-1 text-xs text-muted-foreground">Retrouve les tipsters et les bankrolls publiques que tu suis.</p>
+        {hasFollows ? <p className="mt-2 text-xs font-medium text-foreground"><span className="num">{tipsterFollows.length}</span> tipster{tipsterFollows.length > 1 ? "s" : ""} · <span className="num">{bankrollFollows.length}</span> bankroll{bankrollFollows.length > 1 ? "s" : ""}</p> : null}
+      </div>
+      {hasFollows ? <Link href="/discover" className="inline-flex min-h-10 w-full items-center justify-center rounded-xl border border-border bg-card/40 px-4 text-xs font-semibold text-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary sm:w-auto">Découvrir d’autres tipsters</Link> : null}
     </header>
 
-    {bankrollFollows.length > 0 || tipsterFollows.length > 0 ? <section className="space-y-3">
+    {hasFollows ? <section className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div><h2 className="text-lg font-semibold">Fil d’activité</h2><p className="mt-1 text-xs text-muted-foreground">Les derniers paris de tous tes suivis, réunis au même endroit.</p></div>
         <div className="flex flex-wrap items-center justify-end gap-3"><MarkFollowingViewed locale={locale} newCount={newActivityCount} />{selectedProfile && viewerSettings ? <strong className="rounded-full bg-primary/10 px-3 py-1.5 text-xs text-primary">1u = {fmtMoney(personalStake(1, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)} pour toi</strong> : <Link href="/account/tracking#personal-conversion" className="text-xs font-semibold text-primary hover:underline">Configurer ma conversion globale</Link>}</div>
@@ -156,11 +161,14 @@ export default async function FollowingPage({ params, searchParams }: { params: 
           const tipsterName = bet.bankroll.user.publicDisplayName || bet.bankroll.user.name || "Tipster Kalivoa";
           return <PublicActivityCard key={bet.id} title={bet.description || `${bet.sport} · ${bet.betType}`} meta={`${date.format(bet.date)} · ${tipsterName} · ${bet.sport}`} bankrollName={bet.bankroll.name} bankrollSlug={bet.bankroll.publicSlug!} odds={bet.odds === null ? "—" : number.format(bet.odds)} stake={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} personalStake={personal ? `Pour toi : ${personal}` : undefined} profit={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} result={betResultToLabel(bet.result)} resultTone={resultTone(bet.result)} proof={PROOF_LABELS[certificationStatus(bet, bet.bankroll.certificationStartedAt)]} isNew={isNewActivity(bet)} />;
         })}
-      </ul> : <div className="glass-card rounded-2xl p-8 text-center text-sm text-muted-foreground">Aucune activité dans cette catégorie.</div>}
+      </ul> : <div className="glass-card flex flex-col items-center rounded-2xl p-8 text-center">
+        <p className="text-sm text-muted-foreground">Aucune activité dans cette catégorie.</p>
+        {activityView !== "all" ? <Link href={activityHref("all")} className="mt-3 inline-flex min-h-10 items-center rounded-xl px-3 text-xs font-semibold text-primary hover:bg-primary/10">Afficher toute l’activité</Link> : null}
+      </div>}
       {activity.length === 100 ? <p className="text-center text-xs text-muted-foreground">Les 100 activités les plus récentes sont affichées.</p> : null}
     </section> : null}
 
-    {bankrollFollows.length === 0 && tipsterFollows.length === 0 ? <section className="glass-card flex min-h-64 flex-col items-center justify-center rounded-2xl p-8 text-center">
+    {!hasFollows ? <section className="glass-card flex min-h-64 flex-col items-center justify-center rounded-2xl p-6 text-center sm:p-8">
       <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary"><BookmarkSimple size={25} weight="fill" aria-hidden /></span>
       <h2 className="mt-4 font-semibold">Aucun suivi pour le moment</h2>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">Lorsque tu suivras un tipster ou l’une de ses bankrolls publiques, tu le retrouveras ici.</p>
