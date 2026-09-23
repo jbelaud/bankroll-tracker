@@ -96,7 +96,7 @@ export function HistoryFilters({
             ...Object.fromEntries(sportOptions.map((s) => [s, translateTaxonomy(tSports, s)])),
           }}
         >
-          <SelectTrigger className="min-h-touch rounded-lg px-3 text-xs">
+          <SelectTrigger className="min-h-touch w-full min-w-0 rounded-lg px-3 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -120,7 +120,7 @@ export function HistoryFilters({
               ...Object.fromEntries(bankrollOptions.map((b) => [b.id, b.name])),
             }}
           >
-            <SelectTrigger className="min-h-touch rounded-lg px-3 text-xs">
+            <SelectTrigger className="min-h-touch w-full min-w-0 rounded-lg px-3 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

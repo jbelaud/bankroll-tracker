@@ -9,7 +9,7 @@ import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listTipsters } from "@/lib/actions/tipsters";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { computeProfit } from "@/lib/profit";
-import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtPct } from "@/lib/format";
+import { fmtMoney, fmtMoneySigned, fmtPct } from "@/lib/format";
 import { Link } from "@/i18n/navigation";
 import { ProfitCurve } from "@/components/stats/profit-curve";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
@@ -101,6 +101,11 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
     return start <= today && (!end || end >= today);
   }) ?? null;
   const money = (value: number) => fmtMoneySigned(value, locale, tipster.user.currency);
+  const currentCostLabel = !current
+    ? t("unknown")
+    : current.kind === "FREE"
+      ? t("free")
+      : `${fmtMoney(current.amount ?? 0, locale, tipster.user.currency)}${current.frequency ? ` · ${t(`frequencies.${current.frequency}`)}` : ""}`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -138,24 +143,6 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
         <ProfitCurve data={performance.cumulative} currency={tipster.user.currency} />
       </section>
 
-      <section className="glass-card rounded-xl p-4">
-        <h2 className="text-sm font-semibold">{t("vipTitle")}</h2>
-        <p className="mb-4 mt-1 text-xs text-muted-foreground">{t("vipDescription")}</p>
-        <TipsterCostEditor tipsterId={id} currency={tipster.user.currency} current={current ? {
-          kind: current.kind,
-          amount: current.amount,
-          frequency: current.frequency,
-          startDate: current.startDate.toISOString().slice(0, 10),
-          endDate: current.endDate?.toISOString().slice(0, 10) ?? null,
-        } : null} />
-        <h3 className="mt-6 text-sm font-semibold">{t("historyTitle")}</h3>
-        {tipster.costPeriods.length === 0 ? <p className="mt-2 text-xs text-muted-foreground">{t("historyEmpty")}</p> : (
-          <ul className="mt-2 divide-y divide-border rounded-xl border border-border">
-            {tipster.costPeriods.map((period) => <li key={period.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-3 text-xs"><span>{period.startDate.toISOString().slice(0, 10)} → {period.endDate ? period.endDate.toISOString().slice(0, 10) : t("ongoing")}</span><strong>{period.kind === "FREE" ? t("free") : `${fmtMoney(period.amount ?? 0, locale, period.currency)}${period.frequency ? ` · ${t(`frequencies.${period.frequency}`)}` : ""}`}</strong></li>)}
-          </ul>
-        )}
-      </section>
-
       <section className="glass-card overflow-hidden rounded-xl p-4">
         <h2 className="text-sm font-semibold">{t("monthlyTitle")}</h2>
         {performance.monthly.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{t("monthlyEmpty")}</p> : <div className="no-scrollbar -mx-4 mt-3 overflow-x-auto px-4"><table className="w-full min-w-[620px] text-xs"><thead><tr className="border-b border-border text-left uppercase tracking-wide text-muted-foreground"><th className="py-2">{t("month")}</th><th className="py-2 text-right">{t("bets")}</th><th className="py-2 text-right">{t("bettingProfit")}</th><th className="py-2 text-right">{t("vipCost")}</th><th className="py-2 text-right">{t("netProfit")}</th></tr></thead><tbody>{performance.monthly.map((row) => <tr key={row.month} className="border-b border-border/50"><td className="py-2">{new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${row.month}-01`))}</td><td className="num py-2 text-right">{row.bets}</td><td className="num py-2 text-right">{money(row.bettingProfit)}</td><td className="num py-2 text-right">{row.serviceCost === null ? "—" : `-${fmtMoney(row.serviceCost, locale, tipster.user.currency)}`}</td><td className="num py-2 text-right font-semibold">{row.netProfit === null ? "—" : money(row.netProfit)}</td></tr>)}</tbody></table></div>}
@@ -165,6 +152,31 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
         <h2 className="mb-3 text-sm font-semibold">{t("betsTitle")}</h2>
         <HistoryList bets={history} bankrollOptions={activeBankrolls.map(({ id: bankrollId, name }) => ({ id: bankrollId, name }))} currency={tipster.user.currency} taxonomy={taxonomy} tipsters={tipsters.map(({ id: tipsterId, name, normalizedName, status }) => ({ id: tipsterId, name, normalizedName, status }))} />
       </section>
+
+      <details className="glass-card group rounded-xl p-4">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 marker:hidden">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold">{t("vipTitle")}</h2>
+            <p className="mt-1 text-xs text-muted-foreground">{t("vipDescription")}</p>
+          </div>
+          <span className="shrink-0 rounded-full bg-muted px-3 py-1.5 text-xs font-semibold text-foreground">{currentCostLabel}</span>
+        </summary>
+        <div className="mt-4 border-t border-border pt-4">
+          <TipsterCostEditor tipsterId={id} currency={tipster.user.currency} current={current ? {
+            kind: current.kind,
+            amount: current.amount,
+            frequency: current.frequency,
+            startDate: current.startDate.toISOString().slice(0, 10),
+            endDate: current.endDate?.toISOString().slice(0, 10) ?? null,
+          } : null} />
+          <h3 className="mt-6 text-sm font-semibold">{t("historyTitle")}</h3>
+          {tipster.costPeriods.length === 0 ? <p className="mt-2 text-xs text-muted-foreground">{t("historyEmpty")}</p> : (
+            <ul className="mt-2 divide-y divide-border rounded-xl border border-border">
+              {tipster.costPeriods.map((period) => <li key={period.id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-3 text-xs"><span>{period.startDate.toISOString().slice(0, 10)} → {period.endDate ? period.endDate.toISOString().slice(0, 10) : t("ongoing")}</span><strong>{period.kind === "FREE" ? t("free") : `${fmtMoney(period.amount ?? 0, locale, period.currency)}${period.frequency ? ` · ${t(`frequencies.${period.frequency}`)}` : ""}`}</strong></li>)}
+            </ul>
+          )}
+        </div>
+      </details>
     </div>
   );
 }
