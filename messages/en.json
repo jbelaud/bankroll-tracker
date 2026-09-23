@@ -950,6 +950,8 @@
     "share": "Share",
     "shareDiscord": "Copy for Discord",
     "shareNative": "Share with…",
+    "moreShareOptions": "More sharing options",
+    "howItWorks": "How do referrals work?",
     "shareText": "Try Kalivoa with my referral link!",
     "stats": {
       "invited": "Friends signed up",
