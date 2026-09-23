@@ -52,10 +52,10 @@ function TipsterCard({
   const archived = tipster.status === "ARCHIVED";
 
   return (
-    <article className="glass-card flex flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
+    <article className="glass-card flex flex-col gap-2 rounded-xl p-4 sm:flex-row sm:items-center">
+      <Link href={`/tipsters/${tipster.id}`} className="group min-w-0 flex-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="truncate text-sm font-semibold">{tipster.name}</h3>
+          <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">{tipster.name}</h3>
           <span className={archived
             ? "rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground"
             : "rounded-full bg-profit/12 px-2 py-0.5 text-[0.65rem] font-semibold text-profit"}
@@ -69,18 +69,18 @@ function TipsterCard({
           {t("betCount", { count: tipster.betCount })}
         </p>
         {tipster.notes ? <p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{tipster.notes}</p> : null}
-      </div>
-      <div className="flex shrink-0 flex-wrap gap-2">
-        <Button render={<Link href={`/tipsters/${tipster.id}`} />} variant="outline" className="min-h-touch flex-1 rounded-lg text-xs sm:flex-none">
-          <ChartLineUp size={16} aria-hidden />
+        <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+          <ChartLineUp size={15} aria-hidden />
           {t("actions.details")}
-        </Button>
-        <Button type="button" variant="outline" onClick={onEdit} className="min-h-touch flex-1 rounded-lg text-xs sm:flex-none">
+        </span>
+      </Link>
+      <div className="flex shrink-0 items-center justify-end gap-1 border-t border-border pt-2 sm:border-l sm:border-t-0 sm:pl-2 sm:pt-0">
+        <Button type="button" variant="ghost" size="sm" onClick={onEdit} className="min-h-9 rounded-lg text-xs">
           <PencilSimple size={16} aria-hidden />
           {t("actions.edit")}
         </Button>
         {!archived ? (
-          <Button type="button" variant="outline" onClick={onArchive} className="min-h-touch flex-1 rounded-lg text-xs text-muted-foreground sm:flex-none">
+          <Button type="button" variant="ghost" size="sm" onClick={onArchive} className="min-h-9 rounded-lg text-xs text-muted-foreground">
             <Archive size={16} aria-hidden />
             {t("actions.archive")}
           </Button>

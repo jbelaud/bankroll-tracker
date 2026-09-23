@@ -354,8 +354,8 @@
   },
 
   "tipsters": {
-    "title": "Tipsters",
-    "description": "Gère les personnes et services à l’origine de tes recommandations de paris.",
+    "title": "Mes tipsters",
+    "description": "Centralise les sources de tes paris et compare leurs performances réelles.",
     "add": "Ajouter un tipster",
     "activeTitle": "Actifs ({count})",
     "archivedTitle": "Archivés ({count})",

@@ -354,8 +354,8 @@
   },
 
   "tipsters": {
-    "title": "Tipsters",
-    "description": "Manage the people and services behind your betting recommendations.",
+    "title": "My tipsters",
+    "description": "Keep your betting sources together and compare their actual performance.",
     "add": "Add a tipster",
     "activeTitle": "Active ({count})",
     "archivedTitle": "Archived ({count})",
