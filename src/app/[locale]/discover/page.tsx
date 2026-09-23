@@ -31,6 +31,7 @@ export default async function DiscoverPage({ params, searchParams }: {
   const requestedSport = first(query.sport)?.normalize("NFKC").trim().slice(0, 40) ?? "";
   const requestedProof = first(query.proof);
   const activeProof: ProofFilter = requestedProof === "verified" || requestedProof === "strong" ? requestedProof : "all";
+  const hasActiveFilters = Boolean(search || requestedSport || activeProof !== "all");
   const supabase = await createClient();
   const [authResult, publicTipsters, publicSportRows] = await Promise.all([
     supabase.auth.getUser(),
@@ -110,7 +111,7 @@ export default async function DiscoverPage({ params, searchParams }: {
     return `/discover?${next.toString()}`;
   };
 
-  const directory = <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
+  const directory = <div className="mx-auto flex min-w-0 w-full max-w-7xl flex-col gap-5">
       {!viewer ? <header className="flex items-center justify-between gap-4 py-1">
         <Link href="/" className="text-xl font-black tracking-tight">Kalivoa</Link>
         <div className="flex items-center gap-2">
@@ -119,21 +120,21 @@ export default async function DiscoverPage({ params, searchParams }: {
         </div>
       </header> : null}
 
-      <section className="glass-card overflow-hidden rounded-3xl p-5 sm:p-8">
+      <section className="glass-card min-w-0 overflow-hidden rounded-2xl p-4 sm:rounded-3xl sm:p-8">
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"><UsersThree size={15} weight="fill" aria-hidden /> Communauté Kalivoa</span>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Suivez les résultats, pas les promesses.</h1>
+          <h1 className="mt-3 text-2xl font-bold tracking-tight sm:mt-4 sm:text-4xl">Suivez les résultats, pas les promesses.</h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">Compare leurs résultats en unités, leur activité et le niveau de preuve de leurs paris sans jamais voir leur bankroll réelle.</p>
         </div>
-        <form key={`${search}:${requestedSport}:${activeProof}:${activeSort}`} action={`/${locale}/discover`} method="get" className="mt-6 grid max-w-4xl gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
-          <label className="relative flex-1">
+        <form key={`${search}:${requestedSport}:${activeProof}:${activeSort}`} action={`/${locale}/discover`} method="get" className="mt-5 grid min-w-0 max-w-4xl gap-2 sm:mt-6 sm:grid-cols-2 lg:grid-cols-[minmax(18rem,1fr)_12rem_14rem_auto]">
+          <label className="relative min-w-0 flex-1">
             <span className="sr-only">Rechercher un tipster</span>
             <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <input name="q" defaultValue={search} maxLength={60} placeholder="Nom, @identifiant…" className="min-h-12 w-full rounded-xl border border-input bg-input/30 pl-11 pr-4 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
           </label>
           <input type="hidden" name="sort" value={activeSort} />
-          <label><span className="sr-only">Filtrer par sport</span><select name="sport" defaultValue={requestedSport} className="min-h-12 w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="">Tous les sports</option>{sportOptions.map((sport) => <option key={sport} value={sport}>{sport}</option>)}</select></label>
-          <label><span className="sr-only">Filtrer par niveau de preuve</span><select name="proof" defaultValue={activeProof} className="min-h-12 w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="all">Tous les niveaux de preuve</option><option value="verified">Score de preuve ≥ 60</option><option value="strong">Score de preuve ≥ 80</option></select></label>
+          <label className="min-w-0"><span className="sr-only">Filtrer par sport</span><select name="sport" defaultValue={requestedSport} className="min-h-12 min-w-0 w-full max-w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="">Tous les sports</option>{sportOptions.map((sport) => <option key={sport} value={sport}>{sport}</option>)}</select></label>
+          <label className="min-w-0"><span className="sr-only">Filtrer par niveau de preuve</span><select name="proof" defaultValue={activeProof} className="min-h-12 min-w-0 w-full max-w-full rounded-xl border border-input bg-background px-3 text-sm"><option value="all">Tous les niveaux de preuve</option><option value="verified">Score de preuve ≥ 60</option><option value="strong">Score de preuve ≥ 80</option></select></label>
           <button type="submit" className="min-h-12 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground hover:opacity-90">Rechercher</button>
         </form>
         {(search || requestedSport || activeProof !== "all") ? <Link href="/discover" className="mt-3 inline-flex text-xs font-semibold text-primary hover:underline">Effacer tous les filtres</Link> : null}
@@ -142,11 +143,11 @@ export default async function DiscoverPage({ params, searchParams }: {
       <section className="space-y-4 pb-10">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div><h2 className="text-lg font-semibold">Tipsters publics</h2><p className="mt-1 text-xs text-muted-foreground">{cards.length} profil(s){search ? ` pour « ${search} »` : " disponibles"}{requestedSport ? ` · ${requestedSport}` : ""}</p></div>
-          <nav aria-label="Trier les tipsters" className="grid grid-cols-3 gap-1 rounded-xl border border-border bg-card/40 p-1">
+          {cards.length > 0 ? <nav aria-label="Trier les tipsters" className="grid grid-cols-3 gap-1 rounded-xl border border-border bg-card/40 p-1">
             <SortLink href={sortHref("popular")} active={activeSort === "popular"}>Plus suivis</SortLink>
             <SortLink href={sortHref("recent")} active={activeSort === "recent"}>Récents</SortLink>
             <SortLink href={sortHref("active")} active={activeSort === "active"}>Plus actifs</SortLink>
-          </nav>
+          </nav> : null}
         </div>
 
         {cards.length > 0 ? <ul className="grid gap-4 xl:grid-cols-2">
@@ -170,11 +171,18 @@ export default async function DiscoverPage({ params, searchParams }: {
             </ul>
             <Link href={`/t/${tipster.publicHandle}`} className="relative mt-5 inline-flex min-h-11 items-center justify-between border-t border-border pt-4 text-sm font-semibold text-primary">Voir le profil et les paris <ArrowRight size={17} aria-hidden /></Link>
           </li>)}
-        </ul> : <div className="glass-card flex min-h-56 flex-col items-center justify-center rounded-2xl p-8 text-center">
-          <MagnifyingGlass size={30} className="text-muted-foreground" aria-hidden />
-          <h3 className="mt-3 font-semibold">Aucun tipster trouvé</h3>
-          <p className="mt-1 text-sm text-muted-foreground">Essaie un autre nom ou affiche tous les profils publics.</p>
-          <Link href="/discover" className="mt-4 text-sm font-semibold text-primary hover:underline">Effacer la recherche</Link>
+        </ul> : <div className="glass-card flex min-h-56 flex-col items-center justify-center rounded-2xl p-6 text-center sm:p-8">
+          {hasActiveFilters ? <>
+            <MagnifyingGlass size={30} className="text-muted-foreground" aria-hidden />
+            <h3 className="mt-3 font-semibold">Aucun tipster trouvé</h3>
+            <p className="mt-1 max-w-md text-sm text-muted-foreground">Essaie un autre nom ou affiche tous les profils publics.</p>
+            <Link href="/discover" className="mt-4 text-sm font-semibold text-primary hover:underline">Effacer tous les filtres</Link>
+          </> : <>
+            <UsersThree size={32} className="text-primary" weight="duotone" aria-hidden />
+            <h3 className="mt-3 font-semibold">La communauté démarre ici</h3>
+            <p className="mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">Aucun profil public n’est encore disponible. Configure ton profil et publie une bankroll certifiée pour apparaître dans l’annuaire.</p>
+            <Link href="/account/public-profile" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">Configurer mon profil public</Link>
+          </>}
         </div>}
       </section>
     </div>;
