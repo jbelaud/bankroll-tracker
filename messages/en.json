@@ -1682,16 +1682,16 @@
     "pages": {
       "features": {
         "eyebrow": "Kalivoa features",
-        "title": "From betting-slip screenshot to usable bankroll history.",
-        "description": "Kalivoa brings together structured reading of visible tickets, review and useful indicators for bankroll tracking.",
-        "sectionTitle": "A controlled path from screenshot to history",
-        "intro": "Import speeds up visible-ticket entry, while the final validation always stays with the user.",
+        "title": "All your bet tracking, without spreadsheets or duplicate entry.",
+        "description": "Capture a ticket, review detected data and keep a clear history with the indicators that genuinely matter.",
+        "sectionTitle": "A simple path from ticket to analysis",
+        "intro": "Kalivoa connects every step without taking away control: extracted information remains visible and editable before saving.",
         "points": {
-          "one": { "title": "Controlled import", "description": "Add one or more screenshots and find visible bets ready to be reviewed." },
-          "two": { "title": "Organized history", "description": "Keep bets, bankrolls and capital movements in the same place." },
-          "three": { "title": "Performance reading", "description": "Review profit, ROI and breakdowns from saved bets." }
+          "one": { "title": "Add your tickets", "description": "Import one or several screenshots, or enter a bet manually whenever you prefer." },
+          "two": { "title": "Review before saving", "description": "Check the bankroll, stake, odds, status and every detected field before confirming." },
+          "three": { "title": "Understand your history", "description": "Review balance, profit, ROI and breakdowns without mixing bets and capital movements." }
         },
-        "notice": { "title": "No performance promise", "description": "Kalivoa measures and organizes data. It does not recommend betting or guarantee any outcome." }
+        "notice": { "title": "You stay in control at every step", "description": "Kalivoa organizes and measures past activity. It does not recommend bets, place stakes or guarantee results." }
       },
       "import": {
         "eyebrow": "Betting-slip screenshot reading",
@@ -1708,16 +1708,16 @@
       },
       "bankroll": {
         "eyebrow": "Bankroll tracking",
-        "title": "Understand betting history through grouped data.",
-        "description": "Find bankrolls, capital movements, bets and statistics in the same application.",
-        "sectionTitle": "Indicators built from your betting history",
-        "intro": "Kalivoa calculates indicators from saved bets and bankroll movements, without mixing the two.",
+        "title": "A readable bankroll, even as your history grows.",
+        "description": "Keep capital, movements and bets separate, then follow their evolution from one consistent view on mobile and desktop.",
+        "sectionTitle": "Build tracking that stays reliable over time",
+        "intro": "Every figure has its place: real capital, deposits and withdrawals, then settled-bet results.",
         "points": {
-          "one": { "title": "Balance and evolution", "description": "View bankroll evolution from capital and settled bets." },
-          "two": { "title": "Profit and ROI", "description": "Check indicators calculated for bets saved in your tracking." },
-          "three": { "title": "Useful filters", "description": "Analyze by period, sport, bet type or bookmaker." }
+          "one": { "title": "Create a bankroll", "description": "Set its bookmaker, reference capital and, when useful, your staking allocations." },
+          "two": { "title": "Separate movements", "description": "Record deposits and withdrawals separately so they are never confused with betting performance." },
+          "three": { "title": "Analyze results", "description": "Filter profit, ROI and history by period, sport, bet type or bookmaker." }
         },
-        "notice": { "title": "A tool for perspective", "description": "Indicators help understand past activity. They do not predict gains or recommend a stake." }
+        "notice": { "title": "Figures to understand, not predict", "description": "Indicators only reflect saved data. They do not predict gains or constitute a staking recommendation." }
       },
       "pricing": {
         "eyebrow": "Pricing and access",

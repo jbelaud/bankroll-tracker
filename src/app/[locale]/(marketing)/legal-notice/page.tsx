@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { marketingMetadata } from "@/lib/marketing-seo";
-import { MarketingInfoPage } from "@/components/marketing/marketing-info-page";
+import { MarketingDocumentPage } from "@/components/marketing/marketing-document-page";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -11,5 +11,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 }
 
 export default async function LegalNoticePage({ params }: { params: Promise<{ locale: Locale }> }) {
-  return <MarketingInfoPage locale={(await params).locale} page="legal" />;
+  return <MarketingDocumentPage locale={(await params).locale} kind="legal" />;
 }

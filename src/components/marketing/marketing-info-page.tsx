@@ -8,21 +8,13 @@ type MarketingPageKey =
   | "features"
   | "import"
   | "bankroll"
-  | "pricing"
-  | "bookmakers"
-  | "contact"
-  | "legal"
-  | "sales";
+  | "pricing";
 
 const pagePaths: Record<MarketingPageKey, string> = {
   features: "/features",
   import: "/screenshot-import",
   bankroll: "/bankroll-tracking",
   pricing: "/pricing",
-  bookmakers: "/bookmakers",
-  contact: "/contact",
-  legal: "/legal-notice",
-  sales: "/sales-terms",
 };
 
 export async function MarketingInfoPage({
@@ -32,14 +24,31 @@ export async function MarketingInfoPage({
   locale: Locale;
   page: MarketingPageKey;
 }) {
-  const t = await getTranslations({ locale, namespace: "marketing" });
+  const [t, common] = await Promise.all([
+    getTranslations({ locale, namespace: "marketing" }),
+    getTranslations({ locale, namespace: "marketing.info" }),
+  ]);
   const text = (key: string) => t(key as never);
   const pageKey = "pages." + page + ".";
-  const common = await getTranslations({ locale, namespace: "marketing.info" });
   const path = pagePaths[page];
   const isImportJourney = page === "import";
   const isPricingJourney = page === "pricing";
-  const isProductJourney = isImportJourney || isPricingJourney;
+  const isCoreJourney = page === "features" || page === "bankroll";
+  const isProductJourney = isImportJourney || isPricingJourney || isCoreJourney;
+  const secondaryHref = isImportJourney
+    ? "/bookmakers"
+    : isPricingJourney
+      ? "/features"
+      : page === "features"
+        ? "/screenshot-import"
+        : "/features";
+  const secondaryLabel = isImportJourney
+    ? locale === "fr" ? "Voir les bookmakers compatibles" : "View compatible bookmakers"
+    : isPricingJourney
+      ? locale === "fr" ? "Voir les fonctionnalités" : "View features"
+      : page === "features"
+        ? locale === "fr" ? "Découvrir l’import par capture" : "Explore screenshot import"
+        : locale === "fr" ? "Voir toutes les fonctionnalités" : "View all features";
   const homeHref = "/" + locale;
   const currentHref = homeHref + path;
   const jsonLd = {
@@ -84,10 +93,8 @@ export async function MarketingInfoPage({
                   {common("cta")}
                   <ArrowRight size={18} weight="bold" aria-hidden />
                 </Link>
-                <Link href={isImportJourney ? "/bookmakers" : "/features"} locale={locale} className="marketing-secondary-cta">
-                  {isImportJourney
-                    ? locale === "fr" ? "Voir les bookmakers compatibles" : "View compatible bookmakers"
-                    : locale === "fr" ? "Voir les fonctionnalités" : "View features"}
+                <Link href={secondaryHref} locale={locale} className="marketing-secondary-cta">
+                  {secondaryLabel}
                 </Link>
               </div>
             ) : null}
@@ -99,9 +106,11 @@ export async function MarketingInfoPage({
           </section>
 
           <section className={`${isProductJourney ? "mt-5 gap-3" : "mt-8 gap-4"} grid md:grid-cols-3`}>
-            {["one", "two", "three"].map((key) => (
+            {["one", "two", "three"].map((key, index) => (
               <article key={key} className={`marketing-card ${isProductJourney ? "flex gap-3 p-4 md:block md:p-6" : "p-6"}`}>
-                <CheckCircle size={21} className={`${isProductJourney ? "mt-0.5 shrink-0" : ""} text-profit`} weight="fill" aria-hidden />
+                {isCoreJourney
+                  ? <span className="num flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">{index + 1}</span>
+                  : <CheckCircle size={21} className={`${isProductJourney ? "mt-0.5 shrink-0" : ""} text-profit`} weight="fill" aria-hidden />}
                 <div>
                   <h3 className={`${isProductJourney ? "md:mt-5" : "mt-5"} text-base font-semibold`}>{text(pageKey + "points." + key + ".title")}</h3>
                   <p className={`${isProductJourney ? "mt-1.5 md:mt-3" : "mt-3"} text-sm leading-6 text-muted-foreground`}>{text(pageKey + "points." + key + ".description")}</p>

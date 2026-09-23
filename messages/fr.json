@@ -1681,16 +1681,16 @@
     "pages": {
       "features": {
         "eyebrow": "Fonctionnalités Kalivoa",
-        "title": "De la capture de ticket à un historique de bankroll exploitable.",
-        "description": "Kalivoa réunit la lecture structurée de tickets visibles, leur revue et les indicateurs utiles au suivi d’une bankroll.",
-        "sectionTitle": "Un parcours de contrôle, de la capture à l’historique",
-        "intro": "L’import accélère la saisie des informations visibles ; la validation finale reste toujours entre les mains de l’utilisateur.",
+        "title": "Tout votre suivi de paris, sans tableur ni double saisie.",
+        "description": "Capturez un ticket, vérifiez les données détectées et retrouvez un historique clair avec les indicateurs qui comptent vraiment.",
+        "sectionTitle": "Un parcours simple, du ticket à l’analyse",
+        "intro": "Kalivoa relie les étapes sans vous faire perdre le contrôle : chaque information extraite reste visible et modifiable avant l’enregistrement.",
         "points": {
-          "one": { "title": "Import contrôlé", "description": "Ajoutez une ou plusieurs captures et retrouvez les paris visibles, prêts à être vérifiés." },
-          "two": { "title": "Historique organisé", "description": "Conservez paris, bankrolls et mouvements de capital au même endroit." },
-          "three": { "title": "Lecture de la performance", "description": "Examinez profit, ROI et répartitions à partir des paris enregistrés." }
+          "one": { "title": "Ajoutez vos tickets", "description": "Importez une ou plusieurs captures, ou saisissez un pari manuellement quand vous le préférez." },
+          "two": { "title": "Vérifiez avant d’enregistrer", "description": "Contrôlez la bankroll, la mise, la cote, le statut et chaque donnée détectée avant validation." },
+          "three": { "title": "Comprenez votre historique", "description": "Consultez solde, profit, ROI et répartitions sans mélanger paris et mouvements de capital." }
         },
-        "notice": { "title": "Pas de promesse de performance", "description": "Kalivoa sert à mesurer et organiser des données. Il ne conseille pas de parier et ne garantit aucun résultat." }
+        "notice": { "title": "Vous gardez la main à chaque étape", "description": "Kalivoa organise et mesure votre activité passée. Il ne conseille pas de pari, ne place aucune mise et ne garantit aucun résultat." }
       },
       "import": {
         "eyebrow": "Lecture de tickets par capture",
@@ -1707,16 +1707,16 @@
       },
       "bankroll": {
         "eyebrow": "Suivi de bankroll",
-        "title": "Comprendre son historique de paris avec des données regroupées.",
-        "description": "Retrouvez vos bankrolls, mouvements de capital, paris et statistiques dans la même application.",
-        "sectionTitle": "Des indicateurs construits à partir de votre historique",
-        "intro": "Kalivoa calcule les indicateurs à partir des paris enregistrés et des mouvements de bankroll, sans les confondre.",
+        "title": "Une bankroll lisible, même quand votre historique grandit.",
+        "description": "Séparez vos capitaux, mouvements et paris, puis suivez leur évolution depuis une vue cohérente sur mobile comme sur ordinateur.",
+        "sectionTitle": "Construisez un suivi qui reste fiable dans le temps",
+        "intro": "Chaque donnée a sa place : le capital réel, les dépôts et retraits, puis les résultats des paris réglés.",
         "points": {
-          "one": { "title": "Solde et évolution", "description": "Visualisez l’évolution de la bankroll à partir du capital et des paris réglés." },
-          "two": { "title": "Profit et ROI", "description": "Consultez les indicateurs calculés pour les paris enregistrés dans votre suivi." },
-          "three": { "title": "Filtres utiles", "description": "Analysez selon la période, le sport, le type de pari ou le bookmaker." }
+          "one": { "title": "Créez une bankroll", "description": "Définissez son bookmaker, son capital de référence et, si besoin, vos allocations de mise." },
+          "two": { "title": "Distinguez les mouvements", "description": "Enregistrez dépôts et retraits séparément pour ne pas les confondre avec la performance des paris." },
+          "three": { "title": "Analysez les résultats", "description": "Filtrez profit, ROI et historique par période, sport, type de pari ou bookmaker." }
         },
-        "notice": { "title": "Un outil de contrôle", "description": "Les indicateurs servent à mieux comprendre l’activité passée, pas à prédire des gains ou recommander une mise." }
+        "notice": { "title": "Des chiffres pour comprendre, pas pour prédire", "description": "Les indicateurs reflètent uniquement les données enregistrées. Ils ne prédisent aucun gain et ne constituent pas une recommandation de mise." }
       },
       "pricing": {
         "eyebrow": "Tarifs et accès",
