@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { calculateScanCostUsd } from "./cost";
 
 describe("calculateScanCostUsd", () => {
@@ -12,7 +12,15 @@ describe("calculateScanCostUsd", () => {
   });
 
   it("uses Gemini Flash and Flash-Lite prices", () => {
-    expect(calculateScanCostUsd("gemini-3.6-flash", 1_568, 500)).toBeCloseTo(0.006102);
-    expect(calculateScanCostUsd("gemini-3.5-flash-lite", 1_568, 500)).toBeCloseTo(0.0017204);
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-09-29T00:00:00Z"));
+      expect(calculateScanCostUsd("gemini-3.6-flash", 1_568, 500)).toBeCloseTo(0.003051);
+      expect(calculateScanCostUsd("gemini-3.5-flash-lite", 1_568, 500)).toBeCloseTo(0.0017204);
+      vi.setSystemTime(new Date("2027-01-01T00:00:00Z"));
+      expect(calculateScanCostUsd("gemini-3.6-flash", 1_568, 500)).toBeCloseTo(0.006102);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

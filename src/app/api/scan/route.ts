@@ -48,7 +48,7 @@ function isSameOrigin(request: NextRequest): boolean {
   }
 }
 
-// La clé API Claude ne quitte jamais le serveur → runtime Node, jamais edge.
+// Les clés API IA ne quittent jamais le serveur → runtime Node, jamais edge.
 export const runtime = "nodejs";
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // garde-fou 8 Mo
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: t("notAuthenticated") }, { status: 401 });
   }
 
-  // 2. Rate limit : chaque appel coûte réellement de l'argent (API Claude).
+  // 2. Rate limit : chaque appel IA coûte réellement de l'argent.
   // 2bis. Quota mensuel lié au plan — distinct du
   // rate-limit horaire ci-dessus, qui protège contre l'abus indépendamment
   // du plan.
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
   };
 
-  // 4. Appel IA côté serveur uniquement (Anthropic prioritaire pour le scan).
+  // 4. Appel IA côté serveur uniquement (Google prioritaire si configuré).
   let rawBets: unknown[];
   let rawExtraction: unknown;
   let detectedBookmaker: string | null = null;

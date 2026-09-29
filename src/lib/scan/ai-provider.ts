@@ -5,6 +5,8 @@ import type { Taxonomy } from "@/lib/taxonomy";
 
 const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"] as const;
 type GeminiModel = (typeof GEMINI_MODELS)[number];
+const DEFAULT_GEMINI_SCAN_MODEL: GeminiModel = "gemini-3.6-flash";
+const DEFAULT_GEMINI_INSIGHTS_MODEL: GeminiModel = "gemini-3.5-flash-lite";
 
 export const ANTHROPIC_SCAN_MODEL = "claude-sonnet-4-6";
 export const STRICT_SCAN_SYSTEM_PROMPT =
@@ -85,16 +87,18 @@ export type ScanAiResponse = {
 export type ScanProvider = "anthropic" | "gemini";
 
 export function getConfiguredScanProvider(): ScanProvider | null {
-  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
   if (process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY) return "gemini";
+  if (process.env.ANTHROPIC_API_KEY) return "anthropic";
   return null;
 }
 
-function getGeminiModel(): GeminiModel {
-  const configuredModel = process.env.GEMINI_MODEL;
+function getGeminiModel(purpose: "scan" | "insights"): GeminiModel {
+  const configuredModel = purpose === "scan"
+    ? process.env.GEMINI_SCAN_MODEL ?? process.env.GEMINI_MODEL
+    : process.env.GEMINI_INSIGHTS_MODEL ?? process.env.GEMINI_MODEL;
   return GEMINI_MODELS.includes(configuredModel as GeminiModel)
     ? (configuredModel as GeminiModel)
-    : "gemini-3.5-flash-lite";
+    : purpose === "scan" ? DEFAULT_GEMINI_SCAN_MODEL : DEFAULT_GEMINI_INSIGHTS_MODEL;
 }
 
 export function hasConfiguredScanProvider(): boolean {
@@ -116,9 +120,33 @@ export async function analyzeTicketImage({
 }): Promise<ScanAiResponse> {
   const provider = getConfiguredScanProvider();
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
+  if (provider === "gemini" && geminiApiKey) {
+    const model = getGeminiModel("scan");
+    const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+    const response = await ai.models.generateContent({
+      model,
+      contents: [
+        { inlineData: { mimeType: mediaType, data: base64 } },
+        { text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+      ],
+      config: {
+        systemInstruction: STRICT_SCAN_SYSTEM_PROMPT,
+        responseMimeType: "application/json",
+        responseJsonSchema: SCAN_RESPONSE_SCHEMA,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+      },
+    });
 
-  // Anthropic est prioritaire pour le scan. Gemini reste disponible lorsque
-  // aucune clé Anthropic n'est configurée.
+    if (!response.text) throw new Error("Réponse Gemini vide");
+    return {
+      text: response.text,
+      model,
+      inputTokens: response.usageMetadata?.promptTokenCount ?? 0,
+      outputTokens: (response.usageMetadata?.candidatesTokenCount ?? 0) +
+        (response.usageMetadata?.thoughtsTokenCount ?? 0),
+    };
+  }
+
   if (provider === "anthropic") {
     const response = await new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.create({
       model: ANTHROPIC_SCAN_MODEL,
@@ -151,34 +179,6 @@ export async function analyzeTicketImage({
     };
   }
 
-  if (provider === "gemini" && geminiApiKey) {
-    const model = getGeminiModel();
-    const ai = new GoogleGenAI({ apiKey: geminiApiKey });
-    const response = await ai.models.generateContent({
-      model,
-      contents: [
-        {
-          inlineData: { mimeType: mediaType, data: base64 },
-        },
-        { text: "Analyse cette capture de ticket de paris sportifs." },
-      ],
-      config: {
-        systemInstruction: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }),
-        responseMimeType: "application/json",
-        responseJsonSchema: SCAN_RESPONSE_SCHEMA,
-        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-      },
-    });
-
-    if (!response.text) throw new Error("Réponse Gemini vide");
-    return {
-      text: response.text,
-      model,
-      inputTokens: response.usageMetadata?.promptTokenCount ?? 0,
-      outputTokens: response.usageMetadata?.candidatesTokenCount ?? 0,
-    };
-  }
-
   throw new Error("Aucun fournisseur IA configuré");
 }
 
@@ -188,14 +188,14 @@ export async function generateTextWithConfiguredProvider(prompt: string): Promis
 
   if (geminiApiKey) {
     const response = await new GoogleGenAI({ apiKey: geminiApiKey }).models.generateContent({
-      model: getGeminiModel(),
+      model: getGeminiModel("insights"),
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
         thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
       },
     });
-    if (!response.text) throw new Error("R\u00e9ponse Gemini vide");
+    if (!response.text) throw new Error("Réponse Gemini vide");
     return response.text;
   }
 

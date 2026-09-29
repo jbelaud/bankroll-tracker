@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 // Fenêtre glissante par utilisateur, stockée en base (fiable en serverless,
 // contrairement à un compteur en mémoire qui ne survit pas entre instances).
-// Chaque appel /api/scan déclenche un appel payant à Claude — ce garde-fou
+// Chaque appel /api/scan déclenche un appel IA payant — ce garde-fou
 // protège contre l'abus/le spam, pas contre un usage normal.
 const WINDOW_MS = 60 * 60 * 1000; // 1h
 export const HOURLY_SCAN_LIMITS: Record<Plan, number> = {
