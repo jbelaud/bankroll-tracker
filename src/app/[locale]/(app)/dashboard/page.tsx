@@ -4,6 +4,7 @@ import { listBankrolls } from "@/lib/actions/bankrolls";
 import { listAllBets } from "@/lib/actions/bets";
 import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
+import { unitPerformance } from "@/lib/unit-performance";
 import { movementDelta } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
@@ -112,6 +113,7 @@ export default async function DashboardPage() {
   const totalProfit = settled.reduce((s, b) => s + computeProfit(b), 0);
   const totalBalance = totalNetFunding + totalProfit;
   const totalStaked = settled.reduce((s, b) => s + realStake(b), 0);
+  const units = unitPerformance(bets);
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const wonCount = settled.filter((b) => b.result === "GAGNE").length;
   const winRate = settled.length > 0 ? (wonCount / settled.length) * 100 : 0;
@@ -187,10 +189,15 @@ export default async function DashboardPage() {
       <Reveal index={1} className="xl:col-span-4">
         <KpiRow
           profit={totalProfit}
+          unitProfit={units.profit}
+          missingUnitCount={units.missing}
+          totalCount={bets.length}
+          pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
           roi={roi}
           winRate={winRate}
           settledCount={settled.length}
           wonCount={wonCount}
+          currency={currency}
         />
       </Reveal>
 

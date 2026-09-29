@@ -6,6 +6,9 @@ import { INSIGHTS_COOLDOWN_DAYS, INSIGHTS_COOLDOWN_MS } from "./types";
 
 const stats: GlobalStats = {
   totalBets: 24,
+  performanceBets: 24,
+  totalProfit: 40,
+  roi: 10,
   totalStaked: 400,
   avgOdds: 1.85,
   avgOddsWeighted: 1.8,

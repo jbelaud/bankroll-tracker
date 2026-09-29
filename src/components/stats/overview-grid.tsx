@@ -1,10 +1,13 @@
-import { getLocale, getTranslations } from "next-intl/server";
-import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
+import { TrendUp, TrendDown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
-import { fmtMoney, fmtMoneySigned } from "@/lib/format";
+import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import type { GlobalStats } from "@/lib/stats";
+import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
 function StatCard({
   label,
@@ -38,23 +41,26 @@ function StatCard({
   );
 }
 
-export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; currency: Currency }) {
+type UnitStats = { profit: number | null; averageStake: number | null; biggestWin: number | null; biggestLoss: number | null; missing: number };
+
+export function OverviewGrid({ stats, currency, units }: { stats: GlobalStats; currency: Currency; units: UnitStats }) {
   const biggestWinAmount = stats.biggestWin ? computeProfit(stats.biggestWin) : null;
   const biggestLossAmount = stats.biggestLoss ? computeProfit(stats.biggestLoss) : null;
 
-  const locale = await getLocale();
-  const t = await getTranslations("stats.overview");
+  const locale = useLocale();
+  const t = useTranslations("stats.overview");
+  const displayUnit = useDisplayUnit();
   const secondaryStats = (
     <>
       <StatCard
         label={t("biggestWin")}
-        value={biggestWinAmount != null ? fmtMoneySigned(biggestWinAmount, locale, currency) : "—"}
-        trend={biggestWinAmount != null ? "up" : undefined}
+        value={displayUnit === "units" ? units.biggestWin === null ? "—" : fmtUnits(units.biggestWin, locale, true) : biggestWinAmount != null ? fmtMoneySigned(biggestWinAmount, locale, currency) : "—"}
+        trend={displayUnit === "units" && units.biggestWin === null ? undefined : biggestWinAmount != null ? "up" : undefined}
       />
       <StatCard
         label={t("biggestLoss")}
-        value={biggestLossAmount != null ? fmtMoneySigned(biggestLossAmount, locale, currency) : "—"}
-        trend={biggestLossAmount != null ? "down" : undefined}
+        value={displayUnit === "units" ? units.biggestLoss === null ? "—" : fmtUnits(units.biggestLoss, locale, true) : biggestLossAmount != null ? fmtMoneySigned(biggestLossAmount, locale, currency) : "—"}
+        trend={displayUnit === "units" && units.biggestLoss === null ? undefined : biggestLossAmount != null ? "down" : undefined}
       />
       <StatCard
         label={t("bestStreak")}
@@ -73,20 +79,25 @@ export async function OverviewGrid({ stats, currency }: { stats: GlobalStats; cu
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <StatCard label={t("totalBets")} value={String(stats.totalBets)} />
+      <div className="flex justify-end"><DisplayUnitToggle /></div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <StatCard label={t("totalBets")} value={String(stats.totalBets)} sub={t("performanceBets", { count: stats.performanceBets })} />
+        <StatCard label={t("roi")} value={stats.roi === null ? "—" : fmtPct(stats.roi, locale)} sub={t("roiDescription")} trend={stats.roi === null ? undefined : stats.roi >= 0 ? "up" : "down"} />
+        <StatCard label={t("profit")} value={displayUnit === "units" ? units.profit === null ? "—" : fmtUnits(units.profit, locale, true) : fmtMoneySigned(stats.totalProfit, locale, currency)} trend={displayUnit === "units" && units.profit === null ? undefined : stats.totalProfit >= 0 ? "up" : "down"} />
         <StatCard
           label={t("avgOdds")}
           value={stats.avgOdds.toFixed(2)}
           sub={t("avgOddsWeighted", { value: stats.avgOddsWeighted.toFixed(2) })}
         />
-        <StatCard label={t("avgStake")} value={fmtMoney(stats.avgStake, locale, currency)} />
+        <StatCard label={t("avgStake")} value={displayUnit === "units" ? units.averageStake === null ? "—" : fmtUnits(units.averageStake, locale) : fmtMoney(stats.avgStake, locale, currency)} />
         <StatCard
           label={t("currentStreak")}
           value={String(stats.curStreak)}
           trend={stats.curType === "PERDU" ? "down" : stats.curType === "GAGNE" ? "up" : undefined}
         />
       </div>
+
+      {displayUnit === "units" && units.missing > 0 ? <p className="text-xs text-warning">{t("missingUnits", { count: units.missing })}</p> : null}
 
       <details className="group sm:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-xl border border-border text-xs font-semibold text-primary marker:content-none">

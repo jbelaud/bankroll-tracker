@@ -108,6 +108,9 @@ export function bucketStats(
 
 export type GlobalStats = {
   totalBets: number;
+  performanceBets: number;
+  totalProfit: number;
+  roi: number | null;
   totalStaked: number;
   avgOdds: number;
   avgOddsWeighted: number;
@@ -138,6 +141,7 @@ export function computeGlobalStats(bets: Bet[]): GlobalStats {
     .sort((a, b) => a.date.getTime() - b.date.getTime());
   const cashPerformanceBets = performanceBets.filter((b) => !b.freebet);
   const totalStaked = cashPerformanceBets.reduce((s, b) => s + realStake(b), 0);
+  const totalProfit = performanceBets.reduce((sum, bet) => sum + computeProfit(bet), 0);
   const avgOdds = cashPerformanceBets.length > 0 ? cashPerformanceBets.reduce((s, b) => s + (Number(b.odds) || 0), 0) / cashPerformanceBets.length : 0;
   const avgOddsWeighted =
     totalStaked > 0
@@ -212,6 +216,9 @@ export function computeGlobalStats(bets: Bet[]): GlobalStats {
 
   return {
     totalBets: bets.length,
+    performanceBets: performanceBets.length,
+    totalProfit,
+    roi: totalStaked > 0 ? totalProfit / totalStaked * 100 : null,
     totalStaked,
     avgOdds,
     avgOddsWeighted,

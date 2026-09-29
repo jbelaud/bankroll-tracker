@@ -6,6 +6,8 @@ import { currencySymbol } from "@/lib/format";
 import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { getServerCurrency } from "@/lib/get-server-currency";
+import { unitPerformance } from "@/lib/unit-performance";
+import { profitInUnits } from "@/lib/public-bankroll";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
@@ -76,6 +78,10 @@ export default async function StatsPage({
     return (!from || day >= from) && (!to || day <= to) && (!q || text.includes(q)) && (!bankroll || bet.bankrollId === bankroll) && (!sportFilter || bet.sport === sportFilter) && (!typeFilter || bet.betType === typeFilter) && (!resultFilter || bet.result === resultFilter) && (!live || String(bet.live) === live) && (!freebet || String(bet.freebet) === freebet) && (minStake === null || bet.stake >= minStake) && (maxStake === null || bet.stake <= maxStake) && (minOdds === null || (bet.odds !== null && bet.odds >= minOdds)) && (maxOdds === null || (bet.odds !== null && bet.odds <= maxOdds));
   });
   const stats = computeGlobalStats(bets);
+  const units = unitPerformance(bets);
+  const extremeInUnits = (bet: typeof stats.biggestWin) => bet && bet.stakeUnits !== null
+    && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
+    ? profitInUnits(bet) : null;
 
   const settledCount = bets.filter((b) => countsTowardPerformance(b.result)).length;
 
@@ -172,7 +178,13 @@ export default async function StatsPage({
           <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{t("sections.overviewDescription", { count: bets.length })}</p>
         </div>
-        <OverviewGrid stats={stats} currency={currency} />
+        <OverviewGrid stats={stats} currency={currency} units={{
+          profit: units.profit,
+          averageStake: units.averageStake,
+          missing: units.missing,
+          biggestWin: extremeInUnits(stats.biggestWin),
+          biggestLoss: extremeInUnits(stats.biggestLoss),
+        }} />
       </section>
 
       {paidPlan ? (

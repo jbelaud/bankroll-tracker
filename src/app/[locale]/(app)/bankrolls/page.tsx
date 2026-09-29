@@ -4,6 +4,7 @@ import { listAllBets } from "@/lib/actions/bets";
 import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { getServerCurrency } from "@/lib/get-server-currency";
+import { unitPerformance } from "@/lib/unit-performance";
 import {
   BankrollList,
   type BankrollListItem,
@@ -27,6 +28,8 @@ export default async function BankrollsPage({
 
   const items: BankrollListItem[] = bankrolls.map((br) => {
     const summary = summaries.find((s) => s.id === br.id)!;
+    const bankrollBets = bets.filter((bet) => bet.bankrollId === br.id);
+    const units = unitPerformance(bankrollBets);
     return {
       id: br.id,
       name: br.name,
@@ -37,8 +40,11 @@ export default async function BankrollsPage({
       allocations: br.allocations,
       balance: summary.balance,
       profit: summary.profit,
-      betCount: bets.filter((bet) => bet.bankrollId === br.id).length,
-      pendingCount: bets.filter((bet) => bet.bankrollId === br.id && bet.result === "EN_ATTENTE").length,
+      betCount: bankrollBets.length,
+      pendingCount: bankrollBets.filter((bet) => bet.result === "EN_ATTENTE").length,
+      settledCount: units.settled,
+      unitProfit: units.profit,
+      missingUnitCount: units.missing,
       locked: br.locked,
     };
   });

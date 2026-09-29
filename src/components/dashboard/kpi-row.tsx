@@ -1,7 +1,10 @@
-import { getLocale, getTranslations } from "next-intl/server";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { fmtMoneySigned, fmtPct } from "@/lib/format";
-import { getServerCurrency } from "@/lib/get-server-currency";
+import type { Currency } from "@prisma/client";
+import { fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
+import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
 function KpiTile({
   label,
@@ -32,38 +35,51 @@ function KpiTile({
   );
 }
 
-export async function KpiRow({
+export function KpiRow({
   profit,
+  unitProfit,
+  missingUnitCount,
+  totalCount,
+  pendingCount,
   roi,
   winRate,
   settledCount,
   wonCount,
+  currency,
 }: {
   profit: number;
+  unitProfit: number | null;
+  missingUnitCount: number;
+  totalCount: number;
+  pendingCount: number;
   roi: number;
   winRate: number;
   settledCount: number;
   wonCount: number;
+  currency: Currency;
 }) {
-  const locale = await getLocale();
-  const currency = await getServerCurrency();
-  const t = await getTranslations("dashboard.kpi");
+  const locale = useLocale();
+  const t = useTranslations("dashboard.kpi");
+  const displayUnit = useDisplayUnit();
 
   return (
-    <section aria-label={t("ariaLabel")} className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
-      <KpiTile label={t("bets")} value={String(settledCount)} sub={t("settled", { count: settledCount })} />
-      <KpiTile label={t("profit")} value={fmtMoneySigned(profit, locale, currency)} trend={profit} />
-      <KpiTile
-        label={t("roi")}
-        value={fmtPct(roi, locale)}
-        trend={roi}
-        sub={t("settled", { count: settledCount })}
-      />
-      <KpiTile
-        label={t("winRate")}
-        value={fmtPct(winRate, locale)}
-        sub={t("won", { count: wonCount })}
-      />
+    <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
+      <div className="flex justify-end"><DisplayUnitToggle /></div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
+        <KpiTile label={t("allBets")} value={String(totalCount)} sub={t("countBreakdown", { settled: settledCount, pending: pendingCount, refunded: totalCount - settledCount - pendingCount })} />
+        <KpiTile label={t("profit")} value={displayUnit === "units" ? unitProfit === null ? "—" : fmtUnits(unitProfit, locale, true) : fmtMoneySigned(profit, locale, currency)} trend={displayUnit === "units" && unitProfit === null ? undefined : profit} sub={displayUnit === "units" && missingUnitCount > 0 ? t("missingUnits", { count: missingUnitCount }) : undefined} />
+        <KpiTile
+          label={t("roi")}
+          value={fmtPct(roi, locale)}
+          trend={roi}
+          sub={t("roiDescription")}
+        />
+        <KpiTile
+          label={t("winRate")}
+          value={fmtPct(winRate, locale)}
+          sub={t("won", { count: wonCount })}
+        />
+      </div>
     </section>
   );
 }

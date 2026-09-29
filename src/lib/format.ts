@@ -46,6 +46,11 @@ export function fmtStakeUnits(stake: number, referenceCapital: number | null | u
   return `${new Intl.NumberFormat(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format((stake / referenceCapital) * 100)} u`;
 }
 
+export function fmtUnits(value: number, locale: string, signed = false): string {
+  const absolute = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(value));
+  return `${signed ? value < 0 ? "−" : "+" : value < 0 ? "−" : ""}${absolute} u`;
+}
+
 export function fmtDate(d: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, { day: "2-digit", month: "2-digit" }).format(d);
 }

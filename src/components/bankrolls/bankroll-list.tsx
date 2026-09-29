@@ -6,7 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight, Plus, Wallet, LockKey, Crown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { fmtMoney, fmtMoneySigned } from "@/lib/format";
+import { fmtMoney, fmtMoneySigned, fmtUnits } from "@/lib/format";
+import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
 import {
   BankrollFormDrawer,
   type BankrollFormTarget,
@@ -17,6 +18,9 @@ export type BankrollListItem = BankrollFormTarget & {
   profit: number;
   betCount: number;
   pendingCount: number;
+  settledCount: number;
+  unitProfit: number | null;
+  missingUnitCount: number;
   locked: boolean;
 };
 
@@ -34,6 +38,7 @@ export function BankrollList({
   const [open, setOpen] = useState(initialCreateOpen);
   const locale = useLocale();
   const t = useTranslations("bankrolls");
+  const displayUnit = useDisplayUnit();
 
   useEffect(() => {
     if (initialCreateOpen) {
@@ -54,13 +59,16 @@ export function BankrollList({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <Button
-        onClick={openCreate}
-        className="min-h-touch w-full rounded-lg text-sm font-semibold animate-fade-in-up sm:w-auto"
-      >
-        <Plus size={18} weight="bold" aria-hidden />
-        {t("newBankroll")}
-      </Button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Button
+          onClick={openCreate}
+          className="min-h-touch w-full rounded-lg text-sm font-semibold animate-fade-in-up sm:w-auto"
+        >
+          <Plus size={18} weight="bold" aria-hidden />
+          {t("newBankroll")}
+        </Button>
+        <DisplayUnitToggle />
+      </div>
 
       {bankrolls.length === 0 ? (
         <div className="glass-card flex flex-col items-center gap-3 rounded-xl p-8 text-center animate-fade-in-up">
@@ -123,20 +131,24 @@ export function BankrollList({
                   <div className="grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
                     <div className="min-w-0">
                       <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("profit")}</span>
-                      <strong className={br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
-                        {fmtMoneySigned(br.profit, locale, currency)}
+                      <strong className={displayUnit === "units" && br.unitProfit === null ? "num mt-1 block truncate text-xs" : br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
+                        {displayUnit === "units" ? br.unitProfit === null ? "—" : fmtUnits(br.unitProfit, locale, true) : fmtMoneySigned(br.profit, locale, currency)}
                       </strong>
+                      {displayUnit === "units" && br.missingUnitCount > 0 ? <span className="mt-0.5 block text-[0.6rem] text-warning">{t("missingUnits", { count: br.missingUnitCount })}</span> : null}
                     </div>
                     <div className="min-w-0">
-                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span>
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("capitalPerformance")}</span>
                       <strong className={br.profit >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
                         {br.initial > 0 ? `${br.profit >= 0 ? "+" : ""}${((br.profit / br.initial) * 100).toFixed(1)}%` : "—"}
                       </strong>
+                      <span className="mt-0.5 block text-[0.6rem] text-muted-foreground">{t("capitalBasis")}</span>
                     </div>
                     <div className="min-w-0">
-                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("bets")}</span>
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("allBets")}</span>
                       <strong className="num mt-1 block text-xs">{br.betCount}</strong>
-                      {br.pendingCount > 0 && <span className="mt-0.5 block truncate text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span>}
+                      <span className="mt-0.5 block text-[0.6rem] text-muted-foreground">{t("performanceBets", { count: br.settledCount })}</span>
+                      {br.pendingCount > 0 ? <span className="mt-0.5 block text-[0.6rem] text-warning">{t("pendingShort", { count: br.pendingCount })}</span> : null}
+                      {br.betCount - br.settledCount - br.pendingCount > 0 ? <span className="mt-0.5 block text-[0.6rem] text-muted-foreground">{t("refundedCount", { count: br.betCount - br.settledCount - br.pendingCount })}</span> : null}
                     </div>
                   </div>
                 </Link>
