@@ -20,6 +20,8 @@ Pour une distribution de production, exécuter `pnpm extension:build` : le manif
 
 Le projet reste une application Next.js unique. L’extension est un dossier indépendant compilé avec le TypeScript déjà installé, sans React ni nouveau framework d’exécution.
 
+La popup reprend les tokens de `src/app/globals.css`, extraits à chaque compilation, et l’icône du site. Les polices Inter et JetBrains Mono sont embarquées avec leurs licences dans `extension/assets`, sans téléchargement distant à l’ouverture. Le sélecteur de destination n’apparaît que dans le build de développement. Après une mise à jour des fichiers de l’extension, cliquer sur « Recharger » dans `chrome://extensions` pour afficher le nouveau design ; les captures IndexedDB sont conservées.
+
 | Partie | Existant réutilisé / ajout V1 |
 | --- | --- |
 | Authentification | Session Supabase de l’application, `requireUser`, vérification serveur ; aucun jeton dans l’extension |

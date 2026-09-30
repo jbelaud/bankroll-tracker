@@ -11,7 +11,7 @@ declare const chrome: {
 };
 type Tab = { id?: number; windowId: number; url?: string; active?: boolean };
 type Sender = { tab?: Tab; url?: string };
-async function badge() { await chrome.action.setBadgeText({ text: String((await list()).length || "") }); await chrome.action.setBadgeBackgroundColor({ color: "#6d5dfc" }); }
+async function badge() { await chrome.action.setBadgeText({ text: String((await list()).length || "") }); await chrome.action.setBadgeBackgroundColor({ color: "#75a7ff" }); }
 
 // This function is serialized by Chrome: keep it self-contained.
 function selectArea() {
@@ -20,10 +20,10 @@ function selectArea() {
   overlay.id = "kalivoa-capture-overlay";
   overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;cursor:crosshair;background:rgba(0,0,0,.15);touch-action:none";
   const box = document.createElement("div");
-  box.style.cssText = "position:absolute;border:2px solid #8b7bff;pointer-events:none;box-sizing:border-box";
+  box.style.cssText = "position:absolute;border:2px solid oklch(0.72 0.14 250);pointer-events:none;box-sizing:border-box";
   const help = document.createElement("div");
   help.textContent = "Kalivoa : encadrez uniquement le ticket · Échap pour annuler";
-  help.style.cssText = "position:absolute;top:12px;left:12px;background:#171528;color:white;padding:12px;font:14px sans-serif;border-radius:8px";
+  help.style.cssText = "position:absolute;top:12px;left:12px;background:#0b0d12;color:#f5f5f7;padding:12px;font:13px system-ui,sans-serif;border:1px solid #ffffff20;border-radius:8px";
   overlay.append(box, help);
   document.documentElement.append(overlay);
   let start: { x: number; y: number } | null = null;

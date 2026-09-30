@@ -9,6 +9,14 @@ for (const name of ["background", "popup", "storage", "policy"]) {
   }).outputText);
 }
 for (const name of ["manifest.json", "popup.html", "popup.css"]) await copyFile(new URL(`./${name}`, import.meta.url), new URL(name, out));
+// Reuse website tokens instead of maintaining a second palette.
+const siteCss = await readFile(new URL("../src/app/globals.css", import.meta.url), "utf8");
+const tokens = siteCss.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1];
+if (!tokens) throw new Error("Kalivoa design tokens not found");
+await writeFile(new URL("theme.css", out), `:root {${tokens}\n}\n`);
+await copyFile(new URL("../public/kalivoa-icon.svg", import.meta.url), new URL("kalivoa-icon.svg", out));
+await mkdir(new URL("assets/", out), { recursive: true });
+for (const name of ["inter-latin.woff2", "jetbrains-mono-latin.woff2", "OFL-Inter.txt", "OFL-JetBrainsMono.txt"]) await copyFile(new URL(`./assets/${name}`, import.meta.url), new URL(`assets/${name}`, out));
 if (process.argv.includes("--dev")) {
   const manifest = JSON.parse(await readFile(new URL("manifest.json", out), "utf8"));
   manifest.externally_connectable.matches.push("http://localhost/*");

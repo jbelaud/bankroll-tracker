@@ -6,7 +6,12 @@ async function refresh() {
   for (const url of urls.splice(0)) URL.revokeObjectURL(url);
   const rows = await list();
   const bytes = rows.reduce((n, row) => n + row.blob.size, 0);
-  element("count").textContent = `${rows.length} captures en attente · ${(bytes / 1024 / 1024).toFixed(1)} / 40 Mo${bytes > 32 * 1024 * 1024 ? " · stockage presque plein" : ""}`;
+  element("count").textContent = String(rows.length);
+  element("empty").hidden = rows.length !== 0;
+  element("storage-label").textContent = `${(bytes / 1024 / 1024).toLocaleString("fr", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} / 40 Mo${bytes > 32 * 1024 * 1024 ? " · presque plein" : ""}`;
+  element<HTMLMeterElement>("storage").value = bytes;
+  element("send-label").textContent = rows.length ? `Envoyer ${rows.length === 1 ? "la capture" : `les ${rows.length} captures`}` : "Envoyer à Kalivoa";
+  element<HTMLButtonElement>("clear").disabled = rows.length === 0;
   element<HTMLButtonElement>("send").disabled = rows.length === 0;
   element("queue").replaceChildren();
   for (const row of rows) {
@@ -37,6 +42,7 @@ element("send").onclick = () => void run(async () => {
 void fetch("manifest.json").then((response) => response.json()).then((manifest) => {
   if (manifest.externally_connectable.matches.includes("http://localhost/*")) {
     const option = document.createElement("option"); option.value = "http://localhost:3000"; option.textContent = "Développement local"; element<HTMLSelectElement>("destination").append(option);
+    element("destination-label").hidden = false;
   }
 });
 void events("extension_opened").catch(() => undefined);
