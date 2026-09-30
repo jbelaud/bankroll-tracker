@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ExtensionBatch } from "./extension-batch";
+import { ExtensionBatch, useExtensionLink } from "./extension-batch";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { ArrowSquareOut, CheckCircle, DiscordLogo, WarningCircle } from "@phosphor-icons/react";
@@ -77,6 +77,7 @@ export function ScanFlow({
   const tPending = useTranslations("scan.pending");
   const [bankrollId, setBankrollId] = useState(resultProofTarget?.bankrollId ?? bankrolls[0]?.id ?? "");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
+  const extensionLink = useExtensionLink();
   const [error, setError] = useState("");
   const [sharingEmpty, setSharingEmpty] = useState(false);
   const [emptyShared, setEmptyShared] = useState(false);
@@ -132,8 +133,11 @@ export function ScanFlow({
     }
     setError("");
     setEmptyShared(false);
+    extensionCleanup.current = null;
+    setLocalCleanupWarning("");
+    if (extensionLink) window.location.hash = "";
     setFlow({ step: "idle" });
-  }, [flow]);
+  }, [flow, extensionLink]);
 
   const confirmImport = useCallback(
     async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, files: File[], scans: ScanTicketResult[], skippedDuplicateFiles: string[]) => {
@@ -367,6 +371,11 @@ export function ScanFlow({
   return (
     <div className="flex flex-1 flex-col gap-3">
       {!resultProofTarget ? <ExtensionBatch userId={userId} bankrolls={bankrolls} bankrollId={bankrollId} onBankrollChange={setBankrollId} onReview={async (result, cleanup) => {
+        if (result.bets.length === 0) {
+          setFlow({ step: "empty", files: result.files, scans: result.scans, skippedDuplicateFiles: result.skippedDuplicateFiles });
+          return;
+        }
+        void trackPublicGrowthEvent("verification_started", { screenshots_count: result.files.length, bets_detected: result.bets.length });
         const draftId = await createScanDraft(result.bankrollId, buildDraftPayload(result.bets, result.scans, result.skippedDuplicateFiles));
         setBankrollId(result.bankrollId);
         extensionCleanup.current = cleanup;
@@ -381,7 +390,7 @@ export function ScanFlow({
           {error}
         </p>
       )}
-      {!resultProofTarget && pendingDrafts.length > 0 && (
+      {!extensionLink && !resultProofTarget && pendingDrafts.length > 0 && (
         <section className="glass-card rounded-xl p-4">
           <h2 className="text-sm font-semibold">{tPending("title")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{tPending("description")}</p>
@@ -399,12 +408,12 @@ export function ScanFlow({
           </div>
         </section>
       )}
-      <UploadZone
+      {!extensionLink ? <UploadZone
         bankrolls={bankrolls}
         bankrollId={bankrollId}
         onBankrollChange={setBankrollId}
         onFilesSelected={startScan}
-      />
+      /> : null}
     </div>
   );
 }
