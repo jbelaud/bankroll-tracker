@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ExtensionBatch } from "./extension-batch";
 import { useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { ArrowSquareOut, CheckCircle, DiscordLogo, WarningCircle } from "@phosphor-icons/react";
@@ -52,6 +53,7 @@ type FlowState =
   | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number };
 
 export function ScanFlow({
+  userId,
   bankrolls,
   currency,
   taxonomy,
@@ -59,6 +61,7 @@ export function ScanFlow({
   tipsters,
   resultProofTarget,
 }: {
+  userId: string;
   bankrolls: BankrollOption[];
   currency: Currency;
   taxonomy: Taxonomy;
@@ -77,6 +80,8 @@ export function ScanFlow({
   const [error, setError] = useState("");
   const [sharingEmpty, setSharingEmpty] = useState(false);
   const [emptyShared, setEmptyShared] = useState(false);
+  const extensionCleanup = useRef<(() => Promise<void>) | null>(null);
+  const [localCleanupWarning, setLocalCleanupWarning] = useState("");
 
   const buildDraftPayload = useCallback((bets: ParsedBet[], scans: ScanTicketResult[], skippedDuplicateFiles: string[], excludedIndexes: number[] = []): ScanDraftPayload => ({
     bets,
@@ -178,6 +183,14 @@ export function ScanFlow({
         }));
       }
       if (draftId) await deleteScanDraft(draftId);
+      if (extensionCleanup.current) {
+        await extensionCleanup.current().catch(() => {
+          // Import succeeded: cleanup failure must never trigger a second import.
+          console.warn("[extension] Nettoyage local incomplet ; suppression disponible dans l’extension.");
+          setLocalCleanupWarning("L’import a réussi, mais certaines captures locales n’ont pas pu être supprimées. Supprimez-les depuis l’extension Kalivoa.");
+        });
+        extensionCleanup.current = null;
+      }
       setFlow({
         step: "completed",
         imported: result.imported,
@@ -300,6 +313,7 @@ export function ScanFlow({
         <div>
           <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
           <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+          {localCleanupWarning ? <p role="status" className="mt-2 text-sm text-muted-foreground">{localCleanupWarning}</p> : null}
         </div>
 
         {flow.earnedReferralScans > 0 ? (
@@ -352,6 +366,12 @@ export function ScanFlow({
 
   return (
     <div className="flex flex-1 flex-col gap-3">
+      {!resultProofTarget ? <ExtensionBatch userId={userId} bankrolls={bankrolls} bankrollId={bankrollId} onBankrollChange={setBankrollId} onReview={async (result, cleanup) => {
+        const draftId = await createScanDraft(result.bankrollId, buildDraftPayload(result.bets, result.scans, result.skippedDuplicateFiles));
+        setBankrollId(result.bankrollId);
+        extensionCleanup.current = cleanup;
+        setFlow({ step: "review", draftId, ...result, excludedIndexes: [] });
+      }} /> : null}
       {resultProofTarget ? <section className="rounded-xl border border-primary/30 bg-primary/10 p-4">
         <p className="text-sm font-semibold">Ajouter la preuve du résultat</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Scanne le ticket clôturé correspondant à « {resultProofTarget.label} ». Kalivoa complétera ce pari existant sans en créer un nouveau.</p>

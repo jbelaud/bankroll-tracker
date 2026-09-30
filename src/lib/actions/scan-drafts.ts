@@ -26,7 +26,7 @@ export type PendingScanDraft = {
 };
 
 function ensureSerializablePayload(payload: ScanDraftPayload): Prisma.InputJsonValue {
-  if (!Array.isArray(payload.bets) || payload.bets.length === 0 || payload.bets.length > 150) {
+  if (!Array.isArray(payload.bets) || payload.bets.length === 0 || payload.bets.length > 5_000) {
     throw new Error("Le brouillon de scan est invalide.");
   }
 

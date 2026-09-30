@@ -2,6 +2,15 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export const PUBLIC_GROWTH_EVENT_NAMES = [
+  "batch_upload_started",
+  "batch_upload_completed",
+  "batch_upload_failed",
+  "extension_opened",
+  "capture_started",
+  "capture_completed",
+  "capture_deleted",
+  "bet_scan_success",
+  "bet_scan_failed",
   "landing_view",
   "signup_started",
   "scan_opened",

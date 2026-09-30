@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Kalivoa</title><link rel="stylesheet" href="popup.css"></head>
+<body><h1>Kalivoa</h1><p>Capturez uniquement le ticket. Vos images restent locales jusqu’à votre envoi.</p>
+<button id="capture">Capturer un pari</button><small>Raccourci : Alt + Maj + K</small>
+<button id="login" class="secondary">Ouvrir Kalivoa / se connecter</button><small>La connexion est vérifiée dans Kalivoa. Aucun identifiant n’est conservé dans l’extension.</small>
+<p id="count" role="status"></p><p id="error" role="alert"></p>
+<label>Destination <select id="destination"><option value="https://kalivoa.com">Kalivoa</option></select></label>
+<button id="send">Envoyer à Kalivoa</button><button id="clear" class="secondary">Supprimer toutes les captures</button>
+<div id="queue"></div><script type="module" src="popup.js"></script></body></html>

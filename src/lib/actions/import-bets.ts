@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
+import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
@@ -419,6 +420,7 @@ export async function importBets(
             fieldsCorrectedCount: Math.max(0, Math.min(1_000, Math.trunc(measurement?.fieldsCorrectedCount ?? 0))),
             correctedFields: measurement?.correctedFields?.filter((field) => /^[a-z][a-zA-Z0-9_]{0,63}$/.test(field)).slice(0, 30),
             verificationCompletedAt: new Date(),
+            extensionReceipt: Prisma.DbNull,
           },
         });
       });
@@ -593,6 +595,7 @@ export async function importBets(
               ? measurement!.correctedFields.filter((field) => /^[a-z][a-zA-Z0-9_]{0,63}$/.test(field)).slice(0, 30)
               : undefined,
             verificationCompletedAt: new Date(),
+            extensionReceipt: Prisma.DbNull,
           },
         });
       }));

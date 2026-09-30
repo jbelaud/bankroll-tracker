@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Kalivoa — Capture de paris",
+  "version": "0.1.0",
+  "description": "Capturez vos tickets localement, puis vérifiez-les dans Kalivoa.",
+  "permissions": ["activeTab", "scripting"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "popup.html", "default_title": "Kalivoa" },
+  "commands": { "capture": { "suggested_key": { "default": "Alt+Shift+K" }, "description": "Capturer un ticket" } },
+  "externally_connectable": { "matches": ["https://kalivoa.com/*"] }
+}

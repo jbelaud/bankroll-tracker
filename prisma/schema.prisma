@@ -572,6 +572,9 @@ model ScanUsage {
   // Empêche qu'une même capture soit traitée plusieurs fois pour le
   // parrainage. Les valeurs nulles des anciennes lignes restent autorisées.
   sourceHash              String?
+  // Reprise des captures d’extension sans second appel OCR : uniquement
+  // les paris normalisés et métadonnées de revue, jamais l’image ni le texte brut.
+  extensionReceipt        Json?
   referralEligible        Boolean      @default(false)
   referralProcessedAt     DateTime?
   // Champs P0 : uniquement des métadonnées agrégées, jamais la capture ou

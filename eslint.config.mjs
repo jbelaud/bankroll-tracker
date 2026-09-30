@@ -41,6 +41,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "extension/dist/**",
     "next-env.d.ts",
     // Historical design reference; it is not part of the Next.js application.
     "bankroll-tracker.jsx",

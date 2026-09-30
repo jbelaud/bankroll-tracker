@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
@@ -32,6 +32,7 @@ import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
+import { extensionScanReplay } from "@/lib/scan/extension-replay";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -96,6 +97,7 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const image = formData.get("image");
   const bankrollId = String(formData.get("bankrollId") ?? "");
+  const extensionCapture = formData.get("extensionCapture") === "true";
   if (!(image instanceof File)) {
     return NextResponse.json({ error: t("missingImage") }, { status: 400 });
   }
@@ -157,7 +159,7 @@ export async function POST(request: NextRequest) {
 
   const duplicateScan = await prisma.scanUsage.findUnique({
     where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true, betsImported: true, promptVersion: true },
+    select: { id: true, betsImported: true, promptVersion: true, extensionReceipt: true, verificationCompletedAt: true },
   });
   // Une analyse de la version courante devient un doublon bloquant lorsque ses
   // paris ont été importés ou que son brouillon existe encore. Après une mise
@@ -165,6 +167,10 @@ export async function POST(request: NextRequest) {
   // bénéficier des nouvelles règles, sans seconde récompense de parrainage.
   let isRepeatAnalysis = false;
   if (duplicateScan) {
+    // Authentication and bankroll ownership were checked above. Replaying a
+    // completed extraction never reserves quota or starts another paid call.
+    const replay = extensionScanReplay(extensionCapture, bankrollId, duplicateScan);
+    if (replay) return NextResponse.json(replay);
     const promptWasUpgraded = canRescanAfterPromptUpgrade(
       duplicateScan.promptVersion,
       SCAN_PROMPT_VERSION
@@ -283,12 +289,16 @@ export async function POST(request: NextRequest) {
   }
 
   if (rawBets.length === 0) {
+    const emptyUsageId = randomUUID();
+    const emptyReceipt = { bets: [], scan: { usageId: emptyUsageId, rawExtraction: [], model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "EMPTY" } };
     // Conserve la télémétrie de l'analyse (comme avant le parrainage), mais
     // marque explicitement ce scan vide comme non éligible à toute récompense.
     let emptyScanUsage: { id: string };
     try {
       emptyScanUsage = await prisma.scanUsage.create({
         data: {
+          id: emptyUsageId,
+          extensionReceipt: extensionCapture ? { bankrollId, response: emptyReceipt } : undefined,
           userId: user.id,
           model: scanModel,
           plan: dbUser.plan,
@@ -491,12 +501,16 @@ export async function POST(request: NextRequest) {
     return evidence ? [evidence] : [];
   });
   let scanUsage;
+  const usageId = randomUUID();
+  const extensionResponse = { bets, scan: { usageId, rawExtraction: bets, model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "READY" } };
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
     // par le programme de parrainage. L'index userId/sourceHash bloque les
     // doublons, y compris lors de requêtes concurrentes.
     scanUsage = await prisma.scanUsage.create({
       data: {
+        id: usageId,
+        extensionReceipt: extensionCapture ? JSON.parse(JSON.stringify({ bankrollId, response: extensionResponse })) as Prisma.InputJsonValue : undefined,
         userId: user.id,
         model: scanModel,
         plan: dbUser.plan,

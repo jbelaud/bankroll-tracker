@@ -1,6 +1,10 @@
 import type { ParsedBet } from "./types";
 import { prepareClientScanImage } from "./image-preparation-client";
 
+export class ScanRequestError extends Error {
+  constructor(message: string, public readonly status: number) { super(message); }
+}
+
 export type ScanTicketResult = {
   /** Index de la capture d'origine, conservé si une autre capture du lot est ignorée. */
   sourceFileIndex: number;
@@ -22,7 +26,8 @@ export type ScanTicketResult = {
 export async function scanTickets(
   images: File[],
   bankrollId: string,
-  onProgress?: (done: number, total: number) => void
+  onProgress?: (done: number, total: number) => void,
+  extensionCapture = false
 ): Promise<{ bets: ParsedBet[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }> {
   const total = images.length;
   const all: ParsedBet[] = [];
@@ -36,8 +41,9 @@ export async function scanTickets(
     const preparedImage = await prepareClientScanImage(images[i]);
     if (preparedImage) form.append("preparedImage", preparedImage);
     form.append("bankrollId", bankrollId);
+    if (extensionCapture) form.append("extensionCapture", "true");
 
-    const res = await fetch("/api/scan", { method: "POST", body: form });
+    const res = await fetch("/api/scan", { method: "POST", body: form, signal: extensionCapture ? AbortSignal.timeout(120_000) : undefined });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       // Une capture déjà importée ou avec une revue en attente ne doit pas
@@ -49,7 +55,7 @@ export async function scanTickets(
         onProgress?.(i + 1, total);
         continue;
       }
-      throw new Error(data.error || "L'analyse du ticket a échoué.");
+      throw new ScanRequestError(data.error || "L'analyse du ticket a échoué.", res.status);
     }
     const { bets, scan } = (await res.json()) as {
       bets: ParsedBet[];

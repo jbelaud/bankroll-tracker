@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
+import { Prisma } from "@prisma/client";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,10 @@ export async function GET(request: NextRequest) {
     select: { id: true, storagePath: true },
     take: 100,
   });
+  const clearedExtensionReceipts = await prisma.scanUsage.updateMany({
+    where: { createdAt: { lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }, extensionReceipt: { not: Prisma.DbNull } },
+    data: { extensionReceipt: Prisma.DbNull },
+  });
   const storage = createAdminSupabaseClient().storage.from(QUALITY_BUCKET);
   let deleted = 0;
   for (const report of reports) {
@@ -26,5 +31,5 @@ export async function GET(request: NextRequest) {
     await prisma.scanQualityReport.delete({ where: { id: report.id } });
     deleted++;
   }
-  return NextResponse.json({ deleted });
+  return NextResponse.json({ deleted, clearedExtensionReceipts: clearedExtensionReceipts.count });
 }
