@@ -4,6 +4,7 @@ import { getSiteUrlForPath, isProductionDeployment } from "@/lib/site";
 const publicPaths = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
   { path: "/features", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/extension", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/screenshot-import", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/bankroll-tracking", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/bookmakers", priority: 0.7, changeFrequency: "monthly" as const },

@@ -496,6 +496,7 @@
   },
 
   "scan": {
+    "installExtension": "Installer l’extension Chrome",
     "title": "Scan OCR",
     "noBankroll": {
       "title": "Pas encore de bankroll",

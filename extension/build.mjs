@@ -1,4 +1,6 @@
 import ts from "typescript";
+import sharp from "sharp";
+import { fileURLToPath } from "node:url";
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
 const out = new URL("./dist/", import.meta.url);
 await mkdir(out, { recursive: true });
@@ -15,6 +17,9 @@ const tokens = siteCss.match(/:root\s*\{([\s\S]*?)\n\}/)?.[1];
 if (!tokens) throw new Error("Kalivoa design tokens not found");
 await writeFile(new URL("theme.css", out), `:root {${tokens}\n}\n`);
 await copyFile(new URL("../public/kalivoa-icon.svg", import.meta.url), new URL("kalivoa-icon.svg", out));
+for (const size of [16, 32, 48, 128]) {
+  await writeFile(new URL(`icon-${size}.png`, out), await sharp(fileURLToPath(new URL("../public/kalivoa-icon.svg", import.meta.url))).resize(size, size).png().toBuffer());
+}
 await mkdir(new URL("assets/", out), { recursive: true });
 for (const name of ["inter-latin.woff2", "jetbrains-mono-latin.woff2", "OFL-Inter.txt", "OFL-JetBrainsMono.txt"]) await copyFile(new URL(`./assets/${name}`, import.meta.url), new URL(`assets/${name}`, out));
 if (process.argv.includes("--dev")) {

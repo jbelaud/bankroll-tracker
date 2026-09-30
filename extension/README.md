@@ -111,3 +111,8 @@ Fichiers créés : dossier `extension` (sources, manifeste, interface, compilati
 Fichiers adaptés : page Scan, `ScanFlow`, client et route Scan, actions de brouillon et d’import, schéma Prisma, cron de rétention, liste des événements growth, scripts du projet et exclusions des fichiers générés.
 
 Prochaine étape : appliquer la migration sur une base de développement identifiée, charger le build de développement dans Chrome et exécuter la recette avec une session Kalivoa et un quota suffisant. La livraison Web Store nécessite ensuite ses éléments de présentation et de confidentialité.
+
+## Distribution
+Page publique : https://kalivoa.com/fr/extension. La bêta téléchargeable se charge en mode développeur après extraction du ZIP.
+`pnpm extension:release` reconstruit la version de production, ses icônes et le ZIP public avec son empreinte SHA-256. Le paquet contient uniquement les fichiers explicitement autorisés ; aucun fichier de développement ni secret.
+La préparation Chrome Web Store est décrite dans CHROMEWEBSTORE.md. La publication Google est une étape distincte de la mise en ligne du ZIP.

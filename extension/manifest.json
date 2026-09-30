@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Kalivoa — Capture de paris",
   "version": "0.1.0",
+  "icons": { "16": "icon-16.png", "32": "icon-32.png", "48": "icon-48.png", "128": "icon-128.png" },
   "description": "Capturez vos tickets localement, puis vérifiez-les dans Kalivoa.",
   "permissions": ["activeTab", "scripting"],
   "background": { "service_worker": "background.js", "type": "module" },

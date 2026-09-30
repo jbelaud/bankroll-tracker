@@ -20,6 +20,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
           <FooterColumn title={t("product")} locale={locale} links={[
             ["/features", t("features")],
             ["/screenshot-import", t("import")],
+            ["/extension", locale === "fr" ? "Extension Chrome" : "Chrome extension"],
             ["/bookmakers", t("bookmakers")],
             ["/pricing", t("pricing")],
           ]} />

@@ -60,7 +60,10 @@ export default async function ScanPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        <Link href="/extension" className="rounded-xl border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20">{t("installExtension")}</Link>
+      </div>
       <ScanFlow
         userId={user.id}
         bankrolls={activeBankrolls.map((br) => ({
