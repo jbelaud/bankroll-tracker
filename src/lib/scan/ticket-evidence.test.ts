@@ -5,6 +5,15 @@ import {
 } from "./ticket-evidence";
 
 describe("PMU ticket evidence (anonymized)", () => {
+  it("reads Winamax placement footers including dates near midnight", () => {
+    const placedAt = parseVisibleParisDateTime("9h54 - 28 septembre 2026");
+    expect(placedAt?.toISOString()).toBe("2026-09-28T07:54:00.000Z");
+    expect(parisCalendarDate(placedAt!)).toBe("2026-09-28");
+    expect(parisCalendarDate(parseVisibleParisDateTime("0h15 – 28 septembre 2026")!)).toBe("2026-09-28");
+    expect(parseVisibleParisDateTime("9h54 - 31 septembre 2026")).toBeNull();
+    expect(parseVisibleParisDateTime("25h54 - 28 septembre 2026")).toBeNull();
+    expect(parseVisibleParisDateTime("9h54 - 28/09")).toBeNull();
+  });
   it("takes the ticket header over a selection status, potential gain or cash-out offer", () => {
     expect(ticketResultFromHeader("Simple @ 2,63 • En cours")).toBe("EN_ATTENTE");
     expect(ticketResultFromHeader("Simple @ 2,63 • Gagné")).toBe("GAGNE");

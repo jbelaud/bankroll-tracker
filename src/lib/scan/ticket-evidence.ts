@@ -11,7 +11,10 @@ const MONTHS: Record<string, number> = {
 
 export function parseVisibleParisDateTime(value: unknown): Date | null {
   if (typeof value !== "string") return null;
-  const clean = value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const normalized = value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  // Winamax prints the placement time before the full date in its footer.
+  const footer = /^(\d{1,2})[:h](\d{2})\s*[-–—]\s*(\d{1,2}\s+[a-z]+\.?\s+\d{4})$/.exec(normalized);
+  const clean = footer ? `${footer[3]} • ${footer[1]}:${footer[2]}` : normalized;
   const match = /^(\d{1,2})\s+([a-z]+)\.?\s+(\d{4})\s*[,•]\s*(\d{1,2})[:h](\d{2})$/.exec(clean);
   if (!match) return null;
   const day = Number(match[1]);

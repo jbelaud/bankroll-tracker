@@ -2,10 +2,7 @@ import { SPORTS } from "@/lib/sports";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
 
-// Prompt d'extraction des tickets — COPIE VERBATIM de l'artifact de référence
-// (bankroll-tracker.jsx, buildExtractionPrompt, lignes 1451-1491). Ne pas
-// réinventer : ces règles (dates, freebet, live, cash out, Mymatch, types
-// suggérés, dédup par ticketRef) sont éprouvées sur des vrais tickets.
+// Contrat d'extraction partagé par les fournisseurs de vision.
 export function buildExtractionPrompt(
   taxonomy: Taxonomy = SPORTS,
   context?: { bookmaker?: string; bookmakerRules?: string | null }
@@ -28,7 +25,7 @@ Exemple de prudence : un ticket recadré avec « Simple @ 2,63 », « Référenc
 Schéma attendu pour chaque pari :
 {
   "date": "AAAA-MM-JJ, ou null si l'année ou la date complète ne sont pas visibles",
-  "ticketPlacedAtText": "date et heure exactes de prise du pari visibles dans l'en-tête, ou null",
+  "ticketPlacedAtText": "date et heure exactes de prise du pari visibles dans l'en-tête ou le pied du ticket, ou null",
   "ticketHeaderText": "ligne exacte type @ cote • statut dans l'en-tête, ou null",
   "eventStartText": "date et heure exactes de l'événement dans la sélection, ou null si illisibles",
   "dateText": "texte exact de la date visible sur le ticket, sans conversion (ex: Le 05-09-26 à 21h02), ou null",
@@ -58,6 +55,8 @@ ${JSON.stringify(taxonomy, null, 0)}
 Précision cyclisme : "Vainqueur" ou "Podium 1er" (quelle que soit la formulation du bookmaker) = toujours "Top 1". On uniformise systématiquement en Top 1 / Top 3 / Top 10, jamais de libellé bookmaker brut.
 
 Règles impératives :
+- NOUVEAU DESIGN WINAMAX : chaque carte commence par « Simple » (ou le format visible) puis un bandeau « Gagné » / « Perdu ». Son pied est un fin bandeau sous le bloc Mise / Gains : « Réf : ... » à gauche et « 9h54 - 28 septembre 2026 » à droite, parfois en très petits caractères. Inspecte systématiquement ce bandeau pour CHAQUE carte, même si le nom du bookmaker est absent. Recopie sa référence dans "ticketRef", sa date et heure exactes dans "dateText" ET "ticketPlacedAtText", puis donne "date": "2026-09-28" pour cet exemple. La date courte « 28/09 » au-dessus du score est celle de l'événement : ne l'utilise jamais comme date de prise du pari et ne lui ajoute jamais une année. Ne réutilise pas la date du ticket voisin. Si le pied est coupé ou illisible, laisse les champs de date à null.
+- Sur ces cartes, la cote est le nombre rouge dans une pastille blanche à droite de la sélection ; les nombres alignés avec les joueurs sont des scores (y compris les sets de tennis), jamais des cotes. « Mise » donne la mise et « Gains » donne le retour, jamais la cote. Le bandeau explicite « Gagné » / « Perdu » donne le statut du ticket. « Mission Football », « Bang to the Moon » et « La Grosse Cote Boostée » sont des promotions : ne les transforme pas en sélection, en tipster ou en preuve de freebet. Lis le marché et la sélection sous l'affiche, ou sous le titre de la promotion : « Joueur décisif », « Buteur », « Vainqueur », « Podium », « Les deux équipes marquent lors du match ». La lecture de cette structure ne suffit pas à affirmer "detectedBookmaker" : conserve les exigences d'identification visible ci-dessus.
 - NOMS ET ÉVÉNEMENTS — TRANSCRIPTION LITTÉRALE OBLIGATOIRE : recopie chaque nom de joueur, équipe et événement caractère pour caractère tel qu'il est visible. Une initiale reste une initiale : « T.Etcheverry » doit rester « T.Etcheverry ». N'écris jamais son prénom complet, ne corrige jamais son orthographe et ne remplace jamais un participant grâce à tes connaissances sportives. Un nom absent de l'image, par exemple « Joel Josef Schwarzler », est interdit même s'il te semble plausible dans ce contexte. Cette règle s'applique à "description", "eventResult" et à chaque "selections[].label". Si un participant est illisible, conserve uniquement la partie effectivement lisible ou ignore le ticket ; ne complète jamais.
 - COMPTE DES TICKETS : compte d'abord les cartes de ticket entièrement visibles. Retourne exactement un objet par carte complète, jamais davantage. N'extrais pas une carte coupée en haut ou en bas si ses informations principales ne sont pas lisibles. Ne transforme jamais une ligne de sélection en ticket supplémentaire.
 - "date" et "dateText" : utilise exclusivement la date de PRISE DU PARI, en bas du ticket ou dans l'en-tête près de sa référence, jamais celle de l'événement. Recopie le texte exact de cette date dans "dateText", sans changer l'ordre des nombres, puis convertis-le dans "date". Sur Unibet, le format « Le JJ-MM-AA à HHhMM » est obligatoirement JOUR-MOIS-ANNÉE : « Le 05-09-26 à 21h02 » donne "date": "2026-09-05", jamais "2026-05-09". Pour « 10h02 - 22 juin 2026 », utilise "2026-06-22". Si l'année ou la date complète n'est pas visible, mets les deux champs à null ; n'utilise jamais la date actuelle. La conversion finale de la date Unibet sera contrôlée par le serveur à partir de "dateText".

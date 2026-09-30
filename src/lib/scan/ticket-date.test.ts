@@ -2,6 +2,28 @@ import { describe, expect, it } from "vitest";
 import { normalizeExtractedTicketDate } from "./ticket-date";
 
 describe("ticket date normalization", () => {
+  it.each([
+    ["9h54 - 28 septembre 2026", "2026-09-28"],
+    ["17h40 - 27 septembre 2026", "2026-09-27"],
+    ["16h39 - 20 septembre 2026", "2026-09-20"],
+    ["8h29 - 20 septembre 2026", "2026-09-20"],
+    ["12h38 - 23 septembre 2026", "2026-09-23"],
+    ["20h04 - 20 septembre 2026", "2026-09-20"],
+    ["19h41 - 25 septembre 2026", "2026-09-25"],
+    ["9h26 - 25 septembre 2026", "2026-09-25"],
+    ["19h26 - 29 septembre 2026", "2026-09-29"],
+    ["10h49 - 28 septembre 2026", "2026-09-28"],
+    ["10h02 – 22 février 2026", "2026-02-22"],
+  ])("reads the Winamax footer %s even without an interpreted date", (footer, expected) => {
+    expect(normalizeExtractedTicketDate(footer, null)).toBe(expected);
+    expect(normalizeExtractedTicketDate(footer, "2026-09-30")).toBe(expected);
+  });
+
+  it("rejects incomplete or impossible French dates", () => {
+    expect(normalizeExtractedTicketDate("28/09", null)).toBeNull();
+    expect(normalizeExtractedTicketDate("28 septembre", null)).toBeNull();
+    expect(normalizeExtractedTicketDate("9h54 - 31 septembre 2026", "2026-09-30")).toBeNull();
+  });
   const unibetFooters = [
     ["Z848287721", "Le 29-08-26 à 15h56", "2026-08-29"],
     ["Z849269003", "Le 30-08-26 à 20h19", "2026-08-30"],
