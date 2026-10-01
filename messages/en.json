@@ -778,7 +778,7 @@
       "unitExplanation": "Without cash flows, TWR equals progression. In units, performance starts from an index of 100. Deposits and withdrawals cannot be converted without their historical unit value.",
       "moneyExplanation": "Without cash flows, TWR equals progression. Currency figures use the capital and stakes recorded in Kalivoa. A BA import at 1u = 1 currency unit uses proxy amounts.",
       "flowsUnavailable": "With deposits or withdrawals, progression, TWR and annualization are unavailable without a reliable valuation at each cash flow.",
-      "annualizedExplanation": "Annualized return between the first and last settled bet ({days} days), using bet dates. Settlement dates are not yet recorded, so this is an approximation."
+      "annualizedExplanation": "Indicative annualized return between the first and last included bet ({days} days), calculated from bet dates."
     },
     "clv": {
       "intro": "Compare the odds taken with the closing odds entered before the event starts.",

@@ -778,7 +778,7 @@
       "unitExplanation": "Sans mouvement, TWR = progression. En u, la performance part d’un indice 100. Les dépôts et retraits ne sont pas convertis sans valeur d’unité historique.",
       "moneyExplanation": "Sans mouvement, TWR = progression. En devise, ces chiffres utilisent le capital et les mises enregistrés dans Kalivoa. Un import BA à 1 u = 1 € donne des montants de substitution.",
       "flowsUnavailable": "Avec des dépôts ou retraits, la progression, le TWR et l’annualisation restent indisponibles : il manque une valorisation fiable à chaque mouvement.",
-      "annualizedExplanation": "Annualisation du rendement entre le premier et le dernier pari réglé ({days} jours), à partir des dates des paris. Les dates de règlement ne sont pas encore enregistrées : cet indicateur reste approximatif."
+      "annualizedExplanation": "Annualisation indicative du rendement entre le premier et le dernier pari pris en compte ({days} jours), calculée à partir des dates des paris."
     },
     "clv": {
       "intro": "Compare la cote prise à la dernière cote saisie avant le début de l’événement.",
