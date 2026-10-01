@@ -136,6 +136,45 @@ describe("importExternalBets", () => {
     }));
   });
 
+  it("conserve les mises Bet-Analytix en unités indépendamment de la conversion privée", async () => {
+    const sourceBet = bet({ ticketRef: null, stake: 1.25, odds: 3.75, result: "PERDU" });
+    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv", null, 50);
+
+    expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
+    expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_UNITS_V2" }) });
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
+      stake: 62.5,
+      stakeUnits: 1.25,
+      referenceCapitalAtBet: 5000,
+      unitsRecordedAt: expect.any(Date),
+    })] });
+  });
+
+  it("utilise 1 unité = 1 en devise par défaut pour un export BA", async () => {
+    await importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX");
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
+      stake: 1.25,
+      stakeUnits: 1.25,
+      referenceCapitalAtBet: 100,
+    })] });
+  });
+
+  it("reconnaît un ancien import BA comme doublon même avec une nouvelle conversion privée", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      ticketRef: null,
+      date: new Date("2026-08-20T12:00:00.000Z"),
+      stake: 1.25,
+      stakeUnits: 2.5,
+      odds: 3.75,
+      description: "Paris gagne",
+      importBatch: { source: "BET_ANALYTIX" },
+    }]);
+
+    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv", null, 50);
+    expect(response).toEqual({ imported: 0, skippedDuplicates: 1, firstImport: false });
+    expect(mocks.betCreateMany).not.toHaveBeenCalled();
+  });
+
   it("exige et valide le bookmaker de destination pour une bankroll répartie", async () => {
     mocks.bankrollFindFirst.mockResolvedValue({
       id: "bankroll-1",

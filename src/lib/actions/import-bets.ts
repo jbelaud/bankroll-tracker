@@ -43,15 +43,16 @@ function duplicateKey(bet: {
   ticketRef: string | null;
   date: Date;
   stake: number;
+  stakeUnits?: number | null;
   odds: number | null;
   description: string | null;
-}) {
+}, stakeInUnits = false) {
   const normalizedReference = bet.ticketRef?.normalize("NFKC").trim().toLocaleLowerCase("fr");
   if (normalizedReference) return `ref:${normalizedReference}`;
   return [
     "fields",
     bet.date.toISOString().slice(0, 10),
-    bet.stake,
+    stakeInUnits ? bet.stakeUnits ?? bet.stake : bet.stake,
     bet.odds ?? "null",
     bet.description?.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("fr") ?? "",
   ].join(":");
@@ -65,9 +66,14 @@ export async function importExternalBets(
   bets: ParsedBet[],
   sourceFormat: string,
   fileName?: string,
-  requestedAllocationId?: string | null
+  requestedAllocationId?: string | null,
+  baCurrencyPerUnit = 1
 ): Promise<FileImportResult> {
   const user = await requireUser();
+  const isBetAnalytix = sourceFormat === "BET_ANALYTIX";
+  if (isBetAnalytix && (!Number.isFinite(baCurrencyPerUnit) || baCurrencyPerUnit <= 0 || baCurrencyPerUnit > 1_000_000)) {
+    return { error: "Indique une valeur en devise valide pour 1u Bet-Analytix." };
+  }
   if (bets.length === 0) return { error: "Aucun pari valide à importer." };
   if (bets.length > MAX_IMPORT_ROWS) return { error: `Un import est limité à ${MAX_IMPORT_ROWS} paris.` };
 
@@ -82,7 +88,7 @@ export async function importExternalBets(
     }),
     prisma.bet.findMany({
       where: { bankrollId, bankroll: { userId: user.id } },
-      select: { ticketRef: true, date: true, stake: true, odds: true, description: true },
+      select: { ticketRef: true, date: true, stake: true, stakeUnits: true, odds: true, description: true, importBatch: { select: { source: true } } },
     }),
     getUserTaxonomy(user.id, false),
     prisma.bet.count({ where: { bankroll: { userId: user.id } } }),
@@ -103,7 +109,10 @@ export async function importExternalBets(
     return { error: "Choisis le bookmaker dans lequel importer ces paris." };
   }
 
-  const existingKeys = new Set(existingBets.map(duplicateKey));
+  const existingKeys = new Set(existingBets.map((bet) => duplicateKey(
+    bet,
+    isBetAnalytix && bet.importBatch?.source.startsWith("BET_ANALYTIX_UNITS_")
+  )));
   const acceptedKeys = new Set<string>();
   const taxonomyEntries = new Map<string, { userId: string; sport: string; betType: string }>();
   const rows: Array<{
@@ -118,6 +127,9 @@ export async function importExternalBets(
     description: string | null;
     eventResult: string | null;
     stake: number;
+    stakeUnits?: number;
+    referenceCapitalAtBet?: number;
+    unitsRecordedAt?: Date;
     odds: number | null;
     boosted: boolean;
     originalOdds: number | null;
@@ -185,14 +197,24 @@ export async function importExternalBets(
       betType: normalized.betType,
       description,
       eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-      stake: bet.stake as number,
+      // Bet-Analytix exports Stake in units, not in the account currency.
+      // Keep the original units as the authoritative performance measure;
+      // the money amount is an explicit private conversion (1 currency unit/u by default).
+      stake: isBetAnalytix ? (bet.stake as number) * baCurrencyPerUnit : bet.stake as number,
+      ...(isBetAnalytix ? {
+        stakeUnits: bet.stake as number,
+        referenceCapitalAtBet: baCurrencyPerUnit * 100,
+        unitsRecordedAt: new Date(),
+      } : {}),
       odds: bet.odds,
       boosted: Boolean(bet.boosted),
       originalOdds: bet.boosted && Number.isFinite(bet.originalOdds) ? bet.originalOdds : null,
       freebet: Boolean(bet.freebet),
       live: Boolean(bet.live),
       result: bet.result,
-      cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+      cashOutAmount: bet.result === "CASHE" && bet.cashOutAmount !== null && isBetAnalytix
+        ? bet.cashOutAmount * baCurrencyPerUnit
+        : bet.result === "CASHE" ? bet.cashOutAmount : null,
       entryMethod: "FILE" as const,
       format: bet.format ?? "SIMPLE",
       closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 0 ? (bet.closingOdds ?? null) : null,
@@ -200,7 +222,7 @@ export async function importExternalBets(
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
       selections: normalizedSelections,
     };
-    const key = duplicateKey(row);
+    const key = duplicateKey(row, isBetAnalytix);
     if (existingKeys.has(key) || acceptedKeys.has(key)) {
       skippedDuplicates += 1;
       continue;
@@ -237,7 +259,7 @@ export async function importExternalBets(
       const batch = await tx.importBatch.create({
         data: {
           userId: user.id,
-          source: sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
+          source: isBetAnalytix ? "BET_ANALYTIX_UNITS_V2" : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
           fileName: fileName?.normalize("NFKC").trim().replace(/[\\/]/g, "_").slice(0, 255) || null,
           importedCount: rows.length,
           skippedDuplicates,
@@ -305,6 +327,7 @@ export async function importExternalBets(
   revalidatePath("/[locale]/bankrolls", "page");
   revalidatePath("/[locale]/bankrolls/[id]", "page");
   revalidatePath("/[locale]/history", "page");
+  revalidatePath("/[locale]/stats", "page");
   revalidatePath("/[locale]/p/[slug]", "page");
   revalidatePath("/[locale]/t/[handle]", "page");
   return { imported: rows.length, skippedDuplicates, firstImport: totalBets === 0 && rows.length > 0 };

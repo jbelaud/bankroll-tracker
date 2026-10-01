@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -82,6 +83,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const [tipsters, setTipsters] = useState(initialTipsters);
   const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
   const [dateOrder, setDateOrder] = useState<ImportDateOrder>("AUTO");
+  const [baCurrencyPerUnit, setBaCurrencyPerUnit] = useState("1");
   const [loadedFile, setLoadedFile] = useState<{ name: string; content: string } | null>(null);
 
   const validBets = useMemo(
@@ -161,6 +163,11 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
 
   function confirmImport() {
     if (!parsed || validBets.length === 0 || !bankrollId) return;
+    const currencyPerUnit = Number(baCurrencyPerUnit.replace(",", "."));
+    if (parsed.sourceProfile === "BET_ANALYTIX" && (!Number.isFinite(currencyPerUnit) || currencyPerUnit <= 0)) {
+      setFileError(t("preview.baUnitValueError"));
+      return;
+    }
     setFileError("");
     startTransition(async () => {
       try {
@@ -172,7 +179,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             : bet),
           source,
           fileName,
-          allocationId || null
+          allocationId || null,
+          parsed.sourceProfile === "BET_ANALYTIX" ? currencyPerUnit : 1
         );
         if (response.imported === undefined) {
           setFileError(response.error);
@@ -352,6 +360,11 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
                   </p>
                 </div>
               </div>
+              <div className="mt-4 grid gap-2 sm:max-w-xs">
+                <Label htmlFor="ba-currency-per-unit" className="text-xs font-semibold">{t("preview.baUnitValueLabel")}</Label>
+                <Input id="ba-currency-per-unit" type="number" min="0.01" max="1000000" step="0.01" inputMode="decimal" value={baCurrencyPerUnit} onChange={(event) => setBaCurrencyPerUnit(event.target.value)} className="min-h-11 rounded-lg" />
+                <p className="text-xs leading-5 text-muted-foreground">{t("preview.baUnitValueHelp")}</p>
+              </div>
             </div>
           ) : null}
 
@@ -403,7 +416,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           <div className="mt-5 overflow-x-auto rounded-xl border border-border">
             <table className="w-full min-w-[48rem] text-left text-xs">
               <thead className="bg-muted/60 text-muted-foreground">
-                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
+                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{parsed.sourceProfile === "BET_ANALYTIX" ? t("table.stakeUnits") : t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
               </thead>
               <tbody>
                 {parsed.rows.slice(0, 50).map((row) => (
