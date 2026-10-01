@@ -37,6 +37,8 @@ export default async function HistoryPage() {
     eventResult: b.eventResult,
     stake: b.stake,
     odds: b.odds,
+    closingOdds: b.closingOdds,
+    estimatedProbability: b.estimatedProbability,
     result: b.result,
     cashOutAmount: b.cashOutAmount,
     boosted: b.boosted,

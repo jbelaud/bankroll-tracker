@@ -45,6 +45,7 @@ const FIELD_ALIASES = {
   format: ["format", "tickettype", "betformat"],
   tipster: ["tipster", "pronostiqueur", "capper"],
   closingOdds: ["closing", "closingodds", "closingprice", "cotedecloture"],
+  estimatedProbability: ["estimatedprobability", "estimatedprob", "probaestim", "probabiliteestimee"],
 } as const;
 
 type FieldName = keyof typeof FIELD_ALIASES;
@@ -294,6 +295,7 @@ function rowFromRecord(
       format: parseFormat(record.__format ?? fields.format ?? fields.betType),
       tipster: stringValue(fields.tipster) || null,
       closingOdds: parseOdds(fields.closingOdds).value,
+      estimatedProbability: parseNumber(fields.estimatedProbability),
       selections: rawSelections.length > 0 ? rawSelections.map((selection) => ({
         sport: stringValue(selection.Sport) || sport,
         competition: stringValue(selection.Competition) || null,

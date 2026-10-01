@@ -78,7 +78,8 @@ const ownedBet = (overrides = {}) => ({
   id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, format: "SIMPLE", referenceCapitalAtBet: 1000,
   bookmaker: null, ticketRef: null,
   sport: "Football", betType: "Résultat du match", description: "Paris gagne", eventResult: null,
-  date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, result: "EN_ATTENTE",
+  date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, closingOdds: null,
+  estimatedProbability: null, result: "EN_ATTENTE",
   cashOutAmount: null, boosted: false, originalOdds: null, freebet: false, live: false,
   initialProofAt: null, initialProofBeforeEvent: null, resultProofAt: null,
   resultEntryMethod: "UNKNOWN", certificationLockedAt: null, bankroll: { isPublic: false },
@@ -108,6 +109,25 @@ describe("association Bet / Tipster", () => {
     expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ tipsterId: null, stakeUnits: 1, referenceCapitalAtBet: 1000 }),
     }));
+  });
+
+  it("enregistre la cote de clôture et la probabilité estimée à la création et à l'édition", async () => {
+    await createBet(
+      "bankroll-a", "Football", "Résultat du match", "Paris gagne", 10, 2,
+      false, null, false, false, "EN_ATTENTE", null, null, new Date("2026-08-27"), null,
+      { closingOdds: 1.8, estimatedProbability: 62.5 }
+    );
+    expect(mocks.betCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ closingOdds: 1.8, estimatedProbability: 62.5 }),
+    }));
+
+    await updateBet("bet-a", { ...updateInput, closingOdds: 1.75, estimatedProbability: 60 });
+    expect(mocks.betUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ closingOdds: 1.75, estimatedProbability: 60 }),
+    }));
+
+    await expect(updateBet("bet-a", { ...updateInput, closingOdds: 1 })).rejects.toThrow("closingOddsPositive");
+    await expect(updateBet("bet-a", { ...updateInput, estimatedProbability: 101 })).rejects.toThrow("estimatedProbabilityRange");
   });
 
   it("associe uniquement un Tipster actif possédé", async () => {

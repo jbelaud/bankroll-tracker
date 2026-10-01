@@ -31,6 +31,9 @@ function revalidateBetViews() {
   revalidatePath("/[locale]/dashboard", "page");
   revalidatePath("/[locale]/bankrolls", "page");
   revalidatePath("/[locale]/bankrolls/[id]", "page");
+  revalidatePath("/[locale]/stats", "page");
+  revalidatePath("/[locale]/p/[slug]", "page");
+  revalidatePath("/[locale]/t/[handle]", "page");
 }
 
 async function getErrorsT() {
@@ -45,6 +48,8 @@ async function getBetValidationMessages(): Promise<BetValidationMessages> {
     stakePositive: t("stakePositive"),
     invalidResult: t("invalidResult"),
     oddsPositive: t("oddsPositive"),
+    closingOddsPositive: t("closingOddsPositive"),
+    estimatedProbabilityRange: t("estimatedProbabilityRange"),
     taxonomyMismatch: "Le type de pari ne correspond pas au sport sélectionné.",
   };
 }
@@ -91,6 +96,7 @@ export async function createBet(
     tipsterId?: string | null;
     tipster?: string | null;
     closingOdds?: number | null;
+    estimatedProbability?: number | null;
     selections?: ParsedBetSelection[];
     importBatchId?: string | null;
     allocationId?: string | null;
@@ -165,7 +171,8 @@ async function getOwnedBet(betId: string, userId: string) {
       id: true, bankrollId: true, tipsterId: true, format: true, referenceCapitalAtBet: true,
       sport: true, betType: true, description: true, eventResult: true, date: true,
       bookmaker: true, ticketRef: true,
-      stake: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true, boosted: true,
+      stake: true, stakeUnits: true, odds: true, closingOdds: true, estimatedProbability: true,
+      result: true, cashOutAmount: true, boosted: true,
       originalOdds: true, freebet: true, live: true, initialProofAt: true,
       initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true,
       certificationLockedAt: true,
@@ -326,6 +333,8 @@ export type UpdateBetInput = {
   date: string;
   stake: number;
   odds: number | null;
+  closingOdds?: number | null;
+  estimatedProbability?: number | null;
   result: BetResult;
   cashOutAmount: number | null;
   boosted: boolean;
@@ -361,6 +370,12 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
   if (!isBetResult(input.result)) throw new Error(t("invalidResult"));
   if (input.odds === null && input.result !== "REMBOURSE") throw new Error(t("oddsPositive"));
   if (input.odds !== null && (!Number.isFinite(input.odds) || input.odds <= 0)) throw new Error(t("oddsPositive"));
+  if (input.closingOdds !== undefined && input.closingOdds !== null
+    && (!Number.isFinite(input.closingOdds) || input.closingOdds <= 1)) throw new Error(t("closingOddsPositive"));
+  if (input.estimatedProbability !== undefined && input.estimatedProbability !== null
+    && (!Number.isFinite(input.estimatedProbability) || input.estimatedProbability < 0 || input.estimatedProbability > 100)) {
+    throw new Error(t("estimatedProbabilityRange"));
+  }
   if (input.result === "CASHE" && (!Number.isFinite(input.cashOutAmount) || (input.cashOutAmount as number) < 0)) {
     throw new Error(t("cashoutAmountPositive"));
   }
@@ -404,6 +419,8 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       stake: input.stake,
       stakeUnits: toUnits(input.stake, existing.referenceCapitalAtBet),
       odds: input.odds,
+      closingOdds: input.closingOdds === undefined ? existing.closingOdds : input.closingOdds,
+      estimatedProbability: input.estimatedProbability === undefined ? existing.estimatedProbability : input.estimatedProbability,
       result: input.result,
       cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
       boosted: input.boosted,
@@ -452,14 +469,16 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
 function auditSnapshot(bet: {
   bookmaker: string | null;
   sport: string; betType: string; description: string | null; eventResult: string | null;
-  date: Date; stakeUnits: number | null; odds: number | null; result: BetResult; cashOutAmount: number | null;
+  date: Date; stakeUnits: number | null; odds: number | null; closingOdds: number | null;
+  estimatedProbability: number | null; result: BetResult; cashOutAmount: number | null;
   referenceCapitalAtBet: number | null;
   boosted: boolean; originalOdds: number | null; freebet: boolean; live: boolean;
 }) {
   return {
     bookmaker: bet.bookmaker,
     sport: bet.sport, betType: bet.betType, description: bet.description, eventResult: bet.eventResult,
-    date: bet.date.toISOString(), stakeUnits: bet.stakeUnits, odds: bet.odds, result: bet.result,
+    date: bet.date.toISOString(), stakeUnits: bet.stakeUnits, odds: bet.odds,
+    closingOdds: bet.closingOdds, estimatedProbability: bet.estimatedProbability, result: bet.result,
     cashOutUnits: cashOutInUnits(bet.cashOutAmount, bet.referenceCapitalAtBet), boosted: bet.boosted, originalOdds: bet.originalOdds,
     freebet: bet.freebet, live: bet.live,
   };

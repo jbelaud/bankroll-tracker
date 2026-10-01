@@ -83,6 +83,8 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
     eventResult: bet.eventResult,
     stake: bet.stake,
     odds: bet.odds,
+    closingOdds: bet.closingOdds,
+    estimatedProbability: bet.estimatedProbability,
     result: bet.result,
     cashOutAmount: bet.cashOutAmount,
     boosted: bet.boosted,

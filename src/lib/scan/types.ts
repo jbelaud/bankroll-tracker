@@ -39,6 +39,7 @@ export type ParsedBet = {
   tipsterId?: string | null;
   tipster?: string | null;
   closingOdds?: number | null;
+  estimatedProbability?: number | null;
   selections?: ParsedBetSelection[];
   possibleDuplicate?: boolean;
   /** Ce résultat correspond sans ambiguïté à un pari en attente de la bankroll. */

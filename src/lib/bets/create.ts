@@ -21,6 +21,8 @@ export type BetValidationMessages = {
   stakePositive: string;
   invalidResult: string;
   oddsPositive: string;
+  closingOddsPositive: string;
+  estimatedProbabilityRange: string;
   taxonomyMismatch: string;
 };
 
@@ -49,6 +51,7 @@ export type CreateOwnedBetInput = {
     format?: BetFormat;
     resolvedTipsterId?: string | null;
     closingOdds?: number | null;
+    estimatedProbability?: number | null;
     selections?: ParsedBetSelection[];
     importBatchId?: string | null;
   };
@@ -85,6 +88,12 @@ export async function createOwnedBet(
   if (normalizedTaxonomy.taxonomyMismatch) throw new Error(messages.taxonomyMismatch);
 
   const source = input.source ?? {};
+  if (source.closingOdds !== null && source.closingOdds !== undefined
+    && (!Number.isFinite(source.closingOdds) || source.closingOdds <= 1)) throw new Error(messages.closingOddsPositive);
+  if (source.estimatedProbability !== null && source.estimatedProbability !== undefined
+    && (!Number.isFinite(source.estimatedProbability) || source.estimatedProbability < 0 || source.estimatedProbability > 100)) {
+    throw new Error(messages.estimatedProbabilityRange);
+  }
   const normalizedSelections = (source.selections ?? []).slice(0, 100).map((selection) => {
     const context = normalizeSportContext(taxonomy, selection.sport);
     const normalized = normalizeTaxonomyPair(
@@ -140,6 +149,7 @@ export async function createOwnedBet(
       entryMethod: source.entryMethod ?? "MANUAL",
       format: source.format ?? "SIMPLE",
       closingOdds: source.closingOdds ?? null,
+      estimatedProbability: source.estimatedProbability ?? null,
       importBatchId: source.importBatchId ?? null,
       tipsterId: source.resolvedTipsterId ?? null,
       scanUsageId: source.scanUsageId ?? null,

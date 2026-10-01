@@ -275,6 +275,8 @@ export function HistoryBetItem({
               : t("stakeAtOdds", { stake: fmtMoney(bet.stake, locale, currency), odds: fmtOdds(bet.odds, locale) })}
           </span>
           {fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}
+          {bet.closingOdds !== null ? <span className="num text-[0.65rem] text-muted-foreground">{t("closingOdds", { odds: fmtOdds(bet.closingOdds, locale) })}</span> : null}
+          {bet.estimatedProbability !== null ? <span className="num text-[0.65rem] text-muted-foreground">{t("estimatedProbability", { probability: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(bet.estimatedProbability) })}</span> : null}
           <span className={cn("rounded-full px-2 py-0.5 text-[0.65rem] font-semibold", resultTone)}>
             {tResults(bet.result)}
           </span>

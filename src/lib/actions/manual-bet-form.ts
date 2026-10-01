@@ -27,6 +27,10 @@ export async function createManualBetForm(
   const date = String(formData.get("date") ?? "");
   const stake = Number(formData.get("stake"));
   const odds = Number(formData.get("odds"));
+  const closingOddsRaw = String(formData.get("closingOdds") ?? "").trim();
+  const closingOdds = closingOddsRaw ? Number(closingOddsRaw) : null;
+  const probabilityRaw = String(formData.get("estimatedProbability") ?? "").trim();
+  const estimatedProbability = probabilityRaw ? Number(probabilityRaw) : null;
   const boosted = formData.get("boosted") === "on";
   const originalOdds = boosted ? Number(formData.get("originalOdds")) : null;
   const freebet = formData.get("freebet") === "on";
@@ -54,7 +58,7 @@ export async function createManualBetForm(
       null,
       new Date(date),
       null,
-      { tipsterId, allocationId, bookmaker }
+      { tipsterId, allocationId, bookmaker, closingOdds, estimatedProbability }
     );
   } catch (e) {
     const t = await getTranslations({ locale: await getServerLocale(), namespace: "common" });

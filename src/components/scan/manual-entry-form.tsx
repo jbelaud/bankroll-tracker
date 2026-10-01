@@ -211,6 +211,18 @@ export function ManualEntryForm({
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="manual-closing-odds" className="text-xs">{t("closingOddsLabel")}</Label>
+          <Input id="manual-closing-odds" name="closingOdds" type="number" step="0.001" min="1.001" inputMode="decimal" placeholder="1.90" className="num min-h-touch rounded-lg px-3 text-sm" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="manual-estimated-probability" className="text-xs">{t("estimatedProbabilityLabel")}</Label>
+          <Input id="manual-estimated-probability" name="estimatedProbability" type="number" step="0.01" min="0" max="100" inputMode="decimal" placeholder="72.8" className="num min-h-touch rounded-lg px-3 text-sm" />
+        </div>
+      </div>
+      <p className="text-xs leading-5 text-muted-foreground">{t("closingFieldsHelp")}</p>
+
       <label className="flex min-h-touch items-center gap-2 text-sm">
         <input
           type="checkbox"

@@ -140,6 +140,7 @@ export async function importExternalBets(
     entryMethod: "FILE";
     format: ParsedBet["format"];
     closingOdds: number | null;
+    estimatedProbability: number | null;
     tipsterId: string | null | undefined;
     tipsterName: string | null;
     selections: NonNullable<ParsedBet["selections"]>;
@@ -217,7 +218,10 @@ export async function importExternalBets(
         : bet.result === "CASHE" ? bet.cashOutAmount : null,
       entryMethod: "FILE" as const,
       format: bet.format ?? "SIMPLE",
-      closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 0 ? (bet.closingOdds ?? null) : null,
+      closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 1 ? (bet.closingOdds ?? null) : null,
+      estimatedProbability: bet.estimatedProbability === null || bet.estimatedProbability === undefined
+        ? null : Number.isFinite(bet.estimatedProbability) && bet.estimatedProbability >= 0 && bet.estimatedProbability <= 100
+          ? bet.estimatedProbability : null,
       tipsterId: bet.tipsterId,
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
       selections: normalizedSelections,
@@ -382,6 +386,8 @@ export async function importBets(
       stakePositive: tErrors("stakePositive"),
       invalidResult: tErrors("invalidResult"),
       oddsPositive: tErrors("oddsPositive"),
+      closingOddsPositive: tErrors("closingOddsPositive"),
+      estimatedProbabilityRange: tErrors("estimatedProbabilityRange"),
       taxonomyMismatch: "Le type de pari ne correspond pas au sport sélectionné.",
     };
     const uniqueScanUsageIds = [...new Set(scanUsageIds.filter(Boolean))];
@@ -576,6 +582,7 @@ export async function importBets(
           format: bet.format,
           resolvedTipsterId: resolvedTipsterIds[index],
           closingOdds: bet.closingOdds,
+          estimatedProbability: bet.estimatedProbability,
           selections: bet.selections,
         },
       }, validationMessages, { bankrollValidated: true, taxonomy });

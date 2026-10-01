@@ -34,6 +34,8 @@ export type HistoryBetItemData = {
   eventResult: string | null;
   stake: number;
   odds: number | null;
+  closingOdds: number | null;
+  estimatedProbability: number | null;
   result: BetResult;
   cashOutAmount: number | null;
   boosted: boolean;
@@ -516,7 +518,7 @@ function DesktopHistoryTable({
                   </td>
                   {!scopedToBankroll && <td className="max-w-32 truncate px-3 py-3 text-muted-foreground">{bet.bankrollName}</td>}
                   <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtMoney(bet.stake, locale, currency)}</span>{fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="block text-[0.65rem] text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}</td>
-                  <td className="num whitespace-nowrap px-3 py-3 text-right">{fmtOdds(bet.odds, locale)}</td>
+                  <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtOdds(bet.odds, locale)}</span>{bet.closingOdds !== null ? <span className="block text-[0.65rem] text-muted-foreground">{t("closingOdds", { odds: fmtOdds(bet.closingOdds, locale) })}</span> : null}{bet.estimatedProbability !== null ? <span className="block text-[0.65rem] text-muted-foreground">{t("estimatedProbability", { probability: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(bet.estimatedProbability) })}</span> : null}</td>
                   <td className="px-3 py-3"><span className="inline-flex rounded-full bg-muted px-2 py-1 font-medium text-muted-foreground">{tResults(bet.result)}</span></td>
                   <td className={positive ? "num whitespace-nowrap px-3 py-3 text-right font-semibold text-profit" : "num whitespace-nowrap px-3 py-3 text-right font-semibold text-loss"}>
                     {bet.result === "EN_ATTENTE" ? "—" : <span className="inline-flex items-center gap-1"><TrendIcon size={13} weight="bold" aria-hidden />{fmtMoneySigned(bet.profit, locale, currency)}</span>}

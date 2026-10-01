@@ -401,6 +401,7 @@ model Bet {
   entryMethod   BetEntryMethod @default(UNKNOWN)
   format        BetFormat      @default(SIMPLE)
   closingOdds   Float?
+  estimatedProbability Float? // probabilité estimée manuellement, en pourcentage (0-100)
   tipsterId     String?
   tipster       Tipster?       @relation(fields: [tipsterId], references: [id], onDelete: SetNull)
   importBatchId String?

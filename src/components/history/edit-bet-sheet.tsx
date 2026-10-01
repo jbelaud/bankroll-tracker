@@ -60,7 +60,8 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
         bookmaker: value.bookmaker,
         ticketRef: value.ticketRef,
         sport: value.sport, betType: value.betType, description: value.description ?? "", eventResult: value.eventResult ?? "",
-        date: value.date, stake: value.stake, odds: value.odds, result: value.result, cashOutAmount: value.cashOutAmount,
+        date: value.date, stake: value.stake, odds: value.odds, closingOdds: value.closingOdds,
+        estimatedProbability: value.estimatedProbability, result: value.result, cashOutAmount: value.cashOutAmount,
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
         tipsterId: value.tipster?.id ?? null,
         correctionReason,
@@ -108,6 +109,11 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
             <div className="flex flex-col gap-1"><Label htmlFor="edit-odds">{t("odds")}</Label><Input id="edit-odds" type="number" step="0.001" min="0" value={value.odds ?? ""} onChange={(e) => patch({ odds: e.target.value ? Number(e.target.value) : null })} /></div>
             <div className="flex flex-col gap-1"><Label>{t("result")}</Label><Select value={value.result} onValueChange={(result) => patch({ result: result as BetResult })} items={Object.fromEntries((Object.keys(BET_RESULT_LABELS) as BetResult[]).map((result) => [result, tResults(result)]))}><SelectTrigger className="min-h-touch rounded-lg"><SelectValue /></SelectTrigger><SelectContent>{(Object.keys(BET_RESULT_LABELS) as BetResult[]).map((result) => <SelectItem key={result} value={result}>{tResults(result)}</SelectItem>)}</SelectContent></Select></div>
           </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-1"><Label htmlFor="edit-closing-odds">{t("closingOdds")}</Label><Input id="edit-closing-odds" type="number" step="0.001" min="1.001" value={value.closingOdds ?? ""} onChange={(e) => patch({ closingOdds: e.target.value ? Number(e.target.value) : null })} /></div>
+            <div className="flex flex-col gap-1"><Label htmlFor="edit-estimated-probability">{t("estimatedProbability")}</Label><Input id="edit-estimated-probability" type="number" step="0.01" min="0" max="100" value={value.estimatedProbability ?? ""} onChange={(e) => patch({ estimatedProbability: e.target.value ? Number(e.target.value) : null })} /></div>
+          </div>
+          <p className="text-xs text-muted-foreground">{t("closingFieldsHelp")}</p>
           {value.result === "CASHE" && <div className="flex flex-col gap-1"><Label htmlFor="edit-cashout">{t("cashout", { currency })}</Label><Input id="edit-cashout" type="number" step="0.01" min="0" value={value.cashOutAmount ?? ""} onChange={(e) => patch({ cashOutAmount: e.target.value ? Number(e.target.value) : null })} /></div>}
           <div className="grid grid-cols-2 gap-2 text-sm">
             <label className="flex min-h-touch items-center gap-2 rounded-lg border border-input px-3"><input type="checkbox" checked={value.freebet} onChange={(e) => patch({ freebet: e.target.checked })} />{t("freebet")}</label>

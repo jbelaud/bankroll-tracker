@@ -122,7 +122,7 @@ describe("parseBetsFileContent", () => {
   it("reconnaît Bet-Analytix et regroupe les sélections d'un combiné", () => {
     const parsed = parseBetsFileContent("Export_Formatted_Bet-Analytix.csv", [
       '"Date";"Type";"Sport";"Label";"Odds";"Stake";"State";"Bookmaker";"Tipster";"Category";"Competition";"BetType";"Closing";"EstimatedProbability";"Commission";"Bonus";"Live";"Freebet";"Cashout";"Eachway";"Comment"',
-      '"2021-10-01 11:18";"Combined";"";"COMBI SPECIALE";"2.221";"6.33";"W";"Winamax";"Notime-Pronostic";"";"";"";"";"";"";"";"";"";"";"";""',
+      '"2021-10-01 11:18";"Combined";"";"COMBI SPECIALE";"2.221";"6.33";"W";"Winamax";"Notime-Pronostic";"";"";"";"1.900";"72.8";"";"";"";"";"";"";""',
       '"";"";"Football";"LENS OU NUL";"1.170";"";"W";"Winamax";"";"";"";"";"";"";"";"";"";"";"";"";""',
       '"";"";"Tennis";"VAINQUEUR MONFILS";"1.900";"";"W";"Winamax";"";"";"";"";"";"";"";"";"";"";"";"";""',
       '"2021-09-30 14:32";"Simple";"Tennis";"VAINQUEUR MURRAY";"2.250";"1.09";"L";"Winamax";"Bestofpronos";"";"ATP";"";"";"";"";"";"Yes";"";"";"";"Test"',
@@ -144,6 +144,8 @@ describe("parseBetsFileContent", () => {
         betType: "Combiné",
         stake: 6.33,
         odds: 2.221,
+        closingOdds: 1.9,
+        estimatedProbability: 72.8,
         result: "GAGNE",
         format: "COMBINE",
         tipster: "Notime-Pronostic",
