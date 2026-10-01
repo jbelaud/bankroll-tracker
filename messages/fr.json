@@ -40,7 +40,8 @@
     "scanner": "Scan",
     "scannerDesktop": "Scan OCR",
     "fileImport": "Importer un historique",
-    "stats": "Stats",
+    "stats": "Analyser",
+    "aiInsights": "Analyses IA",
     "tipsters": "Tipsters",
     "myTipsters": "Mes tipsters",
     "referrals": "Parrainage",
@@ -50,8 +51,27 @@
     "groups": {
       "tracking": "Suivi",
       "analysis": "Analyse",
-      "manage": "Gérer"
+      "community": "Communauté",
+      "manage": "Mon espace"
     }
+  },
+
+  "aiInsights": {
+    "eyebrow": "Une page dédiée · Premium",
+    "title": "Analyses IA",
+    "subtitle": "Un rapport enregistré sur tes performances, avec les chiffres qui permettent de le vérifier.",
+    "scope": "{bankrolls} bankroll(s) active(s) · {bets} pari(s)",
+    "reportTitle": "Comprendre tes résultats",
+    "reportDescription": "L’analyse existante couvre toutes tes bankrolls actives. Elle est enregistrée et peut être renouvelée après le délai indiqué ci-dessous.",
+    "bets": "Paris suivis",
+    "betsDetail": "{count} comptent dans la performance",
+    "roi": "ROI global",
+    "roiDetail": "Bénéfice ÷ mises engagées",
+    "clvCoverage": "Cotes de clôture",
+    "clvDetail": "Paris éligibles avec closing renseigné",
+    "analyzeLink": "Explorer les statistiques →",
+    "bankrollsLink": "Voir les bankrolls →",
+    "limits": "Les cotes de clôture sont saisies manuellement. Le CLV indique la qualité du prix obtenu ; le rapport IA reste une interprétation à contrôler avec les paris et les indicateurs."
   },
 
   "subscriptionStatus": {
@@ -159,7 +179,13 @@
   },
 
   "dashboard": {
-    "title": "Tableau de bord",
+    "title": "Synthèse",
+    "workspaceSubtitle": "Une vue rapide de toutes tes bankrolls et de tes derniers paris.",
+    "aiTeaserTitle": "Prendre du recul sur tes résultats",
+    "aiTeaserDescription": "Retrouve ton rapport enregistré et les chiffres qui permettent de le vérifier.",
+    "aiTeaserCta": "Analyses IA →",
+    "moreTitle": "Mes repères",
+    "moreDescription": "Capital, objectifs, Scan et conversion personnelle",
     "resources": "Outils et ressources",
     "welcomeTitle": "Bienvenue sur Kalivoa",
     "welcomeSubtitle": "Crée ta première bankroll pour commencer à suivre tes paris.",
@@ -246,11 +272,17 @@
     },
     "bankrollCards": {
       "ariaLabel": "Mes bankrolls",
-      "title": "Mes bankrolls"
+      "title": "Mes bankrolls",
+      "betCount": "{count} paris",
+      "profit": "Bénéfice",
+      "roi": "ROI",
+      "realBalance": "Solde réel",
+      "missingUnits": "{count} pari(s) réglé(s) sans unité : total en u indisponible"
     },
     "recentBets": {
       "ariaLabel": "Paris récents",
-      "title": "Paris récents"
+      "title": "Paris récents",
+      "missingUnits": "— signifie que l’unité de ce pari historique n’est pas renseignée."
     }
   },
 
@@ -323,8 +355,40 @@
 
   "bankrollDetail": {
     "ariaLabel": "Détail de la bankroll",
+    "realBalance": "Solde réel",
     "backToBankrolls": "Toutes les bankrolls",
     "balanceEvolution": "Évolution du solde",
+    "workspace": {
+      "summary": "Indicateurs de la bankroll",
+      "profit": "Bénéfice",
+      "roi": "ROI",
+      "roiDetail": "Bénéfice ÷ mises engagées",
+      "bets": "Tous les paris",
+      "settled": "{count} réglés pour la performance",
+      "clv": "CLV global",
+      "clvCoverage": "{count}/{total} cotes renseignées",
+      "missingUnits": "{count} pari(s) réglé(s) sans unité : total en u indisponible",
+      "addBet": "Ajouter un pari",
+      "details": "Chiffres détaillés",
+      "filters": "Filtres",
+      "calendar": "Calendrier",
+      "analyze": "Analyser",
+      "ai": "Analyses IA",
+      "manage": "Gérer",
+      "capitalTitle": "Capital et mouvements",
+      "capitalDescription": "Solde réel, dépôts, retraits et répartition par bookmaker"
+    },
+    "clvChart": {
+      "title": "Performance et cotes de clôture",
+      "description": "Bénéfices cumulés en u sur les {count} mêmes paris réglés avec mise en u et closing connus.",
+      "coverage": "{count}/{total} comparables",
+      "actual": "Bénéfice réel",
+      "closing": "Bénéfice théorique aux closings",
+      "chartAria": "Deux courbes de bénéfice cumulé sur {count} paris comparables",
+      "betNumber": "Pari n° {number}",
+      "empty": "Ajoute des cotes de clôture à des paris réglés avec une mise en u pour comparer les courbes.",
+      "limits": "{missingClosing} closing(s) manquant(s), {missingUnits} mise(s) sans unité parmi les closings connus. Les deux courbes excluent ces paris et les paris non comparables ; les closings sont saisis manuellement."
+    },
     "settingsTitle": "Réglages de la bankroll",
     "settingsDescription": "Publication, unités, présentation et gestion",
     "personalConversionTitle": "Conversion personnelle des tipsters",
@@ -735,11 +799,12 @@
   "stats": {
     "title": "Stats",
     "workspace": {
-      "title": "Statistiques",
-      "subtitle": "Comprends tes performances et identifie tes tendances.",
+      "title": "Analyser",
+      "subtitle": "Explore tes résultats par période, sport, type de pari et bookmaker.",
       "filters": "Filtres",
       "filtersActive": "Filtres actifs",
       "calendar": "Calendrier",
+      "aiLink": "Analyses IA",
       "close": "Fermer",
       "filtered": "Les statistiques affichent une sélection filtrée.",
       "clearFilters": "Réinitialiser"
@@ -814,7 +879,8 @@
       "analysisDescription": "Compare tes performances selon les cotes, mises, résultats et sports.",
       "breakdown": "Détail des performances",
       "breakdownDescription": "Repère les sports, types de paris et bookmakers qui fonctionnent le mieux.",
-      "formats": "Formats de paris"
+      "formats": "Formats de paris",
+      "advanced": "Chiffres détaillés et indicateurs complémentaires"
     },
     "filters": {
       "title": "Filtres avancés",
@@ -846,9 +912,11 @@
     "curve": {
       "title": "Évolution du bénéfice",
       "bets": "{count, plural, one {# pari} other {# paris}}",
-      "empty": "Aucun pari réglé pour cette sélection."
+      "empty": "Aucun pari réglé pour cette sélection.",
+      "missingUnits": "{count} pari(s) réglé(s) sans unité enregistrée : la courbe en u est indisponible."
     },
     "calendar": {
+      "missingUnits": "{count} pari(s) sans unité enregistrée : totaux en u indisponibles.",
       "title": "Calendrier des bénéfices",
       "previousMonth": "Mois précédent",
       "nextMonth": "Mois suivant",
@@ -901,6 +969,8 @@
       "showLess": "Réduire les indicateurs"
     },
     "tabs": {
+      "missingUnits": "Certains paris n’ont pas d’unité enregistrée : ce graphique en u est indisponible.",
+      "stakeBasis": "Tranches de mises calculées en {currency} ; bénéfice affiché dans l’unité choisie.",
       "odds": "Cotes",
       "stake": "Mises",
       "monthly": "Mensuel",
@@ -916,11 +986,13 @@
     },
     "table": {
       "name": "Nom",
-      "bets": "Paris",
+      "bets": "Paris réglés",
       "winRate": "Réussite",
       "avgOdds": "Cote moy.",
       "staked": "Misé",
+      "roi": "ROI",
       "profit": "Bénéfice",
+      "missingUnits": "Certaines lignes contiennent des paris sans unité enregistrée : leurs montants et leur ROI en u restent indisponibles.",
       "noData": "Aucune donnée.",
       "allSports": "Tous les sports",
       "sportFilterAriaLabel": "Filtrer les types de pari par sport"

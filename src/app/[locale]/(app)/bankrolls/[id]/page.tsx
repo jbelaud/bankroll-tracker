@@ -5,12 +5,18 @@ import { listBets } from "@/lib/actions/bets";
 import { listBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { movementDelta, summarizeBankrollCapital } from "@/lib/bankroll-balance";
 import { computeProfit, countsTowardPerformance } from "@/lib/profit";
+import { computeGlobalStats } from "@/lib/stats";
+import { unitPerformance } from "@/lib/unit-performance";
+import { compareClvSeries, computeClv } from "@/lib/clv";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { BankrollDetailHeader } from "@/components/bankrolls/bankroll-detail-header";
 import { BankrollDetailActions } from "@/components/bankrolls/bankroll-detail-actions";
 import { Sparkline } from "@/components/dashboard/sparkline";
 import { HistoryList, type HistoryBetItemData } from "@/components/history/history-list";
 import { BankrollCapitalStats } from "@/components/bankrolls/bankroll-capital-stats";
+import { BankrollOverviewMetrics } from "@/components/bankrolls/bankroll-overview-metrics";
+import { BankrollClvChart } from "@/components/bankrolls/bankroll-clv-chart";
+import { PublicShareButton } from "@/components/bankrolls/public-share-button";
 import { BankrollMovementPanel } from "@/components/bankrolls/bankroll-movement-panel";
 import { BankrollAllocationList } from "@/components/bankrolls/bankroll-allocation-list";
 import { Link } from "@/i18n/navigation";
@@ -75,6 +81,10 @@ export default async function BankrollDetailPage({
   const capital = summarizeBankrollCapital(bankroll, bets, movements);
   const { profit, balance } = capital;
   const certification = certificationSummary(bets, bankroll.certificationStartedAt);
+  const stats = computeGlobalStats(bets);
+  const units = unitPerformance(bets);
+  const clv = computeClv(bets);
+  const clvComparison = compareClvSeries(bets);
 
   const curveEvents = [
     ...settled.map((bet) => ({ date: bet.date, delta: profitOfBet(bet) })),
@@ -113,6 +123,7 @@ export default async function BankrollDetailPage({
 
   const deleteThisBankroll = deleteBankroll.bind(null, bankroll.id);
   const t = await getTranslations("bankrollDetail");
+  const tWorkspace = await getTranslations("bankrollDetail.workspace");
   const currency = await getServerCurrency();
   const allocationItems = bankroll.allocations.map((allocation) => ({
     id: allocation.id,
@@ -130,22 +141,51 @@ export default async function BankrollDetailPage({
           <ArrowLeft size={16} aria-hidden />
           {t("backToBankrolls")}
         </Link>
+        <div className="glass-card rounded-2xl p-4 sm:p-5">
         <BankrollDetailHeader
           name={bankroll.name}
           mode={bankroll.mode}
           allocationCount={bankroll.allocations.length}
           referenceCapital={bankroll.referenceCapital}
           balance={balance}
-          profit={profit}
           initial={bankroll.initial}
           betCount={bets.length}
           pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
           currency={currency}
         />
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
+          <Link href="/scan" className="inline-flex min-h-touch items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">{tWorkspace("addBet")}</Link>
+          <Link href={`/stats?bankroll=${encodeURIComponent(id)}&section=details`} className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("details")}</Link>
+          <Link href={`/stats?bankroll=${encodeURIComponent(id)}&panel=filters`} className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("filters")}</Link>
+          <Link href={`/stats?bankroll=${encodeURIComponent(id)}&panel=calendar`} className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("calendar")}</Link>
+          <Link href={`/stats?bankroll=${encodeURIComponent(id)}`} className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("analyze")}</Link>
+          <Link href="/ai-insights" className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("ai")}</Link>
+          <a href="#bankroll-settings" className="inline-flex min-h-touch items-center rounded-xl border border-border bg-background px-4 text-sm font-semibold hover:border-primary/40 hover:text-primary">{tWorkspace("manage")}</a>
+          {bankroll.isPublic && bankroll.publicSlug ? <PublicShareButton locale={locale} slug={bankroll.publicSlug} bankrollName={bankroll.name} /> : null}
+        </div>
+        </div>
       </div>
 
+      <BankrollOverviewMetrics
+        profit={profit}
+        unitProfit={units.profit}
+        missingUnits={units.missing}
+        roi={stats.roi}
+        betCount={bets.length}
+        settledCount={stats.performanceBets}
+        clv={clv.mean}
+        clvMeasured={clv.measured}
+        clvCandidates={clv.candidates}
+        currency={currency}
+      />
+
+      <BankrollClvChart comparison={clvComparison} />
+
+      <details className="group glass-card rounded-2xl p-4 sm:p-5 lg:col-span-12">
+        <summary className="min-h-touch cursor-pointer list-none text-sm font-semibold text-primary marker:content-none">{tWorkspace("capitalTitle")} <span className="ml-2 font-normal text-muted-foreground">{tWorkspace("capitalDescription")}</span></summary>
+        <div className="mt-4 grid gap-4 border-t border-border pt-4 lg:grid-cols-2">
       {bankroll.mode === "DISTRIBUTED" ? <BankrollAllocationList allocations={allocationItems} unassignedBetCount={bets.filter((bet) => !bet.allocationId).length} currency={currency} /> : null}
-      <div className="flex flex-col gap-4 lg:col-span-6 lg:gap-6">
+      <div className="flex flex-col gap-4">
         <BankrollCapitalStats
           deposits={capital.deposits}
           withdrawals={capital.withdrawals}
@@ -165,13 +205,15 @@ export default async function BankrollDetailPage({
       </div>
 
       {curve.length >= 2 && (
-        <section className="glass-card rounded-xl p-4 lg:col-span-6" aria-labelledby="bankroll-balance-chart-title">
+        <section className="glass-card rounded-xl p-4" aria-labelledby="bankroll-balance-chart-title">
           <h2 id="bankroll-balance-chart-title" className="mb-3 text-sm font-semibold">{t("balanceEvolution")}</h2>
           <Sparkline points={curve} />
         </section>
       )}
+        </div>
+      </details>
 
-      <details className="group glass-card rounded-2xl lg:col-span-12">
+      <details id="bankroll-settings" className="group glass-card rounded-2xl lg:col-span-12">
         <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl p-4 marker:content-none sm:p-5 [&::-webkit-details-marker]:hidden">
           <span className="min-w-0">
             <span className="block text-base font-semibold">{t("settingsTitle")}</span>

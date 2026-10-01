@@ -40,7 +40,8 @@
     "scanner": "Scan",
     "scannerDesktop": "OCR Scan",
     "fileImport": "Import history",
-    "stats": "Stats",
+    "stats": "Analyze",
+    "aiInsights": "AI analysis",
     "tipsters": "Tipsters",
     "myTipsters": "My tipsters",
     "referrals": "Referrals",
@@ -50,8 +51,27 @@
     "groups": {
       "tracking": "Tracking",
       "analysis": "Analysis",
-      "manage": "Manage"
+      "community": "Community",
+      "manage": "My space"
     }
+  },
+
+  "aiInsights": {
+    "eyebrow": "Dedicated page · Premium",
+    "title": "AI analysis",
+    "subtitle": "A saved report about your performance, backed by numbers you can check.",
+    "scope": "{bankrolls} active bankroll(s) · {bets} bet(s)",
+    "reportTitle": "Understand your results",
+    "reportDescription": "The existing analysis covers all your active bankrolls. It is saved and can be renewed after the delay shown below.",
+    "bets": "Tracked bets",
+    "betsDetail": "{count} count towards performance",
+    "roi": "Overall ROI",
+    "roiDetail": "Profit ÷ stakes risked",
+    "clvCoverage": "Closing odds",
+    "clvDetail": "Eligible bets with recorded closing odds",
+    "analyzeLink": "Explore statistics →",
+    "bankrollsLink": "View bankrolls →",
+    "limits": "Closing odds are entered manually. CLV measures the quality of the price obtained; AI analysis remains an interpretation to check against the bets and metrics."
   },
 
   "subscriptionStatus": {
@@ -159,7 +179,13 @@
   },
 
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Overview",
+    "workspaceSubtitle": "A quick view of all your bankrolls and recent bets.",
+    "aiTeaserTitle": "Take a closer look at your results",
+    "aiTeaserDescription": "Find your saved report and the numbers behind it.",
+    "aiTeaserCta": "AI analysis →",
+    "moreTitle": "My reference points",
+    "moreDescription": "Capital, goals, Scan and personal conversion",
     "resources": "Tools and resources",
     "welcomeTitle": "Welcome to Kalivoa",
     "welcomeSubtitle": "Create your first bankroll to start tracking your bets.",
@@ -246,11 +272,17 @@
     },
     "bankrollCards": {
       "ariaLabel": "My bankrolls",
-      "title": "My bankrolls"
+      "title": "My bankrolls",
+      "betCount": "{count} bets",
+      "profit": "Profit",
+      "roi": "ROI",
+      "realBalance": "Real balance",
+      "missingUnits": "{count} settled bet(s) without units: unit total unavailable"
     },
     "recentBets": {
       "ariaLabel": "Recent bets",
-      "title": "Recent bets"
+      "title": "Recent bets",
+      "missingUnits": "— means this historical bet has no recorded unit."
     }
   },
 
@@ -323,8 +355,40 @@
 
   "bankrollDetail": {
     "ariaLabel": "Bankroll detail",
+    "realBalance": "Real balance",
     "backToBankrolls": "All bankrolls",
     "balanceEvolution": "Balance evolution",
+    "workspace": {
+      "summary": "Bankroll metrics",
+      "profit": "Profit",
+      "roi": "ROI",
+      "roiDetail": "Profit ÷ stakes risked",
+      "bets": "All bets",
+      "settled": "{count} settled for performance",
+      "clv": "Overall CLV",
+      "clvCoverage": "{count}/{total} closing odds entered",
+      "missingUnits": "{count} settled bet(s) without units: unit total unavailable",
+      "addBet": "Add a bet",
+      "details": "Detailed figures",
+      "filters": "Filters",
+      "calendar": "Calendar",
+      "analyze": "Analyze",
+      "ai": "AI analysis",
+      "manage": "Manage",
+      "capitalTitle": "Capital and movements",
+      "capitalDescription": "Real balance, deposits, withdrawals and bookmaker split"
+    },
+    "clvChart": {
+      "title": "Performance and closing odds",
+      "description": "Cumulative profit in units on the same {count} settled bets with known unit stake and closing odds.",
+      "coverage": "{count}/{total} comparable",
+      "actual": "Actual profit",
+      "closing": "Theoretical profit at closing odds",
+      "chartAria": "Two cumulative profit curves on {count} comparable bets",
+      "betNumber": "Bet no. {number}",
+      "empty": "Add closing odds to settled bets with a unit stake to compare the curves.",
+      "limits": "{missingClosing} closing odds missing, {missingUnits} unit stakes missing among known closing odds. Both curves exclude these and other incomparable bets; closing odds are entered manually."
+    },
     "settingsTitle": "Bankroll settings",
     "settingsDescription": "Publishing, units, presentation and management",
     "personalConversionTitle": "Personal tipster conversion",
@@ -735,11 +799,12 @@
   "stats": {
     "title": "Stats",
     "workspace": {
-      "title": "Statistics",
-      "subtitle": "Understand your performance and identify your trends.",
+      "title": "Analyze",
+      "subtitle": "Explore your results by period, sport, bet type and bookmaker.",
       "filters": "Filters",
       "filtersActive": "Active filters",
       "calendar": "Calendar",
+      "aiLink": "AI analysis",
       "close": "Close",
       "filtered": "These statistics use a filtered selection.",
       "clearFilters": "Reset"
@@ -814,7 +879,8 @@
       "analysisDescription": "Compare your performance across odds, stakes, results and sports.",
       "breakdown": "Performance breakdown",
       "breakdownDescription": "Find the sports, bet types and bookmakers that work best.",
-      "formats": "Bet formats"
+      "formats": "Bet formats",
+      "advanced": "Detailed figures and additional metrics"
     },
     "filters": {
       "title": "Advanced filters",
@@ -846,9 +912,11 @@
     "curve": {
       "title": "Profit evolution",
       "bets": "{count, plural, one {# bet} other {# bets}}",
-      "empty": "No settled bets for this selection."
+      "empty": "No settled bets for this selection.",
+      "missingUnits": "{count} settled bet(s) lack recorded units, so the curve in units is unavailable."
     },
     "calendar": {
+      "missingUnits": "{count} bet(s) without recorded units: totals in units unavailable.",
       "title": "Profit calendar",
       "previousMonth": "Previous month",
       "nextMonth": "Next month",
@@ -901,6 +969,8 @@
       "showLess": "Hide extra metrics"
     },
     "tabs": {
+      "missingUnits": "Some bets have no recorded units, so this chart in units is unavailable.",
+      "stakeBasis": "Stake ranges use {currency}; profit uses the selected display unit.",
       "odds": "Odds",
       "stake": "Stakes",
       "monthly": "Monthly",
@@ -916,11 +986,13 @@
     },
     "table": {
       "name": "Name",
-      "bets": "Bets",
+      "bets": "Settled bets",
       "winRate": "Win rate",
       "avgOdds": "Avg. odds",
       "staked": "Staked",
+      "roi": "ROI",
       "profit": "Profit",
+      "missingUnits": "Some rows include bets without recorded units, so their amounts and ROI in units are unavailable.",
       "noData": "No data.",
       "allSports": "All sports",
       "sportFilterAriaLabel": "Filter bet types by sport"

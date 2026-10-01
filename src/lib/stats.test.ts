@@ -71,4 +71,12 @@ describe("performance statistics", () => {
     expect(unitPerformance(settled)).toMatchObject({ profit: 0, averageStake: 1, missing: 0 });
     expect(unitPerformance([...settled, bet({ id: "missing", stakeUnits: null })])).toMatchObject({ profit: null, missing: 1 });
   });
+
+  it("keeps grouped profit in units unavailable when one settled bet lacks units", () => {
+    const rows = groupStats([
+      bet({ id: "known", stake: 50, odds: 2, stakeUnits: 1 }),
+      bet({ id: "unknown", result: "PERDU", stake: 20, stakeUnits: null }),
+    ], (item) => item.sport);
+    expect(rows[0]).toMatchObject({ profit: 30, staked: 70, unitProfit: null, unitStaked: null, missingUnitCount: 1 });
+  });
 });

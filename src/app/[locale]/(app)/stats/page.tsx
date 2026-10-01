@@ -13,7 +13,6 @@ import { computeCapitalReturnStats } from "@/lib/capital-return-stats";
 import { profitInUnits } from "@/lib/public-bankroll";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
-import { INSIGHTS_COOLDOWN_MS, type InsightResult } from "@/lib/insights/types";
 import {
   computeGlobalStats,
   groupStats,
@@ -24,8 +23,6 @@ import {
   stakeBucket,
   stakeBucketLabel,
 } from "@/lib/stats";
-import { InsightsCard } from "@/components/stats/insights-card";
-import { PremiumInsightsCard } from "@/components/stats/premium-insights-card";
 import { OverviewGrid } from "@/components/stats/overview-grid";
 import { ClvPanel } from "@/components/stats/clv-panel";
 import { DetailedStatsPanel } from "@/components/stats/detailed-stats-panel";
@@ -39,7 +36,6 @@ import { ProfitCalendar } from "@/components/stats/profit-calendar";
 import { StatsFilters } from "@/components/stats/stats-filters";
 import { StatsWorkspace } from "@/components/stats/stats-workspace";
 import { ProfitCurve } from "@/components/stats/profit-curve";
-import { isPaidPlan } from "@/lib/billing/plans";
 import { getTipsterPerformances } from "@/lib/tipsters/analytics";
 import { TipsterStatsTable } from "@/components/stats/tipster-stats-table";
 
@@ -52,14 +48,11 @@ export default async function StatsPage({
 }) {
   const user = await requireUser();
   const query = await searchParams;
-  const [allBets, bankrolls, existingInsight, taxonomy, dbUser] = await Promise.all([
+  const [allBets, bankrolls, taxonomy] = await Promise.all([
     listAllBets(),
     listBankrolls(),
-    prisma.insight.findUnique({ where: { userId: user.id } }),
     getUserTaxonomy(user.id),
-    prisma.user.findUnique({ where: { id: user.id }, select: { plan: true } }),
   ]);
-  const paidPlan = isPaidPlan(dbUser?.plan ?? "FREE");
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
   const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const accessibleBets = allBets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
@@ -99,8 +92,6 @@ export default async function StatsPage({
   const extremeInUnits = (bet: typeof stats.biggestWin) => bet && bet.stakeUnits !== null
     && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
     ? profitInUnits(bet) : null;
-
-  const settledCount = bets.filter((b) => countsTowardPerformance(b.result)).length;
 
   const currency = await getServerCurrency();
   const symbol = currencySymbol(currency);
@@ -144,14 +135,28 @@ export default async function StatsPage({
   const daily = Object.values(
     bets
       .filter((bet) => countsTowardPerformance(bet.result))
-      .reduce<Record<string, { date: string; profit: number; count: number }>>((map, bet) => {
+      .reduce<Record<string, { date: string; profit: number; unitProfit: number; missingUnits: number; count: number }>>((map, bet) => {
         const date = bet.date.toISOString().slice(0, 10);
-        map[date] ??= { date, profit: 0, count: 0 };
+        map[date] ??= { date, profit: 0, unitProfit: 0, missingUnits: 0, count: 0 };
         map[date].profit += computeProfit(bet);
+        if (bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits)
+          && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))) {
+          map[date].unitProfit += profitInUnits(bet);
+        } else {
+          map[date].missingUnits += 1;
+        }
         map[date].count += 1;
         return map;
       }, {})
   ).sort((a, b) => a.date.localeCompare(b.date));
+  const monthlyWithUnits = stats.monthly.map((month) => {
+    const entries = daily.filter((day) => day.date.startsWith(month.name));
+    return {
+      ...month,
+      unitProfit: entries.reduce((sum, day) => sum + day.unitProfit, 0),
+      missingUnitCount: entries.reduce((sum, day) => sum + day.missingUnits, 0),
+    };
+  });
   const cumulativeProfit = daily.reduce<Array<{ date: string; cumulative: number }>>(
     (points, entry) => {
       points.push({
@@ -162,15 +167,14 @@ export default async function StatsPage({
     },
     []
   );
+  const cumulativeUnitProfit = daily.reduce<Array<{ date: string; cumulative: number }>>(
+    (points, entry) => {
+      points.push({ date: entry.date, cumulative: (points.at(-1)?.cumulative ?? 0) + entry.unitProfit });
+      return points;
+    }, []
+  );
   const t = await getTranslations("stats");
   const tCondensed = await getTranslations("stats.condensed");
-
-  const visibleInsight = !paidPlan || bankrolls.some((bankroll) => bankroll.locked)
-    ? null
-    : existingInsight;
-  const cooldownUntil = visibleInsight
-    ? visibleInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS
-    : null;
 
   const hasActiveFilters = Boolean(
     from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet ||
@@ -180,6 +184,7 @@ export default async function StatsPage({
   return (
     <StatsWorkspace
       hasActiveFilters={hasActiveFilters}
+      initialPanel={value("panel") === "filters" ? "filters" : value("panel") === "calendar" ? "calendar" : null}
       filters={
         <StatsFilters
           values={{ from, to, q, bankroll, sport: sportFilter, type: typeFilter, result: resultFilter, live, freebet, minStake, maxStake, minOdds, maxOdds }}
@@ -205,18 +210,6 @@ export default async function StatsPage({
       </section>
 
       <ClvPanel stats={clv} />
-      <DetailedStatsPanel stats={details} currency={currency} />
-      {capitalReturns ? <CapitalReturnPanel stats={capitalReturns} currency={currency} /> : null}
-
-      {paidPlan ? (
-        <InsightsCard
-          settledCount={settledCount}
-          initialInsight={visibleInsight ? (visibleInsight.data as unknown as InsightResult) : null}
-          initialCooldownUntil={cooldownUntil}
-        />
-      ) : (
-        <PremiumInsightsCard />
-      )}
 
       <section aria-label={t("chartsAriaLabel")} className="flex flex-col gap-3">
         <div>
@@ -226,13 +219,13 @@ export default async function StatsPage({
         <div className="grid min-w-0 gap-3 xl:grid-cols-2">
           <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
             <h3 className="text-sm font-semibold">{t("curve.title")}</h3>
-            <ProfitCurve data={cumulativeProfit} currency={currency} />
+            <ProfitCurve data={cumulativeProfit} unitData={cumulativeUnitProfit} missingUnits={units.missing} currency={currency} />
           </div>
           <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
             <StatsTabs
               oddsData={oddsData}
               stakeData={stakeData}
-              monthlyData={stats.monthly}
+              monthlyData={monthlyWithUnits}
               distributionData={stats.distribution}
               sportData={bySport}
               currency={currency}
@@ -266,12 +259,19 @@ export default async function StatsPage({
         </div>
       </section>
 
-      <section aria-label={t("condensedAriaLabel")} className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold">{t("sections.formats")}</h2>
-        <CondensedStatRow icon={Lightning} label={tCondensed("boosted")} count={stats.boostedCount} winRate={stats.boostedWinRate} profit={stats.boostedProfit} currency={currency} />
-        <CondensedStatRow icon={Gift} label={tCondensed("freebets")} count={stats.freebetCount} winRate={stats.freebetWinRate} profit={stats.freebetProfit} currency={currency} />
-        <CondensedStatRow icon={Radio} label={tCondensed("live")} count={stats.liveCount} winRate={stats.liveWinRate} profit={stats.liveProfit} currency={currency} />
-      </section>
+      <details open={value("section") === "details"} className="group glass-card rounded-2xl p-4 sm:p-5">
+        <summary className="min-h-touch cursor-pointer text-sm font-semibold text-primary">{t("sections.advanced")}</summary>
+        <div className="mt-4 flex flex-col gap-6 border-t border-border pt-4">
+          <DetailedStatsPanel stats={details} currency={currency} />
+          {capitalReturns ? <CapitalReturnPanel stats={capitalReturns} currency={currency} /> : null}
+          <section aria-label={t("condensedAriaLabel")} className="flex flex-col gap-2">
+            <h2 className="text-sm font-semibold">{t("sections.formats")}</h2>
+            <CondensedStatRow icon={Lightning} label={tCondensed("boosted")} count={stats.boostedCount} winRate={stats.boostedWinRate} profit={stats.boostedProfit} currency={currency} />
+            <CondensedStatRow icon={Gift} label={tCondensed("freebets")} count={stats.freebetCount} winRate={stats.freebetWinRate} profit={stats.freebetProfit} currency={currency} />
+            <CondensedStatRow icon={Radio} label={tCondensed("live")} count={stats.liveCount} winRate={stats.liveWinRate} profit={stats.liveProfit} currency={currency} />
+          </section>
+        </div>
+      </details>
     </StatsWorkspace>
   );
 }

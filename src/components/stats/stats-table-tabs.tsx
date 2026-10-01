@@ -4,9 +4,8 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Les tableaux (StatsTable) sont des Server Components async, rendus par la
-// page serveur et passés ici tout faits — un Client Component ne peut pas
-// instancier un composant serveur async directement dans son propre JSX.
+// Les tableaux sont construits avec les regroupements filtrés de la page
+// serveur, puis réagissent au choix Devise / u dans le navigateur.
 export function StatsTableTabs({
   sportTable,
   typeTable,

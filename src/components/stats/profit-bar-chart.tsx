@@ -10,9 +10,11 @@ import { ChartTooltip } from "./chart-tooltip";
 export function ProfitBarChart({
   data,
   currency,
+  units = false,
 }: {
   data: { name: string; profit: number }[];
   currency: Currency;
+  units?: boolean;
 }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
@@ -33,9 +35,9 @@ export function ProfitBarChart({
           axisLine={false}
           tickLine={false}
           width={50}
-          tickFormatter={(v) => `${v}${currencySymbol(currency)}`}
+          tickFormatter={(v) => `${v}${units ? " u" : currencySymbol(currency)}`}
         />
-        <Tooltip content={<ChartTooltip currency={currency} />} cursor={{ fill: "var(--glass)" }} />
+        <Tooltip content={<ChartTooltip currency={currency} units={units} />} cursor={{ fill: "var(--glass)" }} />
         <Bar dataKey="profit" radius={[4, 4, 0, 0]}>
           {data.map((d, i) => (
             <Cell key={i} fill={d.profit >= 0 ? "var(--profit)" : "var(--loss)"} />

@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfitBarChart } from "./profit-bar-chart";
 import { ResultDistributionDonut } from "./result-distribution-donut";
 import type { GroupStat } from "@/lib/stats";
+import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
+import { currencySymbol } from "@/lib/format";
 
 export function StatsTabs({
   oddsData,
@@ -17,12 +19,17 @@ export function StatsTabs({
 }: {
   oddsData: GroupStat[];
   stakeData: GroupStat[];
-  monthlyData: { name: string; profit: number }[];
+  monthlyData: { name: string; profit: number; unitProfit: number; missingUnitCount: number }[];
   distributionData: { name: string; value: number }[];
   sportData: GroupStat[];
   currency: Currency;
 }) {
   const t = useTranslations("stats.tabs");
+  const units = useDisplayUnit() === "units";
+  const financialChart = (rows: { name: string; profit: number; unitProfit?: number | null; missingUnitCount?: number }[]) =>
+    units && rows.some((row) => (row.missingUnitCount ?? 0) > 0)
+      ? <p className="py-8 text-center text-sm text-muted-foreground">{t("missingUnits")}</p>
+      : <ProfitBarChart data={units ? rows.map((row) => ({ name: row.name, profit: row.unitProfit ?? 0 })) : rows} currency={currency} units={units} />;
 
   return (
     <Tabs defaultValue="odds" className="flex min-w-0 flex-col gap-3">
@@ -45,13 +52,14 @@ export function StatsTabs({
       </TabsList>
 
       <TabsContent value="odds">
-        <ProfitBarChart data={oddsData} currency={currency} />
+        {financialChart(oddsData)}
       </TabsContent>
       <TabsContent value="stake">
-        <ProfitBarChart data={stakeData} currency={currency} />
+        {financialChart(stakeData)}
+        <p className="mt-2 text-xs text-muted-foreground">{t("stakeBasis", { currency: currencySymbol(currency) })}</p>
       </TabsContent>
       <TabsContent value="monthly">
-        <ProfitBarChart data={monthlyData} currency={currency} />
+        {financialChart(monthlyData)}
       </TabsContent>
       <TabsContent value="results">
         {distributionData.length === 0 ? (
@@ -61,7 +69,7 @@ export function StatsTabs({
         )}
       </TabsContent>
       <TabsContent value="sport">
-        <ProfitBarChart data={sportData} currency={currency} />
+        {financialChart(sportData)}
       </TabsContent>
     </Tabs>
   );

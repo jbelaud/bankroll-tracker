@@ -1,5 +1,6 @@
 import type { Bet } from "@prisma/client";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
+import { profitInUnits } from "@/lib/public-bankroll";
 
 // ============================================================
 // Logique de stats — COPIE VERBATIM de l'artifact de référence
@@ -21,7 +22,33 @@ export type GroupStat = {
   settled: number;
   oddsSum: number;
   avgOdds: number;
+  unitProfit: number | null;
+  unitStaked: number | null;
+  missingUnitCount: number;
 };
+
+function emptyGroup(name: string): GroupStat {
+  return { name, profit: 0, staked: 0, count: 0, won: 0, settled: 0, oddsSum: 0, avgOdds: 0, unitProfit: 0, unitStaked: 0, missingUnitCount: 0 };
+}
+
+function addToGroup(row: GroupStat, bet: Bet) {
+  row.count += 1;
+  row.oddsSum += Number(bet.odds) || 0;
+  row.settled += 1;
+  row.profit += computeProfit(bet);
+  row.staked += realStake(bet);
+  if (bet.result === "GAGNE") row.won += 1;
+  const unitsKnown = bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits)
+    && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0));
+  if (!unitsKnown) {
+    row.missingUnitCount += 1;
+    row.unitProfit = null;
+    row.unitStaked = null;
+  } else {
+    if (row.unitProfit !== null) row.unitProfit += profitInUnits(bet);
+    if (row.unitStaked !== null) row.unitStaked += bet.stakeUnits!;
+  }
+}
 
 export function groupStats(bets: Bet[], keyFn: (b: Bet) => string): GroupStat[] {
   const map: Record<string, GroupStat> = {};
@@ -31,14 +58,9 @@ export function groupStats(bets: Bet[], keyFn: (b: Bet) => string): GroupStat[] 
   bets.filter((b) => countsTowardPerformance(b.result) && !b.freebet).forEach((b) => {
     const key = keyFn(b);
     if (!map[key]) {
-      map[key] = { name: key, profit: 0, staked: 0, count: 0, won: 0, settled: 0, oddsSum: 0, avgOdds: 0 };
+      map[key] = emptyGroup(key);
     }
-    map[key].count += 1;
-    map[key].oddsSum += Number(b.odds) || 0;
-    map[key].settled += 1;
-    map[key].profit += computeProfit(b);
-    map[key].staked += realStake(b);
-    if (b.result === "GAGNE") map[key].won += 1;
+    addToGroup(map[key], b);
   });
   return Object.values(map)
     .map((r) => ({ ...r, avgOdds: r.count > 0 ? r.oddsSum / r.count : 0 }))
@@ -91,17 +113,12 @@ export function bucketStats(
 ): GroupStat[] {
   const map: Record<string, GroupStat> = {};
   labels.forEach((l) => {
-    map[l] = { name: l, count: 0, profit: 0, staked: 0, won: 0, settled: 0, oddsSum: 0, avgOdds: 0 };
+    map[l] = emptyGroup(l);
   });
   bets.filter((b) => countsTowardPerformance(b.result) && !b.freebet).forEach((b) => {
     const label = bucketFn(b);
     if (!map[label]) return;
-    map[label].count += 1;
-    map[label].oddsSum += Number(b.odds) || 0;
-    map[label].settled += 1;
-    map[label].profit += computeProfit(b);
-    map[label].staked += realStake(b);
-    if (b.result === "GAGNE") map[label].won += 1;
+    addToGroup(map[label], b);
   });
   return labels.map((l) => ({ ...map[l], avgOdds: map[l].count > 0 ? map[l].oddsSum / map[l].count : 0 }));
 }

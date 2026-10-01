@@ -61,3 +61,29 @@ export function computeClv(bets: ClvBet[]) {
       ? actualProfit - closingProfit : null,
   };
 }
+
+type ClvComparisonBet = ClvBet & Pick<Bet, "date">;
+
+/** Two cumulative profit lines over exactly the same settled selections. */
+export function compareClvSeries(bets: ClvComparisonBet[]) {
+  const eligible = bets.filter((bet) => comparable(bet) && (bet.result === "GAGNE" || bet.result === "PERDU"));
+  const withClosing = eligible.filter(hasClosing);
+  const comparableWithUnits = withClosing
+    .filter((bet) => bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits) && bet.stakeUnits > 0)
+    .toSorted((left, right) => left.date.getTime() - right.date.getTime());
+  let actual = 0;
+  let atClosing = 0;
+  const points = comparableWithUnits.map((bet, index) => {
+    const units = bet.stakeUnits!;
+    actual += bet.result === "GAGNE" ? units * (bet.odds! - 1) : -units;
+    atClosing += bet.result === "GAGNE" ? units * (bet.closingOdds! - 1) : -units;
+    return { order: index + 1, date: bet.date.toISOString(), actual, atClosing };
+  });
+  return {
+    eligible: eligible.length,
+    withClosing: withClosing.length,
+    missingClosing: eligible.length - withClosing.length,
+    missingUnits: withClosing.length - comparableWithUnits.length,
+    points,
+  };
+}

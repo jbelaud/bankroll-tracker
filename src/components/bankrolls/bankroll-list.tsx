@@ -6,8 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight, Plus, Wallet, LockKey, Crown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { fmtMoney, fmtMoneySigned, fmtUnits } from "@/lib/format";
-import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
+import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
+import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 import {
   BankrollFormDrawer,
   type BankrollFormTarget,
@@ -16,6 +16,7 @@ import {
 export type BankrollListItem = BankrollFormTarget & {
   balance: number;
   profit: number;
+  roi: number | null;
   betCount: number;
   pendingCount: number;
   settledCount: number;
@@ -67,7 +68,6 @@ export function BankrollList({
           <Plus size={18} weight="bold" aria-hidden />
           {t("newBankroll")}
         </Button>
-        <DisplayUnitToggle />
       </div>
 
       {bankrolls.length === 0 ? (
@@ -137,11 +137,11 @@ export function BankrollList({
                       {displayUnit === "units" && br.missingUnitCount > 0 ? <span className="mt-0.5 block text-[0.6rem] text-warning">{t("missingUnits", { count: br.missingUnitCount })}</span> : null}
                     </div>
                     <div className="min-w-0">
-                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("capitalPerformance")}</span>
-                      <strong className={br.profit >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
-                        {br.initial > 0 ? `${br.profit >= 0 ? "+" : ""}${((br.profit / br.initial) * 100).toFixed(1)}%` : "—"}
+                      <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span>
+                      <strong className={br.roi === null ? "num mt-1 block text-xs" : br.roi >= 0 ? "num mt-1 block text-xs text-profit" : "num mt-1 block text-xs text-loss"}>
+                        {br.roi === null ? "—" : fmtPct(br.roi, locale)}
                       </strong>
-                      <span className="mt-0.5 block text-[0.6rem] text-muted-foreground">{t("capitalBasis")}</span>
+                      <span className="mt-0.5 block text-[0.6rem] text-muted-foreground">{t("capitalPerformance")}: {br.initial > 0 ? fmtPct((br.profit / br.initial) * 100, locale) : "—"}</span>
                     </div>
                     <div className="min-w-0">
                       <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("allBets")}</span>

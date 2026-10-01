@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import type { GlobalStats } from "@/lib/stats";
-import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
+import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
 function StatCard({
   label,
@@ -79,7 +79,6 @@ export function OverviewGrid({ stats, currency, units }: { stats: GlobalStats; c
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
-      <div className="flex justify-end"><DisplayUnitToggle /></div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         <StatCard label={t("totalBets")} value={String(stats.totalBets)} sub={t("performanceBets", { count: stats.performanceBets })} />
         <StatCard label={t("roi")} value={stats.roi === null ? "—" : fmtPct(stats.roi, locale)} sub={t("roiDescription")} trend={stats.roi === null ? undefined : stats.roi >= 0 ? "up" : "down"} />

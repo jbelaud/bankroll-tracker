@@ -4,9 +4,10 @@ import { useMemo, useState } from "react";
 import type { Currency } from "@prisma/client";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
-import { currencySymbol } from "@/lib/format";
+import { currencySymbol, fmtUnits } from "@/lib/format";
+import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
-type Entry = { date: string; profit: number; count: number };
+type Entry = { date: string; profit: number; unitProfit: number; missingUnits: number; count: number };
 
 export function ProfitCalendar({
   entries,
@@ -17,6 +18,7 @@ export function ProfitCalendar({
 }) {
   const locale = useLocale();
   const t = useTranslations("stats.calendar");
+  const units = useDisplayUnit() === "units";
   const latestEntry = entries.at(-1);
   const [month, setMonth] = useState(() => {
     const date = latestEntry ? new Date(`${latestEntry.date}T12:00:00`) : new Date();
@@ -38,6 +40,8 @@ export function ProfitCalendar({
   const monthKey = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}`;
   const monthEntries = entries.filter((entry) => entry.date.startsWith(monthKey));
   const monthProfit = monthEntries.reduce((sum, entry) => sum + entry.profit, 0);
+  const monthUnitProfit = monthEntries.reduce((sum, entry) => sum + entry.unitProfit, 0);
+  const monthMissingUnits = monthEntries.reduce((sum, entry) => sum + entry.missingUnits, 0);
   const monthCount = monthEntries.reduce((sum, entry) => sum + entry.count, 0);
   const weekdays = Array.from({ length: 7 }, (_, index) =>
     new Intl.DateTimeFormat(locale, { weekday: "narrow" }).format(new Date(2024, 0, index + 1))
@@ -88,6 +92,8 @@ export function ProfitCalendar({
           // le rendu serveur (UTC) et le navigateur (Europe/Paris).
           const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
           const entry = byDate.get(key);
+          const value = units ? entry?.unitProfit : entry?.profit;
+          const unavailable = units && Boolean(entry?.missingUnits);
           const currentMonth = day.getMonth() === month.getMonth();
 
           return (
@@ -96,20 +102,19 @@ export function ProfitCalendar({
               title={
                 entry
                   ? t("dayTooltip", {
-                      profit: `${entry.profit.toFixed(2)}${currencySymbol(currency)}`,
+                      profit: unavailable ? "—" : units ? fmtUnits(entry.unitProfit, locale, true) : `${entry.profit.toFixed(2)}${currencySymbol(currency)}`,
                       count: entry.count,
                     })
                   : undefined
               }
               className={`flex aspect-square flex-col justify-center rounded-md text-center text-[0.65rem] ${
                 currentMonth ? "bg-muted/40" : "opacity-30"
-              } ${entry ? (entry.profit >= 0 ? "text-profit" : "text-loss") : ""}`}
+              } ${entry && !unavailable ? (value! >= 0 ? "text-profit" : "text-loss") : ""}`}
             >
               <span>{day.getDate()}</span>
               {entry && (
                 <span className="num text-[0.55rem]">
-                  {entry.profit >= 0 ? "+" : ""}
-                  {entry.profit.toFixed(0)}
+                  {unavailable ? "—" : `${value! >= 0 ? "+" : ""}${value!.toFixed(0)}`}
                 </span>
               )}
             </div>
@@ -120,10 +125,8 @@ export function ProfitCalendar({
       <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
         <div className="rounded-lg bg-muted/40 p-2">
           {t("monthProfit")}
-          <strong className={monthProfit >= 0 ? "block text-profit" : "block text-loss"}>
-            {monthProfit >= 0 ? "+" : ""}
-            {monthProfit.toFixed(2)}
-            {currencySymbol(currency)}
+          <strong className={units && monthMissingUnits > 0 ? "block text-muted-foreground" : (units ? monthUnitProfit : monthProfit) >= 0 ? "block text-profit" : "block text-loss"}>
+            {units ? monthMissingUnits > 0 ? "—" : fmtUnits(monthUnitProfit, locale, true) : `${monthProfit >= 0 ? "+" : ""}${monthProfit.toFixed(2)}${currencySymbol(currency)}`}
           </strong>
         </div>
         <div className="rounded-lg bg-muted/40 p-2">
@@ -131,6 +134,7 @@ export function ProfitCalendar({
           <strong className="block">{monthCount}</strong>
         </div>
       </div>
+      {units && monthMissingUnits > 0 ? <p className="mt-2 text-xs text-warning">{t("missingUnits", { count: monthMissingUnits })}</p> : null}
     </section>
   );
 }

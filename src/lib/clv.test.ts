@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeClv } from "./clv";
+import { compareClvSeries, computeClv } from "./clv";
 
 const base = {
   odds: 2.1, closingOdds: 1.9, stake: 10, stakeUnits: 1,
@@ -46,5 +46,21 @@ describe("closing line value", () => {
       { ...base, live: true },
       { ...base, format: "LAY" },
     ])).toMatchObject({ candidates: 2, measured: 2, weighted: null, actualProfit: null, closingProfit: null });
+  });
+
+  it("plots real and closing profit on the same eligible settled bets", () => {
+    const result = compareClvSeries([
+      { ...base, date: new Date("2026-09-03"), closingOdds: null },
+      { ...base, date: new Date("2026-09-02"), result: "PERDU", odds: 3, closingOdds: 2.5, stakeUnits: 2 },
+      { ...base, date: new Date("2026-09-01"), odds: 2.1, closingOdds: 1.9 },
+      { ...base, date: new Date("2026-09-04"), stakeUnits: null },
+      { ...base, date: new Date("2026-09-05"), live: true },
+    ]);
+    expect(result).toMatchObject({ eligible: 4, withClosing: 3, missingClosing: 1, missingUnits: 1 });
+    expect(result.points).toHaveLength(2);
+    expect(result.points[0].actual).toBeCloseTo(1.1);
+    expect(result.points[0].atClosing).toBeCloseTo(0.9);
+    expect(result.points[1].actual).toBeCloseTo(-0.9);
+    expect(result.points[1].atClosing).toBeCloseTo(-1.1);
   });
 });

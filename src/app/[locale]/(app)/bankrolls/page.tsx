@@ -5,6 +5,7 @@ import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { unitPerformance } from "@/lib/unit-performance";
+import { computeGlobalStats } from "@/lib/stats";
 import {
   BankrollList,
   type BankrollListItem,
@@ -40,6 +41,7 @@ export default async function BankrollsPage({
       allocations: br.allocations,
       balance: summary.balance,
       profit: summary.profit,
+      roi: computeGlobalStats(bankrollBets).roi,
       betCount: bankrollBets.length,
       pendingCount: bankrollBets.filter((bet) => bet.result === "EN_ATTENTE").length,
       settledCount: units.settled,

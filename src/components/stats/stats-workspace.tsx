@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type CSSProperties, type ReactNode } from "react";
-import { CalendarBlank, FunnelSimple, X } from "@phosphor-icons/react";
+import { CalendarBlank, FunnelSimple, Sparkle, X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   Drawer,
   DrawerContent,
@@ -15,14 +16,16 @@ export function StatsWorkspace({
   calendar,
   children,
   hasActiveFilters,
+  initialPanel = null,
 }: {
   filters: ReactNode;
   calendar: ReactNode;
   children: ReactNode;
   hasActiveFilters: boolean;
+  initialPanel?: "filters" | "calendar" | null;
 }) {
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(initialPanel === "filters");
+  const [calendarOpen, setCalendarOpen] = useState(initialPanel === "calendar");
   const t = useTranslations("stats.workspace");
 
   return (
@@ -33,7 +36,7 @@ export function StatsWorkspace({
             <h1 className="text-xl font-semibold">{t("title")}</h1>
             <p className="mt-1 text-xs text-muted-foreground">{t("subtitle")}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setFiltersOpen(true)}
@@ -46,11 +49,15 @@ export function StatsWorkspace({
             <button
               type="button"
               onClick={() => setCalendarOpen(true)}
-              className="inline-flex min-h-touch items-center gap-1.5 rounded-xl border border-input bg-background px-3 text-xs font-semibold transition-colors hover:bg-muted lg:hidden"
+              className="inline-flex min-h-touch items-center gap-1.5 rounded-xl border border-input bg-background px-3 text-xs font-semibold transition-colors hover:bg-muted"
             >
               <CalendarBlank size={15} weight="bold" aria-hidden />
               {t("calendar")}
             </button>
+            <Link href="/ai-insights" className="inline-flex min-h-touch items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 text-xs font-semibold text-primary transition-colors hover:bg-primary/20">
+              <Sparkle size={15} weight="fill" aria-hidden />
+              {t("aiLink")}
+            </Link>
           </div>
         </header>
 
@@ -61,10 +68,7 @@ export function StatsWorkspace({
           </div>
         )}
 
-        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="flex min-w-0 flex-col gap-6">{children}</div>
-          <aside className="hidden lg:sticky lg:top-24 lg:block">{calendar}</aside>
-        </div>
+        <div className="flex min-w-0 flex-col gap-6">{children}</div>
       </div>
 
       <Drawer open={filtersOpen} onOpenChange={setFiltersOpen} swipeDirection="left">
@@ -84,9 +88,8 @@ export function StatsWorkspace({
         </DrawerContent>
       </Drawer>
 
-      <div className="lg:hidden">
-        <Drawer open={calendarOpen} onOpenChange={setCalendarOpen} showSwipeHandle>
-          <DrawerContent className="rounded-t-2xl">
+        <Drawer open={calendarOpen} onOpenChange={setCalendarOpen} swipeDirection="left">
+          <DrawerContent className="overflow-y-auto border-border" style={{ "--drawer-content-width": "min(100vw, 26rem)" } as CSSProperties}>
             <DrawerHeader className="flex-row items-center justify-between p-4 pb-0">
               <DrawerTitle className="text-base">{t("calendar")}</DrawerTitle>
               <button
@@ -101,7 +104,6 @@ export function StatsWorkspace({
             <div className="p-4 pb-[max(env(safe-area-inset-bottom),1.5rem)]">{calendar}</div>
           </DrawerContent>
         </Drawer>
-      </div>
     </>
   );
 }

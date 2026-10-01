@@ -8,6 +8,7 @@ import { unitPerformance } from "@/lib/unit-performance";
 import { movementDelta } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
+import { computeGlobalStats } from "@/lib/stats";
 import { getMonthlyQuotaStatus } from "@/lib/scan/monthly-quota";
 import { QuotaCard } from "@/components/dashboard/quota-card";
 import { KpiRow } from "@/components/dashboard/kpi-row";
@@ -21,6 +22,8 @@ import { DiscordCommunityCard } from "@/components/dashboard/discord-community-c
 import { PersonalConversionCard } from "@/components/dashboard/personal-conversion-card";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
+import { Sparkle } from "@phosphor-icons/react/dist/ssr";
 
 // Sections en cascade : chaque bloc apparaît avec un léger décalage
 function Reveal({
@@ -145,6 +148,17 @@ export default async function DashboardPage() {
   );
 
   const bankrollSummaries = summarizeBankrolls(bankrolls, bets, movements);
+  const dashboardBankrolls = bankrollSummaries.map((summary) => {
+    const bankrollBets = bets.filter((bet) => bet.bankrollId === summary.id);
+    const performance = unitPerformance(bankrollBets);
+    return {
+      ...summary,
+      betCount: bankrollBets.length,
+      unitProfit: performance.profit,
+      missingUnits: performance.missing,
+      roi: computeGlobalStats(bankrollBets).roi,
+    };
+  });
 
   const bankrollName = (id: string) =>
     bankrolls.find((br) => br.id === id)?.name ?? "—";
@@ -154,11 +168,11 @@ export default async function DashboardPage() {
     sport: b.sport,
     betType: b.betType,
     stake: b.stake,
+    stakeUnits: b.stakeUnits,
     pending: b.result === "EN_ATTENTE",
     profit: computeProfit(b),
+    unitProfit: unitPerformance([b]).profit,
     bankrollName: bankrollName(b.bankrollId),
-    referenceCapital: b.referenceCapitalAtBet,
-    certificationLockedAt: b.certificationLockedAt,
   }));
 
   if (bankrolls.length === 0) {
@@ -171,7 +185,10 @@ export default async function DashboardPage() {
 
   return (
     <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-12 xl:items-start xl:gap-6">
-      <h1 className="sr-only">{t("title")}</h1>
+      <header className="xl:col-span-12">
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t("workspaceSubtitle")}</p>
+      </header>
       {bets.length === 0 && (
         <Reveal index={0} className="xl:col-span-12">
           <OnboardingCard hasBankroll hasBet={false} />
@@ -201,62 +218,38 @@ export default async function DashboardPage() {
         />
       </Reveal>
 
-      <Reveal index={2} className={hasMonthlyGuardrail ? "xl:col-span-8" : "xl:col-span-12"}>
-        <CapitalFlowCard
-          initial={totalInitial}
-          deposits={totalDeposits}
-          withdrawals={totalWithdrawals}
-          netFunding={totalNetFunding}
-          profit={totalProfit}
-          currency={currency}
-        />
+      <Reveal index={2} className="xl:col-span-12">
+        <BankrollCards bankrolls={dashboardBankrolls} currency={currency} />
       </Reveal>
 
-      {hasMonthlyGuardrail ? (
-        <Reveal index={3} className="xl:col-span-4">
-          <GoalsCard
-            monthProfit={monthProfit}
-            profitGoal={dbUser?.monthlyProfitGoal ?? 0}
-            lossLimit={dbUser?.monthlyLossLimit ?? 0}
-          />
-        </Reveal>
-      ) : null}
-
-      <Reveal index={4} className="xl:col-span-5">
-        <BankrollCards bankrolls={bankrollSummaries} />
+      <Reveal index={3} className="xl:col-span-12">
+        <Link href="/ai-insights" className="flex min-h-20 items-center gap-3 rounded-2xl border border-primary/30 bg-primary/10 p-4 transition-colors hover:bg-primary/15">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Sparkle size={20} weight="fill" aria-hidden /></span>
+          <span className="min-w-0 flex-1"><strong className="block text-sm font-semibold">{t("aiTeaserTitle")}</strong><span className="mt-0.5 block text-xs text-muted-foreground">{t("aiTeaserDescription")}</span></span>
+          <span className="hidden text-xs font-semibold text-primary sm:inline">{t("aiTeaserCta")}</span>
+        </Link>
       </Reveal>
 
-      <Reveal index={5} className="xl:col-span-7">
-        <RecentBets bets={recentBets} />
+      <Reveal index={4} className="xl:col-span-12">
+        <RecentBets bets={recentBets} currency={currency} />
       </Reveal>
 
-      <aside aria-label={t("resources")} className="min-w-0 border-t border-border pt-5 xl:col-span-12">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{t("resources")}</h2>
-        <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3 xl:items-start">
-          <Reveal index={6}>
-            <QuotaCard
-              plan={plan}
-              scansUsed={quota.used}
-              scansLimit={quota.limit}
-              initialCreditsRemaining={quota.initialCreditsRemaining}
-              initialCreditsExpiresAt={quota.initialCreditsExpiresAt}
-              referralCreditsRemaining={quota.referralCreditsRemaining}
-              betaPhaseActive={betaProgram?.phase !== "ENDED"}
-            />
-          </Reveal>
-          <Reveal index={7}>
-            <PersonalConversionCard
-              conversion={dbUser?.personalConversion ?? null}
-              currency={currency}
-            />
-          </Reveal>
-          {bets.length > 0 ? (
-            <Reveal index={8}>
-              <DiscordCommunityCard />
-            </Reveal>
-          ) : null}
-        </div>
-      </aside>
+      <Reveal index={5} className="xl:col-span-12">
+        <details className="group glass-card rounded-2xl p-4 sm:p-5">
+          <summary className="min-h-touch cursor-pointer list-none text-sm font-semibold text-primary marker:content-none">
+            {t("moreTitle")} <span className="ml-2 font-normal text-muted-foreground">{t("moreDescription")}</span>
+          </summary>
+          <div className="mt-4 grid min-w-0 gap-4 border-t border-border pt-4 lg:grid-cols-2">
+            <CapitalFlowCard initial={totalInitial} deposits={totalDeposits} withdrawals={totalWithdrawals} netFunding={totalNetFunding} profit={totalProfit} currency={currency} />
+            {hasMonthlyGuardrail ? <GoalsCard monthProfit={monthProfit} profitGoal={dbUser?.monthlyProfitGoal ?? 0} lossLimit={dbUser?.monthlyLossLimit ?? 0} /> : null}
+          </div>
+          <aside aria-label={t("resources")} className="mt-4 grid min-w-0 gap-3 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-3">
+            <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} initialCreditsRemaining={quota.initialCreditsRemaining} initialCreditsExpiresAt={quota.initialCreditsExpiresAt} referralCreditsRemaining={quota.referralCreditsRemaining} betaPhaseActive={betaProgram?.phase !== "ENDED"} />
+            <PersonalConversionCard conversion={dbUser?.personalConversion ?? null} currency={currency} />
+            {bets.length > 0 ? <DiscordCommunityCard /> : null}
+          </aside>
+        </details>
+      </Reveal>
     </div>
   );
 }

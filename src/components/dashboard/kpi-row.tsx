@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { Currency } from "@prisma/client";
 import { fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
-import { DisplayUnitToggle, useDisplayUnit } from "@/components/shared/display-unit-toggle";
+import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
 function KpiTile({
   label,
@@ -64,7 +64,6 @@ export function KpiRow({
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
-      <div className="flex justify-end"><DisplayUnitToggle /></div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
         <KpiTile label={t("allBets")} value={String(totalCount)} sub={t("countBreakdown", { settled: settledCount, pending: pendingCount, refunded: totalCount - settledCount - pendingCount })} />
         <KpiTile label={t("profit")} value={displayUnit === "units" ? unitProfit === null ? "—" : fmtUnits(unitProfit, locale, true) : fmtMoneySigned(profit, locale, currency)} trend={displayUnit === "units" && unitProfit === null ? undefined : profit} sub={displayUnit === "units" && missingUnitCount > 0 ? t("missingUnits", { count: missingUnitCount }) : undefined} />

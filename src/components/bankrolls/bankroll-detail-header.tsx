@@ -1,7 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import type { Currency } from "@prisma/client";
-import { TrendBadge } from "@/components/dashboard/trend-badge";
-import { fmtMoney, fmtMoneySigned, fmtPct } from "@/lib/format";
+import { fmtMoney } from "@/lib/format";
 
 export async function BankrollDetailHeader({
   name,
@@ -9,7 +8,6 @@ export async function BankrollDetailHeader({
   allocationCount,
   referenceCapital,
   balance,
-  profit,
   initial,
   betCount,
   pendingCount,
@@ -20,7 +18,6 @@ export async function BankrollDetailHeader({
   allocationCount: number;
   referenceCapital: number | null;
   balance: number;
-  profit: number;
   initial: number;
   betCount: number;
   pendingCount: number;
@@ -28,14 +25,6 @@ export async function BankrollDetailHeader({
 }) {
   const locale = await getLocale();
   const t = await getTranslations("bankrollDetail");
-  const tCommon = await getTranslations("common");
-
-  // Pas de pourcentage significatif si aucun capital n'a été engagé.
-  const pct = initial > 0 ? (profit / initial) * 100 : null;
-  const label =
-    pct !== null
-      ? `${fmtMoneySigned(profit, locale, currency)} · ${pct >= 0 ? "+" : "−"}${fmtPct(Math.abs(pct), locale)}`
-      : fmtMoneySigned(profit, locale, currency);
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
@@ -46,14 +35,9 @@ export async function BankrollDetailHeader({
         <h1 className="text-lg font-semibold">{name}</h1>
         {referenceCapital ? <span className="num mt-1 text-xs text-primary">{t("referenceUnit", { value: fmtMoney(referenceCapital / 100, locale, currency) })}</span> : null}
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="num text-4xl font-bold tracking-tight">{fmtMoney(balance, locale, currency)}</span>
-        <TrendBadge
-          value={profit}
-          label={label}
-          upLabel={tCommon("trendUp")}
-          downLabel={tCommon("trendDown")}
-        />
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("realBalance")}</span>
+        <span className="num text-3xl font-bold tracking-tight">{fmtMoney(balance, locale, currency)}</span>
       </div>
       <div className="grid grid-cols-3 gap-2 pt-1">
         <div className="rounded-xl border border-border bg-muted/30 p-2.5">

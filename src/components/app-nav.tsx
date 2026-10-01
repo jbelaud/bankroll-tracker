@@ -19,12 +19,14 @@ import {
   Compass,
   CaretDown,
   List,
+  Sparkle,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
 import { SignOutButton } from "@/components/account/sign-out-button";
 import { PlanStatusSummary } from "@/components/account/plan-status-summary";
 import type { Plan } from "@prisma/client";
+import { DisplayUnitToggle } from "@/components/shared/display-unit-toggle";
 
 const NAV_ITEMS = [
   { href: "/dashboard", key: "home", icon: House },
@@ -37,6 +39,7 @@ const NAV_ITEMS = [
   { href: "/referrals", key: "referrals", icon: UsersThree },
   { href: "/account", key: "account", icon: UserCircle },
   { href: "/admin", key: "admin", icon: Gauge, adminOnly: true },
+  { href: "/ai-insights", key: "aiInsights", icon: Sparkle },
 ] as const;
 
 const TIPSTER_SUB_ITEMS = [
@@ -52,13 +55,15 @@ const BET_SUB_ITEMS = [
 ] as const;
 
 const DESKTOP_NAV_GROUPS = [
-  { key: "tracking", items: [NAV_ITEMS[0], NAV_ITEMS[2], { key: "bets", icon: ListBullets, children: BET_SUB_ITEMS }] },
-  { key: "analysis", items: [NAV_ITEMS[4]] },
-  { key: "manage", items: [NAV_ITEMS[5], { key: "tipsters", icon: UserList, children: TIPSTER_SUB_ITEMS }, NAV_ITEMS[8], NAV_ITEMS[9]] },
+  { key: "tracking", items: [NAV_ITEMS[0], NAV_ITEMS[2], { key: "bets", icon: ListBullets, children: BET_SUB_ITEMS }, NAV_ITEMS[5]] },
+  { key: "analysis", items: [NAV_ITEMS[4], NAV_ITEMS[10]] },
+  { key: "community", items: [{ key: "tipsters", icon: UserList, children: TIPSTER_SUB_ITEMS }] },
+  { key: "manage", items: [NAV_ITEMS[8], NAV_ITEMS[9]] },
 ] as const;
 
 const MOBILE_MORE_GROUPS = [
   { key: "bets", items: BET_SUB_ITEMS },
+  { key: "analysis", items: [NAV_ITEMS[10]] },
   { key: "tipsters", items: TIPSTER_SUB_ITEMS },
 ] as const;
 
@@ -90,16 +95,18 @@ export function AppNav({
   const mobileMenuOpen = mobileMenuState?.path === pathname && mobileMenuState.open;
   const mobileMenuItems = [
     ...BET_SUB_ITEMS,
+    NAV_ITEMS[10],
     ...TIPSTER_SUB_ITEMS,
     ...(isAdmin ? [NAV_ITEMS[9]] : []),
   ];
 
   return (
     <>
-      <div className="sticky top-0 z-40 flex min-h-16 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur-xl lg:hidden">
+      <div className="sticky top-0 z-40 flex min-h-16 items-center justify-between gap-2 border-b border-border bg-background/95 px-4 backdrop-blur-xl lg:hidden">
         <Link href="/dashboard" aria-label="Kalivoa">
           <Brand compact />
         </Link>
+        <DisplayUnitToggle compact />
         <nav aria-label={t("moreNavigation")} className="relative">
           <button
             type="button"
@@ -117,7 +124,7 @@ export function AppNav({
           </button>
           {mobileMenuOpen ? <div id="mobile-more-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-10rem)] w-[min(19rem,calc(100vw-2rem))] space-y-3 overflow-y-auto rounded-2xl border border-border bg-background p-2 shadow-xl">
             {MOBILE_MORE_GROUPS.map(({ key: groupKey, items }) => <div key={groupKey}>
-              <p className="px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">{t(groupKey)}</p>
+              <p className="px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">{t(groupKey === "analysis" ? "groups.analysis" : groupKey)}</p>
               <ul className="space-y-1">{items.map(({ href, key, icon: Icon }) => {
                 const active = pathname.startsWith(href);
                 return <li key={href}><Link href={href} onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;
@@ -213,7 +220,7 @@ export function AppNav({
         <ul className="relative grid grid-cols-5 items-end">
           {MOBILE_NAV_ITEMS.map(({ href, key, icon: Icon, ...item }) => {
           const label = t(key);
-          const active = pathname.startsWith(href);
+          const active = pathname.startsWith(href) || (key === "stats" && pathname.startsWith("/ai-insights"));
           const isPrimary = "primary" in item && item.primary;
 
           if (isPrimary) {
@@ -273,6 +280,8 @@ export function AppTopBar() {
         <ChartLineUp size={18} className="text-primary" weight="bold" aria-hidden />
         <span>{currentLabel}</span>
       </div>
+      <div className="flex items-center gap-3">
+      <DisplayUnitToggle />
       <Link
         href="/scan"
         className="inline-flex min-h-touch items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-[0_12px_28px_oklch(0.72_0.14_250_/_18%)] transition-transform hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -280,6 +289,7 @@ export function AppTopBar() {
         <Scan size={18} weight="bold" aria-hidden />
         {t("scannerDesktop")}
       </Link>
+      </div>
     </header>
   );
 }

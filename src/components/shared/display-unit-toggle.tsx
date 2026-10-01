@@ -25,12 +25,12 @@ export function useDisplayUnit(): DisplayUnit {
   return useSyncExternalStore(subscribe, snapshot, () => "money");
 }
 
-export function DisplayUnitToggle() {
+export function DisplayUnitToggle({ compact = false }: { compact?: boolean }) {
   const mode = useDisplayUnit();
   const locale = useLocale();
   const label = locale === "fr" ? "Montants des indicateurs" : "Metric amounts";
   return <div className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-    <span>{label}</span>
+    {!compact ? <span>{label}</span> : null}
     <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label={label}>
       {(["money", "units"] as const).map((value) => <button key={value} type="button" aria-pressed={mode === value}
         onClick={() => { try { window.localStorage.setItem(KEY, value); } catch { /* Preference remains local to this view. */ } window.dispatchEvent(new Event(EVENT)); }}

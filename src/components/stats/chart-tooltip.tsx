@@ -2,7 +2,7 @@
 
 import { useLocale } from "next-intl";
 import type { Currency } from "@prisma/client";
-import { fmtMoney } from "@/lib/format";
+import { fmtMoney, fmtUnits } from "@/lib/format";
 
 // Tooltip recharts commun à tous les graphiques stats — même esprit que
 // CustomTooltip de l'artifact (fond sombre, bordure, .num pour les valeurs).
@@ -12,11 +12,13 @@ export function ChartTooltip({
   payload,
   label,
   currency,
+  units = false,
 }: {
   active?: boolean;
   payload?: { value?: number; name?: string; color?: string }[];
   label?: string;
   currency: Currency;
+  units?: boolean;
 }) {
   const locale = useLocale();
   if (!active || !payload || payload.length === 0) return null;
@@ -25,7 +27,7 @@ export function ChartTooltip({
       {label && <div className="mb-1 text-muted-foreground">{label}</div>}
       {payload.map((p, i) => (
         <div key={i} className="num" style={{ color: p.color }}>
-          {typeof p.value === "number" ? fmtMoney(p.value, locale, currency) : p.value}
+          {typeof p.value === "number" ? units ? fmtUnits(p.value, locale, true) : fmtMoney(p.value, locale, currency) : p.value}
         </div>
       ))}
     </div>
