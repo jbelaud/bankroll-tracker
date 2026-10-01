@@ -2,8 +2,12 @@ import type { Bet } from "@prisma/client";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import { profitInUnits } from "@/lib/public-bankroll";
 
-function hasUnits(bet: Bet): boolean {
-  return bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits)
+function hasStakeUnits(bet: Bet): boolean {
+  return bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits);
+}
+
+function hasProfitUnits(bet: Bet): boolean {
+  return hasStakeUnits(bet)
     && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0));
 }
 
@@ -28,7 +32,7 @@ export function computeDetailedStats(bets: Bet[]) {
   const cashBets = bets.filter((bet) => !bet.freebet);
   const won = bets.filter((bet) => bet.result === "GAGNE").length;
   const lost = bets.filter((bet) => bet.result === "PERDU").length;
-  const unitStake = (items: Bet[]) => items.every(hasUnits)
+  const unitStake = (items: Bet[]) => items.every(hasStakeUnits)
     ? items.reduce((sum, bet) => sum + bet.stakeUnits!, 0) : null;
 
   return {
@@ -43,12 +47,12 @@ export function computeDetailedStats(bets: Bet[]) {
     pendingStake: pending.reduce((sum, bet) => sum + realStake(bet), 0),
     pendingStakeUnits: unitStake(pending),
     maxStake: cashBets.length > 0 ? Math.max(...cashBets.map((bet) => realStake(bet))) : null,
-    maxStakeUnits: cashBets.length > 0 && cashBets.every(hasUnits)
+    maxStakeUnits: cashBets.length > 0 && cashBets.every(hasStakeUnits)
       ? Math.max(...cashBets.map((bet) => bet.stakeUnits!)) : null,
     maxWinningOdds: bets.filter((bet) => bet.result === "GAGNE" && bet.odds !== null)
       .reduce<number | null>((max, bet) => Math.max(max ?? 0, bet.odds!), null),
     drawdown: maxDrawdown(settled.map(computeProfit)),
-    drawdownUnits: settled.every(hasUnits) ? maxDrawdown(settled.map(profitInUnits)) : null,
-    missingUnits: bets.filter((bet) => !hasUnits(bet)).length,
+    drawdownUnits: settled.every(hasProfitUnits) ? maxDrawdown(settled.map(profitInUnits)) : null,
+    missingUnits: bets.filter((bet) => !hasProfitUnits(bet)).length,
   };
 }

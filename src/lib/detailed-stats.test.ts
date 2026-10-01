@@ -44,4 +44,11 @@ describe("detailed performance", () => {
       playedStakeUnits: null, maxStakeUnits: null, drawdownUnits: null, missingUnits: 1,
     });
   });
+
+  it("keeps known stakes in units when a cash-out lacks a conversion snapshot", () => {
+    const cashout = { ...bet("cashout", "2026-09-01T12:00:00Z", "CASHE", 1), referenceCapitalAtBet: null };
+    expect(computeDetailedStats([cashout])).toMatchObject({
+      playedStakeUnits: 1, maxStakeUnits: 1, drawdownUnits: null, missingUnits: 1,
+    });
+  });
 });
