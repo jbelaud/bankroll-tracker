@@ -148,9 +148,12 @@ export async function importExternalBets(
   let skippedDuplicates = 0;
 
   for (const [index, bet] of bets.entries()) {
-    const date = bet.date && /^\d{4}-\d{2}-\d{2}$/.test(bet.date)
-      ? new Date(`${bet.date}T12:00:00.000Z`)
-      : new Date(Number.NaN);
+    const placedAt = bet.placedAt && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/.test(bet.placedAt)
+      && bet.placedAt.slice(0, 10) === bet.date ? new Date(bet.placedAt) : null;
+    const date = placedAt && !Number.isNaN(placedAt.getTime()) ? placedAt
+      : bet.date && /^\d{4}-\d{2}-\d{2}$/.test(bet.date)
+        ? new Date(`${bet.date}T12:00:00.000Z`)
+        : new Date(Number.NaN);
     if (Number.isNaN(date.getTime())) return { error: `Date invalide à la ligne ${index + 1}.` };
     if (!Number.isFinite(bet.stake) || (bet.stake as number) <= 0) return { error: `Mise invalide à la ligne ${index + 1}.` };
     if (!isBetResult(bet.result)) return { error: `Résultat invalide à la ligne ${index + 1}.` };

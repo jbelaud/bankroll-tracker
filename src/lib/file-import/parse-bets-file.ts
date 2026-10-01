@@ -190,6 +190,16 @@ function parseDate(value: unknown, dateOrder: Exclude<ImportDateOrder, "AUTO">):
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString().slice(0, 10);
 }
 
+function parsePlacedAt(value: unknown): string | null {
+  const match = stringValue(value).match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
+  if (!match || validDate(Number(match[1].slice(0, 4)), Number(match[1].slice(5, 7)), Number(match[1].slice(8, 10))) !== match[1]) return null;
+  const hour = Number(match[2]); const minute = Number(match[3]); const second = Number(match[4] ?? "00");
+  if (hour > 23 || minute > 59 || second > 59) return null;
+  // BA exports a wall-clock time without a timezone. Preserve its ordering
+  // without shifting the source calendar day.
+  return `${match[1]}T${match[2]}:${match[3]}:${String(second).padStart(2, "0")}.000Z`;
+}
+
 function isAmbiguousDayMonth(value: unknown): boolean {
   const match = stringValue(value).match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](?:\d{2}|\d{4})(?:\D|$)/);
   return Boolean(match && Number(match[1]) <= 12 && Number(match[2]) <= 12);
@@ -280,6 +290,7 @@ function rowFromRecord(
     bet: {
       ticketRef: stringValue(fields.ticketRef) || null,
       date,
+      placedAt: parsePlacedAt(fields.date),
       sport,
       betType,
       description,

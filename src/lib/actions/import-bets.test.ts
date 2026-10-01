@@ -159,6 +159,15 @@ describe("importExternalBets", () => {
     })] });
   });
 
+  it("conserve l'heure BA pour ordonner les paris d'un même jour", async () => {
+    await importExternalBets("bankroll-1", [bet({
+      date: "2026-09-03", placedAt: "2026-09-03T19:20:00.000Z",
+    })], "BET_ANALYTIX");
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
+      date: new Date("2026-09-03T19:20:00.000Z"),
+    })] });
+  });
+
   it("reconnaît un ancien import BA comme doublon même avec une nouvelle conversion privée", async () => {
     mocks.betFindMany.mockResolvedValue([{
       ticketRef: null,

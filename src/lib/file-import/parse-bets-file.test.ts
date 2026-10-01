@@ -140,6 +140,7 @@ describe("parseBetsFileContent", () => {
       errors: [],
       bet: {
         date: "2021-10-01",
+        placedAt: "2021-10-01T11:18:00.000Z",
         sport: "Multi-sport",
         betType: "Combiné",
         stake: 6.33,

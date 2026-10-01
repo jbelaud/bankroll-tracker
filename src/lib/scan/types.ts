@@ -20,6 +20,8 @@ export type ParsedBet = {
   ticketRef: string | null;
   /** YYYY-MM-DD when fully visible; otherwise requires review before import. */
   date: string | null;
+  /** Full source timestamp when supplied; used to order same-day bets. */
+  placedAt?: string | null;
   /** Heure de début reconnue dans la sélection, en ISO UTC ; null si incertaine. */
   eventStartAt?: string | null;
   sport: string;

@@ -744,6 +744,23 @@
       "filtered": "Les statistiques affichent une sélection filtrée.",
       "clearFilters": "Réinitialiser"
     },
+    "details": {
+      "title": "Détails de performance",
+      "intro": "Les mêmes filtres que la vue d’ensemble s’appliquent à ces indicateurs.",
+      "won": "Paris gagnés",
+      "lost": "Paris perdus",
+      "refunded": "Paris remboursés",
+      "pending": "Paris en cours",
+      "cashed": "Paris encaissés",
+      "success": "Réussite",
+      "playedStake": "Mises jouées",
+      "pendingStake": "Mises en cours",
+      "maxStake": "Mise maximale",
+      "maxWinningOdds": "Plus grosse cote gagnée",
+      "drawdown": "Drawdown maximal",
+      "definitions": "Réussite = gagnés ÷ (gagnés + perdus). Drawdown = plus forte baisse du bénéfice cumulé après un sommet, calculée dans l’ordre des paris.",
+      "missingUnits": "{count, plural, one {# pari sans unité empêche certains totaux en u.} other {# paris sans unité empêchent certains totaux en u.}}"
+    },
     "clv": {
       "intro": "Compare la cote prise à la dernière cote saisie avant le début de l’événement.",
       "coverage": "{measured}/{total} cotes renseignées",

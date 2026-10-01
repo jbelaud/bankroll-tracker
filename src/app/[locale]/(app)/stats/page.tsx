@@ -8,6 +8,7 @@ import { getUserTaxonomy } from "@/lib/taxonomy";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { unitPerformance } from "@/lib/unit-performance";
 import { computeClv } from "@/lib/clv";
+import { computeDetailedStats } from "@/lib/detailed-stats";
 import { profitInUnits } from "@/lib/public-bankroll";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
@@ -26,6 +27,7 @@ import { InsightsCard } from "@/components/stats/insights-card";
 import { PremiumInsightsCard } from "@/components/stats/premium-insights-card";
 import { OverviewGrid } from "@/components/stats/overview-grid";
 import { ClvPanel } from "@/components/stats/clv-panel";
+import { DetailedStatsPanel } from "@/components/stats/detailed-stats-panel";
 import { StatsTabs } from "@/components/stats/stats-tabs";
 import { StatsTable } from "@/components/stats/stats-table";
 import { StatsTableTabs } from "@/components/stats/stats-table-tabs";
@@ -82,6 +84,7 @@ export default async function StatsPage({
   const stats = computeGlobalStats(bets);
   const units = unitPerformance(bets);
   const clv = computeClv(bets);
+  const details = computeDetailedStats(bets);
   const extremeInUnits = (bet: typeof stats.biggestWin) => bet && bet.stakeUnits !== null
     && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
     ? profitInUnits(bet) : null;
@@ -191,6 +194,7 @@ export default async function StatsPage({
       </section>
 
       <ClvPanel stats={clv} />
+      <DetailedStatsPanel stats={details} currency={currency} />
 
       {paidPlan ? (
         <InsightsCard

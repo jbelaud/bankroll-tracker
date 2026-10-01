@@ -744,6 +744,23 @@
       "filtered": "These statistics use a filtered selection.",
       "clearFilters": "Reset"
     },
+    "details": {
+      "title": "Performance details",
+      "intro": "The same filters as the overview apply to these metrics.",
+      "won": "Winning bets",
+      "lost": "Losing bets",
+      "refunded": "Refunded bets",
+      "pending": "Pending bets",
+      "cashed": "Cashed out bets",
+      "success": "Win rate",
+      "playedStake": "Settled stakes",
+      "pendingStake": "Pending stakes",
+      "maxStake": "Largest stake",
+      "maxWinningOdds": "Highest winning odds",
+      "drawdown": "Maximum drawdown",
+      "definitions": "Win rate = wins ÷ (wins + losses). Drawdown is the largest decline in cumulative profit from a previous peak, in bet order.",
+      "missingUnits": "{count, plural, one {# bet without units prevents some unit totals.} other {# bets without units prevent some unit totals.}}"
+    },
     "clv": {
       "intro": "Compare the odds taken with the closing odds entered before the event starts.",
       "coverage": "{measured}/{total} closing odds entered",
