@@ -1,6 +1,11 @@
 # Kalivoa — Chrome Web Store
 
-Statut : paquet de production prêt ; soumission non effectuée (connexion Google requise).
+Statut : soumis au Chrome Web Store, en attente d’examen (état vérifié le 1er octobre 2026).
+ID Chrome Web Store : nmhjnidaoooclmmefpecbnphhonbjdlj
+Tableau de bord : https://chrome.google.com/webstore/devconsole/70cba258-8721-4261-9ebc-13c743b36097/nmhjnidaoooclmmefpecbnphhonbjdlj/edit
+Fiche, icône, capture, petite image promotionnelle, permissions, catégories de données, politique de confidentialité et instructions de test enregistrées.
+Distribution : publique, toutes régions, achats via l’application déclarés (offres Kalivoa).
+La finalisation et la soumission ont été réalisées par l’éditeur. L’approbation et la disponibilité publique ne sont pas encore confirmées. La bêta reste disponible via le ZIP et l’installation manuelle.
 Version : 0.1.0
 Paquet : public/downloads/kalivoa-extension-0.1.0.zip
 Construction : pnpm extension:release (archive reproductible, fichiers explicitement autorisés).
