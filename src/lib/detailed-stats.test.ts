@@ -30,6 +30,7 @@ describe("detailed performance", () => {
     expect(details).toMatchObject({
       won: 1, lost: 2, refunded: 1, pending: 1,
       playedStake: 5, playedStakeUnits: 5, pendingStake: 1, pendingStakeUnits: 1,
+      potentialReturn: 2, potentialReturnUnits: 2, potentialProfit: 1, potentialProfitUnits: 1,
       maxStake: 2, maxStakeUnits: 2, maxWinningOdds: 3,
       drawdown: 3, drawdownUnits: 3,
     });
@@ -49,6 +50,14 @@ describe("detailed performance", () => {
     const cashout = { ...bet("cashout", "2026-09-01T12:00:00Z", "CASHE", 1), referenceCapitalAtBet: null };
     expect(computeDetailedStats([cashout])).toMatchObject({
       playedStakeUnits: 1, maxStakeUnits: 1, drawdownUnits: null, missingUnits: 1,
+    });
+  });
+
+  it("does not present potential gains if a pending odd is unknown", () => {
+    const pending = { ...bet("pending", "2026-09-01T12:00:00Z", "EN_ATTENTE", 1), odds: null };
+    expect(computeDetailedStats([pending])).toMatchObject({
+      potentialReturn: null, potentialProfit: null,
+      potentialReturnUnits: null, potentialProfitUnits: null,
     });
   });
 });

@@ -9,6 +9,7 @@ import { getServerCurrency } from "@/lib/get-server-currency";
 import { unitPerformance } from "@/lib/unit-performance";
 import { computeClv } from "@/lib/clv";
 import { computeDetailedStats } from "@/lib/detailed-stats";
+import { computeCapitalReturnStats } from "@/lib/capital-return-stats";
 import { profitInUnits } from "@/lib/public-bankroll";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
@@ -28,6 +29,7 @@ import { PremiumInsightsCard } from "@/components/stats/premium-insights-card";
 import { OverviewGrid } from "@/components/stats/overview-grid";
 import { ClvPanel } from "@/components/stats/clv-panel";
 import { DetailedStatsPanel } from "@/components/stats/detailed-stats-panel";
+import { CapitalReturnPanel } from "@/components/stats/capital-return-panel";
 import { StatsTabs } from "@/components/stats/stats-tabs";
 import { StatsTable } from "@/components/stats/stats-table";
 import { StatsTableTabs } from "@/components/stats/stats-table-tabs";
@@ -85,6 +87,15 @@ export default async function StatsPage({
   const units = unitPerformance(bets);
   const clv = computeClv(bets);
   const details = computeDetailedStats(bets);
+  const selectedBankroll = activeBankrolls.find((item) => item.id === bankroll);
+  const hasSubsetFilters = Boolean(from || to || q || sportFilter || typeFilter || resultFilter || live || freebet
+    || minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null);
+  const capitalReturns = selectedBankroll && !hasSubsetFilters
+    ? computeCapitalReturnStats(selectedBankroll, bets, await prisma.bankrollMovement.findMany({
+      where: { bankrollId: selectedBankroll.id, bankroll: { userId: user.id } },
+      orderBy: { date: "asc" },
+    }))
+    : null;
   const extremeInUnits = (bet: typeof stats.biggestWin) => bet && bet.stakeUnits !== null
     && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
     ? profitInUnits(bet) : null;
@@ -195,6 +206,7 @@ export default async function StatsPage({
 
       <ClvPanel stats={clv} />
       <DetailedStatsPanel stats={details} currency={currency} />
+      {capitalReturns ? <CapitalReturnPanel stats={capitalReturns} currency={currency} /> : null}
 
       {paidPlan ? (
         <InsightsCard

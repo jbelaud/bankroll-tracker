@@ -35,6 +35,8 @@ export function DetailedStatsPanel({ stats, currency }: { stats: DetailedStats; 
       <Item label={t("success")} value={stats.successRate === null ? "—" : fmtPct(stats.successRate, locale, 2)} tone="profit" />
       <Item label={t("playedStake")} value={amount(stats.playedStake, stats.playedStakeUnits)} />
       <Item label={t("pendingStake")} value={amount(stats.pendingStake, stats.pendingStakeUnits)} />
+      <Item label={t("potentialReturn")} value={amount(stats.potentialReturn, stats.potentialReturnUnits)} />
+      <Item label={t("potentialProfit")} value={amount(stats.potentialProfit, stats.potentialProfitUnits)} />
       <Item label={t("maxStake")} value={amount(stats.maxStake, stats.maxStakeUnits)} />
       <Item label={t("maxWinningOdds")} value={stats.maxWinningOdds === null ? "—" : new Intl.NumberFormat(locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(stats.maxWinningOdds)} />
       <Item label={t("drawdown")} value={amount(stats.drawdown, stats.drawdownUnits)} tone="loss" />

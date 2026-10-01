@@ -29,11 +29,25 @@ export function computeDetailedStats(bets: Bet[]) {
       || a.createdAt.getTime() - b.createdAt.getTime() || a.id.localeCompare(b.id));
   const played = settled.filter((bet) => !bet.freebet);
   const pending = bets.filter((bet) => bet.result === "EN_ATTENTE" && !bet.freebet);
+  const pendingAll = bets.filter((bet) => bet.result === "EN_ATTENTE");
   const cashBets = bets.filter((bet) => !bet.freebet);
   const won = bets.filter((bet) => bet.result === "GAGNE").length;
   const lost = bets.filter((bet) => bet.result === "PERDU").length;
   const unitStake = (items: Bet[]) => items.every(hasStakeUnits)
     ? items.reduce((sum, bet) => sum + bet.stakeUnits!, 0) : null;
+  const maxStake = cashBets.reduce<number | null>((max, bet) => Math.max(max ?? 0, realStake(bet)), null);
+  const maxStakeUnits = cashBets.length > 0 && cashBets.every(hasStakeUnits)
+    ? cashBets.reduce((max, bet) => Math.max(max, bet.stakeUnits!), 0) : null;
+  const pendingOddsKnown = pendingAll.every((bet) => bet.odds !== null && Number.isFinite(bet.odds) && bet.odds > 1);
+  const pendingUnitKnown = pendingOddsKnown && pendingAll.every(hasStakeUnits);
+  const potentialReturn = pendingOddsKnown ? pendingAll.reduce((sum, bet) =>
+    sum + bet.stake * (bet.freebet ? bet.odds! - 1 : bet.odds!), 0) : null;
+  const potentialProfit = pendingOddsKnown ? pendingAll.reduce((sum, bet) =>
+    sum + bet.stake * (bet.odds! - 1), 0) : null;
+  const potentialReturnUnits = pendingUnitKnown ? pendingAll.reduce((sum, bet) =>
+    sum + bet.stakeUnits! * (bet.freebet ? bet.odds! - 1 : bet.odds!), 0) : null;
+  const potentialProfitUnits = pendingUnitKnown ? pendingAll.reduce((sum, bet) =>
+    sum + bet.stakeUnits! * (bet.odds! - 1), 0) : null;
 
   return {
     won,
@@ -46,9 +60,12 @@ export function computeDetailedStats(bets: Bet[]) {
     playedStakeUnits: unitStake(played),
     pendingStake: pending.reduce((sum, bet) => sum + realStake(bet), 0),
     pendingStakeUnits: unitStake(pending),
-    maxStake: cashBets.length > 0 ? Math.max(...cashBets.map((bet) => realStake(bet))) : null,
-    maxStakeUnits: cashBets.length > 0 && cashBets.every(hasStakeUnits)
-      ? Math.max(...cashBets.map((bet) => bet.stakeUnits!)) : null,
+    potentialReturn,
+    potentialReturnUnits,
+    potentialProfit,
+    potentialProfitUnits,
+    maxStake,
+    maxStakeUnits,
     maxWinningOdds: bets.filter((bet) => bet.result === "GAGNE" && bet.odds !== null)
       .reduce<number | null>((max, bet) => Math.max(max ?? 0, bet.odds!), null),
     drawdown: maxDrawdown(settled.map(computeProfit)),
