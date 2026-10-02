@@ -11,6 +11,7 @@ const PROTECTED_ROUTES = [
   "/account",
   "/history",
   "/referrals",
+  "/partners",
 ];
 const AUTH_ROUTES = ["/login", "/signup"];
 const CANONICAL_HOST = "kalivoa.com";

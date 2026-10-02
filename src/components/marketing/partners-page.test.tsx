@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { NextIntlClientProvider } from "next-intl";
 import fr from "../../../messages/fr.json";
 import en from "../../../messages/en.json";
-import { getPublicPartners, PARTNER_CATALOGUE } from "@/lib/partners/catalogue";
+import { getPublicPartners, getPartnerPreviews, PARTNER_CATALOGUE } from "@/lib/partners/catalogue";
 import { PartnerCard, PartnersPage } from "./partners-page";
 
 vi.mock("@/lib/growth/client", () => ({ trackPublicGrowthEvent: vi.fn() }));
@@ -16,14 +16,19 @@ const render = (element: React.ReactNode, locale: "fr" | "en" = "fr") => renderT
 
 describe("page publique partenaires", () => {
   it("rend les onglets accessibles, les conditions et les 30 scans permanents après validation", () => {
-    const html = render(<PartnersPage partners={getPublicPartners(now)} />);
+    const html = render(<PartnersPage partners={getPartnerPreviews(now)} />);
     expect(html).toContain("Les partenaires Kalivoa");
     expect(html.match(/role="tab"/g)).toHaveLength(2);
     expect(html).toContain("Conditions d’utilisation de Kalivoa");
     expect(html).toContain('href="/responsible-gambling"');
     expect(html).toContain("30 scans gratuits");
     expect(html).toContain("Scans permanents, sans expiration.");
-    expect(html).toContain("après validation du parrainage par Kalivoa");
+    expect(html).toContain("Accéder à mes offres");
+    expect(html).toContain('href="/partners"');
+    for (const partner of PARTNER_CATALOGUE) {
+      if (partner.href) expect(html).not.toContain(partner.href);
+      if (partner.promoCode) expect(html).not.toContain(partner.promoCode);
+    }
     expect(html).toContain("Collaboration à l’étude");
     expect(html).not.toContain("Aucun avantage en scans");
   });

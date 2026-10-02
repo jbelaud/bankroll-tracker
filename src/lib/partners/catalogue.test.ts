@@ -1,11 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { getPublicPartners, PARTNER_CATALOGUE, safePartnerUrl, type PartnerEntry } from "./catalogue";
+import { getPublicPartners, getPartnerPreviews, PARTNER_CATALOGUE, safePartnerUrl, type PartnerEntry } from "./catalogue";
 
 const now = new Date("2026-10-02T12:00:00Z");
 const base = PARTNER_CATALOGUE[0];
 const entry = (values: Partial<PartnerEntry>): PartnerEntry => ({ ...base, ...values });
 
 describe("catalogue public des partenaires", () => {
+  it("ne sérialise aucun lien, code ou campagne dans la présentation publique", () => {
+    const json = JSON.stringify(getPartnerPreviews(now));
+    for (const partner of PARTNER_CATALOGUE) {
+      if (partner.href) expect(json).not.toContain(partner.href);
+      if (partner.promoCode) expect(json).not.toContain(partner.promoCode);
+      if (partner.scanReward) expect(json).not.toContain(partner.scanReward.campaignId);
+    }
+    expect(json).not.toContain('"href"');
+    expect(json).not.toContain('"conditionsHref"');
+    expect(json).not.toContain('"promoCode"');
+  });
   it("reprend les partenaires fournis et les 30 scans permanents approuvés pour chaque bookmaker", () => {
     const items = getPublicPartners(now);
     expect(items.filter((p) => p.section === "bookmakers").map((p) => p.id)).toEqual(["winamax", "betclic", "pmu", "unibet"]);

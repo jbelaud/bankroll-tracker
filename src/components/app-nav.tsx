@@ -20,6 +20,7 @@ import {
   CaretDown,
   List,
   Sparkle,
+  Handshake,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -40,6 +41,7 @@ const NAV_ITEMS = [
   { href: "/account", key: "account", icon: UserCircle },
   { href: "/admin", key: "admin", icon: Gauge, adminOnly: true },
   { href: "/ai-insights", key: "aiInsights", icon: Sparkle },
+  { href: "/partners", key: "partners", icon: Handshake },
 ] as const;
 
 const TIPSTER_SUB_ITEMS = [
@@ -58,13 +60,14 @@ const DESKTOP_NAV_GROUPS = [
   { key: "tracking", items: [NAV_ITEMS[0], NAV_ITEMS[2], { key: "bets", icon: ListBullets, children: BET_SUB_ITEMS }, NAV_ITEMS[5]] },
   { key: "analysis", items: [NAV_ITEMS[4], NAV_ITEMS[10]] },
   { key: "community", items: [{ key: "tipsters", icon: UserList, children: TIPSTER_SUB_ITEMS }] },
-  { key: "manage", items: [NAV_ITEMS[8], NAV_ITEMS[9]] },
+  { key: "manage", items: [NAV_ITEMS[8], NAV_ITEMS[11], NAV_ITEMS[9]] },
 ] as const;
 
 const MOBILE_MORE_GROUPS = [
   { key: "bets", items: BET_SUB_ITEMS },
   { key: "analysis", items: [NAV_ITEMS[10]] },
   { key: "tipsters", items: TIPSTER_SUB_ITEMS },
+  { key: "manage", items: [NAV_ITEMS[11]] },
 ] as const;
 
 // Le Scan est l'action principale sur mobile : il doit rester au centre de la
@@ -97,6 +100,7 @@ export function AppNav({
     ...BET_SUB_ITEMS,
     NAV_ITEMS[10],
     ...TIPSTER_SUB_ITEMS,
+    NAV_ITEMS[11],
     ...(isAdmin ? [NAV_ITEMS[9]] : []),
   ];
 
@@ -124,7 +128,7 @@ export function AppNav({
           </button>
           {mobileMenuOpen ? <div id="mobile-more-menu" className="absolute right-0 top-full mt-2 max-h-[calc(100dvh-10rem)] w-[min(19rem,calc(100vw-2rem))] space-y-3 overflow-y-auto rounded-2xl border border-border bg-background p-2 shadow-xl">
             {MOBILE_MORE_GROUPS.map(({ key: groupKey, items }) => <div key={groupKey}>
-              <p className="px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">{t(groupKey === "analysis" ? "groups.analysis" : groupKey)}</p>
+              <p className="px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">{t(groupKey === "analysis" || groupKey === "manage" ? `groups.${groupKey}` : groupKey)}</p>
               <ul className="space-y-1">{items.map(({ href, key, icon: Icon }) => {
                 const active = pathname.startsWith(href);
                 return <li key={href}><Link href={href} onClick={() => setMobileMenuState({ path: pathname, open: false })} aria-current={active ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-xl px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", active ? "bg-primary/12 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground")}><Icon size={18} weight={active ? "fill" : "regular"} aria-hidden /><span>{t(key)}</span></Link></li>;

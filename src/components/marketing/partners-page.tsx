@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, ChartLineUp, Copy, Handshake, House, ShieldCheck } from "@phosphor-icons/react";
+import { ArrowUpRight, ChartLineUp, Copy, Handshake, House, ShieldCheck, LockSimple } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import type { PartnerSection, PublicPartner } from "@/lib/partners/catalogue";
+import type { PartnerSection, PublicPartner, PartnerPreview } from "@/lib/partners/catalogue";
 import type { PublicGrowthEventName } from "@/lib/growth/events";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +18,7 @@ function track(name: PublicGrowthEventName, properties?: Record<string, string>)
   void trackPublicGrowthEvent(name, properties).catch(() => {});
 }
 
-export function PartnersPage({ partners }: { partners: PublicPartner[] }) {
+export function PartnersPage({ partners }: { partners: PartnerPreview[] }) {
   const t = useTranslations("partners");
   const locale = useLocale() as Locale;
   const [section, setSection] = useState<PartnerSection>("bookmakers");
@@ -49,6 +49,17 @@ export function PartnersPage({ partners }: { partners: PublicPartner[] }) {
     </header>
 
     <div className="kalivoa-content-frame pt-7 sm:pt-10">
+      <section className="marketing-solution mb-8 flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="max-w-2xl">
+          <p className="flex items-center gap-2 text-sm font-semibold text-primary"><LockSimple size={17} aria-hidden />{t("publicAccess.eyebrow")}</p>
+          <h2 className="mt-2 text-xl font-semibold">{t("publicAccess.title")}</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("publicAccess.description")}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-3">
+          <Link href="/partners" className="marketing-primary-cta min-h-11 text-sm">{t("publicAccess.open")}<ArrowUpRight size={16} aria-hidden /></Link>
+          <Link href="/signup" className="marketing-secondary-cta min-h-11 text-sm">{t("publicAccess.signup")}</Link>
+        </div>
+      </section>
       <Tabs value={section} onValueChange={(value) => {
         if ((value === "bookmakers" || value === "tools") && value !== section) {
           setSection(value); track("partners_tab_changed", { tab: value });
@@ -70,7 +81,7 @@ export function PartnersPage({ partners }: { partners: PublicPartner[] }) {
               {(["odds", "data", "community", "training", "other"] as const).map((key) => <span key={key} className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground">{t(`categories.${key}`)}</span>)}
             </div>}
             {items.length > 0 ? <div className="mt-6 grid items-start gap-4 md:grid-cols-2">
-              {items.map((partner) => <PartnerCard key={partner.id} partner={partner} locale={locale} />)}
+              {items.map((partner) => <PartnerPreviewCard key={partner.id} partner={partner} locale={locale} />)}
             </div> : <div className="marketing-card mt-6 p-6 sm:p-8">
               <h3 className="text-base font-semibold">{t(`${tab}.emptyTitle`)}</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{t(`${tab}.emptyDescription`)}</p>
@@ -94,6 +105,24 @@ export function PartnersPage({ partners }: { partners: PublicPartner[] }) {
         </div>
       </section>
     </div>
+  </article>;
+}
+
+function PartnerPreviewCard({ partner, locale }: { partner: PartnerPreview; locale: Locale }) {
+  const t = useTranslations("partners");
+  return <article className="marketing-card flex min-w-0 flex-col p-5 sm:p-6">
+    <div className="flex items-center gap-3">
+      <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/60 text-lg font-bold">{partner.name.slice(0, 2).toUpperCase()}</span>
+      <div className="min-w-0"><p className="text-xs text-muted-foreground">{t(`categories.${partner.category}`)}</p><h3 className="mt-1 text-xl font-semibold">{partner.name}</h3></div>
+    </div>
+    <p className="mt-4 text-sm leading-6 text-muted-foreground">{partner.description[locale]}</p>
+    <p className="mt-3 text-xs font-medium text-muted-foreground">{partner.statusNote?.[locale] ?? t(`statuses.${partner.status}`)}</p>
+    {partner.scanReward && <div className="mt-4 rounded-xl border border-primary/25 bg-primary/5 p-4">
+      <p className="text-sm font-semibold text-primary">{t("freeScans", { count: partner.scanReward.quantity })}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{partner.scanReward.expiresAfterDays === null ? t("permanentScans") : t("scanExpiry", { days: partner.scanReward.expiresAfterDays })}</p>
+    </div>}
+    {partner.status === "ACTIVE" ? <Link href="/partners" className="marketing-secondary-cta mt-5 min-h-11 w-full justify-center text-sm"><LockSimple size={16} aria-hidden />{t("publicAccess.card")}</Link>
+      : <p className="mt-4 text-xs leading-6 text-muted-foreground">{t(partner.status === "PREPARATION" ? "preparationNotice" : "unavailableNotice")}</p>}
   </article>;
 }
 

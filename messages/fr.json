@@ -1,5 +1,7 @@
 {
   "partners": {
+    "publicAccess": { "eyebrow": "Réservé aux membres Kalivoa", "title": "Vos avantages vous attendent dans votre espace", "description": "Cette page présente nos partenaires et les avantages prévus. Les liens, codes et conditions des offres sont accessibles depuis votre compte Kalivoa, dans la rubrique Partenaires.", "open": "Accéder à mes offres", "signup": "Créer mon compte Kalivoa", "card": "Voir l’offre dans mon espace" },
+    "member": { "eyebrow": "Votre espace partenaires", "title": "Les avantages de votre compte Kalivoa", "description": "Retrouvez vos offres bookmakers et les outils sélectionnés pour accompagner votre suivi. Les offres actives prévoient 30 scans permanents après validation du parrainage.", "permanent": "Scans permanents", "once": "Une fois par offre et par compte", "myScans": "Mes scans disponibles", "available": "offres bookmakers disponibles", "perOffer": "scans par offre validée", "noExpiryValue": "Sans limite", "noExpiryLabel": "de durée après attribution", "howTitle": "Comment obtenir vos scans ?", "steps": { "choose": { "title": "Consultez les conditions", "description": "Choisissez une offre et vérifiez votre éligibilité avant toute inscription." }, "refer": { "title": "Utilisez votre accès Kalivoa", "description": "Passez par le lien ou le code de cette page et respectez les conditions du bookmaker." }, "validate": { "title": "Recevez vos scans après validation", "description": "Une fois le parrainage confirmé, les 30 scans rejoignent votre compte sans expiration." } }, "validationPending": "Le parcours de validation est en préparation. Aucun scan n’est attribué automatiquement pour le moment : un clic ou une copie du code ne suffit pas.", "reassuranceTitle": "Des avantages, en toute transparence", "reassurance": "Les scans Kalivoa sont distincts des bonus bookmakers. Les paris sont réservés aux adultes et comportent un risque de perte : gardez vos limites et ne jouez pas davantage pour obtenir un avantage.", "signIn": "Se reconnecter" },
     "meta": { "title": "Les partenaires Kalivoa", "description": "Découvrez les liens de parrainage et les collaborations en préparation de Kalivoa : outils d’analyse, suivi de bankroll et conditions des offres." },
     "nav": "Partenaires", "home": "Accueil", "breadcrumb": "Fil d’Ariane",
     "eyebrow": "Offres et outils · en toute transparence",
@@ -88,6 +90,7 @@
     "referrals": "Parrainage",
     "admin": "Administration",
     "account": "Compte",
+    "partners": "Partenaires",
     "moreNavigation": "Menu",
     "groups": {
       "tracking": "Suivi",

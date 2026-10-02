@@ -106,6 +106,16 @@ export type PublicPartner = Omit<PartnerEntry, "scanReward" | "href" | "conditio
   scanReward?: Pick<PartnerScanReward, "quantity" | "expiresAfterDays" | "conditions">;
 };
 
+// La page publique ne reçoit jamais les liens, codes ou identifiants de campagne.
+export type PartnerPreview = Pick<PublicPartner,
+  "id" | "name" | "section" | "category" | "status" | "description" | "statusNote" | "logo" | "scanReward">;
+
+export function getPartnerPreviews(now = new Date()): PartnerPreview[] {
+  return getPublicPartners(now).map(({ id, name, section, category, status, description, statusNote, logo, scanReward }) => ({
+    id, name, section, category, status, description, statusNote, logo, scanReward,
+  }));
+}
+
 export function safePartnerUrl(value?: string): string | undefined {
   if (!value) return;
   try {
