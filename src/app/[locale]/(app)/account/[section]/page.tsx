@@ -11,6 +11,8 @@ import { canUseBetaOffer } from "@/lib/billing/beta-offer";
 import { LanguageSwitcher } from "@/components/account/language-switcher";
 import { CurrencySwitcher } from "@/components/account/currency-switcher";
 import { PlanCard } from "@/components/account/plan-card";
+import { ScanCreditSummary } from "@/components/account/scan-credit-summary";
+import { getScanWallet } from "@/lib/scan/credit-wallet";
 import { AccountGoalsCard } from "@/components/account/account-goals-card";
 import { PersonalConversionForm } from "@/components/account/personal-conversion-form";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
@@ -47,11 +49,12 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
       break;
     }
     case "subscription": {
-      const [dbUser, betaProgram] = await Promise.all([
+      const [dbUser, betaProgram, wallet] = await Promise.all([
         prisma.user.findUnique({ where: { id: user.id }, select: { plan: true, subscriptionCurrentPeriodEnd: true, betaOfferUsedAt: true, initialScanCreditRemaining: true, initialScanCreditExpiresAt: true } }),
         prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
+        getScanWallet(user.id),
       ]);
-      content = <PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null })} initialCreditsRemaining={dbUser?.initialScanCreditRemaining ?? 0} initialCreditsExpiresAt={dbUser?.initialScanCreditExpiresAt ?? null} betaPhaseActive={betaProgram?.phase !== "ENDED"} />;
+      content = <div className="space-y-5"><PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null })} initialCreditsRemaining={0} initialCreditsExpiresAt={null} betaPhaseActive={betaProgram?.phase !== "ENDED"} /><section className="glass-card rounded-xl p-4"><ScanCreditSummary wallet={wallet} /></section></div>;
       break;
     }
     case "tracking": {

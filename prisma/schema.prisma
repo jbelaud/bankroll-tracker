@@ -69,7 +69,7 @@ model User {
   betaOfferUsedAt              DateTime?
 
   // Crédits ponctuels accordés à l'abonnement pour l'import d'historique.
-  // Ils sont consommés avant le quota mensuel et expirent 30 jours après
+  // Leur consommation suit désormais l'échéance des lots ; ils expirent 30 jours après
   // l'abonnement, sans jamais être recréés par les webhooks du cycle de vie.
   initialScanCreditRemaining Int       @default(0)
   initialScanCreditExpiresAt DateTime?
@@ -80,6 +80,10 @@ model User {
   // (scanCount/scanWindowStart ci-dessus, qui reste inchangé).
   monthlyScanCount       Int      @default(0)
   monthlyScanWindowStart DateTime @default(now())
+  // Les compteurs historiques restent uniquement pour la reprise et le retour arrière.
+  scanWalletMigratedAt DateTime?
+  scanCreditBatches ScanCreditBatch[]
+  scanCreditReservations ScanCreditReservation[]
 
   bankrolls             Bankroll[]
   personalConversion   PersonalConversionProfile?
@@ -554,6 +558,105 @@ model UserTaxonomyEntry {
 // ------------------------------------------------------------
 // Les coûts sont figés au moment de l'appel : le tableau de bord admin reste
 // donc exact même si le tarif de Haiku change plus tard.
+enum ScanCreditType {
+  MONTHLY
+  INITIAL
+  REFERRAL
+  PARTNER
+  PROMOTIONAL
+}
+
+enum ScanCreditBatchStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+enum ScanCreditReservationStatus {
+  RESERVED
+  CONSUMED
+  RELEASED
+}
+
+enum ScanCreditMovementKind {
+  GRANT
+  MIGRATE
+  RESERVE
+  CONSUME
+  RELEASE
+  REVOKE
+  ADJUST_QUOTA
+}
+
+model ScanCreditBatch {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type ScanCreditType
+  origin String
+  grantKey String
+  // Clé de portée métier distincte du déclencheur : ex. une offre par utilisateur.
+  entitlementKey String?
+  quantityGranted Int
+  quantityUsed Int @default(0)
+  quantityReserved Int @default(0)
+  quantityRevoked Int @default(0)
+  grantedAt DateTime @default(now())
+  periodStartedAt DateTime?
+  expiresAt DateTime?
+  status ScanCreditBatchStatus @default(ACTIVE)
+  stackable Boolean @default(true)
+  conditions String?
+  requiresPaidPlan Boolean @default(false)
+  campaignId String?
+  partnerId String?
+  referralRewardId String? @unique
+  referralReward ReferralReward? @relation(fields: [referralRewardId], references: [id], onDelete: Restrict)
+  reservations ScanCreditReservation[]
+  movements ScanCreditMovement[]
+  @@unique([userId, grantKey])
+  @@unique([userId, entitlementKey])
+  @@unique([id, userId])
+  @@index([userId, status, expiresAt, grantedAt])
+  @@map("scan_credit_batches")
+}
+
+model ScanCreditReservation {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batchId String
+  batch ScanCreditBatch @relation(fields: [batchId, userId], references: [id, userId], onDelete: Cascade)
+  requestKey String
+  activeSourceKey String?
+  status ScanCreditReservationStatus @default(RESERVED)
+  scanUsageId String? @unique
+  scanUsage ScanUsage? @relation(fields: [scanUsageId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+  leaseExpiresAt DateTime
+  settledAt DateTime?
+  movements ScanCreditMovement[]
+  @@unique([userId, requestKey])
+  @@unique([userId, activeSourceKey])
+  @@index([userId, status, leaseExpiresAt])
+  @@map("scan_credit_reservations")
+}
+
+model ScanCreditMovement {
+  id String @id @default(uuid())
+  batchId String
+  batch ScanCreditBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  reservationId String?
+  reservation ScanCreditReservation? @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  kind ScanCreditMovementKind
+  amount Int
+  eventKey String @unique
+  reason String?
+  createdAt DateTime @default(now())
+  @@index([batchId, createdAt])
+  @@map("scan_credit_movements")
+}
+
 enum ScanOutcome {
   READY
   EMPTY
@@ -600,6 +703,7 @@ model ScanUsage {
   createdAt               DateTime     @default(now())
 
   bets Bet[]
+  creditReservation ScanCreditReservation?
 
   @@unique([userId, sourceHash])
   @@index([userId, createdAt])
@@ -697,6 +801,7 @@ model ReferralReward {
   cancellationReason String?
   cancelledAt        DateTime?
   createdAt          DateTime             @default(now())
+  scanCreditBatch    ScanCreditBatch?
 
   @@index([beneficiaryId, createdAt])
   @@index([referralId, createdAt])

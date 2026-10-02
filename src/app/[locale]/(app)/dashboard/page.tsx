@@ -244,7 +244,7 @@ export default async function DashboardPage() {
             {hasMonthlyGuardrail ? <GoalsCard monthProfit={monthProfit} profitGoal={dbUser?.monthlyProfitGoal ?? 0} lossLimit={dbUser?.monthlyLossLimit ?? 0} /> : null}
           </div>
           <aside aria-label={t("resources")} className="mt-4 grid min-w-0 gap-3 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-3">
-            <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} initialCreditsRemaining={quota.initialCreditsRemaining} initialCreditsExpiresAt={quota.initialCreditsExpiresAt} referralCreditsRemaining={quota.referralCreditsRemaining} betaPhaseActive={betaProgram?.phase !== "ENDED"} />
+            <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} wallet={quota} betaPhaseActive={betaProgram?.phase !== "ENDED"} />
             <PersonalConversionCard conversion={dbUser?.personalConversion ?? null} currency={currency} />
             {bets.length > 0 ? <DiscordCommunityCard /> : null}
           </aside>

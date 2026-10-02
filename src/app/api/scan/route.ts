@@ -8,6 +8,7 @@ import { labelToBetResult } from "@/lib/bet-result";
 import { hasKnownTicketReference, looksLikeParsedDuplicate } from "@/lib/scan/duplicate";
 import { checkScanRateLimit } from "@/lib/scan/rate-limit";
 import { checkMonthlyQuota, releaseMonthlyQuota } from "@/lib/scan/monthly-quota";
+import { commitScanUsage } from "@/lib/scan/credit-wallet";
 import { getServerLocale as getLocale } from "@/lib/i18n/get-server-locale";
 import { calculateScanCostUsd } from "@/lib/scan/cost";
 import { getUserTaxonomy, normalizeSportContext, normalizeTaxonomyPair } from "@/lib/taxonomy";
@@ -220,8 +221,11 @@ export async function POST(request: NextRequest) {
       { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
     );
   }
-  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan);
+  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan, sourceHash);
   if (!monthlyQuota.allowed) {
+    if (monthlyQuota.reason === "DUPLICATE") {
+      return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
+    }
     return NextResponse.json(
       { error: t("monthlyQuotaExceeded") },
       { status: 429, headers: { "Retry-After": String(monthlyQuota.retryAfterSeconds) } }
@@ -230,10 +234,11 @@ export async function POST(request: NextRequest) {
   let quotaReserved = true;
   const releaseQuota = async () => {
     if (!quotaReserved) return;
-    quotaReserved = false;
     await releaseMonthlyQuota(user.id, monthlyQuota.reservation);
+    quotaReserved = false;
   };
 
+  try {
   // 4. Appel IA côté serveur uniquement (Google prioritaire si configuré).
   let rawBets: unknown[];
   let rawExtraction: unknown;
@@ -507,8 +512,7 @@ export async function POST(request: NextRequest) {
     // Le journal de consommation est également l'événement idempotent utilisé
     // par le programme de parrainage. L'index userId/sourceHash bloque les
     // doublons, y compris lors de requêtes concurrentes.
-    scanUsage = await prisma.scanUsage.create({
-      data: {
+    scanUsage = await commitScanUsage(user.id, monthlyQuota.reservation, {
         id: usageId,
         extensionReceipt: extensionCapture ? JSON.parse(JSON.stringify({ bankrollId, response: extensionResponse })) as Prisma.InputJsonValue : undefined,
         userId: user.id,
@@ -527,8 +531,6 @@ export async function POST(request: NextRequest) {
         durationMs: Date.now() - scanStartedAt,
         betsDetected: bets.length,
         proofEvidence,
-      },
-      select: { id: true },
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -538,11 +540,15 @@ export async function POST(request: NextRequest) {
     throw error;
   }
 
-  const referralResult = referralEligible
-    ? await processValidReferralScan(user.id, scanUsage.id)
-    : { earnedReferralScans: 0 };
-
   quotaReserved = false;
+  // Une panne du programme de récompenses ne transforme pas une analyse réussie
+  // et débitée en erreur côté client. Un événement non traité reste rejouable.
+  const referralResult = referralEligible
+    ? await processValidReferralScan(user.id, scanUsage.id).catch((error) => {
+        console.error("[scan] validation de récompense différée", error);
+        return { earnedReferralScans: 0 };
+      })
+    : { earnedReferralScans: 0 };
   await recordGrowthEventSafely({
     name: "scan_result_ready",
     userId: user.id,
@@ -568,4 +574,7 @@ export async function POST(request: NextRequest) {
       earnedReferralScans: referralResult.earnedReferralScans,
     },
   });
+  } finally {
+    if (quotaReserved) await releaseQuota().catch((error) => console.error("[scan] restitution différée", error));
+  }
 }

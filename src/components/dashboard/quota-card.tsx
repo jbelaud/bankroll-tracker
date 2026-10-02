@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { Plan } from "@prisma/client";
 import { Scan, Crown, CircleNotch } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { createCheckoutSessionAction } from "@/lib/actions/billing";
 import { isPaidPlan } from "@/lib/billing/plans";
 import { Link } from "@/i18n/navigation";
+import { ScanCreditSummary } from "@/components/account/scan-credit-summary";
+import type { ScanWalletSummary } from "@/lib/scan/credit-policy";
 
 // Widget d'engagement/conversion sur le Dashboard — distinct de PlanCard
 // (écran Compte, informatif : date de renouvellement, gestion d'abonnement).
@@ -18,26 +20,21 @@ export function QuotaCard({
   plan,
   scansUsed,
   scansLimit,
-  initialCreditsRemaining,
-  initialCreditsExpiresAt,
-  referralCreditsRemaining,
+  wallet,
   betaPhaseActive,
 }: {
   plan: Plan;
   scansUsed: number;
   scansLimit: number;
-  initialCreditsRemaining: number;
-  initialCreditsExpiresAt: Date | null;
-  referralCreditsRemaining: number;
+  wallet: ScanWalletSummary;
   betaPhaseActive: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const t = useTranslations("dashboard.quota");
-  const locale = useLocale();
   const paidPlan = isPaidPlan(plan);
 
-  const remaining = Math.max(0, scansLimit - scansUsed);
+  const remaining = wallet.totalAvailable;
   const pct = scansLimit > 0 ? Math.min(100, (scansUsed / scansLimit) * 100) : 0;
   const barColor = pct >= 90 ? "bg-loss" : pct >= 60 ? "bg-warning" : "bg-primary";
 
@@ -72,25 +69,6 @@ export function QuotaCard({
         )}
       </div>
 
-      {initialCreditsRemaining > 0 && initialCreditsExpiresAt && (
-        <p className="rounded-lg bg-primary/10 px-3 py-2 text-xs leading-relaxed text-primary">
-          {t("initialCredits", {
-            count: initialCreditsRemaining,
-            date: new Intl.DateTimeFormat(locale, {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            }).format(initialCreditsExpiresAt),
-          })}
-        </p>
-      )}
-
-      {referralCreditsRemaining > 0 && (
-        <p className="rounded-lg bg-profit/10 px-3 py-2 text-xs leading-relaxed text-profit">
-          {t("referralCredits", { count: referralCreditsRemaining })}
-        </p>
-      )}
-
       <div className="flex flex-col gap-1.5">
         <div className="flex items-baseline justify-between">
           <span className="num text-2xl font-bold tracking-tight">{remaining}</span>
@@ -113,6 +91,7 @@ export function QuotaCard({
         </div>
       </div>
 
+      <ScanCreditSummary wallet={wallet} compact />
       {error && (
         <p role="alert" className="text-xs text-loss">
           {error}

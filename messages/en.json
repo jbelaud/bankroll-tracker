@@ -1,4 +1,17 @@
 {
+  "scanCredits": {
+    "total": "{count} scans available",
+    "count": "{count} scans",
+    "empty": "You have no scans available.",
+    "expires": "Use before {date}.",
+    "noExpiry": "No expiry.",
+    "startsOnFirstUse": "30-day period starting when this allowance is first used.",
+    "expiringTitle": "Scans with a limited validity period",
+    "permanentTitle": "Permanent scans: {count}",
+    "alert": "{count} of your scans expire soon. Use them before {date}.",
+    "types": { "MONTHLY": "Monthly scans", "INITIAL": "Initial scans", "REFERRAL": "Referral scans", "PARTNER": "Partner scans", "PROMOTIONAL": "Promotional scans" },
+    "origins": { "historyImport": "History import bonus", "legacyReferral": "Referral: historical balance", "betaReferral": "Beta referral" }
+  },
   "common": {
     "cancel": "Cancel",
     "delete": "Delete",
@@ -215,7 +228,7 @@
       "join": "Join"
     },
     "quota": {
-      "title": "AI scans this month",
+      "title": "Available scans",
       "remaining": "{used}/{limit} used",
       "premiumBadge": "Premium",
       "initialCredits": "Import credit: {count} scans remaining until {date}.",

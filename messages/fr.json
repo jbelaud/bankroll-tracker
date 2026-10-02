@@ -1,4 +1,17 @@
 {
+  "scanCredits": {
+    "total": "{count} scans disponibles",
+    "count": "{count} scans",
+    "empty": "Vous ne disposez d'aucun scan disponible.",
+    "expires": "À utiliser avant le {date}.",
+    "noExpiry": "Sans expiration.",
+    "startsOnFirstUse": "Période de 30 jours à partir de la première utilisation de ce quota.",
+    "expiringTitle": "Scans valables pour une période définie",
+    "permanentTitle": "Scans permanents : {count}",
+    "alert": "{count} de vos scans expirent bientôt. Utilisez-les avant le {date}.",
+    "types": { "MONTHLY": "Scans mensuels", "INITIAL": "Scans initiaux", "REFERRAL": "Scans de parrainage", "PARTNER": "Scans partenaires", "PROMOTIONAL": "Scans promotionnels" },
+    "origins": { "historyImport": "Bonus d'import d'historique", "legacyReferral": "Parrainage : solde historique", "betaReferral": "Parrainage bêta" }
+  },
   "common": {
     "cancel": "Annuler",
     "delete": "Supprimer",
@@ -215,7 +228,7 @@
       "join": "Rejoindre"
     },
     "quota": {
-      "title": "Scans IA ce mois",
+      "title": "Scans disponibles",
       "remaining": "{used}/{limit} utilisés",
       "premiumBadge": "Premium",
       "initialCredits": "Crédit d'import : {count} scans restants jusqu'au {date}.",

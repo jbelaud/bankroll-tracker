@@ -6,6 +6,7 @@ import {
   INITIAL_SCAN_CREDIT,
   INITIAL_SCAN_CREDIT_DURATION_DAYS,
 } from "@/lib/scan/monthly-quota";
+import { grantScanBatch } from "@/lib/scan/credit-wallet";
 
 // Le SDK Stripe a besoin du module crypto Node pour vérifier la signature —
 // jamais edge (même raison que /api/scan pour la clé Anthropic).
@@ -112,13 +113,11 @@ export async function POST(request: NextRequest) {
           const expiresAt = new Date(
             grantedAt.getTime() + INITIAL_SCAN_CREDIT_DURATION_DAYS * 24 * 60 * 60 * 1000
           );
-          await prisma.user.updateMany({
-            where: { id: userId, initialScanCreditGrantedAt: null },
-            data: {
-              initialScanCreditRemaining: INITIAL_SCAN_CREDIT,
-              initialScanCreditGrantedAt: grantedAt,
-              initialScanCreditExpiresAt: expiresAt,
-            },
+          await grantScanBatch({
+            userId, type: "INITIAL", origin: "SUBSCRIPTION_HISTORY_IMPORT",
+            quantity: INITIAL_SCAN_CREDIT, grantKey: "subscription:initial",
+            entitlementKey: "subscription:initial", grantedAt, expiresAt,
+            requiresPaidPlan: true, conditions: "PAID_PLAN_HISTORY_IMPORT_30_DAYS",
           });
         }
 

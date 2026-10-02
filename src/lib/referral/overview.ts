@@ -2,6 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { referralProgress } from "./progress";
+import { getScanWallet } from "@/lib/scan/credit-wallet";
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
@@ -10,7 +11,7 @@ function maskEmail(email: string): string {
 }
 
 export async function getReferralOverview(userId: string) {
-  const [user, referrals, rewards] = await Promise.all([
+  const [user, referrals, rewards, wallet] = await Promise.all([
     prisma.user.findUniqueOrThrow({
       where: { id: userId },
       select: { referralCode: true, referralScanCredits: true },
@@ -29,11 +30,12 @@ export async function getReferralOverview(userId: string) {
       where: { beneficiaryId: userId, status: "GRANTED" },
       _sum: { amount: true },
     }),
+    getScanWallet(userId),
   ]);
 
   return {
     referralCode: user.referralCode,
-    referralCreditsRemaining: user.referralScanCredits,
+    referralCreditsRemaining: wallet.referralRemaining,
     invitedCount: referrals.length,
     activeCount: referrals.filter((referral) => referral.validScanCount > 0).length,
     scansEarned: rewards._sum.amount ?? 0,

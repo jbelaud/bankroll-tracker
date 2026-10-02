@@ -9,6 +9,7 @@ import {
   REFERRAL_CONTEXT_MAX_AGE_SECONDS,
 } from "./config";
 import { prisma } from "@/lib/prisma";
+import { grantScanBatchInTransaction, lockScanWalletUsers } from "@/lib/scan/credit-wallet";
 
 type ReferralContext = {
   code: string;
@@ -139,7 +140,7 @@ async function grantReward(
   amount: number,
   type: ReferralRewardType
 ): Promise<RewardGrant> {
-  await tx.referralReward.create({
+  const reward = await tx.referralReward.create({
     data: {
       referralId,
       beneficiaryId,
@@ -148,11 +149,24 @@ async function grantReward(
       triggerKey: `${referralId}:${type}`,
     },
   });
-  await tx.user.update({
-    where: { id: beneficiaryId },
-    data: { referralScanCredits: { increment: amount } },
+  await grantScanBatchInTransaction(tx, {
+    userId: beneficiaryId, type: "REFERRAL", origin: "BETA_REFERRAL",
+    quantity: amount, grantKey: `referral:${referralId}:${type}`,
+    entitlementKey: `referral:${referralId}:${type}`, referralRewardId: reward.id,
+    campaignId: "beta-referral", conditions: type,
   });
+  await tx.growthEvent.create({ data: { userId: beneficiaryId, name: "scan_reward_validated",
+    properties: { credit_type: "referral", scans_count: amount } } });
   return { beneficiaryId, amount, type };
+}
+
+export async function retryPendingReferralRewards() {
+  if (!BETA_REFERRAL_CONFIG.enabled) return 0;
+  const scans = await prisma.scanUsage.findMany({ where: {
+    outcome: "READY", referralEligible: true, referralProcessedAt: null,
+  }, select: { id: true, userId: true }, orderBy: { createdAt: "asc" }, take: 100 });
+  for (const scan of scans) await processValidReferralScan(scan.userId, scan.id);
+  return scans.length;
 }
 
 /** Processes exactly one successful OCR scan. Replaying the same scan is a no-op. */
@@ -163,6 +177,8 @@ export async function processValidReferralScan(userId: string, scanUsageId: stri
   if (!BETA_REFERRAL_CONFIG.enabled) return { earnedReferralScans: 0, grants: [] };
 
   return prisma.$transaction(async (tx) => {
+    const relation = await tx.referral.findUnique({ where: { referredUserId: userId }, select: { referrerId: true } });
+    await lockScanWalletUsers(tx, [userId, ...(relation ? [relation.referrerId] : [])]);
     const now = new Date();
     const claimed = await tx.scanUsage.updateMany({
       where: {

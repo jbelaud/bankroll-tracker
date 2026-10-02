@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { lockScanWalletUsers, revokeScanBatchInTransaction } from "@/lib/scan/credit-wallet";
+import { batchRemaining } from "@/lib/scan/credit-policy";
 
 function revalidateReferralViews() {
   revalidatePath("/[locale]/admin", "page");
@@ -44,6 +46,15 @@ export async function cancelReferralReward(rewardId: string, reasonInput: string
       select: { id: true, beneficiaryId: true, amount: true },
     });
     if (!reward) return;
+    await lockScanWalletUsers(tx, [reward.beneficiaryId]);
+    const batch = await tx.scanCreditBatch.findFirst({ where: { referralRewardId: reward.id, userId: reward.beneficiaryId } });
+    if (!batch) {
+      const user = await tx.user.findUniqueOrThrow({ where: { id: reward.beneficiaryId }, select: { scanWalletMigratedAt: true, referralScanCredits: true } });
+      const legacy = await tx.scanCreditBatch.findFirst({ where: { userId: reward.beneficiaryId, grantKey: "legacy:referral" } });
+      if ((!user.scanWalletMigratedAt && user.referralScanCredits > 0) || (legacy && (batchRemaining(legacy) > 0 || legacy.quantityReserved > 0))) {
+        throw new Error("Cette récompense historique n'est pas reliée à ses scans restants. Vérifiez le solde de reprise avant de l'annuler, afin de préserver les autres récompenses.");
+      }
+    }
 
     const cancelled = await tx.referralReward.updateMany({
       where: { id: reward.id, status: "GRANTED" },
@@ -55,13 +66,7 @@ export async function cancelReferralReward(rewardId: string, reasonInput: string
     });
     if (cancelled.count !== 1) return;
 
-    // SQL atomique : une réservation concurrente de scan ne peut pas écraser
-    // l'ajustement administratif, ni faire descendre le solde affiché sous 0.
-    await tx.$executeRaw`
-      UPDATE "users"
-      SET "referralScanCredits" = GREATEST(0, "referralScanCredits" - ${reward.amount})
-      WHERE "id" = ${reward.beneficiaryId}
-    `;
+    if (batch) await revokeScanBatchInTransaction(tx, reward.beneficiaryId, batch.id, reason);
   });
   revalidateReferralViews();
 }

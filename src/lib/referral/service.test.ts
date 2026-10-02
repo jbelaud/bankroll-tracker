@@ -6,15 +6,20 @@ const mocks = vi.hoisted(() => {
     referral: { findUnique: vi.fn(), update: vi.fn() },
     referralReward: { create: vi.fn() },
     user: { update: vi.fn() },
+    growthEvent: { create: vi.fn() },
   };
   return {
     tx,
     prisma: { $transaction: vi.fn(async (callback: (transaction: typeof tx) => unknown) => callback(tx)) },
+    grantScanBatch: vi.fn(),
   };
 });
 
 vi.mock("@/lib/prisma", () => ({ prisma: mocks.prisma }));
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/scan/credit-wallet", () => ({
+  lockScanWalletUsers: vi.fn(), grantScanBatchInTransaction: mocks.grantScanBatch,
+}));
 
 process.env.BETA_REFERRAL_ENABLED = "true";
 const { processValidReferralScan } = await import("./service");
@@ -24,7 +29,7 @@ describe("attribution transactionnelle des récompenses de parrainage", () => {
     vi.clearAllMocks();
     mocks.prisma.$transaction.mockImplementation(async (callback) => callback(mocks.tx));
     mocks.tx.scanUsage.updateMany.mockResolvedValue({ count: 1 });
-    mocks.tx.referralReward.create.mockResolvedValue({});
+    mocks.tx.referralReward.create.mockResolvedValue({ id: "reward-1" });
     mocks.tx.user.update.mockResolvedValue({});
   });
 
@@ -45,7 +50,11 @@ describe("attribution transactionnelle des récompenses de parrainage", () => {
       ],
     });
     expect(mocks.tx.referralReward.create).toHaveBeenCalledTimes(2);
-    expect(mocks.tx.user.update).toHaveBeenCalledTimes(2);
+    expect(mocks.grantScanBatch).toHaveBeenCalledTimes(2);
+    expect(mocks.grantScanBatch).toHaveBeenCalledWith(mocks.tx, expect.objectContaining({
+      type: "REFERRAL", userId: "referred-1", quantity: 10, referralRewardId: "reward-1",
+      entitlementKey: "referral:referral-1:REFEREE_FIRST_VALID_SCAN",
+    }));
   });
 
   it("ne crédite rien quand le même événement est rejoué", async () => {
@@ -57,6 +66,7 @@ describe("attribution transactionnelle des récompenses de parrainage", () => {
     });
     expect(mocks.tx.referral.update).not.toHaveBeenCalled();
     expect(mocks.tx.referralReward.create).not.toHaveBeenCalled();
+    expect(mocks.grantScanBatch).not.toHaveBeenCalled();
   });
 
   it("accorde uniquement les 10 scans supplémentaires au parrain au cinquième scan", async () => {

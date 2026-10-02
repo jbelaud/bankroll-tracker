@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { hasInitialScanCredits, isPaidPlan } from "./plans";
 import { HOURLY_SCAN_LIMITS } from "@/lib/scan/rate-limit";
-import { SCAN_QUOTA_CONFIG } from "@/lib/scan/monthly-quota";
+import { SCAN_QUOTA_CONFIG } from "@/lib/scan/quota-config";
 import { activeBankrollLimit, isBankrollLocked } from "./bankroll-limits";
 
 describe("beta tester plan", () => {

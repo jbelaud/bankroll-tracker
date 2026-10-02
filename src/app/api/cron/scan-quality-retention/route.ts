@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { Prisma } from "@prisma/client";
+import { recoverAbandonedScanReservations } from "@/lib/scan/credit-wallet";
+import { retryPendingReferralRewards } from "@/lib/referral/service";
 
 export const runtime = "nodejs";
 
@@ -11,6 +13,8 @@ export async function GET(request: NextRequest) {
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const recoveredScanWallets = await recoverAbandonedScanReservations();
+  const retriedReferralRewards = await retryPendingReferralRewards();
   const reports = await prisma.scanQualityReport.findMany({
     where: { expiresAt: { lte: new Date() } },
     select: { id: true, storagePath: true },
@@ -31,5 +35,5 @@ export async function GET(request: NextRequest) {
     await prisma.scanQualityReport.delete({ where: { id: report.id } });
     deleted++;
   }
-  return NextResponse.json({ deleted, clearedExtensionReceipts: clearedExtensionReceipts.count });
+  return NextResponse.json({ deleted, clearedExtensionReceipts: clearedExtensionReceipts.count, recoveredScanWallets, retriedReferralRewards });
 }
