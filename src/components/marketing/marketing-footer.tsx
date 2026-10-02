@@ -26,6 +26,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
           ]} />
           <FooterColumn title={t("learn")} locale={locale} links={[
             ["/bankroll-tracking", t("bankroll")],
+            ["/partenaires", t("partners")],
             ["/faq", t("faq")],
             ["/responsible-gambling", t("responsible")],
           ]} />

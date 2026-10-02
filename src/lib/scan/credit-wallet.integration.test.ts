@@ -11,6 +11,14 @@ import { spawnSync } from "node:child_process";
 
 const holder = vi.hoisted(() => ({ client: null as PrismaClient | null }));
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/partners/catalogue", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/partners/catalogue")>();
+  return { ...actual, PARTNER_CATALOGUE: [...actual.PARTNER_CATALOGUE, {
+    ...actual.PARTNER_CATALOGUE[0], id: "test-only-partner", name: "Test PostgreSQL", offerExpiresAt: undefined,
+    scanReward: { campaignId: "test-only-campaign", quantity: 4, expiresAfterDays: 1, stackable: true,
+      conditions: { fr: "Action de test validée", en: "Validated test action" } },
+  }] };
+});
 vi.mock("@/lib/admin", () => ({ requireAdmin: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/prisma", () => ({ prisma: new Proxy({}, { get: (_, key) => {
@@ -22,6 +30,7 @@ const { getScanWallet, grantScanBatch, reserveScanCredit, releaseScanCredit, com
 process.env.BETA_REFERRAL_ENABLED = "true";
 const { processValidReferralScan } = await import("@/lib/referral/service");
 const { cancelReferralReward } = await import("@/lib/actions/referrals");
+const { grantValidatedPartnerScans } = await import("@/lib/partners/rewards");
 
 let pg: EmbeddedPostgres;
 let directory: string;
@@ -82,7 +91,8 @@ afterAll(async () => {
   if (directory) {
     const allowed = join(resolve(tmpdir()), "kalivoa-scan-tests-");
     if (!resolve(directory).startsWith(allowed)) throw new Error("Chemin de nettoyage de test refusé.");
-    await rm(directory, { recursive: true, force: true });
+    // Windows peut garder brièvement un fichier ouvert après l'arrêt de PostgreSQL.
+    await rm(directory, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 });
   }
 }, 30_000);
 
@@ -297,6 +307,55 @@ describe("lots de scans avec transactions PostgreSQL réelles", () => {
     await client().user.delete({ where: { id: userId } });
     expect(await client().scanCreditBatch.count({ where: { userId } })).toBe(0);
     expect(await client().scanCreditReservation.count({ where: { userId } })).toBe(0);
+  });
+
+  it("attribue une offre partenaire validée une seule fois, avec expiration et priorité de consommation", async () => {
+    const input = { userId, partnerId: "test-only-partner", campaignId: "test-only-campaign", validatedActionId: "action-1" };
+    const result = await grantValidatedPartnerScans(input);
+    expect(result.batch).toMatchObject({ type: "PARTNER", partnerId: input.partnerId, campaignId: input.campaignId, quantityGranted: 4 });
+    expect(result.batch.expiresAt!.getTime() - Date.now()).toBeGreaterThan(23 * 3_600_000);
+    expect((await grantValidatedPartnerScans(input)).created).toBe(false);
+    expect((await grantValidatedPartnerScans({ ...input, validatedActionId: "action-2" })).created).toBe(false);
+    const validations = await client().growthEvent.findMany({ where: { userId, name: "scan_reward_validated" } });
+    expect(validations).toHaveLength(1);
+    expect(validations[0].properties).toEqual({ credit_type: "partner", partner_id: input.partnerId,
+      campaign_id: input.campaignId, scans_count: 4 });
+    const reservation = await reserve();
+    expect((await client().scanCreditReservation.findUniqueOrThrow({ where: { id: reservation } })).batchId).toBe(result.batch.id);
+    await commitScanUsage(userId, reservation, createUsage());
+    expect((await getScanWallet(userId)).partnerRemaining).toBe(3);
+  });
+
+  it("refuse un avantage partenaire non confirmé ou une mauvaise campagne", async () => {
+    const input = { userId, partnerId: "test-only-partner", campaignId: "test-only-campaign", validatedActionId: "action-1" };
+    await expect(grantValidatedPartnerScans({ ...input, partnerId: "pmu" })).rejects.toThrow("Aucune récompense");
+    await expect(grantValidatedPartnerScans({ ...input, partnerId: "betcroissant" })).rejects.toThrow("Aucune récompense");
+    await expect(grantValidatedPartnerScans({ ...input, campaignId: "wrong" })).rejects.toThrow("Aucune récompense");
+    await expect(grantValidatedPartnerScans({ ...input, validatedActionId: " " })).rejects.toThrow("incomplète");
+    expect(await client().scanCreditBatch.count({ where: { userId, type: "PARTNER" } })).toBe(0);
+    expect(await client().growthEvent.count({ where: { userId, name: "scan_reward_validated" } })).toBe(0);
+  });
+
+  it("attribue 30 scans permanents par bookmaker, cumulables et protégés des doubles validations", async () => {
+    await client().user.update({ where: { id: userId }, data: { monthlyScanCount: 10 } });
+    const input = { userId, partnerId: "winamax", campaignId: "winamax-referral-permanent-30-v1", validatedActionId: "referral-1" };
+    const results = await Promise.all([
+      grantValidatedPartnerScans(input),
+      grantValidatedPartnerScans({ ...input, validatedActionId: "referral-2" }),
+    ]);
+    expect(results.filter((r) => r.created)).toHaveLength(1);
+    expect(results[0].batch).toMatchObject({ quantityGranted: 30, expiresAt: null, stackable: true, type: "PARTNER" });
+    await grantValidatedPartnerScans({ ...input, partnerId: "betclic", campaignId: "betclic-referral-permanent-30-v1" });
+    expect(await getScanWallet(userId)).toMatchObject({ partnerRemaining: 60, permanentRemaining: 60 });
+    expect(await client().growthEvent.count({ where: { userId, name: "scan_reward_validated" } })).toBe(2);
+    const expiring = await grant("PROMOTIONAL", 1, future(1));
+    const first = await reserve();
+    expect((await client().scanCreditReservation.findUniqueOrThrow({ where: { id: first } })).batchId).toBe(expiring.batch.id);
+    await commitScanUsage(userId, first, createUsage());
+    expect((await getScanWallet(userId)).permanentRemaining).toBe(60);
+    await commitScanUsage(userId, await reserve(), createUsage());
+    expect(await getScanWallet(userId)).toMatchObject({ partnerRemaining: 59, permanentRemaining: 59 });
+    expect(await client().scanCreditBatch.count({ where: { userId, type: "PARTNER", expiresAt: null } })).toBe(2);
   });
 
   it("réconcilie les mouvements avec le solde du lot après usage et restitution", async () => {

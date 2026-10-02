@@ -22,6 +22,11 @@ export const PUBLIC_GROWTH_EVENT_NAMES = [
   "duplicate_warning_shown",
   "bookmaker_mismatch_warning_shown",
   "scan_expiry_alert_shown",
+  "partners_page_view",
+  "partners_tab_changed",
+  "partner_clicked",
+  "bookmaker_clicked",
+  "promo_code_copied",
 ] as const;
 
 export type PublicGrowthEventName = (typeof PUBLIC_GROWTH_EVENT_NAMES)[number];

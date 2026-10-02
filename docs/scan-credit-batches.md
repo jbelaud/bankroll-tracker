@@ -90,9 +90,16 @@ dans une transaction sous verrou, au premier accès au nouveau service.
 5. Rouvrir le service et contrôler les totaux d'un compte gratuit, d'un compte
    payant et d'un compte avec crédits historiques de parrainage.
 
-La migration a été validée dans une base PostgreSQL locale isolée ; elle n'a pas
-été appliquée à la base déployée. La suite complète passe avec 372 tests, et la
-compilation de production, le contrôle TypeScript et ESLint ont réussi.
+La migration a été validée dans une base PostgreSQL locale isolée, puis appliquée
+à la base de production le 2 octobre 2026 après autorisation explicite. La base
+est à jour ; les trois tables, la colonne de reprise, la RLS et l'absence d'accès
+des rôles navigateur ont été vérifiées. La suite complète passe avec 372 tests,
+et la compilation de production, le contrôle TypeScript et ESLint ont réussi.
+
+La mise en ligne du code avait précédé l'application de la migration et provoqué
+une erreur `P2022` sur le tableau de bord. Pour une prochaine évolution de schéma,
+appliquer les migrations additives compatibles avant de promouvoir le code qui
+les utilise, en respectant la fenêtre de bascule décrite ci-dessus.
 
 Sur ce poste Windows, la régénération complète du client Prisma rencontre un
 verrou sur sa DLL (`EPERM`). Avant la mise en service, arrêter proprement les

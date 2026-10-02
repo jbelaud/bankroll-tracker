@@ -5,12 +5,13 @@ import { Link } from "@/i18n/navigation";
 import { Brand } from "./brand";
 import { LanguageLink } from "./language-link";
 
-type HeaderLink = { href: string; key: "features" | "import" | "bookmakers" | "pricing" | "faq" };
+type HeaderLink = { href: string; key: "features" | "import" | "bookmakers" | "partners" | "pricing" | "faq" };
 
 const links: HeaderLink[] = [
   { href: "/features", key: "features" },
   { href: "/screenshot-import", key: "import" },
   { href: "/bookmakers", key: "bookmakers" },
+  { href: "/partenaires", key: "partners" },
   { href: "/pricing", key: "pricing" },
   { href: "/faq", key: "faq" },
 ];
