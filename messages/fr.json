@@ -1,7 +1,75 @@
 {
+  "partnerReferrals": {
+    "declare": "Déclarer mon parrainage",
+    "complete": "Compléter ma demande",
+    "submit": "Envoyer ma déclaration",
+    "sendUpdate": "Envoyer les compléments",
+    "sending": "Envoi en cours…",
+    "username": "Pseudo chez le bookmaker",
+    "registrationDate": "Date d’inscription chez le bookmaker",
+    "memberNote": "Informations complémentaires (facultatif)",
+    "confirmation": "Je confirme m’être inscrit via le lien ou le code Kalivoa et avoir respecté les conditions de l’offre.",
+    "formHelp": "Après votre inscription via notre lien, déclarez votre parrainage. Votre pseudo et la date d’inscription nous permettent de retrouver votre parrainage chez le bookmaker.",
+    "myScans": "Voir mes scans",
+    "history": "Mes demandes de parrainage ({count})",
+    "statuses": {
+      "PENDING": "En attente de validation",
+      "NEEDS_INFO": "Informations demandées",
+      "APPROVED": "Parrainage validé",
+      "REJECTED": "Demande refusée"
+    },
+    "descriptions": {
+      "PENDING": "Votre demande a été transmise à Kalivoa. Les {count} scans seront offerts après vérification du parrainage.",
+      "NEEDS_INFO": "Kalivoa a besoin de précisions. Complétez votre demande ci-dessous pour poursuivre la vérification.",
+      "APPROVED": "Les {count} scans permanents ont été ajoutés à votre compte, sans expiration.",
+      "REJECTED": "Votre parrainage n’a pas pu être validé. Retrouvez le motif ci-dessous."
+    },
+    "errors": {
+      "invalidForm": "Vérifiez le pseudo, la date et les champs du formulaire.",
+      "offerUnavailable": "Cette offre ne permet plus de déposer une nouvelle demande.",
+      "alreadySubmitted": "Une demande existe déjà pour cette offre. Consultez son statut.",
+      "alreadyRewarded": "Les scans de cette offre ont déjà été attribués à ce compte.",
+      "staleRequest": "Cette demande a changé. Actualisez la page avant de poursuivre.",
+      "notFound": "Cette demande n’est pas disponible.",
+      "actionFailed": "L’action n’a pas abouti. Actualisez la page et réessayez."
+    },
+    "admin": {
+      "title": "Parrainages bookmakers",
+      "description": "Retrouvez les déclarations des membres. Vérifiez le parrainage chez le bookmaker avant de valider : votre confirmation ajoute les scans et prépare l’email au membre.",
+      "pendingCount": "{count, plural, =0 {Aucune demande à vérifier} one {# demande à vérifier} other {# demandes à vérifier}}",
+      "back": "Retour à l’administration",
+      "declaredAt": "Déclaration reçue",
+      "memberMessage": "Message du membre :",
+      "reviewMessage": "Message de vérification :",
+      "messageLabel": "Message au membre (obligatoire pour un refus ou un complément)",
+      "validationHelp": "Validez uniquement après avoir confirmé le parrainage et la réception de la récompense chez le bookmaker.",
+      "approve": "Valider et offrir {count} scans",
+      "needInfo": "Demander un complément",
+      "reject": "Refuser",
+      "rewardGranted": "{count} scans permanents attribués",
+      "retryEmail": "Renvoyer l’email",
+      "audit": "Historique de la demande",
+      "saved": "Action enregistrée.",
+      "empty": "Aucune demande dans cette catégorie.",
+      "filterLabel": "Statut des demandes",
+      "all": "Toutes",
+      "pagination": "Pagination des demandes",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page {page} · {count} demandes",
+      "emailSetup": "L’envoi d’emails doit être configuré. Vous pouvez valider les parrainages : les scans seront ajoutés et les emails seront conservés pour un envoi ultérieur.",
+      "uncertainEmailHelp": "Le prestataire n’a pas confirmé l’envoi. Vérifiez son historique avant de renvoyer : le membre a peut-être déjà reçu cet email. Le renvoi n’ajoute aucun scan.",
+      "emailStatuses": {
+        "PENDING": "Email en attente d’envoi",
+        "SENT": "Email envoyé au membre",
+        "FAILED": "Email à renvoyer",
+        "NEEDS_REVIEW": "Envoi de l’email à vérifier"
+      }
+    }
+  },
   "partners": {
     "publicAccess": { "eyebrow": "Réservé aux membres Kalivoa", "title": "Vos avantages vous attendent dans votre espace", "description": "Cette page présente nos partenaires et les avantages prévus. Les liens, codes et conditions des offres sont accessibles depuis votre compte Kalivoa, dans la rubrique Partenaires.", "open": "Accéder à mes offres", "signup": "Créer mon compte Kalivoa", "card": "Voir l’offre dans mon espace" },
-    "member": { "eyebrow": "Votre espace partenaires", "title": "Partenaires", "description": "Vos offres bookmakers et outils pour accompagner votre suivi.", "permanent": "Scans permanents", "once": "Une fois par offre et par compte", "myScans": "Mes scans", "available": "offres bookmakers disponibles", "perOffer": "scans par offre validée", "noExpiryValue": "Sans limite", "noExpiryLabel": "de durée après attribution", "howTitle": "Comment obtenir vos scans ?", "steps": { "choose": { "title": "Consultez les conditions", "description": "Choisissez une offre et vérifiez votre éligibilité avant toute inscription." }, "refer": { "title": "Utilisez votre accès Kalivoa", "description": "Passez par le lien ou le code de cette page et respectez les conditions du bookmaker." }, "validate": { "title": "Recevez vos scans après validation", "description": "Une fois le parrainage confirmé, les 30 scans rejoignent votre compte sans expiration." } }, "validationPending": "Le parcours de validation est en préparation. Aucun scan n’est attribué automatiquement pour le moment : un clic ou une copie du code ne suffit pas.", "reassuranceTitle": "Des avantages, en toute transparence", "reassurance": "Les scans Kalivoa sont distincts des bonus bookmakers. Les paris sont réservés aux adultes et comportent un risque de perte : gardez vos limites et ne jouez pas davantage pour obtenir un avantage.", "signIn": "Se reconnecter", "rewardSummary": "30 scans permanents par offre validée", "offerCount": "{count, plural, =0 {Aucune offre active} one {# offre active} other {# offres actives}}", "validationNotice": "Validation en préparation : les scans ne sont pas encore attribués automatiquement." },
+    "member": { "eyebrow": "Votre espace partenaires", "title": "Partenaires", "description": "Vos offres bookmakers et outils pour accompagner votre suivi.", "permanent": "Scans permanents", "once": "Une fois par offre et par compte", "myScans": "Mes scans", "available": "offres bookmakers disponibles", "perOffer": "scans par offre validée", "noExpiryValue": "Sans limite", "noExpiryLabel": "de durée après attribution", "howTitle": "Comment obtenir vos scans ?", "steps": { "choose": { "title": "Consultez les conditions", "description": "Choisissez une offre et vérifiez votre éligibilité avant toute inscription." }, "refer": { "title": "Utilisez votre accès Kalivoa", "description": "Inscrivez-vous via le lien ou le code de cette page, puis déclarez votre parrainage." }, "validate": { "title": "Recevez vos scans après validation", "description": "Une fois le parrainage confirmé, les 30 scans rejoignent votre compte sans expiration." } }, "validationPending": "Après votre inscription via le lien ou le code Kalivoa, déclarez votre parrainage sur cette page. Nous le vérifions auprès du bookmaker avant d’attribuer les scans. Un clic ou une copie du code ne suffit pas.", "reassuranceTitle": "Des avantages, en toute transparence", "reassurance": "Les scans Kalivoa sont distincts des bonus bookmakers. Les paris sont réservés aux adultes et comportent un risque de perte : gardez vos limites et ne jouez pas davantage pour obtenir un avantage.", "signIn": "Se reconnecter", "rewardSummary": "30 scans permanents par offre validée", "offerCount": "{count, plural, =0 {Aucune offre active} one {# offre active} other {# offres actives}}", "validationNotice": "Déclarez votre parrainage après inscription. Les scans sont offerts après vérification." },
     "meta": { "title": "Les partenaires Kalivoa", "description": "Découvrez les liens de parrainage et les collaborations en préparation de Kalivoa : outils d’analyse, suivi de bankroll et conditions des offres." },
     "nav": "Partenaires", "home": "Accueil", "breadcrumb": "Fil d’Ariane",
     "eyebrow": "Offres et outils · en toute transparence",

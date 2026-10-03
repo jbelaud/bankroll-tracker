@@ -1,7 +1,75 @@
 {
+  "partnerReferrals": {
+    "declare": "Declare my referral",
+    "complete": "Complete my request",
+    "submit": "Send my declaration",
+    "sendUpdate": "Send additional information",
+    "sending": "Sending…",
+    "username": "Bookmaker username",
+    "registrationDate": "Bookmaker registration date",
+    "memberNote": "Additional information (optional)",
+    "confirmation": "I confirm that I registered through the Kalivoa link or code and met the offer’s conditions.",
+    "formHelp": "After registering through our link, declare your referral. Your username and registration date help us find your referral with the bookmaker.",
+    "myScans": "View my scans",
+    "history": "My referral requests ({count})",
+    "statuses": {
+      "PENDING": "Awaiting validation",
+      "NEEDS_INFO": "More information needed",
+      "APPROVED": "Referral validated",
+      "REJECTED": "Request declined"
+    },
+    "descriptions": {
+      "PENDING": "Your request has been sent to Kalivoa. The {count} scans will be awarded after the referral is verified.",
+      "NEEDS_INFO": "Kalivoa needs more information. Complete your request below to continue the review.",
+      "APPROVED": "The {count} permanent scans have been added to your account with no expiry.",
+      "REJECTED": "Your referral could not be validated. See the reason below."
+    },
+    "errors": {
+      "invalidForm": "Check the username, date and form fields.",
+      "offerUnavailable": "This offer no longer accepts new requests.",
+      "alreadySubmitted": "A request already exists for this offer. Check its status.",
+      "alreadyRewarded": "Scans for this offer have already been awarded to this account.",
+      "staleRequest": "This request has changed. Refresh the page before continuing.",
+      "notFound": "This request is not available.",
+      "actionFailed": "The action could not be completed. Refresh the page and try again."
+    },
+    "admin": {
+      "title": "Bookmaker referrals",
+      "description": "Review members’ declarations. Check the referral with the bookmaker before approving: your confirmation adds scans and queues the member’s email.",
+      "pendingCount": "{count, plural, =0 {No requests to review} one {# request to review} other {# requests to review}}",
+      "back": "Back to administration",
+      "declaredAt": "Declaration received",
+      "memberMessage": "Member message:",
+      "reviewMessage": "Review message:",
+      "messageLabel": "Message to the member (required to decline or request information)",
+      "validationHelp": "Only approve after confirming the referral and receiving the reward from the bookmaker.",
+      "approve": "Approve and award {count} scans",
+      "needInfo": "Request more information",
+      "reject": "Decline",
+      "rewardGranted": "{count} permanent scans awarded",
+      "retryEmail": "Resend email",
+      "audit": "Request history",
+      "saved": "Action saved.",
+      "empty": "No requests in this category.",
+      "filterLabel": "Request status",
+      "all": "All",
+      "pagination": "Request pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} · {count} requests",
+      "emailSetup": "Email sending must be configured. You can approve referrals: scans will be added and emails will be saved for delivery later.",
+      "uncertainEmailHelp": "The provider did not confirm delivery. Check its history before resending: the member may already have received this email. Resending does not add scans.",
+      "emailStatuses": {
+        "PENDING": "Email queued",
+        "SENT": "Email sent to member",
+        "FAILED": "Email needs to be resent",
+        "NEEDS_REVIEW": "Email delivery needs checking"
+      }
+    }
+  },
   "partners": {
     "publicAccess": { "eyebrow": "For Kalivoa members", "title": "Your benefits are in your member area", "description": "This page introduces our partners and planned benefits. Offer links, codes and terms are available in your Kalivoa account, under Partners.", "open": "Access my offers", "signup": "Create my Kalivoa account", "card": "View offer in my member area" },
-    "member": { "eyebrow": "Your partner area", "title": "Partners", "description": "Bookmaker offers and tools to support your tracking.", "permanent": "Permanent scans", "once": "Once per offer and account", "myScans": "My scans", "available": "bookmaker offers available", "perOffer": "scans per validated offer", "noExpiryValue": "No expiry", "noExpiryLabel": "after scans are awarded", "howTitle": "How do you receive your scans?", "steps": { "choose": { "title": "Review the terms", "description": "Choose an offer and check your eligibility before registering." }, "refer": { "title": "Use your Kalivoa access", "description": "Use the link or code on this page and meet the bookmaker’s terms." }, "validate": { "title": "Receive scans after validation", "description": "Once the referral is confirmed, 30 scans are added to your account with no expiry." } }, "validationPending": "The validation process is being prepared. No scans are awarded automatically yet: clicking a link or copying a code is not enough.", "reassuranceTitle": "Benefits with transparency", "reassurance": "Kalivoa scans are separate from bookmaker bonuses. Betting is for adults and carries a risk of loss: keep your limits and do not play more to receive a benefit.", "signIn": "Sign in again", "rewardSummary": "30 permanent scans per validated offer", "offerCount": "{count, plural, =0 {No active offers} one {# active offer} other {# active offers}}", "validationNotice": "Validation is being prepared: scans are not awarded automatically yet." },
+    "member": { "eyebrow": "Your partner area", "title": "Partners", "description": "Bookmaker offers and tools to support your tracking.", "permanent": "Permanent scans", "once": "Once per offer and account", "myScans": "My scans", "available": "bookmaker offers available", "perOffer": "scans per validated offer", "noExpiryValue": "No expiry", "noExpiryLabel": "after scans are awarded", "howTitle": "How do you receive your scans?", "steps": { "choose": { "title": "Review the terms", "description": "Choose an offer and check your eligibility before registering." }, "refer": { "title": "Use your Kalivoa access", "description": "Register through the link or code on this page, then declare your referral." }, "validate": { "title": "Receive scans after validation", "description": "Once the referral is confirmed, 30 scans are added to your account with no expiry." } }, "validationPending": "After registering through the Kalivoa link or code, declare your referral on this page. We check it with the bookmaker before awarding scans. Clicking a link or copying a code is not enough.", "reassuranceTitle": "Benefits with transparency", "reassurance": "Kalivoa scans are separate from bookmaker bonuses. Betting is for adults and carries a risk of loss: keep your limits and do not play more to receive a benefit.", "signIn": "Sign in again", "rewardSummary": "30 permanent scans per validated offer", "offerCount": "{count, plural, =0 {No active offers} one {# active offer} other {# active offers}}", "validationNotice": "Declare your referral after registering. Scans are awarded after verification." },
     "meta": { "title": "Kalivoa partners", "description": "Explore Kalivoa’s referral links and collaborations under discussion: analysis tools, bankroll tracking and offer terms." },
     "nav": "Partners", "home": "Home", "breadcrumb": "Breadcrumb",
     "eyebrow": "Offers and tools · with transparency",

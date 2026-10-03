@@ -5,6 +5,7 @@ import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { Prisma } from "@prisma/client";
 import { recoverAbandonedScanReservations } from "@/lib/scan/credit-wallet";
 import { retryPendingReferralRewards } from "@/lib/referral/service";
+import { retryPendingPartnerRewardEmails } from "@/lib/partners/reward-emails";
 
 export const runtime = "nodejs";
 
@@ -15,6 +16,7 @@ export async function GET(request: NextRequest) {
   }
   const recoveredScanWallets = await recoverAbandonedScanReservations();
   const retriedReferralRewards = await retryPendingReferralRewards();
+  const retriedPartnerEmails = await retryPendingPartnerRewardEmails();
   const reports = await prisma.scanQualityReport.findMany({
     where: { expiresAt: { lte: new Date() } },
     select: { id: true, storagePath: true },
@@ -35,5 +37,5 @@ export async function GET(request: NextRequest) {
     await prisma.scanQualityReport.delete({ where: { id: report.id } });
     deleted++;
   }
-  return NextResponse.json({ deleted, clearedExtensionReceipts: clearedExtensionReceipts.count, recoveredScanWallets, retriedReferralRewards });
+  return NextResponse.json({ deleted, clearedExtensionReceipts: clearedExtensionReceipts.count, recoveredScanWallets, retriedReferralRewards, retriedPartnerEmails });
 }

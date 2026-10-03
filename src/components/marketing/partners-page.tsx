@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight, ChartLineUp, Copy, Handshake, House, ShieldCheck, LockSimple } from "@phosphor-icons/react";
@@ -126,7 +126,7 @@ function PartnerPreviewCard({ partner, locale }: { partner: PartnerPreview; loca
   </article>;
 }
 
-export function PartnerCard({ partner, locale }: { partner: PublicPartner; locale: Locale }) {
+export function PartnerCard({ partner, locale, children }: { partner: PublicPartner; locale: Locale; children?: ReactNode }) {
   const t = useTranslations("partners");
   const [copyState, setCopyState] = useState<"idle" | "copying" | "copied" | "failed">("idle");
   const active = partner.status === "ACTIVE";
@@ -187,5 +187,6 @@ export function PartnerCard({ partner, locale }: { partner: PublicPartner; local
       </a>
       <p className="mt-2 text-center text-xs text-muted-foreground">{t(partner.section === "bookmakers" ? "referralLink" : "partnerLink")}</p>
     </div> : <p className="mt-5 flex items-center gap-2 text-xs leading-6 text-muted-foreground"><ChartLineUp size={16} className="shrink-0" aria-hidden />{t(partner.status === "PREPARATION" ? "preparationNotice" : "unavailableNotice")}</p>}
+    {children}
   </article>;
 }

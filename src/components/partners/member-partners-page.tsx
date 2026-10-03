@@ -9,9 +9,12 @@ import type { PartnerSection, PublicPartner } from "@/lib/partners/catalogue";
 import { PartnerCard } from "@/components/marketing/partners-page";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
+import { PartnerClaimForm } from "./partner-claim-form";
+import type { MemberPartnerClaim } from "@/lib/partners/claims-types";
 
-export function MemberPartnersPage({ partners }: { partners: PublicPartner[] }) {
+export function MemberPartnersPage({ partners, claims = [] }: { partners: PublicPartner[]; claims?: MemberPartnerClaim[] }) {
   const t = useTranslations("partners");
+  const claimText = useTranslations("partnerReferrals");
   const locale = useLocale() as Locale;
   const [section, setSection] = useState<PartnerSection>("bookmakers");
   const viewed = useRef(false);
@@ -64,11 +67,25 @@ export function MemberPartnersPage({ partners }: { partners: PublicPartner[] }) 
         return <TabsContent key={tab} value={tab} keepMounted className="mt-3 data-[hidden]:hidden">
           <h2 className="sr-only">{t(`${tab}.title`)}</h2>
           <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{t(`${tab}.description`)}</p>
-          {items.length ? <div className="mt-3 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">{items.map((partner) => <PartnerCard key={partner.id} partner={partner} locale={locale} />)}</div>
+          {items.length ? <div className="mt-3 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">{items.map((partner) => {
+            const claim = claims.find((item) => item.partnerId === partner.id);
+            return <PartnerCard key={partner.id} partner={partner} locale={locale}>
+              {(claim || (partner.section === "bookmakers" && partner.scanReward)) && <PartnerClaimForm key={`${partner.id}-${claim?.revision ?? 0}`} partnerId={partner.id} quantity={claim?.rewardQuantity ?? partner.scanReward!.quantity} claim={claim} />}
+            </PartnerCard>;
+          })}</div>
             : <div className="mt-5 rounded-2xl border border-border bg-card p-6"><h3 className="font-semibold">{t(`${tab}.emptyTitle`)}</h3><p className="mt-2 text-sm text-muted-foreground">{t(`${tab}.emptyDescription`)}</p></div>}
         </TabsContent>;
       })}
     </Tabs>
+
+    {claims.length > 0 && <details className="rounded-xl border border-border bg-card/50 px-4 py-2">
+      <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring">{claimText("history", { count: claims.length })}</summary>
+      <ul className="divide-y divide-border">{claims.map((claim) => <li key={claim.id} className="py-3">
+        <p className="flex flex-wrap justify-between gap-2 text-sm"><strong>{claim.partnerName}</strong><span className="text-muted-foreground">{claimText(`statuses.${claim.status}`)}</span></p>
+        <p className="mt-1 text-xs text-muted-foreground">{claim.bookmakerUsername} · {new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Paris" }).format(new Date(claim.createdAt))}</p>
+        {!partners.some((partner) => partner.id === claim.partnerId) && <PartnerClaimForm key={`${claim.id}-${claim.revision}`} partnerId={claim.partnerId} quantity={claim.rewardQuantity} claim={claim} />}
+      </li>)}</ul>
+    </details>}
 
     <aside className="flex flex-col gap-4 rounded-2xl border border-border bg-card/50 p-5 sm:flex-row sm:p-6">
       <CheckCircle size={25} className="shrink-0 text-primary" aria-hidden />

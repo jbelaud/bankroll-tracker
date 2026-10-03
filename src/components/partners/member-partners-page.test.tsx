@@ -7,7 +7,8 @@ import en from "../../../messages/en.json";
 import { getPublicPartners } from "@/lib/partners/catalogue";
 import { MemberPartnersPage } from "./member-partners-page";
 vi.mock("@/lib/growth/client", () => ({ trackPublicGrowthEvent: vi.fn() }));
-vi.mock("@/i18n/navigation", () => ({ Link: ({ children, ...props }: React.ComponentProps<"a">) => <a {...props}>{children}</a> }));
+vi.mock("@/i18n/navigation", () => ({ Link: ({ children, ...props }: React.ComponentProps<"a">) => <a {...props}>{children}</a>, useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("@/lib/actions/partner-referrals", () => ({ declarePartnerReferral: vi.fn() }));
 
 describe("espace partenaires connecté", () => {
   it.each(["fr", "en"] as const)("affiche les offres, les scans permanents et la validation en préparation en %s", (locale) => {
@@ -18,6 +19,6 @@ describe("espace partenaires connecté", () => {
     expect(html).toContain('href="/account/subscription"');
     expect(html.match(/role="tab"/g)).toHaveLength(2);
     expect(html).toContain(locale === "fr" ? "Scans permanents, sans expiration." : "Permanent scans with no expiry.");
-    expect(html).toContain(locale === "fr" ? "Aucun scan n’est attribué automatiquement pour le moment" : "No scans are awarded automatically yet");
+    expect(html).toContain(locale === "fr" ? "Les scans sont offerts après vérification" : "Scans are awarded after verification");
   });
 });

@@ -9,9 +9,10 @@ accéder à son espace. Elle ne transmet aucun lien de parrainage ni code.
 
 Espace membre `/fr/partners` et `/en/partners`, intégré au tableau de bord :
 entrée « Partenaires » juste sous « Compte » dans « Mon espace », et dans le
-menu mobile. Présentation des avantages, étapes, état de préparation de la
-validation, onglets et cartes avec conditions dépliables, codes copiables et
-liens. « Mes scans disponibles » renvoie au compte et à l'abonnement.
+menu mobile. L'en-tête compact laisse les onglets visibles sur mobile ; les
+étapes et conditions sont dépliables. Les cartes proposent les liens et codes,
+la déclaration du parrainage et son état de validation. « Mes scans » renvoie
+au compte et à l'abonnement.
 
 `getPartnerPreviews` construit les données publiques par sélection explicite
 des champs. Les liens, codes et campagnes ne sont pas sérialisés dans ses props.
@@ -31,8 +32,9 @@ nom servent de repère visuel sans prétendre reproduire un logo officiel.
 Les quatre liens sont ceux transmis par le propriétaire de Kalivoa.
 Le catalogue est `src/lib/partners/catalogue.ts` : statut, catégorie, descriptions,
 avantage confirmé, conditions, lien, code, logo éventuel, échéance, mise en avant
-et ordre sont regroupés dans cette source. Il ne dépend pas de la disponibilité
-de la base pour afficher la page. Aucun nouveau schéma n'est nécessaire.
+et ordre sont regroupés dans cette source. Le catalogue et les aperçus publics
+ne dépendent pas de la base. Les déclarations membres utilisent les nouvelles
+tables décrites dans [Parrainages bookmakers](bookmaker-referrals.md).
 
 - Winamax : lien et code fournis ; aucun montant non vérifié annoncé.
 - Betclic : avantage fourni et rapproché des conditions officielles ; le bonus
@@ -78,15 +80,16 @@ même si plusieurs identifiants de validation arrivent. Le lot possède son
 partenaire, sa campagne et sa propre expiration ; la consommation garde la
 priorité par expiration de la phase 1.
 
-Le propriétaire a choisi de préparer d'abord les pages et de définir le
-parcours de validation ensuite. Une mention visible dans l'espace membre
-explique qu'aucun scan n'est attribué automatiquement pour le moment.
-L'adaptateur est exclusivement serveur. Un futur webhook authentifié ou une
-administration autorisée doit vérifier la preuve et le bénéficiaire avant de
-l'appeler. Aucun endpoint public, clic ou copie de code ne déclenche d'attribution.
-La quantité et la permanence sont approuvées. Le parcours réel d'attribution
-reste à connecter à une source de validation fiable ; un lien de parrainage
-seul ne fournit pas cette preuve.
+Le membre déclare son inscription avec son pseudo bookmaker et sa date
+d'inscription. L'administration reçoit une demande à vérifier et peut demander
+un complément, refuser avec un motif ou valider. La validation attribue les
+30 scans permanents et prépare l'email dans une seule transaction, avec
+protection contre les doublons. Elle utilise les conditions figées lors de la
+déclaration, ce qui permet de traiter une demande après la fin de l'offre.
+Un clic, une copie de code ou une déclaration ne déclenche aucune attribution.
+Le rapprochement avec la récompense reçue chez le bookmaker reste manuel.
+Le parcours et la configuration des emails sont documentés dans
+[Parrainages bookmakers](bookmaker-referrals.md).
 
 ## Événements
 
@@ -121,36 +124,25 @@ catalogue public.
 
 ## Points à confirmer avant activation des avantages
 
-Source et parcours de validation du parrainage ; modalités PMU
+Configuration du service et de l'expéditeur des emails ; modalités PMU
 actuelles ; logos officiels si souhaités ; finalisation de la collaboration
-BetCroissant. La préparation de cette page ne publie pas de partenariat fictif.
+BetCroissant. Aucun partenariat non confirmé n'est annoncé comme actif.
 
 ## Vérification
 
-La séparation publique/membre passe la suite complète : 407 tests dans 76
-fichiers. Les tests vérifient l'absence de liens/codes/campagnes dans les données
-et le HTML publics, la redirection vers la connexion en FR/EN, les sessions
-absentes/invalides/anonymes, et le rendu des offres membres dans les deux langues.
-Compilation de production et ESLint réussis. La tentative de vérification
-visuelle de cette correction avec un compte fictif et une base temporaire a
-été interrompue par des délais d'attente répétés du navigateur intégré ; aucun
-contrôle visuel mobile ou parcours de connexion navigateur n'est revendiqué
-pour cette correction. Le serveur local a bien rendu la présentation publique.
+Le 3 octobre 2026, la suite complète passe : 436 tests dans 79 fichiers,
+avec TypeScript, ESLint et compilation de production réussis. La séparation
+publique/membre, les sessions et les traductions FR/EN sont couvertes.
+Les 15 tests PostgreSQL du parcours de déclaration vérifient notamment les
+doublons, le cumul, les décisions concurrentes, les droits, les compléments,
+les refus, la validation après expiration et les reprises des emails.
 
-La suite complète de la phase 2 passe avec 393 tests. Après confirmation des
-30 scans permanents, les 47 tests ciblés passent : rendu FR/EN, cumul entre
-bookmakers, permanence et validations simultanées. Le nettoyage de la base de
-test tolère les verrous temporaires de Windows. La vérification TypeScript et
-ESLint passe également. La compilation de production de la phase 2 a réussi.
-Les tests PostgreSQL couvrent
-aussi l'adaptateur partenaire : unicité du lot et de l'événement de validation,
-expiration, consommation prioritaire et refus d'une offre non confirmée.
+Une démonstration locale avec comptes fictifs, composants réels et base
+temporaire a vérifié dans le navigateur : déclaration, complément demandé,
+correction par le membre, validation et solde de 30 scans permanents.
+Les onglets restent visibles à 390 pixels, sans débordement. Le modèle d'email
+a été contrôlé visuellement ; aucun email réel n'a été envoyé.
 
-Le navigateur a vérifié les versions française et anglaise, les deux onglets,
-la navigation, les conditions dépliables, la confirmation de copie, le clavier
-et l'affichage à 390 pixels sans débordement. Aucun message d'erreur n'a été
-observé. Les événements de visite, changement d'onglet et copie ont été retrouvés
-dans une base PostgreSQL temporaire dédiée à cette vérification locale.
-
-Aucune nouvelle migration de production n'est nécessaire pour les pages
-publique et membre. L'attribution de scans reste indépendante des clics.
+La migration `20261003110000_partner_referral_claims` a été appliquée sur
+Supabase Production. Les nouvelles tables sont protégées par RLS et ne sont
+pas accessibles aux rôles publics. L'attribution reste indépendante des clics.

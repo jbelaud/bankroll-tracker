@@ -17,6 +17,7 @@ import type { ReactNode } from "react";
 import { AdminUserTable, type AdminUserRow } from "@/components/admin/admin-user-table";
 import { BetaTesterManager } from "@/components/admin/beta-tester-manager";
 import { ReferralManager } from "@/components/admin/referral-manager";
+import { PartnerReferralAlert } from "@/components/admin/partner-referral-alert";
 import { ScanMeasurementTable } from "@/components/admin/scan-measurement-table";
 import { ScanQualityQueue } from "@/components/admin/scan-quality-queue";
 import { requireAdmin } from "@/lib/admin";
@@ -346,6 +347,8 @@ export default async function AdminPage({
     take: 50,
   });
 
+  const pendingPartnerClaims = await prisma.partnerReferralClaim.count({ where: { status: "PENDING" } });
+
   const [
     planCounts,
     signups,
@@ -505,6 +508,7 @@ export default async function AdminPage({
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
+      <PartnerReferralAlert key={pendingPartnerClaims} initialCount={pendingPartnerClaims} />
       <header className="flex flex-col gap-5 border-b border-border pb-6 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-primary">
