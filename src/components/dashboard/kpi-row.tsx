@@ -18,19 +18,19 @@ function KpiTile({
   sub?: string;
 }) {
   return (
-    <div className="glass-card flex min-h-24 min-w-0 flex-col items-start justify-center gap-1 rounded-xl p-3 sm:min-h-28 sm:p-4">
-      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="glass-card flex min-w-0 flex-col items-start justify-center gap-0.5 rounded-xl px-3 py-2.5">
+      <span className="text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       <span
         className={cn(
-          "num max-w-full text-lg font-bold tracking-tight sm:text-xl 2xl:text-2xl",
+          "num max-w-full text-lg font-bold tracking-tight",
           trend !== undefined && (trend >= 0 ? "text-profit" : "text-loss")
         )}
       >
         {value}
       </span>
-      {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
+      {sub && <span className="text-[0.65rem] leading-tight text-muted-foreground">{sub}</span>}
     </div>
   );
 }
@@ -64,7 +64,7 @@ export function KpiRow({
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-2">
         <KpiTile label={t("allBets")} value={String(totalCount)} sub={t("countBreakdown", { settled: settledCount, pending: pendingCount, refunded: totalCount - settledCount - pendingCount })} />
         <KpiTile label={t("profit")} value={displayUnit === "units" ? unitProfit === null ? "—" : fmtUnits(unitProfit, locale, true) : fmtMoneySigned(profit, locale, currency)} trend={displayUnit === "units" && unitProfit === null ? undefined : profit} sub={displayUnit === "units" && missingUnitCount > 0 ? t("missingUnits", { count: missingUnitCount }) : undefined} />
         <KpiTile

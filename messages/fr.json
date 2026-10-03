@@ -83,7 +83,8 @@
     "scanner": "Scan",
     "scannerDesktop": "Scan OCR",
     "fileImport": "Importer un historique",
-    "stats": "Analyser",
+    "stats": "Statistiques",
+    "statsMobile": "Stats",
     "aiInsights": "Analyses IA",
     "tipsters": "Tipsters",
     "myTipsters": "Mes tipsters",
@@ -94,7 +95,7 @@
     "moreNavigation": "Menu",
     "groups": {
       "tracking": "Suivi",
-      "analysis": "Analyse",
+      "analysis": "Performances",
       "community": "Communauté",
       "manage": "Mon espace"
     }
@@ -416,7 +417,7 @@
       "details": "Chiffres détaillés",
       "filters": "Filtres",
       "calendar": "Calendrier",
-      "analyze": "Analyser",
+      "analyze": "Statistiques",
       "ai": "Analyses IA",
       "manage": "Gérer",
       "capitalTitle": "Capital et mouvements",
@@ -843,8 +844,18 @@
   "stats": {
     "title": "Stats",
     "workspace": {
-      "title": "Analyser",
-      "subtitle": "Explore tes résultats par période, sport, type de pari et bookmaker.",
+      "title": "Statistiques",
+      "subtitle": "Choisis un thème pour explorer tes résultats sans perdre le fil.",
+      "viewsLabel": "Vues statistiques",
+      "views": {
+        "general": "Général",
+        "distributions": "Répartitions",
+        "sport": "Sports",
+        "type": "Types de pari",
+        "bookmaker": "Bookmakers",
+        "tipster": "Tipsters",
+        "details": "Chiffres détaillés"
+      },
       "filters": "Filtres",
       "filtersActive": "Filtres actifs",
       "calendar": "Calendrier",

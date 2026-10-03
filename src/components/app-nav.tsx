@@ -34,7 +34,7 @@ const NAV_ITEMS = [
   { href: "/history", key: "history", icon: ListBullets },
   { href: "/scan", key: "scanner", desktopKey: "scannerDesktop", icon: Scan, primary: true },
   { href: "/import-history", key: "fileImport", icon: FileArrowUp },
-  { href: "/stats", key: "stats", icon: ChartBar },
+  { href: "/stats", key: "stats", mobileKey: "statsMobile", icon: ChartBar },
   { href: "/bankrolls", key: "bankrolls", icon: Wallet },
   { href: "/tipsters", key: "tipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
@@ -223,7 +223,7 @@ export function AppNav({
       >
         <ul className="relative grid grid-cols-5 items-end">
           {MOBILE_NAV_ITEMS.map(({ href, key, icon: Icon, ...item }) => {
-          const label = t(key);
+          const label = t("mobileKey" in item ? item.mobileKey : key);
           const active = pathname.startsWith(href) || (key === "stats" && pathname.startsWith("/ai-insights"));
           const isPrimary = "primary" in item && item.primary;
 

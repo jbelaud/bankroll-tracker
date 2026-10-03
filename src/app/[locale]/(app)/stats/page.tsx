@@ -29,12 +29,12 @@ import { DetailedStatsPanel } from "@/components/stats/detailed-stats-panel";
 import { CapitalReturnPanel } from "@/components/stats/capital-return-panel";
 import { StatsTabs } from "@/components/stats/stats-tabs";
 import { StatsTable } from "@/components/stats/stats-table";
-import { StatsTableTabs } from "@/components/stats/stats-table-tabs";
 import { TypeStatsFilter } from "@/components/stats/type-stats-filter";
 import { CondensedStatRow } from "@/components/stats/condensed-stat-row";
 import { ProfitCalendar } from "@/components/stats/profit-calendar";
 import { StatsFilters } from "@/components/stats/stats-filters";
 import { StatsWorkspace } from "@/components/stats/stats-workspace";
+import { STATS_VIEWS, type StatsView } from "@/lib/stats-view";
 import { ProfitCurve } from "@/components/stats/profit-curve";
 import { getTipsterPerformances } from "@/lib/tipsters/analytics";
 import { TipsterStatsTable } from "@/components/stats/tipster-stats-table";
@@ -180,9 +180,15 @@ export default async function StatsPage({
     from || to || q || bankroll || sportFilter || typeFilter || resultFilter || live || freebet ||
     minStake !== null || maxStake !== null || minOdds !== null || maxOdds !== null
   );
+  const requestedView = value("view");
+  const initialView: StatsView = value("section") === "details"
+    ? "details"
+    : STATS_VIEWS.includes(requestedView as StatsView) ? requestedView as StatsView : "general";
 
   return (
     <StatsWorkspace
+      key={`${bankroll}-${initialView}-${value("panel")}`}
+      initialView={initialView}
       hasActiveFilters={hasActiveFilters}
       initialPanel={value("panel") === "filters" ? "filters" : value("panel") === "calendar" ? "calendar" : null}
       filters={
@@ -194,74 +200,59 @@ export default async function StatsPage({
         />
       }
       calendar={<ProfitCalendar entries={daily} currency={currency} />}
-    >
-      <section aria-label={t("overview.ariaLabel")} className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("sections.overviewDescription", { count: bets.length })}</p>
-        </div>
-        <OverviewGrid stats={stats} currency={currency} units={{
-          profit: units.profit,
-          averageStake: units.averageStake,
-          missing: units.missing,
-          biggestWin: extremeInUnits(stats.biggestWin),
-          biggestLoss: extremeInUnits(stats.biggestLoss),
-        }} />
-      </section>
-
-      <ClvPanel stats={clv} />
-
-      <section aria-label={t("chartsAriaLabel")} className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-sm font-semibold">{t("sections.analysis")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("sections.analysisDescription")}</p>
-        </div>
-        <div className="grid min-w-0 gap-3 xl:grid-cols-2">
-          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
-            <h3 className="text-sm font-semibold">{t("curve.title")}</h3>
+      views={{
+        general: <div className="flex min-w-0 flex-col gap-5">
+          <section aria-label={t("overview.ariaLabel")} className="flex flex-col gap-3">
+            <div>
+              <h2 className="text-sm font-semibold">{t("sections.overview")}</h2>
+              <p className="mt-1 text-xs text-muted-foreground">{t("sections.overviewDescription", { count: bets.length })}</p>
+            </div>
+            <OverviewGrid stats={stats} currency={currency} units={{
+              profit: units.profit,
+              averageStake: units.averageStake,
+              missing: units.missing,
+              biggestWin: extremeInUnits(stats.biggestWin),
+              biggestLoss: extremeInUnits(stats.biggestLoss),
+            }} />
+          </section>
+          <ClvPanel stats={clv} />
+          <section className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4" aria-label={t("curve.title")}>
+            <h2 className="text-sm font-semibold">{t("curve.title")}</h2>
             <ProfitCurve data={cumulativeProfit} unitData={cumulativeUnitProfit} missingUnits={units.missing} currency={currency} />
-          </div>
-          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 lg:p-4">
-            <StatsTabs
-              oddsData={oddsData}
-              stakeData={stakeData}
-              monthlyData={monthlyWithUnits}
-              distributionData={stats.distribution}
-              sportData={bySport}
-              currency={currency}
+          </section>
+        </div>,
+        distributions: <section aria-label={t("chartsAriaLabel")} className="flex min-w-0 flex-col gap-3">
+          <p className="text-xs text-muted-foreground">{t("sections.analysisDescription")}</p>
+          <StatsTabs
+            oddsData={oddsData}
+            stakeData={stakeData}
+            monthlyData={monthlyWithUnits}
+            distributionData={stats.distribution}
+            sportData={bySport}
+            currency={currency}
+          />
+        </section>,
+        sport: <section aria-label={t("tableTabs.sport")} className="flex min-w-0 flex-col gap-3">
+          <p className="text-xs text-muted-foreground">{t("sections.breakdownDescription")}</p>
+          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4"><StatsTable rows={bySport} kind="sport" currency={currency} /></div>
+        </section>,
+        type: <section aria-label={t("tableTabs.type")} className="flex min-w-0 flex-col gap-3">
+          <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4">
+            <TypeStatsFilter
+              sportOptions={sportOptions}
+              tables={Object.fromEntries(Object.entries(byTypePerSport).map(([key, rows]) => [
+                key, <StatsTable key={key} rows={rows} kind="type" currency={currency} />,
+              ]))}
             />
           </div>
-        </div>
-      </section>
-
-      <section aria-label={t("tablesAriaLabel")} className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-sm font-semibold">{t("sections.breakdown")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("sections.breakdownDescription")}</p>
-        </div>
-        <div className="glass-card min-w-0 overflow-hidden rounded-xl p-3">
-          <StatsTableTabs
-            sportTable={<StatsTable rows={bySport} kind="sport" currency={currency} />}
-            typeTable={
-              <TypeStatsFilter
-                sportOptions={sportOptions}
-                tables={Object.fromEntries(
-                  Object.entries(byTypePerSport).map(([key, rows]) => [
-                    key,
-                    <StatsTable key={key} rows={rows} kind="type" currency={currency} />,
-                  ])
-                )}
-              />
-            }
-            bookmakerTable={<StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />}
-            tipsterTable={<TipsterStatsTable rows={byTipster} from={from || undefined} to={to || undefined} />}
-          />
-        </div>
-      </section>
-
-      <details open={value("section") === "details"} className="group glass-card rounded-2xl p-4 sm:p-5">
-        <summary className="min-h-touch cursor-pointer text-sm font-semibold text-primary">{t("sections.advanced")}</summary>
-        <div className="mt-4 flex flex-col gap-6 border-t border-border pt-4">
+        </section>,
+        bookmaker: <section aria-label={t("tableTabs.bookmaker")} className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4">
+          <StatsTable rows={byBookmaker} kind="bookmaker" currency={currency} />
+        </section>,
+        tipster: <section aria-label={t("tableTabs.tipster")} className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4">
+          <TipsterStatsTable rows={byTipster} from={from || undefined} to={to || undefined} />
+        </section>,
+        details: <div className="flex min-w-0 flex-col gap-5">
           <DetailedStatsPanel stats={details} currency={currency} />
           {capitalReturns ? <CapitalReturnPanel stats={capitalReturns} currency={currency} /> : null}
           <section aria-label={t("condensedAriaLabel")} className="flex flex-col gap-2">
@@ -270,8 +261,8 @@ export default async function StatsPage({
             <CondensedStatRow icon={Gift} label={tCondensed("freebets")} count={stats.freebetCount} winRate={stats.freebetWinRate} profit={stats.freebetProfit} currency={currency} />
             <CondensedStatRow icon={Radio} label={tCondensed("live")} count={stats.liveCount} winRate={stats.liveWinRate} profit={stats.liveProfit} currency={currency} />
           </section>
-        </div>
-      </details>
-    </StatsWorkspace>
+        </div>,
+      }}
+    />
   );
 }

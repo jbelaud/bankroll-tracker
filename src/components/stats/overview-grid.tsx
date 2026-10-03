@@ -22,13 +22,13 @@ function StatCard({
 }) {
   const Icon = trend === "down" ? TrendDown : TrendUp;
   return (
-    <div className="glass-card flex flex-col gap-1 rounded-xl p-3">
-      <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="glass-card flex min-h-16 min-w-0 flex-col justify-center gap-0.5 rounded-xl px-3 py-2.5">
+      <span className="text-[0.6rem] font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       <span
         className={cn(
-          "num flex items-center gap-1 text-base font-semibold",
+          "num flex items-center gap-1 text-sm font-semibold sm:text-base",
           trend === "up" && "text-profit",
           trend === "down" && "text-loss"
         )}
@@ -36,7 +36,7 @@ function StatCard({
         {trend && <Icon size={14} weight="bold" aria-hidden />}
         {value}
       </span>
-      {sub && <span className="text-[0.65rem] text-muted-foreground">{sub}</span>}
+      {sub && <span className="text-[0.6rem] leading-tight text-muted-foreground">{sub}</span>}
     </div>
   );
 }
@@ -79,7 +79,7 @@ export function OverviewGrid({ stats, currency, units }: { stats: GlobalStats; c
 
   return (
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
         <StatCard label={t("totalBets")} value={String(stats.totalBets)} sub={t("performanceBets", { count: stats.performanceBets })} />
         <StatCard label={t("roi")} value={stats.roi === null ? "—" : fmtPct(stats.roi, locale)} sub={t("roiDescription")} trend={stats.roi === null ? undefined : stats.roi >= 0 ? "up" : "down"} />
         <StatCard label={t("profit")} value={displayUnit === "units" ? units.profit === null ? "—" : fmtUnits(units.profit, locale, true) : fmtMoneySigned(stats.totalProfit, locale, currency)} trend={displayUnit === "units" && units.profit === null ? undefined : stats.totalProfit >= 0 ? "up" : "down"} />

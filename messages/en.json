@@ -83,7 +83,8 @@
     "scanner": "Scan",
     "scannerDesktop": "OCR Scan",
     "fileImport": "Import history",
-    "stats": "Analyze",
+    "stats": "Statistics",
+    "statsMobile": "Stats",
     "aiInsights": "AI analysis",
     "tipsters": "Tipsters",
     "myTipsters": "My tipsters",
@@ -94,7 +95,7 @@
     "moreNavigation": "Menu",
     "groups": {
       "tracking": "Tracking",
-      "analysis": "Analysis",
+      "analysis": "Performance",
       "community": "Community",
       "manage": "My space"
     }
@@ -416,7 +417,7 @@
       "details": "Detailed figures",
       "filters": "Filters",
       "calendar": "Calendar",
-      "analyze": "Analyze",
+      "analyze": "Statistics",
       "ai": "AI analysis",
       "manage": "Manage",
       "capitalTitle": "Capital and movements",
@@ -843,8 +844,18 @@
   "stats": {
     "title": "Stats",
     "workspace": {
-      "title": "Analyze",
-      "subtitle": "Explore your results by period, sport, bet type and bookmaker.",
+      "title": "Statistics",
+      "subtitle": "Choose a topic to explore your results with less clutter.",
+      "viewsLabel": "Statistics views",
+      "views": {
+        "general": "Overview",
+        "distributions": "Breakdowns",
+        "sport": "Sports",
+        "type": "Bet types",
+        "bookmaker": "Bookmakers",
+        "tipster": "Tipsters",
+        "details": "Detailed figures"
+      },
       "filters": "Filters",
       "filtersActive": "Active filters",
       "calendar": "Calendar",

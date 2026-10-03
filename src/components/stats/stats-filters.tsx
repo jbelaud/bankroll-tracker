@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useStatsView } from "@/components/stats/stats-workspace";
 
 type FilterValues = {
   from: string;
@@ -31,12 +32,14 @@ export function StatsFilters({
   typesBySport: Record<string, string[]>;
 }) {
   const t = useTranslations("stats.filters");
+  const activeView = useStatsView();
   const [sport, setSport] = useState(values.sport);
   const [betType, setBetType] = useState(values.type);
   const availableTypes = sport ? typesBySport[sport] ?? [] : [];
 
   return (
       <form method="get" className="grid min-w-0 grid-cols-2 gap-2 [&>input]:min-w-0 [&>select]:min-w-0">
+        <input type="hidden" name="view" value={activeView} />
         <input name="from" type="date" defaultValue={values.from} aria-label={t("startDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="to" type="date" defaultValue={values.to} aria-label={t("endDate")} className="h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
         <input name="q" defaultValue={values.q} placeholder={t("search")} className="col-span-2 h-10 rounded-lg border border-input bg-transparent px-3 text-xs" />
