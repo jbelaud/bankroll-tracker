@@ -284,6 +284,31 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Barre discrète du menu latéral, adaptée au fond sombre de Kalivoa. */
+  .sidebar-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: oklch(0.72 0.14 250 / 55%) padding-box;
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(0.72 0.14 250 / 85%);
+  }
+  .sidebar-scrollbar::-webkit-scrollbar-button {
+    display: none;
+  }
+  @supports (-moz-appearance: none) {
+    .sidebar-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: oklch(0.72 0.14 250 / 55%) transparent;
+    }
+  }
 }
 
 /* Respect de prefers-reduced-motion : on coupe les animations décoratives */
