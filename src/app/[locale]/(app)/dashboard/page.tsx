@@ -5,10 +5,13 @@ import { listAllBets } from "@/lib/actions/bets";
 import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import { unitPerformance } from "@/lib/unit-performance";
+import { profitInUnits } from "@/lib/public-bankroll";
 import { movementDelta } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { computeGlobalStats } from "@/lib/stats";
+import { compareClvSeries } from "@/lib/clv";
+import { computeDetailedStats } from "@/lib/detailed-stats";
 import { getMonthlyQuotaStatus } from "@/lib/scan/monthly-quota";
 import { QuotaCard } from "@/components/dashboard/quota-card";
 import { KpiRow } from "@/components/dashboard/kpi-row";
@@ -16,6 +19,7 @@ import { GoalsCard } from "@/components/dashboard/goals-card";
 import { BankrollCards } from "@/components/dashboard/bankroll-cards";
 import { RecentBets } from "@/components/dashboard/recent-bets";
 import { PerformancePanel } from "@/components/dashboard/performance-panel";
+import { BankrollClvChart } from "@/components/bankrolls/bankroll-clv-chart";
 import { OnboardingCard } from "@/components/dashboard/onboarding-card";
 import { CapitalFlowCard } from "@/components/dashboard/capital-flow-card";
 import { DiscordCommunityCard } from "@/components/dashboard/discord-community-card";
@@ -117,6 +121,18 @@ export default async function DashboardPage() {
   const totalBalance = totalNetFunding + totalProfit;
   const totalStaked = settled.reduce((s, b) => s + realStake(b), 0);
   const units = unitPerformance(bets);
+  const unitProfitPoints = units.missing === 0 ? settled.reduce<Array<{ date: string; profit: number }>>(
+    (points, bet) => {
+      points.push({
+        date: bet.date.toISOString().slice(0, 10),
+        profit: (points.at(-1)?.profit ?? 0) + profitInUnits(bet),
+      });
+      return points;
+    },
+    []
+  ) : [];
+  const details = computeDetailedStats(bets);
+  const clvComparison = compareClvSeries(bets);
   const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
   const wonCount = settled.filter((b) => b.result === "GAGNE").length;
   const winRate = settled.length > 0 ? (wonCount / settled.length) * 100 : 0;
@@ -198,7 +214,11 @@ export default async function DashboardPage() {
       <Reveal index={0} className="xl:col-span-8">
         <PerformancePanel
           points={performancePoints}
+          unitPoints={unitProfitPoints}
+          missingUnits={units.missing}
           balance={totalBalance}
+          drawdown={details.drawdown}
+          drawdownUnits={details.drawdownUnits}
           currency={currency}
         />
       </Reveal>
@@ -219,10 +239,14 @@ export default async function DashboardPage() {
       </Reveal>
 
       <Reveal index={2} className="xl:col-span-12">
-        <BankrollCards bankrolls={dashboardBankrolls} currency={currency} />
+        <BankrollClvChart comparison={clvComparison} />
       </Reveal>
 
       <Reveal index={3} className="xl:col-span-12">
+        <BankrollCards bankrolls={dashboardBankrolls} currency={currency} />
+      </Reveal>
+
+      <Reveal index={4} className="xl:col-span-12">
         <Link href="/ai-insights" className="flex min-h-20 items-center gap-3 rounded-2xl border border-primary/30 bg-primary/10 p-4 transition-colors hover:bg-primary/15">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Sparkle size={20} weight="fill" aria-hidden /></span>
           <span className="min-w-0 flex-1"><strong className="block text-sm font-semibold">{t("aiTeaserTitle")}</strong><span className="mt-0.5 block text-xs text-muted-foreground">{t("aiTeaserDescription")}</span></span>
@@ -230,11 +254,11 @@ export default async function DashboardPage() {
         </Link>
       </Reveal>
 
-      <Reveal index={4} className="xl:col-span-12">
+      <Reveal index={5} className="xl:col-span-12">
         <RecentBets bets={recentBets} currency={currency} />
       </Reveal>
 
-      <Reveal index={5} className="xl:col-span-12">
+      <Reveal index={6} className="xl:col-span-12">
         <details className="group glass-card rounded-2xl p-4 sm:p-5">
           <summary className="min-h-touch cursor-pointer list-none text-sm font-semibold text-primary marker:content-none">
             {t("moreTitle")} <span className="ml-2 font-normal text-muted-foreground">{t("moreDescription")}</span>

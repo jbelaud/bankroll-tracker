@@ -7,7 +7,7 @@ import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 import { getUserTaxonomy } from "@/lib/taxonomy";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { unitPerformance } from "@/lib/unit-performance";
-import { computeClv } from "@/lib/clv";
+import { compareClvSeries, computeClv } from "@/lib/clv";
 import { computeDetailedStats } from "@/lib/detailed-stats";
 import { computeCapitalReturnStats } from "@/lib/capital-return-stats";
 import { profitInUnits } from "@/lib/public-bankroll";
@@ -25,6 +25,8 @@ import {
 } from "@/lib/stats";
 import { OverviewGrid } from "@/components/stats/overview-grid";
 import { ClvPanel } from "@/components/stats/clv-panel";
+import { BankrollClvChart } from "@/components/bankrolls/bankroll-clv-chart";
+import { DrawdownBadge } from "@/components/stats/drawdown-badge";
 import { DetailedStatsPanel } from "@/components/stats/detailed-stats-panel";
 import { CapitalReturnPanel } from "@/components/stats/capital-return-panel";
 import { StatsTabs } from "@/components/stats/stats-tabs";
@@ -79,6 +81,7 @@ export default async function StatsPage({
   const stats = computeGlobalStats(bets);
   const units = unitPerformance(bets);
   const clv = computeClv(bets);
+  const clvComparison = compareClvSeries(bets);
   const details = computeDetailedStats(bets);
   const selectedBankroll = activeBankrolls.find((item) => item.id === bankroll);
   const hasSubsetFilters = Boolean(from || to || q || sportFilter || typeFilter || resultFilter || live || freebet
@@ -216,8 +219,12 @@ export default async function StatsPage({
             }} />
           </section>
           <ClvPanel stats={clv} />
+          <BankrollClvChart comparison={clvComparison} />
           <section className="glass-card min-w-0 overflow-hidden rounded-xl p-3 sm:p-4" aria-label={t("curve.title")}>
-            <h2 className="text-sm font-semibold">{t("curve.title")}</h2>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <h2 className="text-sm font-semibold">{t("curve.title")}</h2>
+              <DrawdownBadge amount={details.drawdown} units={details.drawdownUnits} currency={currency} />
+            </div>
             <ProfitCurve data={cumulativeProfit} unitData={cumulativeUnitProfit} missingUnits={units.missing} currency={currency} />
           </section>
         </div>,

@@ -365,9 +365,13 @@
     },
     "performance": {
       "ariaLabel": "Évolution globale du capital",
+      "unitAriaLabel": "Évolution du bénéfice cumulé en unités",
       "eyebrow": "Capital global",
+      "moneyCurveTitle": "Évolution du capital en devise",
+      "unitCurveTitle": "Bénéfice cumulé en unités",
+      "missingUnitCurve": "{count, plural, one {Un pari réglé n’a pas d’unité enregistrée. La courbe en unités ne peut pas être calculée.} other {# paris réglés n’ont pas d’unité enregistrée. La courbe en unités ne peut pas être calculée.}}",
       "filtersAriaLabel": "Ouvrir les filtres avancés",
-      "notEnoughData": "Ajoute au moins deux paris réglés pour afficher l'évolution.",
+      "notEnoughData": "Aucune donnée pour cette période.",
       "periods": { "7d": "7j", "30d": "30j", "90d": "3m", "1y": "1a", "all": "Tout" },
       "statsCta": "Statistiques",
       "historyCta": "Historique"
@@ -948,6 +952,10 @@
       "maxStake": "Mise maximale",
       "maxWinningOdds": "Plus grosse cote gagnée",
       "drawdown": "Drawdown maximal",
+      "drawdownAllTime": "Drawdown max · total",
+      "drawdownAllTimeHelp": "Plus forte baisse du bénéfice cumulé sur tout l’historique des paris réglés. Le filtre de période du graphique ne la modifie pas. Les dépôts et retraits sont exclus.",
+      "drawdownHelp": "Plus forte baisse du bénéfice cumulé des paris réglés, après un sommet. Les dépôts et retraits sont exclus.",
+      "drawdownUnavailable": "Unités manquantes dans l’historique",
       "definitions": "Réussite = gagnés ÷ (gagnés + perdus). Drawdown = plus forte baisse du bénéfice cumulé après un sommet, calculée dans l’ordre des paris. Les montants potentiels supposent que tous les paris en cours gagnent.",
       "missingUnits": "{count, plural, one {# pari sans unité empêche certains totaux en u.} other {# paris sans unité empêchent certains totaux en u.}}"
     },

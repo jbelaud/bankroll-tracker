@@ -34,8 +34,8 @@ export function DisplayUnitToggle({ compact = false }: { compact?: boolean }) {
     <div className="inline-flex rounded-lg border border-border p-0.5" role="group" aria-label={label}>
       {(["money", "units"] as const).map((value) => <button key={value} type="button" aria-pressed={mode === value}
         onClick={() => { try { window.localStorage.setItem(KEY, value); } catch { /* Preference remains local to this view. */ } window.dispatchEvent(new Event(EVENT)); }}
-        className={`min-h-9 rounded-md px-2.5 font-semibold ${mode === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-        {value === "money" ? (locale === "fr" ? "Devise" : "Currency") : "u"}
+        className={`min-h-9 rounded-md font-semibold ${compact ? "px-1.5 text-[11px] sm:px-2.5 sm:text-xs" : "px-2.5"} ${mode === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+        {value === "money" ? (locale === "fr" ? "Devise" : "Currency") : (locale === "fr" ? "Unité" : "Units")}
       </button>)}
     </div>
   </div>;
