@@ -286,28 +286,27 @@
   }
 
   /* Barre discrète du menu latéral, adaptée au fond sombre de Kalivoa. */
+  .sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-ring) transparent;
+  }
   .sidebar-scrollbar::-webkit-scrollbar {
     width: 8px;
   }
   .sidebar-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: transparent;
   }
   .sidebar-scrollbar::-webkit-scrollbar-thumb {
     border: 2px solid transparent;
     border-radius: 999px;
-    background: oklch(0.72 0.14 250 / 55%) padding-box;
+    background-color: var(--sidebar-ring);
+    background-clip: padding-box;
   }
   .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: oklch(0.72 0.14 250 / 85%);
+    background-color: var(--sidebar-primary);
   }
   .sidebar-scrollbar::-webkit-scrollbar-button {
     display: none;
-  }
-  @supports (-moz-appearance: none) {
-    .sidebar-scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: oklch(0.72 0.14 250 / 55%) transparent;
-    }
   }
 }
 

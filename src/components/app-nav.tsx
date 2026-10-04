@@ -145,7 +145,11 @@ export function AppNav({
           </Link>
         </div>
 
-        <nav aria-label={t("ariaLabel")} className="sidebar-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-5">
+        <nav
+          aria-label={t("ariaLabel")}
+          className="sidebar-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-5"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "var(--sidebar-ring) transparent" }}
+        >
           <div className="flex flex-col gap-5">
             {DESKTOP_NAV_GROUPS.map(({ key: groupKey, items }) => (
               <div key={groupKey}>
