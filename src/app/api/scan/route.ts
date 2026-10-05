@@ -365,7 +365,10 @@ export async function POST(request: NextRequest) {
         result: "EN_ATTENTE",
         bankroll: { userId: user.id },
       },
-      select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+      select: {
+        id: true, ticketRef: true, date: true, stake: true, odds: true,
+        bookmaker: true, sport: true, betType: true, description: true, format: true,
+      },
     }),
   ]);
   const existingCandidates = existing.map((b) => ({
@@ -480,7 +483,12 @@ export async function POST(request: NextRequest) {
   // courses et ne fait jamais confiance à cet indicateur d'interface.
   const previewMatchedTargetIds = new Set<string>();
   for (const [index, bet] of bets.entries()) {
-    if (bet.result === "EN_ATTENTE" && findPendingTicketMatch(pendingResultTargets, bet)) {
+    const matchBookmaker = detectedBookmaker ?? normalizedBookmaker;
+    if (bet.result === "EN_ATTENTE" && findPendingTicketMatch(
+      pendingResultTargets,
+      bet,
+      { bookmaker: matchBookmaker }
+    )) {
       bet.pendingTicketAlreadyExists = true;
     }
     const raw = rawBets[index] as Record<string, unknown>;
@@ -491,7 +499,8 @@ export async function POST(request: NextRequest) {
     )) continue;
     const target = findAutomaticResultProofTarget(
       pendingResultTargets.filter(({ id }) => !previewMatchedTargetIds.has(id)),
-      bet
+      bet,
+      { bookmaker: matchBookmaker }
     );
     if (!target) continue;
     previewMatchedTargetIds.add(target.id);
