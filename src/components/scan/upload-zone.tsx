@@ -22,11 +22,13 @@ export function UploadZone({
   bankrollId,
   onBankrollChange,
   onFilesSelected,
+  resultOnly = false,
 }: {
   bankrolls: BankrollOption[];
   bankrollId: string;
   onBankrollChange: (id: string) => void;
   onFilesSelected: (files: File[]) => void;
+  resultOnly?: boolean;
 }) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
@@ -144,13 +146,13 @@ export function UploadZone({
           </p>
         )}
 
-        <Link
+        {!resultOnly ? <Link
           href="/scan/manual"
           className="flex min-h-touch items-center gap-1.5 text-xs font-medium text-muted-foreground underline-offset-4 transition-colors active:text-foreground hover:text-foreground"
         >
           <PencilSimpleLine size={14} aria-hidden />
           {t("manualEntry")}
-        </Link>
+        </Link> : null}
 
         <details
           aria-label={t("tips.ariaLabel")}
@@ -179,7 +181,7 @@ export function UploadZone({
           </div>
         </details>
 
-        <Link
+        {!resultOnly ? <Link
           href="/import-history"
           className="group flex w-full max-w-xl items-center gap-3 rounded-2xl border border-border bg-background p-4 text-left transition-colors hover:border-primary/30 hover:bg-primary/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
@@ -192,7 +194,7 @@ export function UploadZone({
             <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{t("fileImport.description")}</span>
           </span>
           <ArrowRight size={18} className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" aria-hidden />
-        </Link>
+        </Link> : null}
       </div>
     </div>
   );

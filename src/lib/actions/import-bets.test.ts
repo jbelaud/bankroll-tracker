@@ -677,4 +677,56 @@ describe("importBets", () => {
     expect(response).toEqual({ error: expect.stringContaining("déjà enregistré") });
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
+
+  it("met à jour plusieurs résultats certifiés en lot sans créer de pari", async () => {
+    mocks.betFindMany.mockResolvedValue([
+      {
+        id: "pending-1", ticketRef: "REF-000001",
+        date: new Date("2026-10-05T00:00:00Z"), stake: 5, odds: 2,
+      },
+      {
+        id: "pending-2", ticketRef: "REF-000002",
+        date: new Date("2026-10-05T00:00:00Z"), stake: 10, odds: 1.8,
+      },
+    ]);
+    mocks.scanUsageFindMany.mockResolvedValue([
+      {
+        id: "scan-result-1", detectedBookmaker: "Winamax", selectedBookmaker: "Winamax",
+        createdAt: new Date("2026-10-05T20:00:00Z"),
+        proofEvidence: [makeScanProofEvidence("REF-000001", "Simple @ 2,00 • Gagné", null)],
+      },
+      {
+        id: "scan-result-2", detectedBookmaker: "Winamax", selectedBookmaker: "Winamax",
+        createdAt: new Date("2026-10-05T20:01:00Z"),
+        proofEvidence: [makeScanProofEvidence("REF-000002", "Simple @ 1,80 • Perdu", null)],
+      },
+    ]);
+
+    const response = await importBets("bankroll-1", [
+      bet({ ticketRef: "REF-000001", date: "2026-10-05", stake: 5, odds: 2, result: "GAGNE", sourceScanIndex: 0 }),
+      bet({ ticketRef: "REF-000002", date: "2026-10-05", stake: 10, odds: 1.8, result: "PERDU", sourceScanIndex: 1 }),
+    ], ["scan-result-1", "scan-result-2"], [], undefined, true);
+
+    expect(response).toEqual({ imported: 2, firstImport: false, resultProofsUpdated: 2 });
+    expect(mocks.betUpdateMany).toHaveBeenCalledTimes(2);
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("refuse tout le lot lorsqu'un résultat ne correspond à aucun pari en attente", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: "Winamax", selectedBookmaker: "Winamax",
+      createdAt: new Date("2026-10-05T20:00:00Z"),
+      proofEvidence: [makeScanProofEvidence("REF-UNKNOWN", "Simple @ 2,00 • Gagné", null)],
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "REF-UNKNOWN", date: "2026-10-05", stake: 5, odds: 2,
+      result: "GAGNE", sourceScanIndex: 0,
+    })], ["scan-result"], [], undefined, true);
+
+    expect(response).toEqual({ error: expect.stringContaining("ne correspond pas de façon unique") });
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
 });

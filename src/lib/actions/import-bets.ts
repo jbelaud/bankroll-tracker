@@ -348,7 +348,8 @@ export async function importBets(
   bets: ParsedBet[],
   scanUsageIds: string[] = [],
   scanMeasurements: ScanImportMeasurement[] = [],
-  resultForBetId?: string
+  resultForBetId?: string,
+  resultBatchMode = false
 ): Promise<ImportResult> {
   const locale = await getServerLocale();
   const user = await requireUser();
@@ -368,7 +369,11 @@ export async function importBets(
   let resultProofsUpdated = 0;
   try {
     const bankroll = await prisma.bankroll.findFirst({
-      where: { id: bankrollId, userId: user.id },
+      where: {
+        id: bankrollId,
+        userId: user.id,
+        ...(resultBatchMode ? { certificationStartedAt: { not: null } } : {}),
+      },
       select: { id: true, mode: true, allocations: { select: { id: true, bookmaker: true } } },
     });
     if (!bankroll) return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollNotFound") };
@@ -420,7 +425,7 @@ export async function importBets(
           bankrollId,
           result: "EN_ATTENTE",
           certificationLockedAt: { not: null },
-          bankroll: { userId: user.id, isPublic: true, certificationStartedAt: { not: null } },
+          bankroll: { userId: user.id, certificationStartedAt: { not: null } },
         },
         select: {
           id: true, ticketRef: true, date: true, stake: true, odds: true,
@@ -486,6 +491,7 @@ export async function importBets(
       where: {
         bankrollId,
         result: "EN_ATTENTE",
+        ...(resultBatchMode ? { certificationLockedAt: { not: null } } : {}),
         bankroll: { userId: user.id },
       },
       select: {
@@ -566,6 +572,12 @@ export async function importBets(
       };
     });
 
+    if (resultBatchMode && bets.some((bet) => bet.result === "EN_ATTENTE")) {
+      return {
+        error: "Le mode résultats en lot accepte uniquement des tickets clôturés avec un résultat clairement visible.",
+      };
+    }
+
     for (const [index, bet] of bets.entries()) {
       const plan = automaticResultPlans[index];
       if (plan.allCandidateCount > 1) {
@@ -576,6 +588,11 @@ export async function importBets(
       if (plan.allCandidateCount === 1 && !plan.automaticResultTarget) {
         return {
           error: "Plusieurs captures du lot correspondent au même pari en attente. Garde uniquement la capture finale à importer.",
+        };
+      }
+      if (resultBatchMode && !plan.automaticResultTarget) {
+        return {
+          error: "Un ticket du lot ne correspond pas de façon unique à un pari certifié en attente. Aucun pari n’a été modifié : utilise « Scanner le résultat » sur ce pari précis.",
         };
       }
       if (!bet.date && !plan.automaticResultTarget) {

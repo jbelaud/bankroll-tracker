@@ -11,20 +11,38 @@ import { listTipsters } from "@/lib/actions/tipsters";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-export default async function ScanPage({ searchParams }: { searchParams: Promise<{ resultFor?: string | string[] }> }) {
+export default async function ScanPage({ searchParams }: { searchParams: Promise<{ resultFor?: string | string[]; resultBankroll?: string | string[] }> }) {
   const user = await requireUser();
   const query = await searchParams;
   const resultFor = Array.isArray(query.resultFor) ? query.resultFor[0] : query.resultFor;
+  const resultBankroll = Array.isArray(query.resultBankroll) ? query.resultBankroll[0] : query.resultBankroll;
+  if (resultFor && resultBankroll) notFound();
   const resultProofTarget = resultFor ? await prisma.bet.findFirst({
     where: {
       id: resultFor,
       result: "EN_ATTENTE",
       certificationLockedAt: { not: null },
-      bankroll: { userId: user.id, isPublic: true, certificationStartedAt: { not: null } },
+      bankroll: { userId: user.id, certificationStartedAt: { not: null } },
     },
     select: { id: true, bankrollId: true, description: true, sport: true, betType: true },
   }) : null;
   if (resultFor && !resultProofTarget) notFound();
+  const resultProofBatch = resultBankroll ? await prisma.bankroll.findFirst({
+    where: {
+      id: resultBankroll,
+      userId: user.id,
+      certificationStartedAt: { not: null },
+      bets: { some: { result: "EN_ATTENTE", certificationLockedAt: { not: null } } },
+    },
+    select: {
+      id: true,
+      name: true,
+      _count: {
+        select: { bets: { where: { result: "EN_ATTENTE", certificationLockedAt: { not: null } } } },
+      },
+    },
+  }) : null;
+  if (resultBankroll && !resultProofBatch) notFound();
   const [bankrolls, taxonomy, pendingDrafts, tipsters, t, tCommon, currency] = await Promise.all([
     listBankrolls(),
     getUserTaxonomy(user.id),
@@ -35,8 +53,13 @@ export default async function ScanPage({ searchParams }: { searchParams: Promise
     getServerCurrency(),
   ]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
+  const scanBankrolls = resultProofBatch
+    ? activeBankrolls.filter((bankroll) => bankroll.id === resultProofBatch.id)
+    : resultProofTarget
+      ? activeBankrolls.filter((bankroll) => bankroll.id === resultProofTarget.bankrollId)
+      : activeBankrolls;
 
-  if (activeBankrolls.length === 0) {
+  if (scanBankrolls.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 py-24 text-center animate-fade-in-up">
         <div className="glass-card flex size-16 items-center justify-center rounded-2xl">
@@ -66,7 +89,7 @@ export default async function ScanPage({ searchParams }: { searchParams: Promise
       </div>
       <ScanFlow
         userId={user.id}
-        bankrolls={activeBankrolls.map((br) => ({
+        bankrolls={scanBankrolls.map((br) => ({
           id: br.id,
           name: br.name,
           mode: br.mode,
@@ -82,6 +105,11 @@ export default async function ScanPage({ searchParams }: { searchParams: Promise
           betId: resultProofTarget.id,
           bankrollId: resultProofTarget.bankrollId,
           label: resultProofTarget.description || `${resultProofTarget.sport} · ${resultProofTarget.betType}`,
+        } : undefined}
+        resultProofBatch={resultProofBatch ? {
+          bankrollId: resultProofBatch.id,
+          bankrollName: resultProofBatch.name,
+          pendingCount: resultProofBatch._count.bets,
         } : undefined}
       />
     </div>
