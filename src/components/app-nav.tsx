@@ -21,6 +21,7 @@ import {
   List,
   Sparkle,
   Handshake,
+  PuzzlePiece,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -42,6 +43,7 @@ const NAV_ITEMS = [
   { href: "/admin", key: "admin", icon: Gauge, adminOnly: true },
   { href: "/ai-insights", key: "aiInsights", icon: Sparkle },
   { href: "/partners", key: "partners", icon: Handshake },
+  { href: "/extension", key: "extension", icon: PuzzlePiece },
 ] as const;
 
 const TIPSTER_SUB_ITEMS = [
@@ -67,7 +69,7 @@ const MOBILE_MORE_GROUPS = [
   { key: "bets", items: BET_SUB_ITEMS },
   { key: "analysis", items: [NAV_ITEMS[10]] },
   { key: "tipsters", items: TIPSTER_SUB_ITEMS },
-  { key: "manage", items: [NAV_ITEMS[11]] },
+  { key: "manage", items: [NAV_ITEMS[11], NAV_ITEMS[12]] },
 ] as const;
 
 // Le Scan est l'action principale sur mobile : il doit rester au centre de la
@@ -101,6 +103,7 @@ export function AppNav({
     NAV_ITEMS[10],
     ...TIPSTER_SUB_ITEMS,
     NAV_ITEMS[11],
+    NAV_ITEMS[12],
     ...(isAdmin ? [NAV_ITEMS[9]] : []),
   ];
 
@@ -290,6 +293,13 @@ export function AppTopBar() {
       </div>
       <div className="flex items-center gap-3">
       <DisplayUnitToggle />
+      <Link
+        href="/extension"
+        className="inline-flex min-h-touch items-center gap-2 rounded-xl border border-border px-4 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        <PuzzlePiece size={18} aria-hidden />
+        {t("extension")}
+      </Link>
       <Link
         href="/scan"
         className="inline-flex min-h-touch items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-[0_12px_28px_oklch(0.72_0.14_250_/_18%)] transition-transform hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"

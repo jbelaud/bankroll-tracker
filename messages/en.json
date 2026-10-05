@@ -150,6 +150,7 @@
     "discover": "Discover",
     "scanner": "Scan",
     "scannerDesktop": "OCR Scan",
+    "extension": "Extension",
     "fileImport": "Import history",
     "stats": "Statistics",
     "statsMobile": "Stats",
