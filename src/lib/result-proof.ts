@@ -84,10 +84,10 @@ function descriptionIdentityMatches(left: string | null | undefined, right: stri
   if (normalizedLeft.length < 12 || normalizedRight.length < 12) return false;
   if (normalizedLeft === normalizedRight) return true;
 
-  // A settled REMPLAÇANT+ card contains the original (struck-through) player
-  // plus the effective replacement. The pending card only contains the
-  // original player, so allow the shorter complete identity to be contained
-  // in the longer one. Market and fixture tokens must remain present.
+  // REMPLAÇANT+ is a bookmaker guarantee, not another selection or market.
+  // Older extractions nevertheless appended the displayed replacement to the
+  // original player. Keep those records matchable while the original
+  // selection, market and fixture identity remains present.
   const leftTokens = new Set(normalizedLeft.split(" "));
   const rightTokens = new Set(normalizedRight.split(" "));
   const [smaller, larger] = leftTokens.size <= rightTokens.size
@@ -99,27 +99,50 @@ function descriptionIdentityMatches(left: string | null | undefined, right: stri
 }
 
 /**
- * Bet365's compact ticket cards do not expose a stable ticket reference.
- * For simple bets only, use the complete visible identity of the wager as a
- * secondary key. The caller still requires exactly one pending match.
+ * Some compact ticket cards do not expose a stable ticket reference or a
+ * visible bookmaker. For simple bets only, use the visible wager identity as
+ * a secondary key. Unknown bookmakers additionally require the same date and
+ * an exact normalized description. The caller still requires one match.
  */
-function bet365IdentityMatches(
+function unreferencedIdentityMatches(
   existing: ExistingPendingBet,
   scanned: ParsedBet,
   context?: MatchContext
 ) {
   if (exactTicketRef(existing.ticketRef) || exactTicketRef(scanned.ticketRef)) return false;
-  if (normalizeBookmaker(context?.bookmaker ?? "") !== "Bet365") return false;
-  if (normalizeBookmaker(existing.bookmaker ?? "") !== "Bet365") return false;
+  const contextBookmaker = normalizeBookmaker(context?.bookmaker ?? "");
+  const existingBookmaker = normalizeBookmaker(existing.bookmaker ?? "");
+  const isBet365 = contextBookmaker === "Bet365" || existingBookmaker === "Bet365";
+  const bothUnknown = !contextBookmaker && !existingBookmaker;
+  if (!isBet365 && !bothUnknown) return false;
+  if (contextBookmaker && contextBookmaker !== "Bet365") return false;
+  if (existingBookmaker && existingBookmaker !== "Bet365") return false;
   if ((existing.format ?? "SIMPLE") !== "SIMPLE" || (scanned.format ?? "SIMPLE") !== "SIMPLE") return false;
   if (!financialFieldsMatch(existing, scanned)) return false;
 
   const existingDescription = normalizedIdentityText(existing.description);
   const scannedDescription = normalizedIdentityText(scanned.description);
-  if (!descriptionIdentityMatches(existingDescription, scannedDescription)) return false;
+  if (bothUnknown) {
+    // A cropped ticket can legitimately hide the bookmaker. In that case we
+    // accept only the exact normalized identity on the same ticket date. The
+    // caller still requires one unique pending candidate, so stake/odds alone
+    // can never update a result.
+    if (!sameTicketDate(existing, scanned)) return false;
+    if (existingDescription.length < 12 || existingDescription !== scannedDescription) return false;
+  } else if (!descriptionIdentityMatches(existingDescription, scannedDescription)) {
+    return false;
+  }
 
   return normalizedIdentityText(existing.sport) === normalizedIdentityText(scanned.sport)
     && normalizedIdentityText(existing.betType) === normalizedIdentityText(scanned.betType);
+}
+
+export function isStrictUnreferencedResultProof(
+  existing: ExistingPendingBet,
+  scanned: ParsedBet,
+  context?: MatchContext
+) {
+  return scanned.result !== "EN_ATTENTE" && unreferencedIdentityMatches(existing, scanned, context);
 }
 
 function strongReferenceMatch(existing: ExistingPendingBet, scanned: ParsedBet) {
@@ -131,7 +154,7 @@ function strongReferenceMatch(existing: ExistingPendingBet, scanned: ParsedBet) 
 
 export function resultProofMatches(existing: ExistingPendingBet, scanned: ParsedBet, context?: MatchContext) {
   if (!financialFieldsMatch(existing, scanned)) return false;
-  if (bet365IdentityMatches(existing, scanned, context)) return true;
+  if (unreferencedIdentityMatches(existing, scanned, context)) return true;
   // Une IA peut prendre la date de l'événement pour celle du ticket. Une
   // référence suffisamment longue et la même mise/cote priment alors sur la
   // date, mais jamais une simple ressemblance financière.
@@ -142,7 +165,7 @@ export function resultProofMatches(existing: ExistingPendingBet, scanned: Parsed
   return !existingRef || !scannedRef || referencesLookLikeSameTicket(existingRef, scannedRef);
 }
 
-/** Automatic updates require an exact reference or one unique strict Bet365 identity. */
+/** Automatic updates require an exact reference or one unique strict identity. */
 export function automaticResultProofCandidateCount<T extends ExistingPendingBet>(
   pendingBets: T[],
   scanned: ParsedBet,
@@ -153,7 +176,7 @@ export function automaticResultProofCandidateCount<T extends ExistingPendingBet>
   return reference
     ? pendingBets.filter((bet) => exactTicketRef(bet.ticketRef) === reference
       && financialFieldsMatch(bet, scanned) && (reference.length >= 8 || sameTicketDate(bet, scanned))).length
-    : pendingBets.filter((bet) => bet365IdentityMatches(bet, scanned, context)).length;
+    : pendingBets.filter((bet) => unreferencedIdentityMatches(bet, scanned, context)).length;
 }
 
 export function findAutomaticResultProofTarget<T extends ExistingPendingBet>(
@@ -166,7 +189,7 @@ export function findAutomaticResultProofTarget<T extends ExistingPendingBet>(
   const matches = reference
     ? pendingBets.filter((bet) => exactTicketRef(bet.ticketRef) === reference
       && financialFieldsMatch(bet, scanned) && (reference.length >= 8 || sameTicketDate(bet, scanned)))
-    : pendingBets.filter((bet) => bet365IdentityMatches(bet, scanned, context));
+    : pendingBets.filter((bet) => unreferencedIdentityMatches(bet, scanned, context));
   return matches.length === 1 ? matches[0] : null;
 }
 
@@ -181,7 +204,7 @@ export function findPendingTicketMatch<T extends ExistingPendingBet>(
   const matches = reference
     ? pendingBets.filter((bet) => exactTicketRef(bet.ticketRef) === reference
       && financialFieldsMatch(bet, scanned) && (reference.length >= 8 || sameTicketDate(bet, scanned)))
-    : pendingBets.filter((bet) => bet365IdentityMatches(bet, scanned, context));
+    : pendingBets.filter((bet) => unreferencedIdentityMatches(bet, scanned, context));
   return matches.length === 1 ? matches[0] : null;
 }
 

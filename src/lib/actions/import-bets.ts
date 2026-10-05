@@ -20,7 +20,7 @@ import {
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
-import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
+import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof, resultProofMatches } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 
@@ -434,9 +434,10 @@ export async function importBets(
         return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
       }
       const evidence = findScanProofEvidence(scanProof.proofEvidence, scanned.ticketRef);
+      const matchContext = { bookmaker: scanProof.detectedBookmaker ?? scanProof.selectedBookmaker };
       const verifiedResultProof = canAutomaticallyUpdateResult(
         scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, scanned.result
-      );
+      ) || isStrictUnreferencedResultProof(target, scanned, matchContext);
       await prisma.$transaction(async (tx) => {
         await tx.bet.update({
           where: { id: target.id },
@@ -531,14 +532,15 @@ export async function importBets(
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       const bookmaker = scanProof?.detectedBookmaker ?? scanProof?.selectedBookmaker;
-      const mayUpdateResult = Boolean(scanProof && canAutomaticallyUpdateResult(
+      const allCandidateCount = scanProof
+        ? automaticResultProofCandidateCount(pendingResultTargets, bet, { bookmaker })
+        : 0;
+      const hasStandardResultEvidence = Boolean(scanProof && canAutomaticallyUpdateResult(
         scanProof.selectedBookmaker ?? scanProof.detectedBookmaker,
         findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef),
         bet.result
       ));
-      const allCandidateCount = scanProof && mayUpdateResult
-        ? automaticResultProofCandidateCount(pendingResultTargets, bet, { bookmaker })
-        : 0;
+      const mayUpdateResult = hasStandardResultEvidence || Boolean(scanProof && !bet.ticketRef && allCandidateCount > 0);
       const automaticResultTarget = scanProof && mayUpdateResult
         ? findAutomaticResultProofTarget(
             pendingResultTargets.filter((target) => !plannedResultTargetIds.has(target.id)),
@@ -560,7 +562,7 @@ export async function importBets(
       const plan = automaticResultPlans[index];
       if (plan.allCandidateCount > 1) {
         return {
-          error: "Plusieurs paris en attente correspondent à ce ticket Bet365. Ouvre le pari concerné et utilise « Scanner le résultat » pour choisir lequel mettre à jour.",
+          error: "Plusieurs paris en attente correspondent à ce ticket sans référence. Ouvre le pari concerné et utilise « Scanner le résultat » pour choisir lequel mettre à jour.",
         };
       }
       if (plan.allCandidateCount === 1 && !plan.automaticResultTarget) {
@@ -586,7 +588,9 @@ export async function importBets(
         const evidence = findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef);
         const verifiedResultProof = canAutomaticallyUpdateResult(
           scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result
-        );
+        ) || isStrictUnreferencedResultProof(automaticResultTarget, bet, {
+          bookmaker: scanProof.detectedBookmaker ?? scanProof.selectedBookmaker,
+        });
         const updated = await prisma.bet.updateMany({
           where: {
             id: automaticResultTarget.id,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ParsedBet } from "@/lib/scan/types";
-import { findAutomaticResultProofTarget, findPendingTicketMatch, initialProofTiming, resultProofMatches } from "./result-proof";
+import { findAutomaticResultProofTarget, findPendingTicketMatch, initialProofTiming, isStrictUnreferencedResultProof, resultProofMatches } from "./result-proof";
 
 const scanned = (overrides: Partial<ParsedBet> = {}): ParsedBet => ({
   ticketRef: "ABC-123", date: "2026-09-10", sport: "Football", betType: "1N2",
@@ -103,7 +103,42 @@ describe("result proof", () => {
     expect(findAutomaticResultProofTarget([target], { ...result, description: "Un autre buteur" }, { bookmaker: "Bet365" })).toBeNull();
     expect(findAutomaticResultProofTarget([target, { ...target, id: "duplicate" }], result, { bookmaker: "Bet365" })).toBeNull();
   });
-  it("conserve le rapprochement Bet365 lorsqu'un REMPLAÇANT+ ajoute le joueur effectif", () => {
+  it("rapproche une capture recadrée sans bookmaker lorsque l'identité exacte est unique", () => {
+    const target = {
+      id: "cropped-pending",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00Z"),
+      stake: 62.57,
+      odds: 2.69,
+      bookmaker: null,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta - Marque à tout moment",
+      format: "SIMPLE" as const,
+    };
+    const result = scanned({
+      ticketRef: null,
+      date: "2026-10-04",
+      stake: 62.57,
+      odds: 2.69,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta — Marque à tout moment",
+      format: "SIMPLE",
+    });
+
+    expect(findAutomaticResultProofTarget([target], result)).toBe(target);
+    expect(isStrictUnreferencedResultProof(target, result)).toBe(true);
+    expect(findAutomaticResultProofTarget([target], { ...result, date: "2026-10-05" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target], { ...result, description: "Un autre buteur" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target, { ...target, id: "duplicate" }], result)).toBeNull();
+    expect(findAutomaticResultProofTarget(
+      [{ ...target, bookmaker: "PMU" }],
+      result,
+      { bookmaker: "PMU" }
+    )).toBeNull();
+  });
+  it("conserve le rapprochement Bet365 lorsqu'une ancienne extraction REMPLAÇANT+ ajoutait le remplaçant", () => {
     const target = {
       id: "bet365-replacement",
       ticketRef: null,
