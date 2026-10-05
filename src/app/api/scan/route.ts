@@ -368,6 +368,10 @@ export async function POST(request: NextRequest) {
       select: {
         id: true, ticketRef: true, date: true, stake: true, odds: true,
         bookmaker: true, sport: true, betType: true, description: true, format: true,
+        selections: {
+          select: { sport: true, betType: true, label: true, odds: true },
+          orderBy: { position: "asc" },
+        },
       },
     }),
   ]);

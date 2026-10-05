@@ -435,8 +435,9 @@ describe("importBets", () => {
       bookmaker: null,
       sport: "Football",
       betType: "Buteur",
-      description: "Jaime Peralta - Marque à tout moment",
+      description: "Jaime Peralta — Cucuta Deportivo - Deportivo Pereira",
       format: "SIMPLE",
+      selections: [{ sport: "Football", betType: "Buteur", label: "Jaime Peralta", odds: 2.69 }],
     }]);
     mocks.scanUsageFindMany.mockResolvedValue([{
       id: "scan-result",
@@ -457,6 +458,10 @@ describe("importBets", () => {
       result: "GAGNE",
       eventResult: "Cucuta Deportivo 4 - 0 Deportivo Pereira",
       format: "SIMPLE",
+      selections: [{
+        sport: "Football", competition: null, betType: "Buteur",
+        label: "Jaime Peralta", odds: 2.69, result: "GAGNE",
+      }],
       sourceScanIndex: 0,
     })], ["scan-result"]);
 

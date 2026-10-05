@@ -113,8 +113,9 @@ describe("result proof", () => {
       bookmaker: null,
       sport: "Football",
       betType: "Buteur",
-      description: "Jaime Peralta - Marque à tout moment",
+      description: "Jaime Peralta — Cucuta Deportivo - Deportivo Pereira",
       format: "SIMPLE" as const,
+      selections: [{ sport: "Football", betType: "Buteur", label: "Jaime Peralta", odds: 2.69 }],
     };
     const result = scanned({
       ticketRef: null,
@@ -125,12 +126,17 @@ describe("result proof", () => {
       betType: "Buteur",
       description: "Jaime Peralta — Marque à tout moment",
       format: "SIMPLE",
+      selections: [{ sport: "Football", competition: null, betType: "Buteur", label: "Jaime Peralta", odds: 2.69, result: "GAGNE" }],
     });
 
     expect(findAutomaticResultProofTarget([target], result)).toBe(target);
     expect(isStrictUnreferencedResultProof(target, result)).toBe(true);
     expect(findAutomaticResultProofTarget([target], { ...result, date: "2026-10-05" })).toBeNull();
-    expect(findAutomaticResultProofTarget([target], { ...result, description: "Un autre buteur" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target], {
+      ...result,
+      description: "Un autre buteur",
+      selections: [{ ...result.selections![0], label: "Un autre buteur" }],
+    })).toBeNull();
     expect(findAutomaticResultProofTarget([target, { ...target, id: "duplicate" }], result)).toBeNull();
     expect(findAutomaticResultProofTarget(
       [{ ...target, bookmaker: "PMU" }],

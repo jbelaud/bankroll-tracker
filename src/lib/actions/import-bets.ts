@@ -425,6 +425,10 @@ export async function importBets(
         select: {
           id: true, ticketRef: true, date: true, stake: true, odds: true,
           bookmaker: true, sport: true, betType: true, description: true, format: true,
+          selections: {
+            select: { sport: true, betType: true, label: true, odds: true },
+            orderBy: { position: "asc" },
+          },
         },
       });
       if (!target) return { error: "Ce pari n’est plus disponible pour une preuve de résultat." };
@@ -487,6 +491,10 @@ export async function importBets(
       select: {
         id: true, ticketRef: true, date: true, stake: true, odds: true,
         bookmaker: true, sport: true, betType: true, description: true, format: true,
+        selections: {
+          select: { sport: true, betType: true, label: true, odds: true },
+          orderBy: { position: "asc" },
+        },
       },
     });
     const recordedReferences = await prisma.bet.findMany({
