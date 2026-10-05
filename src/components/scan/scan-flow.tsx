@@ -265,6 +265,7 @@ export function ScanFlow({
         initialBets={flow.bets}
         importing={flow.step === "importing"}
         error={error}
+        resultProofMode={resultProofTarget ? "single" : resultBatchMode ? "batch" : undefined}
         skippedDuplicateFiles={flow.skippedDuplicateFiles}
         onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, flow.files, flow.scans, flow.skippedDuplicateFiles)}
         onRestart={restart}
