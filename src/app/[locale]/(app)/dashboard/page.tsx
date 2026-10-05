@@ -186,6 +186,7 @@ export default async function DashboardPage() {
     stake: b.stake,
     stakeUnits: b.stakeUnits,
     pending: b.result === "EN_ATTENTE",
+    certificationLocked: b.certificationLockedAt !== null,
     profit: computeProfit(b),
     unitProfit: unitPerformance([b]).profit,
     bankrollName: bankrollName(b.bankrollId),

@@ -399,7 +399,8 @@
     "recentBets": {
       "ariaLabel": "Paris récents",
       "title": "Paris récents",
-      "missingUnits": "— signifie que l’unité de ce pari historique n’est pas renseignée."
+      "missingUnits": "— signifie que l’unité de ce pari historique n’est pas renseignée.",
+      "scanResult": "Scanner le résultat"
     }
   },
 
@@ -1164,6 +1165,7 @@
       "actions": "Actions",
       "tipster": "Tipster · {name}",
       "showSelections": "Voir les {count} sélections",
+      "scanResult": "Scanner le résultat",
       "editAriaLabel": "Modifier ce pari",
       "deleteAriaLabel": "Supprimer ce pari"
     },
@@ -1186,7 +1188,8 @@
       "estimatedProbability": "Proba estimée : {probability} %",
       "tipster": "Tipster · {name}",
       "showSelections": "Voir les {count} sélections",
-      "hideSelections": "Masquer les sélections"
+      "hideSelections": "Masquer les sélections",
+      "scanResult": "Scanner le résultat"
     },
     "deleteDrawer": {
       "titleSingle": "Supprimer ce pari ?",

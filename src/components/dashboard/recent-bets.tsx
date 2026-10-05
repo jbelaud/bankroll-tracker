@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { TrendUp, TrendDown } from "@phosphor-icons/react";
+import { Scan, TrendUp, TrendDown } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { fmtDate, fmtMoney, fmtMoneySigned, fmtUnits } from "@/lib/format";
@@ -17,6 +17,7 @@ type RecentBet = {
   stake: number;
   stakeUnits: number | null;
   pending: boolean;
+  certificationLocked: boolean;
   profit: number;
   unitProfit: number | null;
   bankrollName: string;
@@ -53,7 +54,7 @@ export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Cu
             const positive = bet.profit >= 0;
             const Icon = positive ? TrendUp : TrendDown;
             return (
-              <li key={bet.id} className="flex min-h-touch items-center gap-3 p-3 lg:border-b lg:border-border last:lg:border-b-0">
+              <li key={bet.id} className="flex min-h-touch flex-wrap items-center gap-3 p-3 lg:border-b lg:border-border last:lg:border-b-0">
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium">
                     {translateTaxonomy(tSports, bet.sport)}
@@ -91,6 +92,17 @@ export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Cu
                       : fmtMoneySigned(bet.profit, locale, currency)}
                   </span>
                 )}
+                {bet.pending && bet.certificationLocked ? (
+                  <div className="flex basis-full justify-end">
+                    <Link
+                      href={`/scan?resultFor=${encodeURIComponent(bet.id)}`}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Scan size={16} weight="bold" aria-hidden />
+                      {t("scanResult")}
+                    </Link>
+                  </div>
+                ) : null}
               </li>
             );
           })}

@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import type { BetFormat, BetResult, Currency } from "@prisma/client";
-import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, ShieldCheck, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
+import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, Scan, ShieldCheck, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
 import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
@@ -510,6 +510,15 @@ function DesktopHistoryTable({
                           ))}
                         </ol>
                       </details>
+                    ) : null}
+                    {bet.result === "EN_ATTENTE" && bet.certificationLockedAt ? (
+                      <Link
+                        href={`/scan?resultFor=${encodeURIComponent(bet.id)}`}
+                        className="mt-2 inline-flex min-h-9 items-center gap-2 rounded-lg bg-primary px-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <Scan size={15} weight="bold" aria-hidden />
+                        {t("scanResult")}
+                      </Link>
                     ) : null}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
