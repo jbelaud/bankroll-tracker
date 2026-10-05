@@ -382,6 +382,138 @@ describe("importBets", () => {
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
 
+  it("met à jour un pari Bet365 sans référence avec sélection, cote et mise identiques", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "pending-bet365",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00.000Z"),
+      stake: 62.57,
+      odds: 2.69,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta — Marque à tout moment — Cucuta Deportivo - Deportivo Pereira",
+      format: "SIMPLE",
+    }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result",
+      detectedBookmaker: "Bet365",
+      selectedBookmaker: "Bet365",
+      createdAt: new Date("2026-10-05T00:00:00.000Z"),
+      proofEvidence: null,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: null,
+      date: null,
+      stake: 62.57,
+      odds: 2.69,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta - Marque à tout moment - Cucuta Deportivo / Deportivo Pereira",
+      result: "GAGNE",
+      eventResult: "Cucuta Deportivo 4 - 0 Deportivo Pereira",
+      format: "SIMPLE",
+      sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 1 });
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ id: "pending-bet365", result: "EN_ATTENTE" }),
+      data: expect.objectContaining({ result: "GAGNE", resultEntryMethod: "SCAN" }),
+    }));
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("rapproche un résultat Bet365 REMPLAÇANT+ du pari initial", async () => {
+    mocks.betFindMany.mockResolvedValue([{
+      id: "pending-bet365-replacement",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00.000Z"),
+      stake: 20.07,
+      odds: 12,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta — Marque deux buts ou plus — Cucuta Deportivo - Deportivo Pereira",
+      format: "SIMPLE",
+    }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result",
+      detectedBookmaker: "Bet365",
+      selectedBookmaker: "Bet365",
+      createdAt: new Date("2026-10-05T00:00:00.000Z"),
+      proofEvidence: null,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: null,
+      date: null,
+      stake: 20.07,
+      odds: 12,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta → Jhonathan Agudelo (REMPLAÇANT+) — Marque deux buts ou plus — Cucuta Deportivo - Deportivo Pereira",
+      result: "PERDU",
+      eventResult: "Cucuta Deportivo 4 - 0 Deportivo Pereira",
+      format: "SIMPLE",
+      sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 1 });
+    expect(mocks.betUpdateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ id: "pending-bet365-replacement", result: "EN_ATTENTE" }),
+      data: expect.objectContaining({ result: "PERDU", resultEntryMethod: "SCAN" }),
+    }));
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("ne crée pas un nouveau pari à partir d'une carte Bet365 réglée sans date", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: "Bet365", selectedBookmaker: "Bet365",
+      createdAt: new Date("2026-10-05T00:00:00.000Z"), proofEvidence: null,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: null, date: null, stake: 50.07, odds: 3.5, sport: "Football", betType: "Buteur",
+      description: "Diego Dorregaray Marque à tout moment Guayaquil City Leones FC",
+      result: "GAGNE", format: "SIMPLE", sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toEqual({ error: expect.stringContaining("date doit être renseignée") });
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("ne fusionne pas deux paris Bet365 sans référence lorsque le rapprochement est ambigu", async () => {
+    const target = {
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00.000Z"),
+      stake: 62.57,
+      odds: 2.69,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta Marque à tout moment Cucuta Deportivo Deportivo Pereira",
+      format: "SIMPLE",
+    };
+    mocks.betFindMany.mockResolvedValue([{ ...target, id: "pending-1" }, { ...target, id: "pending-2" }]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: "Bet365", selectedBookmaker: "Bet365",
+      createdAt: new Date("2026-10-05T00:00:00.000Z"), proofEvidence: null,
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: null, date: null, stake: 62.57, odds: 2.69, sport: "Football", betType: "Buteur",
+      description: target.description, result: "GAGNE", format: "SIMPLE", sourceScanIndex: 0,
+    })], ["scan-result"]);
+
+    expect(response).toEqual({ error: expect.stringContaining("Plusieurs paris en attente") });
+    expect(mocks.betUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
   it("refuse de créer un second pari en attente avec la même référence PMU", async () => {
     mocks.betFindMany.mockResolvedValue([{
       id: "pending-pmu",

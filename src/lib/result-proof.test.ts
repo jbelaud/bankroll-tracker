@@ -47,6 +47,89 @@ describe("result proof", () => {
       scanned({ result: "EN_ATTENTE" })
     )).toBeNull();
   });
+  it("rapproche un ticket simple Bet365 sans référence avec son identité complète", () => {
+    const target = {
+      id: "bet365-pending",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00Z"),
+      stake: 62.57,
+      odds: 2.69,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta — Marque à tout moment — Cúcuta Deportivo - Deportivo Pereira",
+      format: "SIMPLE" as const,
+    };
+    const result = scanned({
+      ticketRef: null,
+      date: null,
+      stake: 62.57,
+      odds: 2.69,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta - Marque à tout moment - Cucuta Deportivo / Deportivo Pereira",
+      format: "SIMPLE",
+    });
+
+    expect(findAutomaticResultProofTarget([target], result, { bookmaker: "Bet365" })).toBe(target);
+    expect(resultProofMatches(target, result, { bookmaker: "Bet365" })).toBe(true);
+  });
+  it("refuse un rapprochement Bet365 absent, différent ou ambigu", () => {
+    const target = {
+      id: "bet365-pending",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00Z"),
+      stake: 62.57,
+      odds: 2.69,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta Marque à tout moment Cucuta Deportivo Deportivo Pereira",
+      format: "SIMPLE" as const,
+    };
+    const result = scanned({
+      ticketRef: null,
+      date: null,
+      stake: 62.57,
+      odds: 2.69,
+      sport: "Football",
+      betType: "Buteur",
+      description: target.description,
+      format: "SIMPLE",
+    });
+
+    expect(findAutomaticResultProofTarget([target], result, { bookmaker: "Winamax" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target], { ...result, stake: 60 }, { bookmaker: "Bet365" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target], { ...result, description: "Un autre buteur" }, { bookmaker: "Bet365" })).toBeNull();
+    expect(findAutomaticResultProofTarget([target, { ...target, id: "duplicate" }], result, { bookmaker: "Bet365" })).toBeNull();
+  });
+  it("conserve le rapprochement Bet365 lorsqu'un REMPLAÇANT+ ajoute le joueur effectif", () => {
+    const target = {
+      id: "bet365-replacement",
+      ticketRef: null,
+      date: new Date("2026-10-04T00:00:00Z"),
+      stake: 20.07,
+      odds: 12,
+      bookmaker: "Bet365",
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta — Marque deux buts ou plus — Cucuta Deportivo - Deportivo Pereira",
+      format: "SIMPLE" as const,
+    };
+    const result = scanned({
+      ticketRef: null,
+      date: null,
+      stake: 20.07,
+      odds: 12,
+      sport: "Football",
+      betType: "Buteur",
+      description: "Jaime Peralta → Jhonathan Agudelo (REMPLAÇANT+) — Marque deux buts ou plus — Cucuta Deportivo - Deportivo Pereira",
+      format: "SIMPLE",
+    });
+
+    expect(findAutomaticResultProofTarget([target], result, { bookmaker: "Bet365" })?.id)
+      .toBe("bet365-replacement");
+  });
   it("n'utilise pas une référence courte ni la seule mise pour franchir une date discordante", () => {
     const short = { ...existing, ticketRef: "AB1234", stake: 5, odds: 2.63 };
     expect(findAutomaticResultProofTarget([{ ...short, id: "short" }], scanned({ ticketRef: "AB1234", date: "2026-09-11", stake: 5, odds: 2.63 }))).toBeNull();
@@ -59,6 +142,18 @@ describe("result proof", () => {
     expect(findPendingTicketMatch([pmu], { ...pending, stake: 6 })).toBeNull();
     expect(findPendingTicketMatch([pmu], { ...pending, ticketRef: null })).toBeNull();
     expect(findPendingTicketMatch([pmu], { ...pending, result: "GAGNE" })).toBeNull();
+  });
+  it("signale aussi un second scan en attente du même pari Bet365 sans référence", () => {
+    const target = {
+      id: "bet365-pending", ticketRef: null, date: new Date("2026-10-04T00:00:00Z"),
+      stake: 62.57, odds: 2.69, bookmaker: "Bet365", sport: "Football", betType: "Buteur",
+      description: "Jaime Peralta Marque à tout moment Cucuta Deportivo Deportivo Pereira", format: "SIMPLE" as const,
+    };
+    const pending = scanned({
+      ticketRef: null, date: null, stake: 62.57, odds: 2.69, result: "EN_ATTENTE",
+      sport: "Football", betType: "Buteur", description: target.description, format: "SIMPLE",
+    });
+    expect(findPendingTicketMatch([target], pending, { bookmaker: "Bet365" })?.id).toBe("bet365-pending");
   });
   it("confirms a scan 34 minutes before a Paris event, but never an uncertain hour", () => {
     const eventStart = new Date("2026-09-17T19:00:00Z"); // 21:00 Paris

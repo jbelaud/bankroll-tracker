@@ -20,7 +20,7 @@ import {
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
 import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
 import { normalizeBookmaker } from "@/lib/bookmakers";
-import { findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
+import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, findPendingTicketMatch, resultProofMatches } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 
@@ -357,10 +357,10 @@ export async function importBets(
     const t = await getTranslations({ locale, namespace: "errors" });
     return { error: t("noBetsToImport") };
   }
-  if (bets.some((bet) => !bet.date || bet.stake === null || (bet.odds === null && bet.result !== "REMBOURSE"))) {
+  if (bets.some((bet) => bet.stake === null || (bet.odds === null && bet.result !== "REMBOURSE"))) {
       return {
         error:
-          "La date et la mise doivent être renseignées. La cote est obligatoire, sauf pour un pari remboursé sans cote visible.",
+          "La mise doit être renseignée. La cote est obligatoire, sauf pour un pari remboursé sans cote visible.",
       };
   }
 
@@ -422,10 +422,15 @@ export async function importBets(
           certificationLockedAt: { not: null },
           bankroll: { userId: user.id, isPublic: true, certificationStartedAt: { not: null } },
         },
-        select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+        select: {
+          id: true, ticketRef: true, date: true, stake: true, odds: true,
+          bookmaker: true, sport: true, betType: true, description: true, format: true,
+        },
       });
       if (!target) return { error: "Ce pari n’est plus disponible pour une preuve de résultat." };
-      if (!resultProofMatches(target, scanned)) {
+      if (!resultProofMatches(target, scanned, {
+        bookmaker: scanProof.detectedBookmaker ?? scanProof.selectedBookmaker,
+      })) {
         return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
       }
       const evidence = findScanProofEvidence(scanProof.proofEvidence, scanned.ticketRef);
@@ -478,13 +483,23 @@ export async function importBets(
         result: "EN_ATTENTE",
         bankroll: { userId: user.id },
       },
-      select: { id: true, ticketRef: true, date: true, stake: true, odds: true },
+      select: {
+        id: true, ticketRef: true, date: true, stake: true, odds: true,
+        bookmaker: true, sport: true, betType: true, description: true, format: true,
+      },
     });
     const recordedReferences = await prisma.bet.findMany({
       where: { bankrollId, ticketRef: { not: null }, bankroll: { userId: user.id } },
       select: { ticketRef: true },
     });
-    if (bets.some((bet) => bet.sourceScanIndex !== undefined && findPendingTicketMatch(pendingResultTargets, bet))) {
+    if (bets.some((bet) => {
+      if (bet.sourceScanIndex === undefined) return false;
+      const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
+      const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
+      return Boolean(findPendingTicketMatch(pendingResultTargets, bet, {
+        bookmaker: scanProof?.detectedBookmaker ?? scanProof?.selectedBookmaker,
+      }));
+    })) {
       return { error: "Ce ticket est déjà enregistré en cours. Vérifie le statut sur la capture : si le résultat est visible, choisis-le avant d’importer pour mettre à jour le pari existant." };
     }
     // Contrôle avant toute écriture : une ambiguïté de référence ne doit pas
@@ -506,18 +521,67 @@ export async function importBets(
         return { error: "Ce ticket est déjà enregistré. Aucun doublon n’a été créé ; vérifie le résultat du pari existant." };
       }
     }
-    const matchedResultTargetIds = new Set<string>();
-    for (const [index, bet] of bets.entries()) {
+    // Prépare tous les rapprochements avant la première écriture. Les cartes
+    // Bet365 réglées n'affichent pas toujours la date du ticket : une date
+    // absente est acceptable uniquement quand une preuve finale correspond à
+    // un unique pari en attente. Elle reste obligatoire pour toute création.
+    const plannedResultTargetIds = new Set<string>();
+    const automaticResultPlans = bets.map((bet) => {
       const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
       const detectedBookmaker = scanUsageId ? scanUsageById.get(scanUsageId)?.detectedBookmaker ?? null : null;
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
-      const automaticResultTarget = scanProof
-        && canAutomaticallyUpdateResult(scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef), bet.result)
+      const bookmaker = scanProof?.detectedBookmaker ?? scanProof?.selectedBookmaker;
+      const mayUpdateResult = Boolean(scanProof && canAutomaticallyUpdateResult(
+        scanProof.selectedBookmaker ?? scanProof.detectedBookmaker,
+        findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef),
+        bet.result
+      ));
+      const allCandidateCount = scanProof && mayUpdateResult
+        ? automaticResultProofCandidateCount(pendingResultTargets, bet, { bookmaker })
+        : 0;
+      const automaticResultTarget = scanProof && mayUpdateResult
         ? findAutomaticResultProofTarget(
-            pendingResultTargets.filter((target) => !matchedResultTargetIds.has(target.id)),
-            bet
+            pendingResultTargets.filter((target) => !plannedResultTargetIds.has(target.id)),
+            bet,
+            { bookmaker }
           )
         : null;
+      if (automaticResultTarget) plannedResultTargetIds.add(automaticResultTarget.id);
+      return {
+        scanUsageId,
+        detectedBookmaker,
+        scanProof,
+        automaticResultTarget,
+        allCandidateCount,
+      };
+    });
+
+    for (const [index, bet] of bets.entries()) {
+      const plan = automaticResultPlans[index];
+      if (plan.allCandidateCount > 1) {
+        return {
+          error: "Plusieurs paris en attente correspondent à ce ticket Bet365. Ouvre le pari concerné et utilise « Scanner le résultat » pour choisir lequel mettre à jour.",
+        };
+      }
+      if (plan.allCandidateCount === 1 && !plan.automaticResultTarget) {
+        return {
+          error: "Plusieurs captures du lot correspondent au même pari en attente. Garde uniquement la capture finale à importer.",
+        };
+      }
+      if (!bet.date && !plan.automaticResultTarget) {
+        return {
+          error: "La date doit être renseignée pour créer un nouveau pari. Une capture de résultat Bet365 sans date peut uniquement mettre à jour un pari en attente correspondant.",
+        };
+      }
+    }
+
+    for (const [index, bet] of bets.entries()) {
+      const {
+        scanUsageId,
+        detectedBookmaker,
+        scanProof,
+        automaticResultTarget,
+      } = automaticResultPlans[index];
       if (automaticResultTarget && scanProof) {
         const evidence = findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef);
         const verifiedResultProof = canAutomaticallyUpdateResult(
@@ -542,7 +606,6 @@ export async function importBets(
             error: "Ce pari vient déjà d’être mis à jour. Actualise la page avant de recommencer.",
           };
         }
-        matchedResultTargetIds.add(automaticResultTarget.id);
         resultProofsUpdated += 1;
         console.info("[scan-result] existing pending bet updated", {
           userId: user.id,
