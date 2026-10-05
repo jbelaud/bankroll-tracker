@@ -94,8 +94,8 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
       )}
 
       {certificationStarted && pendingProofBetId ? <div className="mt-4 flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div><p className="text-sm font-semibold">{pendingProofCount > 1 ? `${pendingProofCount} paris attendent leur preuve de résultat` : "Un pari attend sa preuve de résultat"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Scanne son ticket clôturé : Kalivoa mettra à jour le pari existant et renforcera son niveau de preuve.</p></div>
-        <Link href={`/scan?resultFor=${encodeURIComponent(pendingProofBetId)}`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">Scanner le résultat</Link>
+        <div><p className="text-sm font-semibold">{pendingProofCount > 1 ? `${pendingProofCount} paris attendent leur preuve de résultat` : "Un pari attend sa preuve de résultat"}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{pendingProofCount > 1 ? "Ajoute jusqu’à 10 captures de tickets clôturés : Kalivoa mettra à jour uniquement les paris correspondants." : "Scanne son ticket clôturé : Kalivoa mettra à jour le pari existant et renforcera son niveau de preuve."}</p></div>
+        <Link href={pendingProofCount > 1 ? `/scan?resultBankroll=${encodeURIComponent(bankrollId)}` : `/scan?resultFor=${encodeURIComponent(pendingProofBetId)}`} className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">{pendingProofCount > 1 ? "Scanner les résultats en lot" : "Scanner le résultat"}</Link>
       </div> : null}
 
       {!isPublic && !certificationStarted && !referenceCapital ? <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning">Ajoute un montant de référence avant de rendre cette bankroll publique. Kalivoa l’utilisera uniquement pour convertir les mises en unités.</p> : null}

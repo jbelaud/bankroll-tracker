@@ -60,6 +60,7 @@ export function ScanFlow({
   pendingDrafts,
   tipsters,
   resultProofTarget,
+  resultProofBatch,
 }: {
   userId: string;
   bankrolls: BankrollOption[];
@@ -68,6 +69,7 @@ export function ScanFlow({
   pendingDrafts: PendingScanDraft[];
   tipsters: TipsterOption[];
   resultProofTarget?: { betId: string; bankrollId: string; label: string };
+  resultProofBatch?: { bankrollId: string; bankrollName: string; pendingCount: number };
 }) {
   const router = useRouter();
   const t = useTranslations("scan.error");
@@ -75,7 +77,10 @@ export function ScanFlow({
   const tReferral = useTranslations("referral");
   const tEmpty = useTranslations("scan.empty");
   const tPending = useTranslations("scan.pending");
-  const [bankrollId, setBankrollId] = useState(resultProofTarget?.bankrollId ?? bankrolls[0]?.id ?? "");
+  const resultBatchMode = Boolean(resultProofBatch);
+  const resultProofMode = Boolean(resultProofTarget) || resultBatchMode;
+  const resultProofBankrollId = resultProofTarget?.bankrollId ?? resultProofBatch?.bankrollId;
+  const [bankrollId, setBankrollId] = useState(resultProofBankrollId ?? bankrolls[0]?.id ?? "");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
   const extensionLink = useExtensionLink();
   const [error, setError] = useState("");
@@ -113,7 +118,7 @@ export function ScanFlow({
             screenshots_count: files.length,
             bets_detected: bets.length,
           });
-          const draftId = resultProofTarget ? null : await createScanDraft(
+          const draftId = resultProofMode ? null : await createScanDraft(
             bankrollId,
             buildDraftPayload(bets, scans, skippedDuplicateFiles)
           ).catch(() => null);
@@ -124,7 +129,7 @@ export function ScanFlow({
         setFlow({ step: "idle" });
       }
     },
-    [bankrollId, buildDraftPayload, resultProofTarget, t]
+    [bankrollId, buildDraftPayload, resultProofMode, t]
   );
 
   const restart = useCallback(() => {
@@ -160,7 +165,8 @@ export function ScanFlow({
         bets,
         scanUsageIdsBySourceIndex(scans),
         scanMeasurements,
-        resultProofTarget?.betId
+        resultProofTarget?.betId,
+        resultBatchMode
       );
       if (result.imported === undefined) {
         setError(result.error);
@@ -203,7 +209,7 @@ export function ScanFlow({
         resultProofsUpdated: result.resultProofsUpdated ?? 0,
       });
     },
-    [bankrollId, flow, resultProofTarget?.betId]
+    [bankrollId, flow, resultBatchMode, resultProofTarget?.betId]
   );
 
   if (flow.step === "scanning") {
@@ -265,7 +271,7 @@ export function ScanFlow({
         bankrolls={bankrolls}
         bankrollId={bankrollId}
         onBankrollChange={setBankrollId}
-        bankrollSelectionLocked={Boolean(resultProofTarget)}
+        bankrollSelectionLocked={resultProofMode}
         initialExcludedIndexes={flow.step === "review" ? flow.excludedIndexes : []}
         onReviewChange={(bets, excludedIndexes, selectedBankrollId) => {
           if (!flow.draftId) return;
@@ -292,12 +298,14 @@ export function ScanFlow({
   }
 
   if (flow.step === "completed") {
-    const automaticResultUpdate = !resultProofTarget && flow.resultProofsUpdated > 0;
-    const title = resultProofTarget || automaticResultUpdate
+    const automaticResultUpdate = !resultProofMode && flow.resultProofsUpdated > 0;
+    const title = resultProofMode || automaticResultUpdate
       ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
       : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
-    const description = resultProofTarget
-      ? "Le résultat du pari existant a été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur la capture."
+    const description = resultProofMode
+      ? flow.resultProofsUpdated > 1
+        ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur chaque capture.`
+        : "Le résultat du pari existant a été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur la capture."
       : automaticResultUpdate
       ? flow.resultProofsUpdated > 1
         ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon.`
@@ -326,7 +334,7 @@ export function ScanFlow({
           </p>
         ) : null}
 
-        {!resultProofTarget && flow.firstImport ? (
+        {!resultProofMode && flow.firstImport ? (
           <div className="w-full rounded-xl border border-primary/35 bg-primary/10 p-4 text-left">
             <div className="flex gap-3">
               <DiscordLogo size={24} weight="fill" className="mt-0.5 shrink-0 text-primary" aria-hidden />
@@ -359,10 +367,10 @@ export function ScanFlow({
         <Button
           type="button"
           variant="default"
-          onClick={() => router.push(resultProofTarget ? `/bankrolls/${resultProofTarget.bankrollId}` : "/dashboard")}
+          onClick={() => router.push(resultProofBankrollId ? `/bankrolls/${resultProofBankrollId}` : "/dashboard")}
           className="min-h-touch w-full rounded-lg text-sm font-semibold"
         >
-          {resultProofTarget ? "Retour à la bankroll" : tComplete("dashboardCta")}
+          {resultProofMode ? "Retour à la bankroll" : tComplete("dashboardCta")}
         </Button>
       </section>
     );
@@ -370,7 +378,7 @@ export function ScanFlow({
 
   return (
     <div className="flex flex-1 flex-col gap-3">
-      {!resultProofTarget ? <ExtensionBatch userId={userId} bankrolls={bankrolls} bankrollId={bankrollId} onBankrollChange={setBankrollId} onReview={async (result, cleanup) => {
+      {!resultProofMode ? <ExtensionBatch userId={userId} bankrolls={bankrolls} bankrollId={bankrollId} onBankrollChange={setBankrollId} onReview={async (result, cleanup) => {
         if (result.bets.length === 0) {
           setFlow({ step: "empty", files: result.files, scans: result.scans, skippedDuplicateFiles: result.skippedDuplicateFiles });
           return;
@@ -385,12 +393,16 @@ export function ScanFlow({
         <p className="text-sm font-semibold">Ajouter la preuve du résultat</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Scanne le ticket clôturé correspondant à « {resultProofTarget.label} ». Kalivoa complétera ce pari existant sans en créer un nouveau.</p>
       </section> : null}
+      {resultProofBatch ? <section className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+        <p className="text-sm font-semibold">Ajouter plusieurs preuves de résultat</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Sélectionne jusqu’à 10 captures de tickets clôturés pour « {resultProofBatch.bankrollName} ». Kalivoa cherchera parmi ses {resultProofBatch.pendingCount} paris certifiés en attente et ne créera aucun nouveau pari.</p>
+      </section> : null}
       {error && (
         <p role="alert" className="text-xs text-loss">
           {error}
         </p>
       )}
-      {!extensionLink && !resultProofTarget && pendingDrafts.length > 0 && (
+      {!extensionLink && !resultProofMode && pendingDrafts.length > 0 && (
         <section className="glass-card rounded-xl p-4">
           <h2 className="text-sm font-semibold">{tPending("title")}</h2>
           <p className="mt-1 text-xs text-muted-foreground">{tPending("description")}</p>
@@ -413,6 +425,7 @@ export function ScanFlow({
         bankrollId={bankrollId}
         onBankrollChange={setBankrollId}
         onFilesSelected={startScan}
+        resultOnly={resultProofMode}
       /> : null}
     </div>
   );
