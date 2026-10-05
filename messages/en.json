@@ -399,7 +399,8 @@
     "recentBets": {
       "ariaLabel": "Recent bets",
       "title": "Recent bets",
-      "missingUnits": "— means this historical bet has no recorded unit."
+      "missingUnits": "— means this historical bet has no recorded unit.",
+      "scanResult": "Scan the result"
     }
   },
 
@@ -1164,6 +1165,7 @@
       "actions": "Actions",
       "tipster": "Tipster · {name}",
       "showSelections": "View {count} selections",
+      "scanResult": "Scan the result",
       "editAriaLabel": "Edit this bet",
       "deleteAriaLabel": "Delete this bet"
     },
@@ -1186,7 +1188,8 @@
       "estimatedProbability": "Est. probability: {probability}%",
       "tipster": "Tipster · {name}",
       "showSelections": "View {count} selections",
-      "hideSelections": "Hide selections"
+      "hideSelections": "Hide selections",
+      "scanResult": "Scan the result"
     },
     "deleteDrawer": {
       "titleSingle": "Delete this bet?",

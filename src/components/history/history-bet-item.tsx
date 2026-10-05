@@ -13,8 +13,10 @@ import {
   CheckCircle,
   Circle,
   ShieldCheck,
+  Scan,
 } from "@phosphor-icons/react";
 import type { Currency } from "@prisma/client";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
@@ -255,6 +257,16 @@ export function HistoryBetItem({
             {fmtDateWithYear(bet.date, locale)}
             {showBankrollName && ` · ${bet.bankrollName}`}
           </span>
+          {bet.result === "EN_ATTENTE" && bet.certificationLockedAt ? (
+            <Link
+              href={`/scan?resultFor=${encodeURIComponent(bet.id)}`}
+              onClick={(event) => event.stopPropagation()}
+              className="mt-2 inline-flex min-h-10 w-fit items-center gap-2 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Scan size={16} weight="bold" aria-hidden />
+              {t("scanResult")}
+            </Link>
+          ) : null}
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-0.5">
