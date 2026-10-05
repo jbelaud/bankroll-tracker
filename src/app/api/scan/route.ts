@@ -27,7 +27,7 @@ import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
-import { findAutomaticResultProofTarget, findPendingTicketMatch } from "@/lib/result-proof";
+import { findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
 import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
@@ -491,18 +491,19 @@ export async function POST(request: NextRequest) {
     )) {
       bet.pendingTicketAlreadyExists = true;
     }
-    const raw = rawBets[index] as Record<string, unknown>;
-    if (!canAutomaticallyUpdateResult(
-      normalizedBookmaker ?? detectedBookmaker,
-      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
-      bet.result
-    )) continue;
     const target = findAutomaticResultProofTarget(
       pendingResultTargets.filter(({ id }) => !previewMatchedTargetIds.has(id)),
       bet,
       { bookmaker: matchBookmaker }
     );
     if (!target) continue;
+    const raw = rawBets[index] as Record<string, unknown>;
+    const hasVerifiedResult = canAutomaticallyUpdateResult(
+      normalizedBookmaker ?? detectedBookmaker,
+      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
+      bet.result
+    ) || isStrictUnreferencedResultProof(target, bet, { bookmaker: matchBookmaker });
+    if (!hasVerifiedResult) continue;
     previewMatchedTargetIds.add(target.id);
     bet.updatesExistingBet = true;
     delete bet.possibleDuplicate;
