@@ -24,6 +24,7 @@ export function ReviewList({
   initialBets,
   importing,
   error,
+  resultProofMode,
   skippedDuplicateFiles,
   onConfirm,
   onRestart,
@@ -42,6 +43,7 @@ export function ReviewList({
   initialBets: ParsedBet[];
   importing: boolean;
   error: string;
+  resultProofMode?: "single" | "batch";
   skippedDuplicateFiles: string[];
   onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string) => void;
   onRestart: () => void;
@@ -107,7 +109,11 @@ export function ReviewList({
     () => bets.filter((_, i) => !excluded.has(i)),
     [bets, excluded]
   );
-  const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
+  // Dans un parcours de preuve de résultat, retrouver le pari existant est
+  // précisément le comportement attendu. La validation serveur cible ce pari
+  // et interdit toute création : l'avertissement de doublon générique serait
+  // donc trompeur ici.
+  const duplicateCount = resultProofMode ? 0 : kept.filter((b) => b.possibleDuplicate).length;
   const existingUpdateCount = kept.filter((b) => b.updatesExistingBet).length;
   const pendingTicketCount = kept.filter((b) => b.pendingTicketAlreadyExists && b.result === "EN_ATTENTE").length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
@@ -153,7 +159,11 @@ export function ReviewList({
     <div className="flex flex-col gap-4 pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-28">
       <div className="flex items-center justify-between lg:col-span-12">
         <h2 className="text-base font-semibold">
-          {t("title", { count: bets.length })}
+          {resultProofMode === "single"
+            ? t("resultProofTitle")
+            : resultProofMode === "batch"
+              ? t("resultProofBatchTitle", { count: bets.length })
+              : t("title", { count: bets.length })}
         </h2>
         <Button
           variant="ghost"
@@ -166,7 +176,17 @@ export function ReviewList({
         </Button>
       </div>
 
-      {existingUpdateCount > 0 && (
+      {resultProofMode && (
+        <section role="status" className="flex items-start gap-2 rounded-xl border border-profit/35 bg-profit/10 p-3 text-sm text-profit lg:col-span-12">
+          <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+          <div>
+            <p className="font-semibold">{resultProofMode === "single" ? t("targetedResultTitle") : t("targetedResultBatchTitle")}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-foreground/80">{resultProofMode === "single" ? t("targetedResultDescription") : t("targetedResultBatchDescription")}</p>
+          </div>
+        </section>
+      )}
+
+      {!resultProofMode && existingUpdateCount > 0 && (
         <section role="status" className="flex items-start gap-2 rounded-xl border border-profit/35 bg-profit/10 p-3 text-sm text-profit lg:col-span-12">
           <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           <div>
@@ -211,12 +231,12 @@ export function ReviewList({
       <aside className="flex flex-col gap-3 lg:col-span-3 lg:sticky lg:top-24">
       <section className="rounded-xl border border-border bg-muted/40 p-3">
         <label htmlFor="review-bankroll" className="text-xs font-medium">
-          {t("bankrollLabel")}
+          {resultProofMode ? t("resultProofBankrollLabel") : t("bankrollLabel")}
         </label>
         <Select
           value={bankrollId}
           onValueChange={(value) => changeBankroll(value as string)}
-          disabled={importing}
+          disabled={importing || bankrollSelectionLocked}
           items={Object.fromEntries(
             bankrolls.map((bankroll) => [bankroll.id, bankrollOptionLabel(bankroll)])
           )}
@@ -304,6 +324,7 @@ export function ReviewList({
             referenceCapital={selectedBankroll?.referenceCapital ?? null}
             taxonomy={reviewTaxonomy}
             tipsters={tipsters}
+            resultProofMode={Boolean(resultProofMode)}
             onTipsterCreated={(tipster) => setTipsters((items) => [
               ...items.filter((item) => item.id !== tipster.id),
               tipster,
@@ -326,10 +347,14 @@ export function ReviewList({
           className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg lg:mx-auto lg:max-w-2xl"
         >
           {importing
-            ? t("importing")
+            ? resultProofMode ? t("updatingResult") : t("importing")
             : kept.length === 0
               ? t("noneToImport")
-              : t("import", { count: kept.length })}
+              : resultProofMode === "single"
+                ? t("updateResult")
+                : resultProofMode === "batch"
+                  ? t("updateResults", { count: kept.length })
+                  : t("import", { count: kept.length })}
         </Button>
       </div>
     </div>

@@ -719,7 +719,13 @@
     },
     "review": {
       "title": "Paris détectés ({count})",
+      "resultProofTitle": "Résultat du pari détecté",
+      "resultProofBatchTitle": "Résultats détectés ({count})",
       "restart": "Recommencer",
+      "targetedResultTitle": "Le pari existant sera mis à jour",
+      "targetedResultDescription": "Kalivoa compare cette capture au pari sélectionné puis ajoute le résultat et sa preuve Scan. Aucun nouveau pari ne sera créé.",
+      "targetedResultBatchTitle": "Les paris existants seront mis à jour",
+      "targetedResultBatchDescription": "Kalivoa compare chaque capture aux paris certifiés en attente. Le lot est refusé si une correspondance est ambiguë et aucun nouveau pari ne sera créé.",
       "existingResultUpdateTitle": "{count, plural, one {Ce résultat mettra à jour le pari existant} other {Ces # résultats mettront à jour les paris existants}}",
       "existingResultUpdateDescription": "Après validation, Kalivoa clôturera le pari déjà enregistré et ajoutera sa preuve Scan. Aucun nouveau pari ne sera créé.",
       "pendingTicketWarning": "Ce ticket semble déjà enregistré en cours. Vérifie le statut en haut de la capture : si le résultat est visible, choisis-le ici avant l’import. Kalivoa mettra alors à jour le pari existant.",
@@ -728,6 +734,7 @@
       "suggestedWarning": "Certains paris n'ont pas de type existant qui correspond bien — repère le préfixe « [Type suggéré…] » dans leur description.",
       "taxonomyMismatchWarning": "Certains sports et types de pari ne concordent pas avec la liste actuelle. Vérifie-les avant l'import : les libellés détectés sont conservés pour ne pas fausser les statistiques.",
       "bankrollLabel": "Importer dans cette bankroll",
+      "resultProofBankrollLabel": "Bankroll concernée",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "qualityOffer": {
         "title": "Un problème avec ce scan ?",
@@ -744,6 +751,9 @@
       },
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
       "importing": "Import en cours…",
+      "updatingResult": "Mise à jour du résultat…",
+      "updateResult": "Mettre à jour le résultat",
+      "updateResults": "{count, plural, one {Mettre à jour le résultat} other {Mettre à jour les # résultats}}",
       "noneToImport": "Aucun pari à importer",
       "card": {
         "excludeAriaLabel": "Exclure le pari {index}",

@@ -719,7 +719,13 @@
     },
     "review": {
       "title": "Bets detected ({count})",
+      "resultProofTitle": "Bet result detected",
+      "resultProofBatchTitle": "Results detected ({count})",
       "restart": "Start over",
+      "targetedResultTitle": "The existing bet will be updated",
+      "targetedResultDescription": "Kalivoa compares this screenshot with the selected bet, then adds its result and Scan proof. No new bet will be created.",
+      "targetedResultBatchTitle": "The existing bets will be updated",
+      "targetedResultBatchDescription": "Kalivoa compares each screenshot with pending certified bets. The batch is rejected if a match is ambiguous and no new bet will be created.",
       "existingResultUpdateTitle": "{count, plural, one {This result will update the existing bet} other {These # results will update the existing bets}}",
       "existingResultUpdateDescription": "After confirmation, Kalivoa will settle the previously recorded bet and add its Scan proof. No new bet will be created.",
       "pendingTicketWarning": "This ticket appears to be recorded as pending already. Check the status at the top of the screenshot: if the result is visible, select it here before importing. Kalivoa will update the existing bet.",
@@ -728,6 +734,7 @@
       "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
       "taxonomyMismatchWarning": "Some sports and bet types are not in the current list. Check them before importing: detected labels are preserved so statistics remain accurate.",
       "bankrollLabel": "Import into this bankroll",
+      "resultProofBankrollLabel": "Selected bankroll",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "qualityOffer": {
         "title": "Was there a problem with this scan?",
@@ -744,6 +751,9 @@
       },
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
       "importing": "Importing…",
+      "updatingResult": "Updating result…",
+      "updateResult": "Update the result",
+      "updateResults": "{count, plural, one {Update the result} other {Update the # results}}",
       "noneToImport": "No bets to import",
       "card": {
         "excludeAriaLabel": "Exclude bet {index}",

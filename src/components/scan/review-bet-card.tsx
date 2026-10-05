@@ -39,6 +39,7 @@ export function ReviewBetCard({
   referenceCapital,
   taxonomy,
   tipsters,
+  resultProofMode = false,
   onTipsterCreated,
 }: {
   bet: ParsedBet;
@@ -50,6 +51,7 @@ export function ReviewBetCard({
   referenceCapital: number | null;
   taxonomy: Taxonomy;
   tipsters: TipsterOption[];
+  resultProofMode?: boolean;
   onTipsterCreated: (tipster: TipsterOption) => void;
 }) {
   const suggested = hasSuggestedType(bet);
@@ -95,7 +97,7 @@ export function ReviewBetCard({
         // !border : l'utilitaire .glass-card pose déjà un border (raccourci)
         // dans le même layer ; on force la couleur d'avertissement.
         bet.updatesExistingBet && "!border-profit/50",
-        (bet.possibleDuplicate || bet.taxonomyMismatch || (bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE")) && "!border-warning"
+        ((!resultProofMode && bet.possibleDuplicate) || bet.taxonomyMismatch || (bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE")) && "!border-warning"
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -109,7 +111,7 @@ export function ReviewBetCard({
               {t("selectionsDetected", { count: bet.selections.length })}
             </span>
           ) : null}
-          {bet.possibleDuplicate && (
+          {!resultProofMode && bet.possibleDuplicate && (
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
               {t("duplicateBadge")}
