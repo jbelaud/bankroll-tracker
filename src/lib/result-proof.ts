@@ -12,6 +12,12 @@ type ExistingPendingBet = {
   betType?: string | null;
   description?: string | null;
   format?: BetFormat | null;
+  selections?: ReadonlyArray<{
+    sport?: string | null;
+    betType?: string | null;
+    label: string;
+    odds?: number | null;
+  }>;
 };
 
 type MatchContext = {
@@ -98,6 +104,27 @@ function descriptionIdentityMatches(left: string | null | undefined, right: stri
   return shared / smaller.size >= 0.9;
 }
 
+function singleSelectionIdentityMatches(existing: ExistingPendingBet, scanned: ParsedBet) {
+  const existingSelections = existing.selections ?? [];
+  const scannedSelections = scanned.selections ?? [];
+  if (existingSelections.length !== 1 || scannedSelections.length !== 1) return false;
+
+  const left = existingSelections[0];
+  const right = scannedSelections[0];
+  const leftLabel = normalizedIdentityText(left.label);
+  const rightLabel = normalizedIdentityText(right.label);
+  if (leftLabel.length < 4 || leftLabel !== rightLabel) return false;
+  if (left.odds !== null && left.odds !== undefined && right.odds !== null
+    && Math.abs(left.odds - right.odds) > 0.001) return false;
+
+  const leftSport = normalizedIdentityText(left.sport);
+  const rightSport = normalizedIdentityText(right.sport);
+  if (leftSport && rightSport && leftSport !== rightSport) return false;
+  const leftBetType = normalizedIdentityText(left.betType);
+  const rightBetType = normalizedIdentityText(right.betType);
+  return !leftBetType || !rightBetType || leftBetType === rightBetType;
+}
+
 /**
  * Some compact ticket cards do not expose a stable ticket reference or a
  * visible bookmaker. For simple bets only, use the visible wager identity as
@@ -128,7 +155,8 @@ function unreferencedIdentityMatches(
     // caller still requires one unique pending candidate, so stake/odds alone
     // can never update a result.
     if (!sameTicketDate(existing, scanned)) return false;
-    if (existingDescription.length < 12 || existingDescription !== scannedDescription) return false;
+    const exactDescription = existingDescription.length >= 12 && existingDescription === scannedDescription;
+    if (!exactDescription && !singleSelectionIdentityMatches(existing, scanned)) return false;
   } else if (!descriptionIdentityMatches(existingDescription, scannedDescription)) {
     return false;
   }
