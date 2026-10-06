@@ -22,6 +22,7 @@ import {
   Sparkle,
   Handshake,
   PuzzlePiece,
+  ShieldCheck,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Brand } from "@/components/marketing/brand";
@@ -49,6 +50,7 @@ const NAV_ITEMS = [
 const TIPSTER_SUB_ITEMS = [
   { href: "/discover", key: "discover", icon: Compass },
   { href: "/following", key: "following", icon: BookmarksSimple },
+  { href: "/tipster-space", key: "tipsterSpace", icon: ShieldCheck },
   { href: "/tipsters", key: "myTipsters", icon: UserList },
   { href: "/referrals", key: "referrals", icon: UsersThree },
 ] as const;

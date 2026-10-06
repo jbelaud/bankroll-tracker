@@ -21,7 +21,7 @@ export default async function AccountPage() {
   const rows = [
     { href: "/account/profile", label: t("navigation.profile"), detail: user.email ?? "" },
     { href: "/account/tracking", label: t("navigation.tracking"), detail: t("navigation.trackingDetail") },
-    { href: "/account/public-profile", label: t("navigation.public"), detail: dbUser?.publicDisplayName || t("navigation.publicEmpty") },
+    { href: "/tipster-space", label: t("navigation.public"), detail: dbUser?.publicDisplayName || t("navigation.publicEmpty") },
     { href: "/account/data", label: t("navigation.data"), detail: t("navigation.dataDetail") },
   ];
 

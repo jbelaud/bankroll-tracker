@@ -52,5 +52,6 @@ export async function setBankrollPublication(_state: PublicationState, form: For
 
   revalidatePath("/[locale]/bankrolls/[id]", "page");
   revalidatePath("/[locale]/bankrolls", "page");
+  revalidatePath("/[locale]/tipster-space", "page");
   return { success: publish ? "Bankroll publiée avec son historique de certification." : "Page publique masquée. L’historique de certification reste conservé." };
 }
