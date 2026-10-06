@@ -89,7 +89,7 @@ describe("Kalivoa certification", () => {
       settledBets: 10,
       score: 100,
       level: "GOLD",
-      rulesVersion: "1.1",
+      rulesVersion: "1.2",
     });
     expect(summary.volume).toBeCloseTo(1);
   });

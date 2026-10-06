@@ -53,6 +53,23 @@ describe("PMU ticket evidence (anonymized)", () => {
     expect(findScanProofEvidence([evidence, evidence], "REF-000001")).toBeNull();
   });
 
+  it("records a pending ticket placement time when no event time is displayed", () => {
+    const pending = makeScanProofEvidence(
+      "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "EN_ATTENTE"
+    );
+    const won = makeScanProofEvidence(
+      "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "GAGNE"
+    );
+
+    expect(pending).toMatchObject({
+      headerResult: null,
+      observedResult: "EN_ATTENTE",
+      ticketPlacedAt: "2026-10-05T18:36:00.000Z",
+      eventStartAt: null,
+    });
+    expect(canAutomaticallyUpdateResult(null, won, "GAGNE")).toBe(true);
+  });
+
   it("does not silently settle a PMU bet when the ticket header is missing", () => {
     const pending = makeScanProofEvidence("REF-000001", "Simple @ 2,63 • En cours", null);
     const won = makeScanProofEvidence("REF-000001", "Simple @ 2,63 • Gagné", null);

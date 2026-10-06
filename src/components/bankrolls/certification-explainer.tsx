@@ -1,8 +1,8 @@
 import { CaretDown, CheckCircle, Info, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 
 const PROOF_LEVELS = [
-  { label: "Preuve complète", detail: "Ticket scanné avant l’événement, puis résultat confirmé par un second scan.", tone: "text-profit", icon: <ShieldCheck size={17} weight="fill" aria-hidden /> },
-  { label: "Preuve partielle", detail: "Ticket scanné avant l’événement, mais résultat renseigné manuellement.", tone: "text-primary", icon: <CheckCircle size={17} weight="fill" aria-hidden /> },
+  { label: "Preuve complète", detail: "Ticket en cours scanné avec une heure de prise vérifiable, puis résultat confirmé par un second scan.", tone: "text-profit", icon: <ShieldCheck size={17} weight="fill" aria-hidden /> },
+  { label: "Preuve partielle", detail: "Ticket en cours scanné avec une heure de prise vérifiable, mais résultat renseigné manuellement.", tone: "text-primary", icon: <CheckCircle size={17} weight="fill" aria-hidden /> },
   { label: "Preuve limitée", detail: "Une preuve existe, mais elle ne permet pas de confirmer tout le cycle du pari.", tone: "text-warning", icon: <Info size={17} weight="fill" aria-hidden /> },
   { label: "Non certifié", detail: "Pari ajouté entièrement à la main, sans preuve vérifiable par Kalivoa.", tone: "text-muted-foreground", icon: <Info size={17} aria-hidden /> },
 ];

@@ -655,6 +655,9 @@ export async function importBets(
         ? allocationByBookmaker.get(normalizeBookmaker(detectedBookmaker).toLocaleLowerCase("fr"))
         : undefined;
       const allocation = detectedAllocation ?? (bankroll.mode === "DISTRIBUTED" && bankroll.allocations.length === 1 ? bankroll.allocations[0] : undefined);
+      const sourceEvidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
+      const sourceEvidenceResult = sourceEvidence?.headerResult ?? sourceEvidence?.observedResult ?? null;
+      const qualifiedPendingEvidence = bet.result === "EN_ATTENTE" && sourceEvidenceResult === "EN_ATTENTE";
       await createOwnedBet(user.id, {
         bankrollId,
         allocationId: allocation?.id ?? null,
@@ -676,11 +679,10 @@ export async function importBets(
         source: {
           entryMethod: scanUsageId ? "SCAN" : "MANUAL",
           scanUsageId,
-          eventStartAt: (() => {
-            const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
-            return bet.result === "EN_ATTENTE" && evidence?.headerResult === "EN_ATTENTE" && evidence.eventStartAt
-              ? new Date(evidence.eventStartAt) : null;
-          })(),
+          eventStartAt: qualifiedPendingEvidence && sourceEvidence?.eventStartAt
+            ? new Date(sourceEvidence.eventStartAt) : null,
+          ticketPlacedAt: qualifiedPendingEvidence && sourceEvidence?.ticketPlacedAt
+            ? new Date(sourceEvidence.ticketPlacedAt) : null,
           format: bet.format,
           resolvedTipsterId: resolvedTipsterIds[index],
           closingOdds: bet.closingOdds,

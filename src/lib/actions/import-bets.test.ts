@@ -669,6 +669,31 @@ describe("importBets", () => {
     }), expect.anything(), expect.anything());
   });
 
+  it("qualifies a pending ticket from its visible placement time when no event time is shown", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-winamax", detectedBookmaker: "Winamax", selectedBookmaker: "Winamax",
+      createdAt: new Date("2026-10-05T19:18:55Z"),
+      proofEvidence: [makeScanProofEvidence(
+        "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "EN_ATTENTE"
+      )],
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "6JRT3KC2", date: "2026-10-05", stake: 10, odds: 2,
+      result: "EN_ATTENTE", sourceScanIndex: 0,
+    })], ["scan-winamax"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 0 });
+    expect(mocks.createOwnedBet).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      source: expect.objectContaining({
+        scanUsageId: "scan-winamax",
+        eventStartAt: null,
+        ticketPlacedAt: new Date("2026-10-05T18:36:00Z"),
+      }),
+    }), expect.anything(), expect.anything());
+  });
+
   it("rejects an ambiguous existing reference before creating a duplicate", async () => {
     mocks.betFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([{
       id: "settled-pmu", ticketRef: "REF-000001",
