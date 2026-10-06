@@ -139,7 +139,7 @@ export default async function TipsterSpacePage({ params }: { params: Promise<{ l
 
     <section id="bankrolls" aria-labelledby="certification-bankrolls-title" className="scroll-mt-24">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><h2 id="certification-bankrolls-title" className="text-lg font-semibold">{t("bankrollsTitle")}</h2><p className="mt-1 text-sm text-muted-foreground">{t("bankrollsIntro")}</p></div><Link href="/bankrolls?create=1" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-semibold hover:bg-muted">{t("createBankroll")}</Link></div>
-      {bankrolls.length === 0 ? <div className="mt-4 rounded-2xl border border-dashed border-border p-8 text-center"><Wallet size={30} className="mx-auto text-muted-foreground" aria-hidden /><h3 className="mt-3 font-semibold">{t("emptyTitle")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("emptyDescription")}</p></div> : <div className="mt-4 grid gap-4 xl:grid-cols-2">{bankrolls.map((bankroll) => {
+      {publicBankrolls.length === 0 ? <div className="mt-4 rounded-2xl border border-dashed border-border p-8 text-center"><Wallet size={30} className="mx-auto text-muted-foreground" aria-hidden /><h3 className="mt-3 font-semibold">{t("emptyTitle")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("emptyDescription")}</p></div> : <div className="mt-4 grid gap-4 xl:grid-cols-2">{publicBankrolls.map((bankroll) => {
         const started = Boolean(bankroll.certificationStartedAt);
         const settledProgress = Math.min(100, (bankroll.summary.settledBets / 10) * 100);
         const level = levelLabel(bankroll.summary.level);
