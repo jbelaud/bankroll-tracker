@@ -36,6 +36,7 @@ export async function savePublicTipsterProfile(_state: PublicTipsterProfileState
   }
 
   revalidatePath("/[locale]/account", "layout");
+  revalidatePath("/[locale]/tipster-space", "page");
   revalidatePath("/[locale]/p/[slug]", "page");
   return { success: "Profil public enregistré." };
 }

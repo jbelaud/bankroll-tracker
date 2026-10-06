@@ -156,6 +156,7 @@
     "statsMobile": "Stats",
     "aiInsights": "AI analysis",
     "tipsters": "Tipsters",
+    "tipsterSpace": "Tipster space",
     "myTipsters": "My tipsters",
     "referrals": "Referrals",
     "admin": "Administration",
@@ -167,6 +168,83 @@
       "analysis": "Performance",
       "community": "Community",
       "manage": "My space"
+    }
+  },
+
+  "tipsterSpace": {
+    "eyebrow": "Kalivoa certification",
+    "title": "My tipster space",
+    "intro": "Set up your public identity, manage your bankrolls and track every step required to earn a certification level.",
+    "progress": "{done}/{total} steps completed",
+    "viewProfile": "View my public profile",
+    "configureProfile": "Set up my profile",
+    "manageBankrolls": "Manage my bankrolls",
+    "status": {
+      "profileIncomplete": "Public profile to complete",
+      "inactive": "Certification to activate",
+      "certified": "{count, plural, one {# certified bankroll} other {# certified bankrolls}}",
+      "unverified": "Insufficient proof level",
+      "observation": "Under observation"
+    },
+    "pathTitle": "Your path to certification",
+    "pathIntro": "Certification is calculated separately for each public bankroll. Your profile then brings their levels together without mixing their performance.",
+    "done": "Completed",
+    "todo": "To do",
+    "step": "Step {number}",
+    "steps": {
+      "profile": {
+        "title": "Create your public identity",
+        "description": "Choose your name, @handle, bio and visuals. This information is shared across all your public bankrolls."
+      },
+      "bankroll": {
+        "title": "Prepare a bankroll",
+        "description": "Set its private reference amount and complete any historical units required before publication."
+      },
+      "publish": {
+        "title": "Activate certification",
+        "description": "Publish the bankroll. Tracking starts on that date and never certifies earlier bets retroactively."
+      },
+      "certify": {
+        "title": "Build your proof history",
+        "description": "Scan tickets before the event, then scan their results. Reach 10 settled bets, 20u and at least 40/100."
+      }
+    },
+    "bankrollsTitle": "My bankrolls and their certification",
+    "bankrollsIntro": "Each bankroll keeps its own score, volume, followers and proof history.",
+    "createBankroll": "Create a bankroll",
+    "emptyTitle": "No bankroll yet",
+    "emptyDescription": "Create your first bankroll, set its reference amount and publish it to get started.",
+    "trackingSince": "Tracking started on {date}",
+    "notStarted": "Certification inactive",
+    "public": "Public",
+    "hidden": "Page hidden",
+    "private": "Private",
+    "score": "Score",
+    "level": "Level",
+    "completeVolume": "Complete volume",
+    "settledProgress": "Settled bets",
+    "volumeProgress": "Tracked volume",
+    "observationHelp": "The thresholds of 10 settled bets and 20u must both be reached before leaving observation.",
+    "certificationResult": "Current level: {level}.",
+    "corrections": "{count, plural, one {# recorded correction} other {# recorded corrections}}",
+    "missingReference": "Set the private reference amount for this bankroll before publishing it.",
+    "missingUnits": "{count, plural, one {Complete the unit for the remaining historical bet before publication.} other {Complete the units for the # remaining historical bets before publication.}}",
+    "readyToPublish": "This bankroll is ready: open it to add its public presentation and activate certification.",
+    "manage": "Manage",
+    "viewPublicPage": "View public page",
+    "rulesTitle": "When does a bankroll become certified?",
+    "rulesIntro": "It leaves observation only after both sample thresholds are reached. Its score then determines its level.",
+    "rules": {
+      "bets": "settled bets minimum",
+      "volume": "settled volume minimum",
+      "bronze": "minimum score for Bronze"
+    },
+    "levels": {
+      "gold": "Gold",
+      "silver": "Silver",
+      "bronze": "Bronze",
+      "unverified": "Not certified",
+      "observation": "Under observation"
     }
   },
 
