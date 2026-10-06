@@ -50,7 +50,7 @@ type FlowState =
   | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
   | { step: "empty"; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
   | { step: "importing"; draftId: string | null; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
-  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number };
+  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number; resultProofsVerified: number };
 
 export function ScanFlow({
   userId,
@@ -207,6 +207,7 @@ export function ScanFlow({
         firstImport: result.firstImport,
         earnedReferralScans: scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0),
         resultProofsUpdated: result.resultProofsUpdated ?? 0,
+        resultProofsVerified: result.resultProofsVerified ?? 0,
       });
     },
     [bankrollId, flow, resultBatchMode, resultProofTarget?.betId]
@@ -304,9 +305,11 @@ export function ScanFlow({
       ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
       : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
     const description = resultProofMode
-      ? flow.resultProofsUpdated > 1
+      ? flow.resultProofsVerified === 0
+        ? "Le résultat du pari a été mis à jour, mais la capture ne contenait pas un statut de ticket assez clair pour constituer une preuve certifiée. Il reste enregistré comme résultat manuel."
+        : flow.resultProofsUpdated > 1
         ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur chaque capture.`
-        : "Le résultat du pari existant a été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur la capture."
+        : "Le résultat du pari existant a été mis à jour sans créer de doublon et sa preuve de résultat a été enregistrée."
       : automaticResultUpdate
       ? flow.resultProofsUpdated > 1
         ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon.`

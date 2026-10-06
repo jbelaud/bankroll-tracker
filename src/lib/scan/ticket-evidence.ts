@@ -49,7 +49,13 @@ export function parisCalendarDate(value: Date): string {
 
 export function ticketResultFromHeader(value: unknown): BetResult | null {
   if (typeof value !== "string") return null;
-  const match = /^(?:Simple|Combiné(?:\s*\(\d+\))?|Système)\s*@\s*\d+(?:[,.]\d+)?\s*[•·]\s*(Gagné|Perdu|En cours|Annulé|Remboursé|Cashé)$/iu.exec(value.trim());
+  const normalized = value.normalize("NFKC").trim();
+  // Les books et les modèles restituent parfois le même en-tête sans « @ »
+  // ou avec un tiret à la place de la puce. On exige toujours le type, une
+  // cote et un statut final : un texte de sélection ou un gain potentiel ne
+  // peut donc pas devenir une preuve de résultat.
+  if (!/^(?:Simple|Combiné(?:\s*\(\d+\))?|Système)(?=\s|@)[^\r\n]*?\d+(?:[,.]\d+)?/iu.test(normalized)) return null;
+  const match = /(?:^|[\s•·|—–-])(Gagné|Perdu|En cours|Annulé|Remboursé|Cashé)\s*$/iu.exec(normalized);
   if (!match) return null;
   const status = match[1].toLocaleLowerCase("fr");
   return status === "gagné" ? "GAGNE" : status === "perdu" ? "PERDU"
