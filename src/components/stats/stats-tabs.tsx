@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { ProfitBarChart } from "./profit-bar-chart";
 import { ResultDistributionDonut } from "./result-distribution-donut";
 import type { GroupStat } from "@/lib/stats";
@@ -21,7 +21,7 @@ export function StatsTabs({
   monthlyData: { name: string; profit: number; unitProfit: number; missingUnitCount: number }[];
   distributionData: { name: string; value: number }[];
   sportData: GroupStat[];
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const t = useTranslations("stats.tabs");
   const units = useDisplayUnit() === "units";

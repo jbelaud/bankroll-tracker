@@ -114,7 +114,7 @@ export function BankrollList({
                       <p className="mt-0.5 text-xs text-muted-foreground">
                         {br.mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: br.allocations.length })}
                       </p>
-                      {br.referenceCapital ? <p className="num mt-1 text-[0.65rem] text-primary">{t("referenceUnit", { value: fmtMoney(br.referenceCapital / 100, locale, currency) })}</p> : null}
+                      {br.referenceCapital ? <p className="num mt-1 text-[0.65rem] text-primary">{t("referenceUnit", { value: fmtMoney(br.referenceCapital / 100, locale, br.referenceCurrency) })}</p> : null}
                     </div>
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary group-focus-visible:bg-primary/10 group-focus-visible:text-primary">
                       <ArrowRight size={17} weight="bold" aria-hidden />
@@ -124,7 +124,7 @@ export function BankrollList({
                   <div>
                     <span className="text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">{t("balance")}</span>
                     <p className="num mt-1 text-2xl font-semibold tracking-tight">
-                      {fmtMoney(br.balance, locale, currency)}
+                      {fmtMoney(br.balance, locale, br.currency)}
                     </p>
                   </div>
 
@@ -132,7 +132,7 @@ export function BankrollList({
                     <div className="min-w-0">
                       <span className="block text-[0.6rem] uppercase tracking-wide text-muted-foreground">{t("profit")}</span>
                       <strong className={displayUnit === "units" && br.unitProfit === null ? "num mt-1 block truncate text-xs" : br.profit >= 0 ? "num mt-1 block truncate text-xs text-profit" : "num mt-1 block truncate text-xs text-loss"}>
-                        {displayUnit === "units" ? br.unitProfit === null ? "—" : fmtUnits(br.unitProfit, locale, true) : fmtMoneySigned(br.profit, locale, currency)}
+                        {displayUnit === "units" ? br.unitProfit === null ? "—" : fmtUnits(br.unitProfit, locale, true) : fmtMoneySigned(br.profit, locale, br.currency)}
                       </strong>
                       {displayUnit === "units" && br.missingUnitCount > 0 ? <span className="mt-0.5 block text-[0.6rem] text-warning">{t("missingUnits", { count: br.missingUnitCount })}</span> : null}
                     </div>

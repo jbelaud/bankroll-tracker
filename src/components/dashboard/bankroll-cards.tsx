@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { Link } from "@/i18n/navigation";
 import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
@@ -9,6 +9,7 @@ import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 type BankrollSummary = {
   id: string;
   name: string;
+  currency: AccountingCurrency;
   balance: number;
   profit: number;
   unitProfit: number | null;
@@ -17,7 +18,7 @@ type BankrollSummary = {
   betCount: number;
 };
 
-export function BankrollCards({ bankrolls, currency }: { bankrolls: BankrollSummary[]; currency: Currency }) {
+export function BankrollCards({ bankrolls }: { bankrolls: BankrollSummary[]; currency: AccountingCurrency }) {
   const locale = useLocale();
   const t = useTranslations("dashboard.bankrollCards");
   const tCommon = useTranslations("common");
@@ -33,7 +34,7 @@ export function BankrollCards({ bankrolls, currency }: { bankrolls: BankrollSumm
       {bankrolls.map((bankroll) => {
         const profit = displayUnit === "units"
           ? bankroll.unitProfit === null ? "—" : fmtUnits(bankroll.unitProfit, locale, true)
-          : fmtMoneySigned(bankroll.profit, locale, currency);
+          : fmtMoneySigned(bankroll.profit, locale, bankroll.currency);
         return <Link key={bankroll.id} href={`/bankrolls/${bankroll.id}`} className="glass-card group flex min-w-0 flex-col gap-3 rounded-xl p-4 transition-colors hover:border-primary/40">
           <div className="flex items-start justify-between gap-3"><div className="min-w-0"><h3 className="truncate text-sm font-semibold">{bankroll.name}</h3><p className="mt-1 text-xs text-muted-foreground">{t("betCount", { count: bankroll.betCount })}</p></div><span className="text-primary transition-transform group-hover:translate-x-0.5" aria-hidden>→</span></div>
           <div className="grid grid-cols-2 gap-3 border-t border-border pt-3">
@@ -41,7 +42,7 @@ export function BankrollCards({ bankrolls, currency }: { bankrolls: BankrollSumm
             <div><span className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">{t("roi")}</span><strong className={`num mt-1 block text-base ${bankroll.roi === null ? "" : bankroll.roi >= 0 ? "text-profit" : "text-loss"}`}>{bankroll.roi === null ? "—" : fmtPct(bankroll.roi, locale)}</strong></div>
           </div>
           {displayUnit === "units" && bankroll.missingUnits > 0 ? <p className="text-xs text-warning">{t("missingUnits", { count: bankroll.missingUnits })}</p> : null}
-          <p className="text-xs text-muted-foreground">{t("realBalance")}: {fmtMoney(bankroll.balance, locale, currency)}</p>
+          <p className="text-xs text-muted-foreground">{bankroll.currency === "UNIT" ? "Capital suivi" : t("realBalance")}: {fmtMoney(bankroll.balance, locale, bankroll.currency)}</p>
         </Link>;
       })}
     </div>

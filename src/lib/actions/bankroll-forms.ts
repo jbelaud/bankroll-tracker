@@ -31,6 +31,8 @@ function parseFields(formData: FormData): BankrollInput {
   return {
     name: String(formData.get("name") ?? ""),
     mode,
+    currency: String(formData.get("currency") ?? "EUR") as BankrollInput["currency"],
+    referenceCurrency: String(formData.get("referenceCurrency") ?? "EUR") as BankrollInput["referenceCurrency"],
     initial: Number(formData.get("initial")),
     referenceCapital: referenceRaw ? Number(referenceRaw) : null,
     allocations,

@@ -33,6 +33,7 @@ import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
+import { normalizeScannedMarketType } from "@/lib/scan/market-type";
 import { extensionScanReplay } from "@/lib/scan/extension-replay";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
@@ -392,10 +393,19 @@ export async function POST(request: NextRequest) {
     const financials = normalizeExtractedFinancials(r.stake, r.odds);
     const result = resolveScannedTicketResult(r.ticketHeaderText, r.result);
     const sportContext = normalizeSportContext(taxonomy, String(r.sport ?? "Autre sport"));
+    const visibleSelectionLabels = Array.isArray(r.selections)
+      ? r.selections.flatMap((selection) => selection && typeof selection === "object"
+        && "label" in selection && typeof selection.label === "string" ? [selection.label] : [])
+      : [];
+    const scannedBetType = normalizeScannedMarketType(
+      sportContext.sport,
+      String(r.betType ?? "Autre"),
+      [...visibleSelectionLabels, String(r.description ?? "")]
+    );
     const initialPair = normalizeTaxonomyPair(
       taxonomy,
       sportContext.sport,
-      String(r.betType ?? "Autre")
+      scannedBetType
     );
     const { sport, betType } = initialPair;
     const selections = Array.isArray(r.selections) ? r.selections.slice(0, 100).flatMap((rawSelection) => {
@@ -410,7 +420,7 @@ export async function POST(request: NextRequest) {
       const normalizedSelection = normalizeTaxonomyPair(
         taxonomy,
         selectionContext.sport,
-        String(selection.betType ?? betType)
+        normalizeScannedMarketType(selectionContext.sport, String(selection.betType ?? betType), [label])
       );
       return [{
         sport: normalizedSelection.sport,

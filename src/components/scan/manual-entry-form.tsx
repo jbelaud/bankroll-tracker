@@ -181,7 +181,7 @@ export function ManualEntryForm({
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="manual-stake" className="text-xs">
-            {tCard("stakeLabel", { currency: currencySymbol(currency) })}
+            {tCard("stakeLabel", { currency: currencySymbol(selectedBankroll?.currency ?? currency) })}
           </Label>
           <Input
             id="manual-stake"
@@ -283,7 +283,7 @@ export function ManualEntryForm({
       {result === "CASHE" && (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="manual-cashout" className="text-xs">
-            {tCard("cashoutLabel", { currency: currencySymbol(currency) })}
+            {tCard("cashoutLabel", { currency: currencySymbol(selectedBankroll?.currency ?? currency) })}
           </Label>
           <Input
             id="manual-cashout"

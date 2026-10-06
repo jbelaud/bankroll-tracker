@@ -29,9 +29,10 @@ export async function TipsterStatsTable({
 
   return (
     <>
+      {rows.some((row) => !row.monetaryComparable) ? <p className="mb-3 text-xs text-muted-foreground">Les montants d’un tipster suivi dans plusieurs devises restent indisponibles sans conversion explicite.</p> : null}
       <ul className="divide-y divide-border sm:hidden">
         {rows.map((row) => {
-          const netProfit = row.netProfit === null ? "—" : fmtMoneySigned(row.netProfit, locale, row.currency);
+          const netProfit = !row.monetaryComparable || row.netProfit === null ? "—" : fmtMoneySigned(row.netProfit, locale, row.currency);
           return (
             <li key={row.tipsterId} className="py-3 first:pt-0 last:pb-0">
               <div className="flex items-baseline justify-between gap-3">
@@ -45,7 +46,7 @@ export async function TipsterStatsTable({
               <dl className="mt-2 grid grid-cols-3 gap-2 text-xs">
                 <MobileMetric label={tableT("bets")} value={String(row.settledBetCount)} />
                 <MobileMetric label={tableT("winRate")} value={row.winRate === null ? "—" : fmtPct(row.winRate, locale, 0)} />
-                <MobileMetric label={t("roi")} value={row.roi === null ? "—" : fmtPct(row.roi, locale, 1)} />
+                <MobileMetric label={t("roi")} value={!row.monetaryComparable || row.roi === null ? "—" : fmtPct(row.roi, locale, 1)} />
               </dl>
             </li>
           );
@@ -77,14 +78,14 @@ export async function TipsterStatsTable({
               <td className="num py-2 pr-3 text-right text-muted-foreground">{row.settledBetCount}</td>
               <td className="num py-2 pr-3 text-right text-muted-foreground">{row.winRate === null ? "—" : fmtPct(row.winRate, locale, 0)}</td>
               <td className="num py-2 pr-3 text-right text-muted-foreground">{row.averageOdds === null ? "—" : row.averageOdds.toFixed(2)}</td>
-              <td className="num py-2 pr-3 text-right text-muted-foreground">{fmtMoney(row.totalStake, locale, row.currency)}</td>
-              <td className={`num py-2 pr-3 text-right font-medium ${row.bettingProfit >= 0 ? "text-profit" : "text-loss"}`}>{fmtMoneySigned(row.bettingProfit, locale, row.currency)}</td>
-              <td className="num py-2 pr-3 text-right text-muted-foreground">{row.roi === null ? "—" : fmtPct(row.roi, locale, 1)}</td>
+              <td className="num py-2 pr-3 text-right text-muted-foreground">{row.monetaryComparable ? fmtMoney(row.totalStake, locale, row.currency) : "—"}</td>
+              <td className={`num py-2 pr-3 text-right font-medium ${row.monetaryComparable ? row.bettingProfit >= 0 ? "text-profit" : "text-loss" : "text-muted-foreground"}`}>{row.monetaryComparable ? fmtMoneySigned(row.bettingProfit, locale, row.currency) : "—"}</td>
+              <td className="num py-2 pr-3 text-right text-muted-foreground">{!row.monetaryComparable || row.roi === null ? "—" : fmtPct(row.roi, locale, 1)}</td>
               <td className="num py-2 pr-3 text-right text-muted-foreground">
-                {row.serviceCost === null ? t("unknown") : row.costState === "FREE" ? t("free") : `-${fmtMoney(row.serviceCost, locale, row.currency)}`}
+                {!row.monetaryComparable ? "—" : row.serviceCost === null ? t("unknown") : row.costState === "FREE" ? t("free") : `-${fmtMoney(row.serviceCost, locale, row.currency)}`}
               </td>
               <td className={`num py-2 text-right font-semibold ${row.netProfit === null ? "text-muted-foreground" : row.netProfit >= 0 ? "text-profit" : "text-loss"}`}>
-                {row.netProfit === null ? "—" : fmtMoneySigned(row.netProfit, locale, row.currency)}
+                  {!row.monetaryComparable || row.netProfit === null ? "—" : fmtMoneySigned(row.netProfit, locale, row.currency)}
               </td>
             </tr>
           ))}

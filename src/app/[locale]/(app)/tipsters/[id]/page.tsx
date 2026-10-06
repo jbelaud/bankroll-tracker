@@ -82,6 +82,10 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
     description: bet.description,
     eventResult: bet.eventResult,
     stake: bet.stake,
+    stakeCurrency: bet.stakeCurrency,
+    sourceStakeAmount: bet.sourceStakeAmount,
+    sourceStakeCurrency: bet.sourceStakeCurrency,
+    stakeUnits: bet.stakeUnits,
     odds: bet.odds,
     closingOdds: bet.closingOdds,
     estimatedProbability: bet.estimatedProbability,
@@ -102,12 +106,12 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
     const end = period.endDate?.toISOString().slice(0, 10);
     return start <= today && (!end || end >= today);
   }) ?? null;
-  const money = (value: number) => fmtMoneySigned(value, locale, tipster.user.currency);
+  const money = (value: number) => performance.monetaryComparable ? fmtMoneySigned(value, locale, tipster.user.currency) : "—";
   const currentCostLabel = !current
     ? t("unknown")
     : current.kind === "FREE"
       ? t("free")
-      : `${fmtMoney(current.amount ?? 0, locale, tipster.user.currency)}${current.frequency ? ` · ${t(`frequencies.${current.frequency}`)}` : ""}`;
+      : `${fmtMoney(current.amount ?? 0, locale, current.currency)}${current.frequency ? ` · ${t(`frequencies.${current.frequency}`)}` : ""}`;
 
   return (
     <div className="flex flex-col gap-6">
@@ -119,35 +123,37 @@ export default async function TipsterDetailPage({ params, searchParams }: PagePr
 
       <TipsterPeriodFilter from={fromValue} to={toValue} />
 
+      {!performance.monetaryComparable ? <p className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-xs">Des mises ou frais sont enregistrés dans une autre devise. Les totaux monétaires sont masqués jusqu’à une conversion explicite.</p> : null}
+
       {performance.settledBetCount === 0 ? <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">{t("noSettled")}</p> : null}
 
       <section aria-labelledby="primary-kpis">
         <h2 id="primary-kpis" className="mb-3 text-sm font-semibold">{t("results")}</h2>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <Metric label={t("bettingProfit")} value={money(performance.bettingProfit)} tone={performance.bettingProfit >= 0 ? "profit" : "loss"} />
-          <Metric label={t("vipCost")} value={performance.serviceCost === null ? t("unknown") : performance.costState === "FREE" ? t("free") : `-${fmtMoney(performance.serviceCost, locale, tipster.user.currency)}`} />
-          <Metric label={t("netProfit")} value={performance.netProfit === null ? "—" : money(performance.netProfit)} tone={performance.netProfit === null ? undefined : performance.netProfit >= 0 ? "profit" : "loss"} />
+          <Metric label={t("bettingProfit")} value={money(performance.bettingProfit)} tone={!performance.monetaryComparable ? undefined : performance.bettingProfit >= 0 ? "profit" : "loss"} />
+          <Metric label={t("vipCost")} value={!performance.monetaryComparable ? "—" : performance.serviceCost === null ? t("unknown") : performance.costState === "FREE" ? t("free") : `-${fmtMoney(performance.serviceCost, locale, tipster.user.currency)}`} />
+          <Metric label={t("netProfit")} value={!performance.monetaryComparable || performance.netProfit === null ? "—" : money(performance.netProfit)} tone={!performance.monetaryComparable || performance.netProfit === null ? undefined : performance.netProfit >= 0 ? "profit" : "loss"} />
         </div>
         <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
           <Metric label={t("bets")} value={String(performance.betCount)} />
           <Metric label={t("won")} value={String(performance.wins)} />
           <Metric label={t("lost")} value={String(performance.losses)} />
           <Metric label={t("winRate")} value={performance.winRate === null ? "—" : fmtPct(performance.winRate, locale, 1)} />
-          <Metric label={t("totalStake")} value={fmtMoney(performance.totalStake, locale, tipster.user.currency)} />
-          <Metric label={t("averageStake")} value={performance.averageStake === null ? "—" : fmtMoney(performance.averageStake, locale, tipster.user.currency)} />
+          <Metric label={t("totalStake")} value={performance.monetaryComparable ? fmtMoney(performance.totalStake, locale, tipster.user.currency) : "—"} />
+          <Metric label={t("averageStake")} value={!performance.monetaryComparable || performance.averageStake === null ? "—" : fmtMoney(performance.averageStake, locale, tipster.user.currency)} />
           <Metric label={t("averageOdds")} value={performance.averageOdds === null ? "—" : performance.averageOdds.toFixed(2)} />
-          <Metric label={t("roi")} value={performance.roi === null ? "—" : fmtPct(performance.roi, locale, 1)} />
+          <Metric label={t("roi")} value={!performance.monetaryComparable || performance.roi === null ? "—" : fmtPct(performance.roi, locale, 1)} />
         </div>
       </section>
 
       <section className="glass-card rounded-xl p-3 lg:p-4">
         <h2 className="text-sm font-semibold">{t("curve")}</h2>
-        <ProfitCurve data={performance.cumulative} currency={tipster.user.currency} />
+        {performance.monetaryComparable ? <ProfitCurve data={performance.cumulative} currency={tipster.user.currency} /> : <p className="text-xs text-muted-foreground">Courbe indisponible pour des devises différentes.</p>}
       </section>
 
       <section className="glass-card overflow-hidden rounded-xl p-4">
         <h2 className="text-sm font-semibold">{t("monthlyTitle")}</h2>
-        {performance.monthly.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{t("monthlyEmpty")}</p> : <div className="no-scrollbar -mx-4 mt-3 overflow-x-auto px-4"><table className="w-full min-w-[620px] text-xs"><thead><tr className="border-b border-border text-left uppercase tracking-wide text-muted-foreground"><th className="py-2">{t("month")}</th><th className="py-2 text-right">{t("bets")}</th><th className="py-2 text-right">{t("bettingProfit")}</th><th className="py-2 text-right">{t("vipCost")}</th><th className="py-2 text-right">{t("netProfit")}</th></tr></thead><tbody>{performance.monthly.map((row) => <tr key={row.month} className="border-b border-border/50"><td className="py-2">{new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${row.month}-01`))}</td><td className="num py-2 text-right">{row.bets}</td><td className="num py-2 text-right">{money(row.bettingProfit)}</td><td className="num py-2 text-right">{row.serviceCost === null ? "—" : `-${fmtMoney(row.serviceCost, locale, tipster.user.currency)}`}</td><td className="num py-2 text-right font-semibold">{row.netProfit === null ? "—" : money(row.netProfit)}</td></tr>)}</tbody></table></div>}
+        {performance.monthly.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{t("monthlyEmpty")}</p> : <div className="no-scrollbar -mx-4 mt-3 overflow-x-auto px-4"><table className="w-full min-w-[620px] text-xs"><thead><tr className="border-b border-border text-left uppercase tracking-wide text-muted-foreground"><th className="py-2">{t("month")}</th><th className="py-2 text-right">{t("bets")}</th><th className="py-2 text-right">{t("bettingProfit")}</th><th className="py-2 text-right">{t("vipCost")}</th><th className="py-2 text-right">{t("netProfit")}</th></tr></thead><tbody>{performance.monthly.map((row) => <tr key={row.month} className="border-b border-border/50"><td className="py-2">{new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${row.month}-01`))}</td><td className="num py-2 text-right">{row.bets}</td><td className="num py-2 text-right">{money(row.bettingProfit)}</td><td className="num py-2 text-right">{!performance.monetaryComparable || row.serviceCost === null ? "—" : `-${fmtMoney(row.serviceCost, locale, tipster.user.currency)}`}</td><td className="num py-2 text-right font-semibold">{!performance.monetaryComparable || row.netProfit === null ? "—" : money(row.netProfit)}</td></tr>)}</tbody></table></div>}
       </section>
 
       <section>

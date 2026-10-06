@@ -56,11 +56,15 @@ export default async function StatsPage({
     getUserTaxonomy(user.id),
   ]);
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
+  const mixedCurrencies = new Set(activeBankrolls.map((item) => item.currency)).size > 1;
   const activeBankrollIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const accessibleBets = allBets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
   const value = (key: string) => typeof query[key] === "string" ? query[key].trim() : "";
   const from = value("from"); const to = value("to"); const q = value("q").toLowerCase();
-  const bankroll = value("bankroll"); const sportFilter = value("sport"); const requestedTypeFilter = value("type");
+  const requestedBankroll = value("bankroll");
+  const automaticBankroll = !requestedBankroll && mixedCurrencies ? activeBankrolls[0] : null;
+  const bankroll = requestedBankroll || automaticBankroll?.id || "";
+  const sportFilter = value("sport"); const requestedTypeFilter = value("type");
   const resultFilter = value("result"); const live = value("live"); const freebet = value("freebet");
   const number = (key: string) => { const n = Number(value(key)); return Number.isFinite(n) && value(key) !== "" ? n : null; };
   const minStake = number("minStake"); const maxStake = number("maxStake"); const minOdds = number("minOdds"); const maxOdds = number("maxOdds");
@@ -93,10 +97,10 @@ export default async function StatsPage({
     }))
     : null;
   const extremeInUnits = (bet: typeof stats.biggestWin) => bet && bet.stakeUnits !== null
-    && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
+    && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))
     ? profitInUnits(bet) : null;
 
-  const currency = await getServerCurrency();
+  const currency = selectedBankroll?.currency ?? activeBankrolls[0]?.currency ?? await getServerCurrency();
   const symbol = currencySymbol(currency);
 
   const oddsData = bucketStats(bets, oddsBucket, ODDS_BUCKETS);
@@ -143,7 +147,7 @@ export default async function StatsPage({
         map[date] ??= { date, profit: 0, unitProfit: 0, missingUnits: 0, count: 0 };
         map[date].profit += computeProfit(bet);
         if (bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits)
-          && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))) {
+          && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0))) {
           map[date].unitProfit += profitInUnits(bet);
         } else {
           map[date].missingUnits += 1;
@@ -193,6 +197,7 @@ export default async function StatsPage({
       key={`${bankroll}-${initialView}-${value("panel")}`}
       initialView={initialView}
       hasActiveFilters={hasActiveFilters}
+      scopeNotice={automaticBankroll ? `Devises différentes : statistiques limitées à « ${automaticBankroll.name} ». Choisis une autre bankroll dans les filtres.` : undefined}
       initialPanel={value("panel") === "filters" ? "filters" : value("panel") === "calendar" ? "calendar" : null}
       filters={
         <StatsFilters

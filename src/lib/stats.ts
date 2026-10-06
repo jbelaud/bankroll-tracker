@@ -39,7 +39,7 @@ function addToGroup(row: GroupStat, bet: Bet) {
   row.staked += realStake(bet);
   if (bet.result === "GAGNE") row.won += 1;
   const unitsKnown = bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits)
-    && (bet.result !== "CASHE" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0));
+    && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || (bet.referenceCapitalAtBet !== null && bet.referenceCapitalAtBet > 0));
   if (!unitsKnown) {
     row.missingUnitCount += 1;
     row.unitProfit = null;

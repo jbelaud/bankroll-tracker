@@ -20,7 +20,7 @@ export function AccountGoalsCard({
   initialLossLimit,
   currency,
 }: {
-  monthProfit: number;
+  monthProfit: number | null;
   initialProfitGoal: number;
   initialLossLimit: number;
   currency: Currency;
@@ -142,6 +142,18 @@ export function AccountGoalsCard({
         >
           {tAccount("defineLink")}
         </button>
+      </section>
+    );
+  }
+
+  if (monthProfit === null) {
+    return (
+      <section aria-label={t("title")} className="glass-card rounded-xl p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Target size={15} className="text-primary" aria-hidden />{t("title")}</h2>
+          <Button variant="ghost" size="icon" aria-label={tAccount("editAriaLabel")} onClick={() => setEditing(true)} className="min-h-touch min-w-touch rounded-lg text-muted-foreground"><PencilSimple size={15} aria-hidden /></Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">{tAccount("currencyMismatch")}</p>
       </section>
     );
   }

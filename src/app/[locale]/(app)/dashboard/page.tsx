@@ -106,6 +106,9 @@ export default async function DashboardPage() {
   bankrolls = bankrolls.filter((bankroll) => activeBankrollIds.has(bankroll.id));
   bets = bets.filter((bet) => activeBankrollIds.has(bet.bankrollId));
   movements = movements.filter((movement) => activeBankrollIds.has(movement.bankrollId));
+  const nativeCurrencies = [...new Set(bankrolls.map((bankroll) => bankroll.currency))];
+  const mixedCurrencies = nativeCurrencies.length > 1;
+  const aggregateCurrency = nativeCurrencies[0] ?? currency;
 
   // Même sémantique que le Dashboard de l'artifact : seuls les paris
   // réglés comptent dans le solde et les stats.
@@ -184,6 +187,7 @@ export default async function DashboardPage() {
     sport: b.sport,
     betType: b.betType,
     stake: b.stake,
+    stakeCurrency: b.stakeCurrency,
     stakeUnits: b.stakeUnits,
     pending: b.result === "EN_ATTENTE",
     certificationLocked: b.certificationLockedAt !== null,
@@ -220,7 +224,8 @@ export default async function DashboardPage() {
           balance={totalBalance}
           drawdown={details.drawdown}
           drawdownUnits={details.drawdownUnits}
-          currency={currency}
+          currency={aggregateCurrency}
+          mixedCurrencies={mixedCurrencies}
         />
       </Reveal>
 
@@ -235,7 +240,8 @@ export default async function DashboardPage() {
           winRate={winRate}
           settledCount={settled.length}
           wonCount={wonCount}
-          currency={currency}
+          currency={aggregateCurrency}
+          mixedCurrencies={mixedCurrencies}
         />
       </Reveal>
 
@@ -265,8 +271,8 @@ export default async function DashboardPage() {
             {t("moreTitle")} <span className="ml-2 font-normal text-muted-foreground">{t("moreDescription")}</span>
           </summary>
           <div className="mt-4 grid min-w-0 gap-4 border-t border-border pt-4 lg:grid-cols-2">
-            <CapitalFlowCard initial={totalInitial} deposits={totalDeposits} withdrawals={totalWithdrawals} netFunding={totalNetFunding} profit={totalProfit} currency={currency} />
-            {hasMonthlyGuardrail ? <GoalsCard monthProfit={monthProfit} profitGoal={dbUser?.monthlyProfitGoal ?? 0} lossLimit={dbUser?.monthlyLossLimit ?? 0} /> : null}
+            {!mixedCurrencies && aggregateCurrency !== "UNIT" ? <CapitalFlowCard initial={totalInitial} deposits={totalDeposits} withdrawals={totalWithdrawals} netFunding={totalNetFunding} profit={totalProfit} currency={aggregateCurrency} /> : null}
+            {hasMonthlyGuardrail && !mixedCurrencies && aggregateCurrency === (dbUser?.currency ?? "EUR") ? <GoalsCard monthProfit={monthProfit} profitGoal={dbUser?.monthlyProfitGoal ?? 0} lossLimit={dbUser?.monthlyLossLimit ?? 0} /> : null}
           </div>
           <aside aria-label={t("resources")} className="mt-4 grid min-w-0 gap-3 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-3">
             <QuotaCard plan={plan} scansUsed={quota.used} scansLimit={quota.limit} wallet={quota} betaPhaseActive={betaProgram?.phase !== "ENDED"} />

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { BetEntryMethod, BetResult } from "@prisma/client";
+import type { AccountingCurrency, BetEntryMethod, BetResult } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { ArrowRight, BookmarkSimple, CaretDown, ShieldCheck, UsersThree, XLogo } from "@phosphor-icons/react/dist/ssr";
 import { PublicActivityCard } from "@/components/following/public-activity-card";
@@ -83,7 +83,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
               orderBy: [{ date: "desc" }, { createdAt: "desc" }],
               select: {
                 id: true, createdAt: true, date: true, sport: true, betType: true,
-                description: true, stakeUnits: true, odds: true, result: true,
+                description: true, stakeUnits: true, stakeCurrency: true, odds: true, result: true,
                 cashOutAmount: true, referenceCapitalAtBet: true, freebet: true,
                 entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true,
                 resultProofAt: true, resultEntryMethod: true,
@@ -212,7 +212,7 @@ function Activity({ bet, locale, date, number, viewerSettings, selectedProfile }
   viewerSettings: ViewerSettings;
   selectedProfile: StakingSettings;
 }) {
-  const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
+  const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
   const profit = canCalculateProfit ? profitInUnits(bet) : null;
   const personal = bet.stakeUnits !== null && viewerSettings && selectedProfile ? fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
   return <PublicActivityCard title={bet.description || `${bet.sport} · ${bet.betType}`} meta={`${date.format(bet.date)} · ${bet.sport} · ${bet.betType}`} bankrollName={bet.bankrollName} bankrollSlug={bet.bankrollSlug} odds={bet.odds === null ? "—" : number.format(bet.odds)} stake={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} personalStake={personal ? `Pour toi : ${personal}` : undefined} profit={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} result={betResultToLabel(bet.result)} resultTone={resultTone(bet.result)} proof={PROOF_LABELS[certificationStatus(bet, bet.certificationStartedAt)]} />;
@@ -221,7 +221,7 @@ function Activity({ bet, locale, date, number, viewerSettings, selectedProfile }
 type PublicBet = {
   id: string; createdAt: Date; date: Date; sport: string; betType: string; description: string | null;
   stakeUnits: number | null; odds: number | null; result: BetResult;
-  cashOutAmount: number | null; referenceCapitalAtBet: number | null; freebet: boolean;
+  cashOutAmount: number | null; referenceCapitalAtBet: number | null; freebet: boolean; stakeCurrency: AccountingCurrency;
   entryMethod: BetEntryMethod; initialProofAt: Date | null; initialProofBeforeEvent: boolean | null;
   resultProofAt: Date | null; resultEntryMethod: BetEntryMethod; _count: { corrections: number };
   bankrollId: string; bankrollName: string; bankrollSlug: string; certificationStartedAt: Date | null;

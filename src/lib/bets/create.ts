@@ -1,7 +1,8 @@
 import "server-only";
 
-import type { BetEntryMethod, BetFormat, BetResult } from "@prisma/client";
-import { referenceDateForImport, unitSnapshot } from "@/lib/bankroll-units";
+import type { BetEntryMethod, BetFormat, BetResult, Currency } from "@prisma/client";
+import { referenceAt, referenceDateForImport, unitSnapshot } from "@/lib/bankroll-units";
+import { convertTicketToBankroll } from "@/lib/native-stake";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { isBetResult } from "@/lib/bet-result";
 import { prisma } from "@/lib/prisma";
@@ -55,6 +56,9 @@ export type CreateOwnedBetInput = {
     estimatedProbability?: number | null;
     selections?: ParsedBetSelection[];
     importBatchId?: string | null;
+    ticketCurrency?: Currency;
+    ticketFxRate?: number | null;
+    expectedReferenceCapital?: number | null;
   };
 };
 
@@ -113,7 +117,7 @@ export async function createOwnedBet(
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${input.bankrollId} FOR UPDATE`;
     const bankrollState = await tx.bankroll.findUniqueOrThrow({
       where: { id: input.bankrollId },
-      select: { isPublic: true, certificationStartedAt: true },
+      select: { isPublic: true, certificationStartedAt: true, currency: true, referenceCurrency: true },
     });
     const periods = await tx.bankrollReferencePeriod.findMany({ where: { bankrollId: input.bankrollId } });
     const scanProof = source.scanUsageId ? await tx.scanUsage.findFirst({
@@ -122,6 +126,25 @@ export async function createOwnedBet(
     }) : null;
     const recordedAt = new Date();
     const referenceDate = referenceDateForImport(input.date, source.entryMethod === "FILE", recordedAt);
+    const referenceCapitalAtBet = referenceAt(periods, referenceDate);
+    const fromTicket = source.ticketCurrency !== undefined;
+    if (fromTicket && source.expectedReferenceCapital !== undefined
+      && source.expectedReferenceCapital !== referenceCapitalAtBet) {
+      throw new Error("La référence de conversion a changé depuis la vérification du scan. Actualise-la puis confirme à nouveau.");
+    }
+    const converted = fromTicket ? convertTicketToBankroll({
+      amount: input.stake,
+      cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+      sourceCurrency: source.ticketCurrency!,
+      bankrollCurrency: bankrollState.currency,
+      referenceCurrency: bankrollState.referenceCurrency,
+      referenceCapital: referenceCapitalAtBet,
+      fxRate: source.ticketFxRate,
+    }) : null;
+    const nativeStake = converted?.stake ?? input.stake;
+    const unitFields = bankrollState.currency === "UNIT"
+      ? { referenceCapitalAtBet: fromTicket ? referenceCapitalAtBet : null, stakeUnits: nativeStake, unitsRecordedAt: recordedAt }
+      : unitSnapshot(nativeStake, periods, referenceDate, recordedAt);
     // Une fois démarrée, la certification suit définitivement la bankroll,
     // même si sa page publique est temporairement masquée.
     const certificationActive = bankrollState.certificationStartedAt !== null;
@@ -136,15 +159,22 @@ export async function createOwnedBet(
       betType: normalizedTaxonomy.betType,
       description: input.description.trim() || null,
       eventResult: input.eventResult?.trim() || null,
-      stake: input.stake,
-      ...unitSnapshot(input.stake, periods, referenceDate, recordedAt),
+      stake: nativeStake,
+      stakeCurrency: bankrollState.currency,
+      ...(fromTicket ? {
+        sourceStakeAmount: input.stake,
+        sourceStakeCurrency: source.ticketCurrency,
+        sourceFxRate: converted!.fxRate,
+        sourceCashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+      } : {}),
+      ...unitFields,
       odds: input.odds,
       boosted: input.boosted,
       originalOdds: input.boosted ? input.originalOdds : null,
       freebet: input.freebet,
       live: input.live,
       result: input.result,
-      cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+      cashOutAmount: input.result === "CASHE" ? (converted?.cashOutAmount ?? input.cashOutAmount) : null,
       ticketRef: input.ticketRef?.trim() || null,
       date: input.date,
       entryMethod: source.entryMethod ?? "MANUAL",

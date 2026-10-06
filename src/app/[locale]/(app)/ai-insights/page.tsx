@@ -23,12 +23,13 @@ export default async function AiInsightsPage() {
   const existingInsight = await prisma.insight.findUnique({ where: { userId: user.id } });
 
   const activeBankrolls = bankrolls.filter((bankroll) => !bankroll.locked);
+  const mixedCurrencies = new Set(activeBankrolls.map((bankroll) => bankroll.currency)).size > 1;
   const activeIds = new Set(activeBankrolls.map((bankroll) => bankroll.id));
   const bets = allBets.filter((bet) => activeIds.has(bet.bankrollId));
   const stats = computeGlobalStats(bets);
   const clv = computeClv(bets);
   const paidPlan = isPaidPlan(dbUser?.plan ?? "FREE");
-  const visibleInsight = paidPlan && bankrolls.every((bankroll) => !bankroll.locked) ? existingInsight : null;
+  const visibleInsight = paidPlan && !mixedCurrencies && bankrolls.every((bankroll) => !bankroll.locked) ? existingInsight : null;
   const cooldownUntil = visibleInsight ? visibleInsight.generatedAt.getTime() + INSIGHTS_COOLDOWN_MS : null;
   const [t, locale] = await Promise.all([getTranslations("aiInsights"), getLocale()]);
 
@@ -57,11 +58,11 @@ export default async function AiInsightsPage() {
 
       <div className="grid gap-3 sm:grid-cols-3">
         <SummaryMetric icon={<Wallet size={18} aria-hidden />} label={t("bets")} value={String(bets.length)} detail={t("betsDetail", { count: stats.performanceBets })} />
-        <SummaryMetric icon={<TrendUp size={18} aria-hidden />} label={t("roi")} value={stats.roi === null ? "—" : fmtPct(stats.roi, locale)} detail={t("roiDetail")} />
+        <SummaryMetric icon={<TrendUp size={18} aria-hidden />} label={t("roi")} value={mixedCurrencies || stats.roi === null ? "—" : fmtPct(stats.roi, locale)} detail={t("roiDetail")} />
         <SummaryMetric icon={<ChartBar size={18} aria-hidden />} label={t("clvCoverage")} value={`${clv.measured}/${clv.candidates}`} detail={t("clvDetail")} />
       </div>
 
-      {paidPlan ? (
+      {mixedCurrencies ? <p className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-xs">L’analyse globale attend un filtre par bankroll : les montants de devises différentes ne sont pas additionnés.</p> : paidPlan ? (
         <InsightsCard
           settledCount={stats.performanceBets}
           initialInsight={visibleInsight ? (visibleInsight.data as unknown as InsightResult) : null}

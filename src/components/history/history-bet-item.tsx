@@ -18,7 +18,7 @@ import {
 import type { Currency } from "@prisma/client";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
+import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtUnits } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import type { HistoryBetItemData } from "./history-list";
 
@@ -44,7 +44,6 @@ export function HistoryBetItem({
   onEnterSelection,
   onRequestDelete,
   onRequestEdit,
-  currency,
 }: {
   bet: HistoryBetItemData;
   selectionMode: boolean;
@@ -58,7 +57,7 @@ export function HistoryBetItem({
   onEnterSelection: (id: string) => void;
   onRequestDelete: (id: string) => void;
   onRequestEdit: (id: string) => void;
-  currency: Currency;
+  currency: Currency | "UNIT";
 }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [translateX, setTranslateX] = useState(isOpen ? OPEN_TRANSLATE : 0);
@@ -283,10 +282,11 @@ export function HistoryBetItem({
           </button>
           <span className="num text-xs text-muted-foreground">
             {bet.result === "CASHE"
-              ? t("cashedOut", { amount: fmtMoney(bet.cashOutAmount ?? 0, locale, currency) })
-              : t("stakeAtOdds", { stake: fmtMoney(bet.stake, locale, currency), odds: fmtOdds(bet.odds, locale) })}
+              ? t("cashedOut", { amount: fmtMoney(bet.cashOutAmount ?? 0, locale, bet.stakeCurrency) })
+              : t("stakeAtOdds", { stake: fmtMoney(bet.stake, locale, bet.stakeCurrency), odds: fmtOdds(bet.odds, locale) })}
           </span>
-          {fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}
+          {bet.sourceStakeAmount !== null && bet.sourceStakeCurrency ? <span className="num text-[0.65rem] text-muted-foreground">Ticket : {fmtMoney(bet.sourceStakeAmount, locale, bet.sourceStakeCurrency)}</span> : null}
+          {bet.stakeCurrency !== "UNIT" && bet.stakeUnits !== null ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtUnits(bet.stakeUnits, locale)}</span> : null}
           {bet.closingOdds !== null ? <span className="num text-[0.65rem] text-muted-foreground">{t("closingOdds", { odds: fmtOdds(bet.closingOdds, locale) })}</span> : null}
           {bet.estimatedProbability !== null ? <span className="num text-[0.65rem] text-muted-foreground">{t("estimatedProbability", { probability: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(bet.estimatedProbability) })}</span> : null}
           <span className={cn("rounded-full px-2 py-0.5 text-[0.65rem] font-semibold", resultTone)}>
@@ -301,7 +301,7 @@ export function HistoryBetItem({
             >
               <TrendIcon size={13} weight="bold" aria-hidden />
               <span className="sr-only">{positive ? tCommon("gainSr") : tCommon("lossSr")} </span>
-              {fmtMoneySigned(bet.profit, locale, currency)}
+              {fmtMoneySigned(bet.profit, locale, bet.stakeCurrency)}
             </span>
           )}
         </div>

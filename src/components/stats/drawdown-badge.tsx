@@ -1,6 +1,6 @@
 "use client";
 
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { TrendDown } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
@@ -14,7 +14,7 @@ export function DrawdownBadge({
 }: {
   amount: number;
   units: number | null;
-  currency: Currency;
+  currency: AccountingCurrency;
   allTime?: boolean;
 }) {
   const locale = useLocale();

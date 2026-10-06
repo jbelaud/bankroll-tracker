@@ -29,10 +29,11 @@ export default async function ImportHistoryPage() {
       <h1 className="text-xl font-semibold">{t("title")}</h1>
       <p className="mb-4 text-sm leading-6 text-muted-foreground">{t("description")}</p>
       <FileImportFlow
-        bankrolls={activeBankrolls.map(({ id, name, bookmaker, mode, allocations }) => ({
+        bankrolls={activeBankrolls.map(({ id, name, bookmaker, mode, currency, allocations }) => ({
           id,
           name,
           mode,
+          currency,
           bookmaker,
           allocations: allocations.map(({ id: allocationId, bookmaker: allocationBookmaker }) => ({
             id: allocationId,

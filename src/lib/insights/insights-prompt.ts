@@ -1,9 +1,11 @@
 import type { GlobalStats, GroupStat } from "@/lib/stats";
 import type { TipsterPerformance } from "@/lib/tipsters/performance";
 import type { InsightResult } from "./types";
+import type { AccountingCurrency } from "@prisma/client";
 
 export type InsightsPromptInput = {
   locale: string;
+  nativeCurrency: AccountingCurrency;
   stats: GlobalStats;
   settledCount: number;
   roi: number;
@@ -15,9 +17,9 @@ export type InsightsPromptInput = {
   tipsters: TipsterPerformance[];
 };
 
-function fmtRow(r: GroupStat): string {
+function fmtRow(r: GroupStat, currency: AccountingCurrency): string {
   const wr = r.settled > 0 ? `${((r.won / r.settled) * 100).toFixed(0)}%` : "—";
-  return `${r.name}: ${r.count} paris, ${wr} de réussite, ${r.profit.toFixed(2)} de bénéfice`;
+  return `${r.name}: ${r.count} paris, ${wr} de réussite, ${r.profit.toFixed(2)} ${currency} de bénéfice`;
 }
 
 function fmtMoney(value: number, currency: string): string {
@@ -39,6 +41,9 @@ function fmtTipsterCost(tipster: TipsterPerformance): string {
 }
 
 function fmtTipster(tipster: TipsterPerformance): string {
+  if (!tipster.monetaryComparable) {
+    return `${tipster.tipsterName}: ${tipster.settledBetCount} paris réglés, ${tipster.wins} gagnés, ${tipster.losses} perdus, réussite ${fmtPercent(tipster.winRate)}. Montants, ROI et coût net indisponibles : devises différentes sans conversion explicite.`;
+  }
   const recentMonths = tipster.monthly.slice(-6).map((month) => {
     const cost = month.serviceCost === null ? "coût inconnu" : `coût ${fmtMoney(month.serviceCost, tipster.currency)}`;
     const net = month.netProfit === null ? "net indéterminé" : `net ${fmtMoney(month.netProfit, tipster.currency)}`;
@@ -59,29 +64,31 @@ function buildStatsSummary(input: InsightsPromptInput): string {
   const { stats, settledCount, roi, winRate, bySport, byType, byBookmaker, oddsData, tipsters } = input;
 
   const lines = [
+    `Devise native des paris analysés : ${input.nativeCurrency === "UNIT" ? "U (unités de tipster)" : input.nativeCurrency}. Tous les montants de mise et de bénéfice ci-dessous utilisent cette devise. Aucune conversion en euros n'est implicite.`,
     `Paris réglés : ${settledCount} (${stats.totalBets} au total, dont paris en attente)`,
     `ROI global : ${roi.toFixed(1)}%`,
     `Taux de réussite : ${winRate.toFixed(1)}%`,
     `Cote moyenne : ${stats.avgOdds.toFixed(2)} (pondérée par la mise : ${stats.avgOddsWeighted.toFixed(2)})`,
-    `Mise moyenne : ${stats.avgStake.toFixed(2)}`,
+    `Mise moyenne : ${stats.avgStake.toFixed(2)} ${input.nativeCurrency}`,
     `Meilleure série de victoires : ${stats.bestWinStreak}`,
     `Pire série de défaites : ${stats.worstLossStreak}`,
   ];
 
   if (stats.boostedCount > 0) {
-    lines.push(`Cotes boostées : ${stats.boostedCount} paris, bénéfice ${stats.boostedProfit.toFixed(2)}`);
+    lines.push(`Cotes boostées : ${stats.boostedCount} paris, bénéfice ${stats.boostedProfit.toFixed(2)} ${input.nativeCurrency}`);
   }
   if (stats.freebetCount > 0) {
-    lines.push(`Freebets : ${stats.freebetCount} paris, bénéfice ${stats.freebetProfit.toFixed(2)}`);
+    lines.push(`Freebets : ${stats.freebetCount} paris, bénéfice ${stats.freebetProfit.toFixed(2)} ${input.nativeCurrency}`);
   }
   if (stats.liveCount > 0) {
-    lines.push(`Paris live : ${stats.liveCount} paris, bénéfice ${stats.liveProfit.toFixed(2)}`);
+    lines.push(`Paris live : ${stats.liveCount} paris, bénéfice ${stats.liveProfit.toFixed(2)} ${input.nativeCurrency}`);
   }
 
-  const bySportLines = bySport.slice(0, 8).map(fmtRow);
-  const byTypeLines = byType.slice(0, 10).map(fmtRow);
-  const byBookmakerLines = byBookmaker.slice(0, 6).map(fmtRow);
-  const oddsLines = oddsData.filter((r) => r.count > 0).map(fmtRow);
+  const formatRow = (row: GroupStat) => fmtRow(row, input.nativeCurrency);
+  const bySportLines = bySport.slice(0, 8).map(formatRow);
+  const byTypeLines = byType.slice(0, 10).map(formatRow);
+  const byBookmakerLines = byBookmaker.slice(0, 6).map(formatRow);
+  const oddsLines = oddsData.filter((r) => r.count > 0).map(formatRow);
   const tipsterLines = tipsters
     .toSorted((a, b) => b.settledBetCount - a.settledBetCount)
     .slice(0, 10)

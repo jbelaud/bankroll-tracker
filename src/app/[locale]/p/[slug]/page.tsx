@@ -81,7 +81,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           orderBy: [{ date: "desc" }, { createdAt: "desc" }],
           select: {
             id: true, createdAt: true, date: true, sport: true, betType: true, description: true,
-            eventResult: true, stakeUnits: true, odds: true, result: true, cashOutAmount: true,
+            eventResult: true, stakeUnits: true, stakeCurrency: true, odds: true, result: true, cashOutAmount: true,
             referenceCapitalAtBet: true, freebet: true, bookmaker: true, format: true,
             entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true,
             resultProofAt: true, resultEntryMethod: true,
@@ -230,7 +230,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             <div><h2 className="flex items-center gap-2 font-semibold"><ChartLineUp size={19} className="text-profit" aria-hidden /> Performance cumulée</h2><p className="mt-1 text-xs text-muted-foreground">Bénéfices et pertes exprimés en unités.</p></div>
             <span className="rounded-full bg-muted px-3 py-1.5 text-xs text-muted-foreground">Drawdown max : <strong className="num text-foreground">{curve.maxDrawdown > 0 ? `-${number.format(curve.maxDrawdown)}u` : "0u"}</strong></span>
           </div>
-          {curve.points.length > 0 ? <PublicPerformanceChart points={chartPoints} /> : <div className="flex h-64 items-center justify-center text-center text-sm text-muted-foreground">La courbe apparaîtra dès que les unités des paris réglés seront disponibles.</div>}
+          {performance.missingSettledUnitCount === 0 && curve.points.length > 0 ? <PublicPerformanceChart points={chartPoints} /> : <div className="flex h-64 items-center justify-center text-center text-sm text-muted-foreground">La courbe complète apparaîtra lorsque tous les paris réglés auront une mise en unités fiable.</div>}
         </div>
 
         <aside className="glass-card rounded-2xl p-5 lg:col-span-4">
@@ -264,11 +264,12 @@ export default async function PublicBankrollPage({ params, searchParams }: {
         </nav>
 
         {visibleBets.length === 0 ? <div className="glass-card rounded-2xl p-10 text-center text-sm text-muted-foreground">{activeView === "pending" ? "Aucun pari en cours pour le moment." : activeView === "settled" ? "Aucun résultat publié pour le moment." : "Aucun pari publié pour le moment."}</div> : Array.from(monthGroups.entries()).map(([monthKey, bets], index) => {
-          const monthProfits = bets.map((bet) => {
-            const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
+          const monthProfits = bets.filter((bet) => bet.result !== "EN_ATTENTE" && bet.result !== "REMBOURSE").map((bet) => {
+            const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
             return canCalculateProfit ? profitInUnits(bet) : null;
-          }).filter((value): value is number => value !== null);
-          const monthProfit = monthProfits.length > 0 ? monthProfits.reduce((sum, value) => sum + value, 0) : null;
+          });
+          const monthProfit = monthProfits.length > 0 && monthProfits.every((value) => value !== null)
+            ? monthProfits.reduce<number>((sum, value) => sum + value!, 0) : null;
           return <details key={monthKey} open={index === 0} className="group overflow-hidden rounded-2xl border border-border bg-card/30">
           <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 bg-primary/5 px-4 py-3 marker:hidden transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary [&::-webkit-details-marker]:hidden">
             <h3 className="font-semibold capitalize text-primary">{month.format(bets[0].date)}</h3>
@@ -281,7 +282,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
           <ul className="space-y-2 border-t border-border p-2 sm:p-3">
             {bets.map((bet) => {
               const proofStatus = certificationStatus(bet, bankroll.certificationStartedAt);
-              const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
+              const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
               const profit = canCalculateProfit ? profitInUnits(bet) : null;
               return <li key={bet.id} className="glass-card overflow-hidden rounded-2xl">
                 <div className="flex flex-col sm:flex-row sm:items-stretch">

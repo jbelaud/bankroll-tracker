@@ -1,6 +1,6 @@
 "use client";
 
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { useLocale, useTranslations } from "next-intl";
 import type { computeCapitalReturnStats } from "@/lib/capital-return-stats";
 import { fmtMoney, fmtPct, fmtUnits } from "@/lib/format";
@@ -15,7 +15,7 @@ function Item({ label, value }: { label: string; value: string }) {
   </div>;
 }
 
-export function CapitalReturnPanel({ stats, currency }: { stats: CapitalStats; currency: Currency }) {
+export function CapitalReturnPanel({ stats, currency }: { stats: CapitalStats; currency: AccountingCurrency }) {
   const locale = useLocale();
   const t = useTranslations("stats.capital");
   const inUnits = useDisplayUnit() === "units";

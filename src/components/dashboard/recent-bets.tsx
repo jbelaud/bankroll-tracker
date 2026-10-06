@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Scan, TrendUp, TrendDown } from "@phosphor-icons/react";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency, Currency } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { fmtDate, fmtMoney, fmtMoneySigned, fmtUnits } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
@@ -15,6 +15,7 @@ type RecentBet = {
   sport: string;
   betType: string;
   stake: number;
+  stakeCurrency: AccountingCurrency;
   stakeUnits: number | null;
   pending: boolean;
   certificationLocked: boolean;
@@ -23,7 +24,7 @@ type RecentBet = {
   bankrollName: string;
 };
 
-export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Currency }) {
+export function RecentBets({ bets }: { bets: RecentBet[]; currency: Currency }) {
   const locale = useLocale();
   const displayUnit = useDisplayUnit();
   const t = useTranslations("dashboard.recentBets");
@@ -70,7 +71,7 @@ export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Cu
                 <span className="num text-right text-xs text-muted-foreground">
                   {displayUnit === "units"
                     ? bet.stakeUnits === null ? "—" : fmtUnits(bet.stakeUnits, locale)
-                    : fmtMoney(bet.stake, locale, currency)}
+                    : fmtMoney(bet.stake, locale, bet.stakeCurrency)}
                 </span>
                 {bet.pending ? (
                   <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
@@ -89,7 +90,7 @@ export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Cu
                     </span>
                     {displayUnit === "units"
                       ? bet.unitProfit === null ? "—" : fmtUnits(bet.unitProfit, locale, true)
-                      : fmtMoneySigned(bet.profit, locale, currency)}
+                      : fmtMoneySigned(bet.profit, locale, bet.stakeCurrency)}
                   </span>
                 )}
                 {bet.pending && bet.certificationLocked ? (

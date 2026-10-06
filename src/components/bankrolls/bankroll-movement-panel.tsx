@@ -3,13 +3,14 @@
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBankrollMovementForm } from "@/lib/actions/bankroll-movement-forms";
 import { deleteBankrollMovement } from "@/lib/actions/bankroll-movements";
+import { fmtMoney } from "@/lib/format";
 
 type MovementItem = { id: string; type: "DEPOSIT" | "WITHDRAWAL"; amount: number; note: string | null; date: string };
 
@@ -23,7 +24,7 @@ export function BankrollMovementPanel({
 }: {
   bankrollId: string;
   movements: MovementItem[];
-  currency: Currency;
+  currency: AccountingCurrency;
   locale: string;
   today: string;
   allocations: { id: string; bookmaker: string }[];
@@ -41,7 +42,7 @@ export function BankrollMovementPanel({
     }
   }, [router, state?.success]);
 
-  const formatMoney = (amount: number) => new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+  const formatMoney = (amount: number) => fmtMoney(amount, locale, currency);
   const formatDate = (date: string) => new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric" }).format(new Date(date));
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import type { GroupStat } from "@/lib/stats";
@@ -17,7 +17,7 @@ export function StatsTable({
 }: {
   rows: GroupStat[];
   kind: "sport" | "type" | "bookmaker" | "tipster";
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const locale = useLocale();
   const t = useTranslations("stats.table");

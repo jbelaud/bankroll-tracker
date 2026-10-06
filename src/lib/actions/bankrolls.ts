@@ -10,17 +10,25 @@ import { normalizeBookmaker } from "@/lib/bookmakers";
 import { activeBankrollLimit, isBankrollLocked } from "@/lib/billing/bankroll-limits";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
+import type { AccountingCurrency, Currency } from "@prisma/client";
 
 export type BankrollAllocationInput = { bookmaker: string; initial: number };
 export type BankrollInput = {
   name: string;
   mode: "SINGLE" | "DISTRIBUTED";
+  currency?: AccountingCurrency;
+  referenceCurrency?: Currency;
   initial: number;
   referenceCapital: number | null;
   allocations: BankrollAllocationInput[];
 };
 
 function normalizeInput(input: BankrollInput) {
+  const currency = input.currency ?? "EUR";
+  const referenceCurrency = input.referenceCurrency ?? "EUR";
+  if (!["EUR", "USD", "GBP", "UNIT"].includes(currency)
+    || !["EUR", "USD", "GBP"].includes(referenceCurrency)) throw new Error("INVALID_CURRENCY");
+  if (currency !== "UNIT" && referenceCurrency !== currency) throw new Error("INVALID_CURRENCY");
   if (!Number.isFinite(input.initial) || input.initial < 0) throw new Error("INVALID_INITIAL");
   if (input.referenceCapital !== null && (!Number.isFinite(input.referenceCapital) || input.referenceCapital <= 0)) {
     throw new Error("INVALID_REFERENCE");
@@ -43,7 +51,7 @@ function normalizeInput(input: BankrollInput) {
   if (input.mode === "DISTRIBUTED" && Math.abs(allocated - input.initial) > 0.005) {
     throw new Error("ALLOCATION_TOTAL");
   }
-  return { ...input, name: input.name.trim(), allocations };
+  return { ...input, currency, referenceCurrency, name: input.name.trim(), allocations };
 }
 
 async function translatedInput(input: BankrollInput) {
@@ -55,6 +63,7 @@ async function translatedInput(input: BankrollInput) {
     const code = error instanceof Error ? error.message : "";
     if (code === "INVALID_INITIAL") throw new Error(t("initialCapitalPositive"));
     if (code === "INVALID_REFERENCE") throw new Error(t("referenceCapitalPositive"));
+    if (code === "INVALID_CURRENCY") throw new Error("Devise de bankroll invalide.");
     if (code === "DUPLICATE_ALLOCATIONS") throw new Error(t("duplicateBookmakerAllocation"));
     if (code === "ALLOCATION_TOTAL") throw new Error(t("allocationTotalMismatch"));
     throw new Error(t("bookmakerRequired"));
@@ -86,6 +95,8 @@ export async function createBankroll(input: BankrollInput) {
       userId: user.id,
       name: normalized.name || legacyBookmaker || "Bankroll principale",
       mode: normalized.mode,
+      currency: normalized.currency,
+      referenceCurrency: normalized.referenceCurrency,
       bookmaker: legacyBookmaker,
       initial: normalized.initial,
       referenceCapital: normalized.referenceCapital,
@@ -122,13 +133,20 @@ export async function updateBankroll(
     throw new Error(t("bankrollLocked"));
   }
 
-  const normalized = await translatedInput(input);
+  const normalized = await translatedInput({ ...input, currency: input.currency ?? owned.currency, referenceCurrency: input.referenceCurrency ?? owned.referenceCurrency });
   const legacyBookmaker = normalized.allocations.length === 1 ? normalized.allocations[0].bookmaker : null;
 
   return prisma.$transaction(async (tx) => {
     // Serialize changes of reference for this bankroll.
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${id} FOR UPDATE`;
     const current = await tx.bankroll.findUniqueOrThrow({ where: { id } });
+    if (current.currency !== normalized.currency || current.referenceCurrency !== normalized.referenceCurrency) {
+      const [betCount, movementCount] = await Promise.all([
+        tx.bet.count({ where: { bankrollId: id } }),
+        tx.bankrollMovement.count({ where: { bankrollId: id } }),
+      ]);
+      if (betCount || movementCount) throw new Error("Une bankroll avec historique ne peut changer de devise ou de devise de référence sans révision de ses paris et mouvements.");
+    }
     if (current.referenceCapital !== normalized.referenceCapital) {
       await tx.bankrollReferencePeriod.create({
         data: { bankrollId: id, referenceCapital: normalized.referenceCapital, effectiveFrom: new Date() },
@@ -159,6 +177,8 @@ export async function updateBankroll(
       data: {
         name: normalized.name || legacyBookmaker || "Bankroll principale",
         mode: normalized.mode,
+        currency: normalized.currency,
+        referenceCurrency: normalized.referenceCurrency,
         bookmaker: normalized.mode === "DISTRIBUTED" ? legacyBookmaker : null,
         initial: normalized.initial,
         referenceCapital: normalized.referenceCapital,

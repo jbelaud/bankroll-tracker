@@ -5,7 +5,7 @@ import { profitInUnits } from "@/lib/public-bankroll";
 export function unitPerformance(bets: Bet[]) {
   const settled = bets.filter((bet) => countsTowardPerformance(bet.result));
   const missing = settled.filter((bet) => bet.stakeUnits === null || !Number.isFinite(bet.stakeUnits)
-    || (bet.result === "CASHE" && (!bet.referenceCapitalAtBet || bet.referenceCapitalAtBet <= 0))).length;
+    || (bet.result === "CASHE" && bet.stakeCurrency !== "UNIT" && (!bet.referenceCapitalAtBet || bet.referenceCapitalAtBet <= 0))).length;
   const cashBets = settled.filter((bet) => !bet.freebet);
   return {
     profit: missing === 0 ? settled.reduce((sum, bet) => sum + profitInUnits(bet), 0) : null,

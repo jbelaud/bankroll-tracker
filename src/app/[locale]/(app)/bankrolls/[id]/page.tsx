@@ -8,7 +8,6 @@ import { computeProfit, countsTowardPerformance } from "@/lib/profit";
 import { computeGlobalStats } from "@/lib/stats";
 import { unitPerformance } from "@/lib/unit-performance";
 import { compareClvSeries, computeClv } from "@/lib/clv";
-import { getServerCurrency } from "@/lib/get-server-currency";
 import { BankrollDetailHeader } from "@/components/bankrolls/bankroll-detail-header";
 import { BankrollDetailActions } from "@/components/bankrolls/bankroll-detail-actions";
 import { Sparkline } from "@/components/dashboard/sparkline";
@@ -106,6 +105,10 @@ export default async function BankrollDetailPage({
     description: b.description,
     eventResult: b.eventResult,
     stake: b.stake,
+    stakeCurrency: b.stakeCurrency,
+    sourceStakeAmount: b.sourceStakeAmount,
+    sourceStakeCurrency: b.sourceStakeCurrency,
+    stakeUnits: b.stakeUnits,
     odds: b.odds,
     closingOdds: b.closingOdds,
     estimatedProbability: b.estimatedProbability,
@@ -124,7 +127,7 @@ export default async function BankrollDetailPage({
   const deleteThisBankroll = deleteBankroll.bind(null, bankroll.id);
   const t = await getTranslations("bankrollDetail");
   const tWorkspace = await getTranslations("bankrollDetail.workspace");
-  const currency = await getServerCurrency();
+  const currency = bankroll.currency;
   const allocationItems = bankroll.allocations.map((allocation) => ({
     id: allocation.id,
     bookmaker: allocation.bookmaker,
@@ -152,6 +155,7 @@ export default async function BankrollDetailPage({
           betCount={bets.length}
           pendingCount={bets.filter((bet) => bet.result === "EN_ATTENTE").length}
           currency={currency}
+          referenceCurrency={bankroll.referenceCurrency}
         />
         <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
           <Link href="/scan" className="inline-flex min-h-touch items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">{tWorkspace("addBet")}</Link>
@@ -241,7 +245,7 @@ export default async function BankrollDetailPage({
             availableSports={[...new Set(bets.map((bet) => bet.sport).filter(Boolean))].sort((left, right) => left.localeCompare(right, "fr"))}
           />
           <div className="lg:col-span-12">
-            <ReferenceHistory bankrollId={id} missing={bets.filter((bet) => bet.referenceCapitalAtBet === null).length} />
+            <ReferenceHistory bankrollId={id} referenceCurrency={bankroll.referenceCurrency} missing={bankroll.currency === "UNIT" ? 0 : bets.filter((bet) => bet.stakeCurrency !== "UNIT" && bet.stakeUnits === null).length} />
           </div>
           <section className="rounded-2xl border border-border bg-background/30 p-4 sm:p-5 lg:col-span-6">
             <h2 className="text-base font-semibold">{t("personalConversionTitle")}</h2>
@@ -256,6 +260,8 @@ export default async function BankrollDetailPage({
                 id: bankroll.id,
                 name: bankroll.name,
                 mode: bankroll.mode,
+                currency: bankroll.currency,
+                referenceCurrency: bankroll.referenceCurrency,
                 bookmaker: bankroll.bookmaker,
                 initial: bankroll.initial,
                 referenceCapital: bankroll.referenceCapital,
@@ -263,7 +269,7 @@ export default async function BankrollDetailPage({
               }}
               betCount={bets.length}
               deleteAction={deleteThisBankroll}
-              currency={currency}
+              currency={bankroll.referenceCurrency}
             />
           </section>
         </div>

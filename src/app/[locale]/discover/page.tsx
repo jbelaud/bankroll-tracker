@@ -62,7 +62,7 @@ export default async function DiscoverPage({ params, searchParams }: {
             _count: { select: { followers: true } },
             bets: {
               select: {
-                createdAt: true, updatedAt: true, date: true, result: true, stakeUnits: true, odds: true,
+                createdAt: true, updatedAt: true, date: true, result: true, stakeUnits: true, stakeCurrency: true, odds: true,
                 cashOutAmount: true, referenceCapitalAtBet: true, freebet: true,
                 entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true,
                 resultProofAt: true, resultEntryMethod: true,

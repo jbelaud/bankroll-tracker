@@ -1,7 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { currencySymbol } from "@/lib/format";
 import { ChartTooltip } from "./chart-tooltip";
 
@@ -13,7 +13,7 @@ export function ProfitBarChart({
   units = false,
 }: {
   data: { name: string; profit: number }[];
-  currency: Currency;
+  currency: AccountingCurrency;
   units?: boolean;
 }) {
   return (

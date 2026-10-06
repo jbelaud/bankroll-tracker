@@ -35,9 +35,9 @@ export function CurrencySwitcher({ currency }: { currency: Currency }) {
   return (
     <section
       aria-label={t("title")}
-      className="glass-card flex items-center justify-between rounded-xl p-4"
+      className="glass-card flex flex-wrap items-center justify-between gap-3 rounded-xl p-4"
     >
-      <h2 className="text-sm font-semibold">{t("title")}</h2>
+      <div><h2 className="text-sm font-semibold">{t("title")}</h2><p className="mt-1 max-w-md text-xs text-muted-foreground">{t("description")}</p></div>
       <div className="flex gap-1 rounded-lg bg-muted p-1">
         {CURRENCIES.map((c) => (
           <button

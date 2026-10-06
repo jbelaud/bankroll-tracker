@@ -37,4 +37,8 @@ describe("historical units", () => {
     expect(referenceDateForImport(old, false, now)).toBe(now);
     expect(referenceDateForImport(old, true, now)).toBe(old);
   });
+  it("derives the same ticket's units from each bankroll's own reference amount", () => {
+    expect(toUnits(125.14, 5000)).toBe(2.5028);
+    expect(toUnits(125.14, 10000)).toBe(1.2514);
+  });
 });

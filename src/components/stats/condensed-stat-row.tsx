@@ -1,7 +1,7 @@
 import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 import { TrendUp, TrendDown } from "@phosphor-icons/react/dist/ssr";
 import { getLocale, getTranslations } from "next-intl/server";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { fmtMoneySigned, fmtPct } from "@/lib/format";
 
@@ -18,7 +18,7 @@ export async function CondensedStatRow({
   count: number;
   winRate: number;
   profit: number;
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const TrendIcon = profit >= 0 ? TrendUp : TrendDown;
   const locale = await getLocale();

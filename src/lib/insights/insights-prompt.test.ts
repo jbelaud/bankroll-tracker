@@ -39,6 +39,7 @@ function tipster(overrides: Partial<TipsterPerformance>): TipsterPerformance {
     tipsterName: "El Professor",
     tipsterStatus: "ACTIVE",
     currency: "EUR",
+    monetaryComparable: true,
     period: { from: new Date("2026-01-01"), to: new Date("2026-08-31") },
     betCount: 12,
     settledBetCount: 10,
@@ -64,6 +65,7 @@ function tipster(overrides: Partial<TipsterPerformance>): TipsterPerformance {
 function promptFor(tipsters: TipsterPerformance[]): string {
   return buildInsightsPrompt({
     locale: "fr",
+    nativeCurrency: "EUR",
     stats,
     settledCount: 20,
     roi: 12.5,

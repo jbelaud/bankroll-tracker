@@ -3,10 +3,10 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import type { BetFormat, BetResult, Currency } from "@prisma/client";
+import type { AccountingCurrency, BetFormat, BetResult, Currency } from "@prisma/client";
 import { CaretDown, CalendarX, X, ArrowsLeftRight, PencilSimple, Scan, ShieldCheck, TrashSimple, TrendDown, TrendUp } from "@phosphor-icons/react";
 import { deleteBet, deleteBets, moveBets } from "@/lib/actions/bets";
-import { currencySymbol, fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtStakeUnits } from "@/lib/format";
+import { fmtDateWithYear, fmtMoney, fmtMoneySigned, fmtOdds, fmtUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
 import { groupHistoryBets } from "@/lib/history-grouping";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
@@ -33,6 +33,10 @@ export type HistoryBetItemData = {
   description: string | null;
   eventResult: string | null;
   stake: number;
+  stakeCurrency: AccountingCurrency;
+  sourceStakeAmount: number | null;
+  sourceStakeCurrency: Currency | null;
+  stakeUnits: number | null;
   odds: number | null;
   closingOdds: number | null;
   estimatedProbability: number | null;
@@ -56,6 +60,12 @@ export type HistoryBetItemData = {
   }>;
 };
 
+function formatGroupProfit(amount: number, bets: HistoryBetItemData[], locale: string): string {
+  const currencies = new Set(bets.map((bet) => bet.stakeCurrency));
+  if (currencies.size !== 1) return "—";
+  return fmtMoneySigned(amount, locale, bets[0].stakeCurrency);
+}
+
 export function HistoryList({
   bets: initialBets,
   bankrollOptions,
@@ -69,7 +79,7 @@ export function HistoryList({
   // sélecteur de bankroll ni de nom répété sur chaque ligne, voir plus bas.
   bankrollOptions?: { id: string; name: string }[];
   scopedToBankroll?: boolean;
-  currency: Currency;
+  currency: AccountingCurrency;
   taxonomy: Taxonomy;
   tipsters?: TipsterOption[];
 }) {
@@ -268,7 +278,7 @@ export function HistoryList({
           <span>{t("summary.bets", { count: filteredBets.length })}</span>
           <div className="flex items-center gap-3">
             <strong className={selectedProfit >= 0 ? "num text-profit" : "num text-loss"}>
-              {selectedProfit >= 0 ? "+" : ""}{selectedProfit.toFixed(2)}{currencySymbol(currency)}
+              {formatGroupProfit(selectedProfit, filteredBets, locale)}
             </strong>
             <Button
               variant="outline"
@@ -315,7 +325,7 @@ export function HistoryList({
                   <span className="flex items-center gap-2">
                     <span className="text-xs font-medium text-muted-foreground">{t("accordion.bets", { count: month.betCount })}</span>
                     <span className={month.profit >= 0 ? "num text-profit" : "num text-loss"}>
-                      {month.profit >= 0 ? "+" : ""}{month.profit.toFixed(2)}{currencySymbol(currency)}
+                      {formatGroupProfit(month.profit, month.weeks.flatMap((week) => week.days.flatMap((day) => day.bets)), locale)}
                     </span>
                     <CaretDown className={openMonthKey === month.key ? "rotate-180 transition-transform" : "transition-transform"} size={16} aria-hidden />
                   </span>
@@ -337,7 +347,7 @@ export function HistoryList({
                           <span className="flex items-center gap-2">
                             <span className="text-muted-foreground">{t("accordion.bets", { count: week.betCount })}</span>
                             <span className={week.profit >= 0 ? "num text-profit" : "num text-loss"}>
-                              {week.profit >= 0 ? "+" : ""}{week.profit.toFixed(2)}{currencySymbol(currency)}
+                              {formatGroupProfit(week.profit, week.days.flatMap((day) => day.bets), locale)}
                             </span>
                             <CaretDown className={openWeekKey === weekId ? "rotate-180 transition-transform" : "transition-transform"} size={15} aria-hidden />
                           </span>
@@ -358,7 +368,7 @@ export function HistoryList({
                                     <span className="flex items-center gap-2">
                                       <span className="text-muted-foreground">{t("accordion.bets", { count: day.bets.length })}</span>
                                       <span className={day.profit >= 0 ? "num font-semibold text-profit" : "num font-semibold text-loss"}>
-                                        {day.profit >= 0 ? "+" : ""}{day.profit.toFixed(2)}{currencySymbol(currency)}
+                                        {formatGroupProfit(day.profit, day.bets, locale)}
                                       </span>
                                       <CaretDown className={openDayKey === dayId ? "rotate-180 transition-transform" : "transition-transform"} size={14} aria-hidden />
                                     </span>
@@ -378,7 +388,7 @@ export function HistoryList({
                                           onEnterSelection={handleEnterSelection}
                                           onRequestDelete={(id) => setDeleteTargetIds([id])}
                                           onRequestEdit={handleRequestEdit}
-                                          currency={currency}
+                                          currency={bet.stakeCurrency}
                                         />
                                       ))}
                                     </ul>
@@ -420,7 +430,7 @@ export function HistoryList({
         open={editTarget !== null}
         onOpenChange={(open) => !open && setEditTarget(null)}
         onSaved={handleSaved}
-        currency={currency}
+        currency={editTarget?.stakeCurrency ?? currency}
         taxonomy={taxonomy}
         tipsters={tipsters}
       />
@@ -430,7 +440,6 @@ export function HistoryList({
 
 function DesktopHistoryTable({
   bets,
-  currency,
   scopedToBankroll,
   selectionMode,
   selectedIds,
@@ -439,7 +448,7 @@ function DesktopHistoryTable({
   onRequestDelete,
 }: {
   bets: HistoryBetItemData[];
-  currency: Currency;
+  currency: AccountingCurrency;
   scopedToBankroll: boolean;
   selectionMode: boolean;
   selectedIds: Set<string>;
@@ -526,11 +535,11 @@ function DesktopHistoryTable({
                     <span className="block text-muted-foreground">{translateTaxonomy(tBetTypes, bet.betType)}</span>
                   </td>
                   {!scopedToBankroll && <td className="max-w-32 truncate px-3 py-3 text-muted-foreground">{bet.bankrollName}</td>}
-                  <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtMoney(bet.stake, locale, currency)}</span>{fmtStakeUnits(bet.stake, bet.referenceCapital, locale) ? <span className="block text-[0.65rem] text-primary">{fmtStakeUnits(bet.stake, bet.referenceCapital, locale)}</span> : null}</td>
+                  <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtMoney(bet.stake, locale, bet.stakeCurrency)}</span>{bet.sourceStakeAmount !== null && bet.sourceStakeCurrency ? <span className="block text-[0.65rem] text-muted-foreground">Ticket : {fmtMoney(bet.sourceStakeAmount, locale, bet.sourceStakeCurrency)}</span> : bet.stakeCurrency !== "UNIT" && bet.stakeUnits !== null ? <span className="block text-[0.65rem] text-primary">{fmtUnits(bet.stakeUnits, locale)}</span> : null}</td>
                   <td className="num whitespace-nowrap px-3 py-3 text-right"><span className="block">{fmtOdds(bet.odds, locale)}</span>{bet.closingOdds !== null ? <span className="block text-[0.65rem] text-muted-foreground">{t("closingOdds", { odds: fmtOdds(bet.closingOdds, locale) })}</span> : null}{bet.estimatedProbability !== null ? <span className="block text-[0.65rem] text-muted-foreground">{t("estimatedProbability", { probability: new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(bet.estimatedProbability) })}</span> : null}</td>
                   <td className="px-3 py-3"><span className="inline-flex rounded-full bg-muted px-2 py-1 font-medium text-muted-foreground">{tResults(bet.result)}</span></td>
                   <td className={positive ? "num whitespace-nowrap px-3 py-3 text-right font-semibold text-profit" : "num whitespace-nowrap px-3 py-3 text-right font-semibold text-loss"}>
-                    {bet.result === "EN_ATTENTE" ? "—" : <span className="inline-flex items-center gap-1"><TrendIcon size={13} weight="bold" aria-hidden />{fmtMoneySigned(bet.profit, locale, currency)}</span>}
+                    {bet.result === "EN_ATTENTE" ? "—" : <span className="inline-flex items-center gap-1"><TrendIcon size={13} weight="bold" aria-hidden />{fmtMoneySigned(bet.profit, locale, bet.stakeCurrency)}</span>}
                   </td>
                   <td className="px-2 py-2">
                     <div className="flex justify-end gap-1">

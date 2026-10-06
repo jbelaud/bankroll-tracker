@@ -41,7 +41,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
             bets: {
               orderBy: [{ date: "desc" }, { createdAt: "desc" }],
               select: {
-                result: true, stakeUnits: true, odds: true, freebet: true,
+                result: true, stakeUnits: true, stakeCurrency: true, odds: true, freebet: true,
                 cashOutAmount: true, referenceCapitalAtBet: true, createdAt: true,
                 date: true, entryMethod: true, initialProofAt: true,
                 initialProofBeforeEvent: true, resultProofAt: true,
@@ -100,7 +100,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
     take: 100,
     select: {
       id: true, bankrollId: true, createdAt: true, updatedAt: true, date: true, sport: true,
-      betType: true, description: true, stakeUnits: true, odds: true, result: true,
+      betType: true, description: true, stakeUnits: true, stakeCurrency: true, odds: true, result: true,
       cashOutAmount: true, referenceCapitalAtBet: true, freebet: true,
       entryMethod: true, initialProofAt: true, initialProofBeforeEvent: true,
       resultProofAt: true, resultEntryMethod: true,
@@ -155,7 +155,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
       </nav>
       {visibleActivity.length > 0 ? <ul className="space-y-2">
         {visibleActivity.map((bet) => {
-          const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || Boolean(bet.referenceCapitalAtBet));
+          const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
           const profit = canCalculateProfit ? profitInUnits(bet) : null;
           const personal = bet.stakeUnits !== null && selectedProfile && viewerSettings ? fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
           const tipsterName = bet.bankroll.user.publicDisplayName || bet.bankroll.user.name || "Tipster Kalivoa";

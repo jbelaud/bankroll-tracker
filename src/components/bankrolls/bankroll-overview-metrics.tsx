@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
@@ -26,7 +26,7 @@ export function BankrollOverviewMetrics({
   clv: number | null;
   clvMeasured: number;
   clvCandidates: number;
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const t = useTranslations("bankrollDetail.workspace");
   const locale = useLocale();

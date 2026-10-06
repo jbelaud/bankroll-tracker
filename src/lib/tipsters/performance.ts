@@ -1,4 +1,4 @@
-import type { Bet, Currency, TipsterStatus } from "@prisma/client";
+import type { AccountingCurrency, Bet, Currency, TipsterStatus } from "@prisma/client";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import {
   calculateTipsterServiceCost,
@@ -18,13 +18,14 @@ export type TipsterPerformanceBet = Pick<
   | "live"
   | "result"
   | "cashOutAmount"
->;
+> & { stakeCurrency?: AccountingCurrency };
 
 export type TipsterPerformance = {
   tipsterId: string;
   tipsterName: string;
   tipsterStatus: TipsterStatus;
   currency: Currency;
+  monetaryComparable: boolean;
   period: { from: Date; to: Date };
   betCount: number;
   settledBetCount: number;
@@ -78,6 +79,8 @@ export function computeTipsterPerformance(input: {
   const settled = bets.filter(
     (bet) => countsTowardPerformance(bet.result) && !bet.freebet
   );
+  const monetaryComparable = bets.every((bet) => !bet.stakeCurrency || bet.stakeCurrency === input.currency)
+    && input.costPeriods.every((period) => period.currency === input.currency);
   const totalStake = settled.reduce((sum, bet) => sum + realStake(bet), 0);
   const bettingProfit = settled.reduce((sum, bet) => sum + computeProfit(bet), 0);
   const wins = settled.filter((bet) => bet.result === "GAGNE").length;
@@ -126,6 +129,7 @@ export function computeTipsterPerformance(input: {
     tipsterName: input.tipster.name,
     tipsterStatus: input.tipster.status,
     currency: input.currency,
+    monetaryComparable,
     period: input.period,
     betCount: bets.length,
     settledBetCount: settled.length,

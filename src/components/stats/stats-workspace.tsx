@@ -24,6 +24,7 @@ export function StatsWorkspace({
   calendar,
   views,
   hasActiveFilters,
+  scopeNotice,
   initialPanel = null,
   initialView = "general",
 }: {
@@ -31,6 +32,7 @@ export function StatsWorkspace({
   calendar: ReactNode;
   views: Record<StatsView, ReactNode>;
   hasActiveFilters: boolean;
+  scopeNotice?: string;
   initialPanel?: "filters" | "calendar" | null;
   initialView?: StatsView;
 }) {
@@ -71,6 +73,8 @@ export function StatsWorkspace({
             </Link>
           </div>
         </header>
+
+        {scopeNotice ? <p className="rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-foreground">{scopeNotice}</p> : null}
 
         {hasActiveFilters && (
           <div className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary">

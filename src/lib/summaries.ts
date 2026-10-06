@@ -4,6 +4,7 @@ import { summarizeBankrollCapital } from "@/lib/bankroll-balance";
 export type BankrollSummary = {
   id: string;
   name: string;
+  currency: Bankroll["currency"];
   mode: Bankroll["mode"];
   bookmaker: string | null;
   balance: number;
@@ -22,6 +23,7 @@ export function summarizeBankrolls(
     return {
       id: br.id,
       name: br.name,
+      currency: br.currency,
       mode: br.mode,
       bookmaker: br.bookmaker,
       balance: summary.balance,

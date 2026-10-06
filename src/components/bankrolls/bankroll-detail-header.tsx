@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency, Currency } from "@prisma/client";
 import { fmtMoney } from "@/lib/format";
 
 export async function BankrollDetailHeader({
@@ -12,6 +12,7 @@ export async function BankrollDetailHeader({
   betCount,
   pendingCount,
   currency,
+  referenceCurrency,
 }: {
   name: string;
   mode: "SINGLE" | "DISTRIBUTED";
@@ -21,7 +22,8 @@ export async function BankrollDetailHeader({
   initial: number;
   betCount: number;
   pendingCount: number;
-  currency: Currency;
+  currency: AccountingCurrency;
+  referenceCurrency: Currency;
 }) {
   const locale = await getLocale();
   const t = await getTranslations("bankrollDetail");
@@ -33,10 +35,10 @@ export async function BankrollDetailHeader({
           {mode === "SINGLE" ? t("singleMode") : t("distributedMode", { count: allocationCount })}
         </span>
         <h1 className="text-lg font-semibold">{name}</h1>
-        {referenceCapital ? <span className="num mt-1 text-xs text-primary">{t("referenceUnit", { value: fmtMoney(referenceCapital / 100, locale, currency) })}</span> : null}
+        {referenceCapital ? <span className="num mt-1 text-xs text-primary">{t("referenceUnit", { value: fmtMoney(referenceCapital / 100, locale, referenceCurrency) })}</span> : null}
       </div>
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("realBalance")}</span>
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{currency === "UNIT" ? "Capital suivi" : t("realBalance")}</span>
         <span className="num text-3xl font-bold tracking-tight">{fmtMoney(balance, locale, currency)}</span>
       </div>
       <div className="grid grid-cols-3 gap-2 pt-1">

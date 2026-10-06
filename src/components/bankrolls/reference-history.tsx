@@ -4,8 +4,9 @@ import { useActionState } from "react";
 import { reconcileAllReferences, reconcileReference } from "@/lib/actions/bankroll-references";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { Currency } from "@prisma/client";
 
-export function ReferenceHistory({ bankrollId, missing }: { bankrollId: string; missing: number }) {
+export function ReferenceHistory({ bankrollId, missing, referenceCurrency }: { bankrollId: string; missing: number; referenceCurrency: Currency }) {
   const [allState, reconcileAll, allPending] = useActionState(reconcileAllReferences, {});
   const [periodState, reconcilePeriod, periodPending] = useActionState(reconcileReference, {});
 
@@ -24,7 +25,7 @@ export function ReferenceHistory({ bankrollId, missing }: { bankrollId: string; 
       <form action={reconcileAll} className="mt-5 grid gap-4 sm:grid-cols-[minmax(0,16rem)_1fr] sm:items-end">
         <input type="hidden" name="bankrollId" value={bankrollId} />
         <label className="grid gap-1.5 text-sm font-medium">
-          Montant utilisé pour ces paris (€)
+          Montant utilisé pour ces paris ({referenceCurrency})
           <Input className="h-11 rounded-xl px-3 text-sm" type="number" name="referenceCapital" min="0.01" step="0.01" required />
         </label>
         <Button className="min-h-11 rounded-xl sm:w-fit" disabled={allPending} type="submit">
@@ -54,7 +55,7 @@ export function ReferenceHistory({ bankrollId, missing }: { bankrollId: string; 
           <label className="grid gap-1.5 text-sm font-medium">Au (inclus)
             <Input className="h-11 rounded-xl px-3 text-sm" type="date" name="to" required />
           </label>
-          <label className="grid gap-1.5 text-sm font-medium">Montant de référence (€)
+          <label className="grid gap-1.5 text-sm font-medium">Montant de référence ({referenceCurrency})
             <Input className="h-11 rounded-xl px-3 text-sm" type="number" name="referenceCapital" min="0.01" step="0.01" required />
           </label>
           <Button className="min-h-11 rounded-xl" disabled={periodPending} type="submit">

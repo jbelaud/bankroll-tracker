@@ -15,7 +15,6 @@ import {
 } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -34,12 +33,14 @@ import {
 } from "@/lib/file-import/parse-bets-file";
 import { TipsterSelector } from "@/components/tipsters/tipster-selector";
 import { normalizeTipsterName } from "@/lib/tipsters/normalize";
+import type { AccountingCurrency } from "@prisma/client";
 import type { TipsterOption } from "@/lib/tipsters/types";
 
 type BankrollOption = {
   id: string;
   name: string;
   mode: "SINGLE" | "DISTRIBUTED";
+  currency: AccountingCurrency;
   bookmaker: string | null;
   allocations: Array<{ id: string; bookmaker: string }>;
 };
@@ -83,7 +84,6 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const [tipsters, setTipsters] = useState(initialTipsters);
   const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
   const [dateOrder, setDateOrder] = useState<ImportDateOrder>("AUTO");
-  const [baCurrencyPerUnit, setBaCurrencyPerUnit] = useState("1");
   const [loadedFile, setLoadedFile] = useState<{ name: string; content: string } | null>(null);
 
   const validBets = useMemo(
@@ -163,9 +163,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
 
   function confirmImport() {
     if (!parsed || validBets.length === 0 || !bankrollId) return;
-    const currencyPerUnit = Number(baCurrencyPerUnit.replace(",", "."));
-    if (parsed.sourceProfile === "BET_ANALYTIX" && (!Number.isFinite(currencyPerUnit) || currencyPerUnit <= 0)) {
-      setFileError(t("preview.baUnitValueError"));
+    if (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT") {
+      setFileError("Choisis une bankroll dont la devise native est U pour importer ces mises BA.");
       return;
     }
     setFileError("");
@@ -179,8 +178,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             : bet),
           source,
           fileName,
-          allocationId || null,
-          parsed.sourceProfile === "BET_ANALYTIX" ? currencyPerUnit : 1
+          allocationId || null
         );
         if (response.imported === undefined) {
           setFileError(response.error);
@@ -360,11 +358,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
                   </p>
                 </div>
               </div>
-              <div className="mt-4 grid gap-2 sm:max-w-xs">
-                <Label htmlFor="ba-currency-per-unit" className="text-xs font-semibold">{t("preview.baUnitValueLabel")}</Label>
-                <Input id="ba-currency-per-unit" type="number" min="0.01" max="1000000" step="0.01" inputMode="decimal" value={baCurrencyPerUnit} onChange={(event) => setBaCurrencyPerUnit(event.target.value)} className="min-h-11 rounded-lg" />
-                <p className="text-xs leading-5 text-muted-foreground">{t("preview.baUnitValueHelp")}</p>
-              </div>
+              <p className="mt-4 text-xs leading-5 text-muted-foreground">Les mises BA restent en U, sans conversion fictive en devise. Sélectionne une bankroll dont la devise native est U.</p>
+              {selectedBankroll?.currency !== "UNIT" ? <p role="alert" className="mt-2 text-xs font-semibold text-warning">La bankroll choisie est en devise. Crée une bankroll en U ou fais réviser son historique avant de changer sa devise.</p> : null}
             </div>
           ) : null}
 
@@ -436,7 +431,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           {parsed.rows.length > 50 ? <p className="mt-2 text-xs text-muted-foreground">{t("preview.firstRows", { count: 50, total: parsed.rows.length })}</p> : null}
           {invalidCount > 0 ? <p className="mt-4 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs leading-5 text-warning">{t("preview.invalidSkipped", { count: invalidCount })}</p> : null}
 
-          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
+          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT")} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
             {isPending ? t("preview.importing") : t("preview.import", { count: validBets.length })}
           </Button>
         </section>

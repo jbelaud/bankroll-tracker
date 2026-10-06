@@ -1,4 +1,4 @@
-import type { BetResult } from "@prisma/client";
+import type { AccountingCurrency, BetResult } from "@prisma/client";
 
 export type PublicPerformanceBet = {
   result: BetResult;
@@ -7,6 +7,7 @@ export type PublicPerformanceBet = {
   cashOutAmount: number | null;
   referenceCapitalAtBet: number | null;
   freebet: boolean;
+  stakeCurrency?: AccountingCurrency;
 };
 
 export type PublicPerformancePoint = { date: Date; value: number };
@@ -16,7 +17,8 @@ export function profitInUnits(bet: PublicPerformanceBet): number {
   if (bet.result === "GAGNE") return stakeUnits * ((bet.odds ?? 0) - 1);
   if (bet.result === "PERDU") return bet.freebet ? 0 : -stakeUnits;
   if (bet.result === "CASHE") {
-    const receivedUnits = bet.referenceCapitalAtBet && bet.referenceCapitalAtBet > 0
+    const receivedUnits = bet.stakeCurrency === "UNIT" ? (bet.cashOutAmount ?? 0)
+      : bet.referenceCapitalAtBet && bet.referenceCapitalAtBet > 0
       ? ((bet.cashOutAmount ?? 0) / bet.referenceCapitalAtBet) * 100
       : 0;
     return receivedUnits - (bet.freebet ? 0 : stakeUnits);
@@ -26,8 +28,11 @@ export function profitInUnits(bet: PublicPerformanceBet): number {
 
 export function publicPerformance(bets: PublicPerformanceBet[]) {
   const betsWithUnits = bets.filter((bet) => bet.stakeUnits !== null && Number.isFinite(bet.stakeUnits));
+  const missingSettledUnitCount = bets.filter((bet) => ["GAGNE", "PERDU", "CASHE"].includes(bet.result)
+    && (bet.stakeUnits === null || !Number.isFinite(bet.stakeUnits)
+      || bet.result === "CASHE" && bet.stakeCurrency !== "UNIT" && !(bet.referenceCapitalAtBet && bet.referenceCapitalAtBet > 0))).length;
   const settled = betsWithUnits.filter((bet) => bet.result !== "EN_ATTENTE" && bet.result !== "REMBOURSE");
-  const profit = settled.length > 0 ? settled.reduce((sum, bet) => sum + profitInUnits(bet), 0) : null;
+  const profit = missingSettledUnitCount > 0 ? null : settled.length > 0 ? settled.reduce((sum, bet) => sum + profitInUnits(bet), 0) : null;
   const risked = settled.reduce((sum, bet) => sum + (bet.freebet ? 0 : Math.abs(bet.stakeUnits ?? 0)), 0);
   const won = bets.filter((bet) => bet.result === "GAGNE").length;
   const lost = bets.filter((bet) => bet.result === "PERDU").length;
@@ -40,6 +45,7 @@ export function publicPerformance(bets: PublicPerformanceBet[]) {
     totalVolume: betsWithUnits.reduce((sum, bet) => sum + Math.abs(bet.stakeUnits ?? 0), 0),
     unitBetCount: betsWithUnits.length,
     missingUnitCount: bets.length - betsWithUnits.length,
+    missingSettledUnitCount,
     averageOdds: knownOdds.length > 0
       ? knownOdds.reduce((sum, bet) => sum + (bet.odds ?? 0), 0) / knownOdds.length
       : null,

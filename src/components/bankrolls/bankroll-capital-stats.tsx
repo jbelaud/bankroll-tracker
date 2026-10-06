@@ -15,7 +15,7 @@ export async function BankrollCapitalStats({
   netFunding: number;
   profit: number;
   performancePct: number | null;
-  currency: Currency;
+  currency: Currency | "UNIT";
 }) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("bankrollDetail")]);
   const profitClass = profit < 0 ? "text-loss" : profit > 0 ? "text-profit" : "";

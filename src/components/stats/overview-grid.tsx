@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { TrendUp, TrendDown } from "@phosphor-icons/react";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { fmtMoney, fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { computeProfit } from "@/lib/profit";
@@ -43,7 +43,7 @@ function StatCard({
 
 type UnitStats = { profit: number | null; averageStake: number | null; biggestWin: number | null; biggestLoss: number | null; missing: number };
 
-export function OverviewGrid({ stats, currency, units }: { stats: GlobalStats; currency: Currency; units: UnitStats }) {
+export function OverviewGrid({ stats, currency, units }: { stats: GlobalStats; currency: AccountingCurrency; units: UnitStats }) {
   const biggestWinAmount = stats.biggestWin ? computeProfit(stats.biggestWin) : null;
   const biggestLossAmount = stats.biggestLoss ? computeProfit(stats.biggestLoss) : null;
 

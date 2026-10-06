@@ -116,6 +116,13 @@ enum Currency {
   GBP
 }
 
+enum AccountingCurrency {
+  EUR
+  USD
+  GBP
+  UNIT
+}
+
 enum Plan {
   FREE
   BETA_TESTER
@@ -162,9 +169,11 @@ model Bankroll {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   name             String
+  currency         AccountingCurrency @default(EUR) // devise native du suivi, UNIT pour les bankrolls BA en U
+  referenceCurrency Currency    @default(EUR) // devise du montant privé servant à convertir les scans en U
   mode             BankrollMode @default(DISTRIBUTED)
   bookmaker        String?
-  initial          Float        @default(0) // capital réel de départ
+  initial          Float        @default(0) // capital de départ dans la devise native de la bankroll
   referenceCapital Float? // 1 u = 1 % de ce montant de référence
   isPublic         Boolean      @default(false)
   publicSlug       String?      @unique
@@ -387,6 +396,11 @@ model Bet {
   eventResult String? // score/résultat de l'événement, distinct de la sélection jouée
 
   stake Float
+  stakeCurrency       AccountingCurrency @default(EUR) // devise native de stake/cashOutAmount
+  sourceStakeAmount   Float? // montant d'origine lu sur un ticket, avant conversion en U
+  sourceStakeCurrency Currency?
+  sourceFxRate        Float? // devise de référence reçue pour 1 unité de devise du ticket
+  sourceCashOutAmount Float? // montant d'origine du cash-out, avant conversion en U
   referenceCapitalAtBet Float?
   stakeUnits            Float?
   unitsRecordedAt       DateTime?

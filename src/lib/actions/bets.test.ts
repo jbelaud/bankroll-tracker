@@ -78,7 +78,7 @@ const ownedBet = (overrides = {}) => ({
   id: "bet-a", bankrollId: "bankroll-a", tipsterId: null, format: "SIMPLE", referenceCapitalAtBet: 1000,
   bookmaker: null, ticketRef: null,
   sport: "Football", betType: "Résultat du match", description: "Paris gagne", eventResult: null,
-  date: new Date("2026-08-27T12:00:00Z"), stake: 10, odds: 2, closingOdds: null,
+  date: new Date("2026-08-27T12:00:00Z"), stake: 10, stakeUnits: 1, odds: 2, closingOdds: null,
   estimatedProbability: null, result: "EN_ATTENTE",
   cashOutAmount: null, boosted: false, originalOdds: null, freebet: false, live: false,
   initialProofAt: null, initialProofBeforeEvent: null, resultProofAt: null,
@@ -175,6 +175,49 @@ describe("association Bet / Tipster", () => {
     expect(mocks.betCorrectionCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({ betId: "bet-a", reason: "Mise mal détectée" }),
     }));
+  });
+
+  it("corrige les unités d'un ticket sans modifier sa mise en devise et trace la correction publique", async () => {
+    mocks.betFindFirst.mockResolvedValue(ownedBet({
+      stake: 125.14, stakeUnits: 125.14, referenceCapitalAtBet: 100,
+      certificationLockedAt: new Date("2026-08-01T00:00:00Z"),
+      initialProofAt: new Date("2026-08-27T08:00:00Z"),
+    }));
+
+    await updateBet("bet-a", {
+      ...updateInput, stake: 125.14, stakeUnits: 1.25,
+      correctionReason: "Conversion en unités corrigée",
+    });
+
+    const updateData = mocks.betUpdate.mock.calls[0][0].data;
+    expect(updateData.stake).toBe(125.14);
+    expect(updateData.stakeUnits).toBe(1.25);
+    expect(updateData.referenceCapitalAtBet).toBeCloseTo(10011.2);
+    expect(updateData.unitsRecordedAt).toBeInstanceOf(Date);
+    expect(updateData.initialProofAt).toBeNull();
+    expect(mocks.betCorrectionCreate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        reason: "Conversion en unités corrigée",
+        before: expect.objectContaining({ stakeUnits: 125.14 }),
+        after: expect.objectContaining({ stakeUnits: 1.25 }),
+      }),
+    }));
+  });
+
+  it("conserve les unités enregistrées lors d'une autre édition", async () => {
+    mocks.betFindFirst.mockResolvedValue(ownedBet({ stakeUnits: 1.25, referenceCapitalAtBet: 100 }));
+    await updateBet("bet-a", { ...updateInput, description: "Intitulé corrigé" });
+    expect(mocks.betUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ stakeUnits: 1.25, referenceCapitalAtBet: 100 }),
+    }));
+  });
+
+  it("refuse une correction d'unités vide ou nulle", async () => {
+    await expect(updateBet("bet-a", { ...updateInput, stakeUnits: null }))
+      .rejects.toThrow("mise en unités");
+    await expect(updateBet("bet-a", { ...updateInput, stakeUnits: 0 }))
+      .rejects.toThrow("mise en unités");
+    expect(mocks.betUpdate).not.toHaveBeenCalled();
   });
 
   it("conserve l'heure historique quand le jour du pari n'est pas modifié", async () => {

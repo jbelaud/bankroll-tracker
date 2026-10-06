@@ -24,7 +24,7 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSaved: (bet: HistoryBetItemData) => void;
-  currency: Currency;
+  currency: Currency | "UNIT";
   taxonomy: Taxonomy;
   tipsters: TipsterOption[];
 }) {
@@ -60,13 +60,13 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
         bookmaker: value.bookmaker,
         ticketRef: value.ticketRef,
         sport: value.sport, betType: value.betType, description: value.description ?? "", eventResult: value.eventResult ?? "",
-        date: value.date, stake: value.stake, odds: value.odds, closingOdds: value.closingOdds,
+        date: value.date, stake: value.stake, stakeUnits: value.stakeUnits, odds: value.odds, closingOdds: value.closingOdds,
         estimatedProbability: value.estimatedProbability, result: value.result, cashOutAmount: value.cashOutAmount,
         boosted: value.boosted, originalOdds: value.originalOdds, freebet: value.freebet, live: value.live,
         tipsterId: value.tipster?.id ?? null,
         correctionReason,
       });
-      onSaved({ ...updated, bankrollName: bet.bankrollName, referenceCapital: bet.referenceCapital, profit: computeProfit(updated) });
+      onSaved({ ...updated, bankrollName: bet.bankrollName, referenceCapital: updated.referenceCapitalAtBet, profit: computeProfit(updated) });
       onOpenChange(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : tCommon("unexpectedError"));
@@ -106,9 +106,11 @@ export function EditBetSheet({ bet, open, onOpenChange, onSaved, currency, taxon
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-3 flex flex-col gap-1"><Label htmlFor="edit-date">{t("date")}</Label><Input id="edit-date" type="date" value={value.date} onChange={(e) => patch({ date: e.target.value })} /></div>
             <div className="flex flex-col gap-1"><Label htmlFor="edit-stake">{t("stake", { currency })}</Label><Input id="edit-stake" type="number" step="0.01" min="0" value={value.stake} onChange={(e) => patch({ stake: Number(e.target.value) })} /></div>
+            <div className="flex flex-col gap-1"><Label htmlFor="edit-stake-units">{t("stakeUnits")}</Label><Input id="edit-stake-units" type="number" step="any" min="0.000001" inputMode="decimal" value={value.stakeUnits ?? ""} onChange={(e) => patch({ stakeUnits: e.target.value === "" ? null : Number(e.target.value) })} /></div>
             <div className="flex flex-col gap-1"><Label htmlFor="edit-odds">{t("odds")}</Label><Input id="edit-odds" type="number" step="0.001" min="0" value={value.odds ?? ""} onChange={(e) => patch({ odds: e.target.value ? Number(e.target.value) : null })} /></div>
             <div className="flex flex-col gap-1"><Label>{t("result")}</Label><Select value={value.result} onValueChange={(result) => patch({ result: result as BetResult })} items={Object.fromEntries((Object.keys(BET_RESULT_LABELS) as BetResult[]).map((result) => [result, tResults(result)]))}><SelectTrigger className="min-h-touch rounded-lg"><SelectValue /></SelectTrigger><SelectContent>{(Object.keys(BET_RESULT_LABELS) as BetResult[]).map((result) => <SelectItem key={result} value={result}>{tResults(result)}</SelectItem>)}</SelectContent></Select></div>
           </div>
+          <p className="text-xs text-muted-foreground">{t("stakeUnitsHelp")}</p>
           <div className="grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-1"><Label htmlFor="edit-closing-odds">{t("closingOdds")}</Label><Input id="edit-closing-odds" type="number" step="0.001" min="1.001" value={value.closingOdds ?? ""} onChange={(e) => patch({ closingOdds: e.target.value ? Number(e.target.value) : null })} /></div>
             <div className="flex flex-col gap-1"><Label htmlFor="edit-estimated-probability">{t("estimatedProbability")}</Label><Input id="edit-estimated-probability" type="number" step="0.01" min="0" max="100" value={value.estimatedProbability ?? ""} onChange={(e) => patch({ estimatedProbability: e.target.value ? Number(e.target.value) : null })} /></div>

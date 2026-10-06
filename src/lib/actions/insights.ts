@@ -31,6 +31,8 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
 
   const now = Date.now();
   const bankrolls = await listBankrolls();
+  const activeCurrencies = new Set(bankrolls.filter((bankroll) => !bankroll.locked).map((bankroll) => bankroll.currency));
+  if (activeCurrencies.size > 1) return { error: "Choisis une seule devise de bankroll avant de générer une analyse IA globale." };
   const activeBankrollIds = new Set(
     bankrolls.filter((bankroll) => !bankroll.locked).map((bankroll) => bankroll.id)
   );
@@ -83,6 +85,7 @@ export async function generateInsightsAction(): Promise<GenerateInsightsResult> 
   const locale = await getServerLocale();
   const prompt = buildInsightsPrompt({
     locale,
+    nativeCurrency: [...activeCurrencies][0] ?? "EUR",
     stats,
     settledCount,
     roi,

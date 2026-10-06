@@ -39,7 +39,7 @@ export function EditResultSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSaved: (betId: string, result: BetResult, cashOutAmount: number | null) => void;
-  currency: Currency;
+  currency: Currency | "UNIT";
 }) {
   const [result, setResult] = useState<BetResult>(bet?.result ?? "EN_ATTENTE");
   const [cashOutInput, setCashOutInput] = useState("");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { fmtMoney, fmtUnits } from "@/lib/format";
 
 // Tooltip recharts commun à tous les graphiques stats — même esprit que
@@ -17,7 +17,7 @@ export function ChartTooltip({
   active?: boolean;
   payload?: { value?: number; name?: string; color?: string }[];
   label?: string;
-  currency: Currency;
+  currency: AccountingCurrency;
   units?: boolean;
 }) {
   const locale = useLocale();

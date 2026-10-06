@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
-import { Prisma } from "@prisma/client";
+import { Prisma, type Currency } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
@@ -23,6 +23,7 @@ import { normalizeBookmaker } from "@/lib/bookmakers";
 import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof, resultProofMatches } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
+import { convertTicketToBankroll } from "@/lib/native-stake";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -66,14 +67,10 @@ export async function importExternalBets(
   bets: ParsedBet[],
   sourceFormat: string,
   fileName?: string,
-  requestedAllocationId?: string | null,
-  baCurrencyPerUnit = 1
+  requestedAllocationId?: string | null
 ): Promise<FileImportResult> {
   const user = await requireUser();
   const isBetAnalytix = sourceFormat === "BET_ANALYTIX";
-  if (isBetAnalytix && (!Number.isFinite(baCurrencyPerUnit) || baCurrencyPerUnit <= 0 || baCurrencyPerUnit > 1_000_000)) {
-    return { error: "Indique une valeur en devise valide pour 1u Bet-Analytix." };
-  }
   if (bets.length === 0) return { error: "Aucun pari valide à importer." };
   if (bets.length > MAX_IMPORT_ROWS) return { error: `Un import est limité à ${MAX_IMPORT_ROWS} paris.` };
 
@@ -83,6 +80,7 @@ export async function importExternalBets(
       select: {
         id: true,
         mode: true,
+        currency: true,
         allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
       },
     }),
@@ -94,6 +92,8 @@ export async function importExternalBets(
     prisma.bet.count({ where: { bankroll: { userId: user.id } } }),
   ]);
   if (!bankroll) return { error: "Bankroll introuvable." };
+  if (isBetAnalytix && bankroll.currency !== "UNIT") return { error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." };
+  if (!isBetAnalytix && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
   const requestedAllocation = requestedAllocationId
@@ -127,6 +127,7 @@ export async function importExternalBets(
     description: string | null;
     eventResult: string | null;
     stake: number;
+    stakeCurrency: "EUR" | "USD" | "GBP" | "UNIT";
     stakeUnits?: number;
     referenceCapitalAtBet?: number;
     unitsRecordedAt?: Date;
@@ -201,13 +202,12 @@ export async function importExternalBets(
       betType: normalized.betType,
       description,
       eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-      // Bet-Analytix exports Stake in units, not in the account currency.
-      // Keep the original units as the authoritative performance measure;
-      // the money amount is an explicit private conversion (1 currency unit/u by default).
-      stake: isBetAnalytix ? (bet.stake as number) * baCurrencyPerUnit : bet.stake as number,
+      // Dans une bankroll UNIT, stake et cashOutAmount sont nativement en U.
+      // Aucun montant fictif en devise n'est inventé pour les lignes BA.
+      stake: bet.stake as number,
+      stakeCurrency: bankroll.currency,
       ...(isBetAnalytix ? {
         stakeUnits: bet.stake as number,
-        referenceCapitalAtBet: baCurrencyPerUnit * 100,
         unitsRecordedAt: new Date(),
       } : {}),
       odds: bet.odds,
@@ -216,9 +216,7 @@ export async function importExternalBets(
       freebet: Boolean(bet.freebet),
       live: Boolean(bet.live),
       result: bet.result,
-      cashOutAmount: bet.result === "CASHE" && bet.cashOutAmount !== null && isBetAnalytix
-        ? bet.cashOutAmount * baCurrencyPerUnit
-        : bet.result === "CASHE" ? bet.cashOutAmount : null,
+      cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
       entryMethod: "FILE" as const,
       format: bet.format ?? "SIMPLE",
       closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 1 ? (bet.closingOdds ?? null) : null,
@@ -266,7 +264,7 @@ export async function importExternalBets(
       const batch = await tx.importBatch.create({
         data: {
           userId: user.id,
-          source: isBetAnalytix ? "BET_ANALYTIX_UNITS_V2" : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
+          source: isBetAnalytix ? "BET_ANALYTIX_UNITS_NATIVE" : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
           fileName: fileName?.normalize("NFKC").trim().replace(/[\\/]/g, "_").slice(0, 255) || null,
           importedCount: rows.length,
           skippedDuplicates,
@@ -349,7 +347,10 @@ export async function importBets(
   scanUsageIds: string[] = [],
   scanMeasurements: ScanImportMeasurement[] = [],
   resultForBetId?: string,
-  resultBatchMode = false
+  resultBatchMode = false,
+  ticketCurrency?: Currency,
+  ticketFxRate: number | null = null,
+  expectedReferenceCapital?: number | null
 ): Promise<ImportResult> {
   const locale = await getServerLocale();
   const user = await requireUser();
@@ -375,9 +376,25 @@ export async function importBets(
         userId: user.id,
         ...(resultBatchMode ? { certificationStartedAt: { not: null } } : {}),
       },
-      select: { id: true, mode: true, allocations: { select: { id: true, bookmaker: true } } },
+      select: { id: true, mode: true, currency: true, referenceCurrency: true, referenceCapital: true, allocations: { select: { id: true, bookmaker: true } } },
     });
     if (!bankroll) return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollNotFound") };
+    if (!ticketCurrency) return { error: "Indique la devise lue sur le ticket." };
+    if (expectedReferenceCapital !== undefined && expectedReferenceCapital !== bankroll.referenceCapital) {
+      return { error: "La référence de conversion a changé depuis la vérification. Actualise-la puis confirme à nouveau." };
+    }
+    try {
+      for (const bet of bets) convertTicketToBankroll({
+        amount: bet.stake!, cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+        sourceCurrency: ticketCurrency, bankrollCurrency: bankroll.currency,
+        referenceCurrency: bankroll.referenceCurrency, referenceCapital: bankroll.referenceCapital,
+        fxRate: ticketFxRate,
+      });
+    } catch (error) {
+      return { error: error instanceof Error && error.message === "FX_RATE_REQUIRED"
+        ? "Renseigne un taux explicite entre la devise du ticket et celle de la bankroll."
+        : "La conversion du ticket est impossible avec cette référence. Vérifie la mise et la référence de la bankroll." };
+    }
     if (await isBankrollLockedForUser(user.id, bankrollId)) {
       return { error: (await getTranslations({ locale, namespace: "errors" }))("bankrollLocked") };
     }
@@ -429,7 +446,8 @@ export async function importBets(
           bankroll: { userId: user.id, certificationStartedAt: { not: null } },
         },
         select: {
-          id: true, ticketRef: true, date: true, stake: true, odds: true,
+          id: true, ticketRef: true, date: true, stake: true, stakeCurrency: true,
+          sourceStakeAmount: true, sourceStakeCurrency: true, referenceCapitalAtBet: true, odds: true,
           bookmaker: true, sport: true, betType: true, description: true, format: true,
           selections: {
             select: { sport: true, betType: true, label: true, odds: true },
@@ -438,7 +456,9 @@ export async function importBets(
         },
       });
       if (!target) return { error: "Ce pari n’est plus disponible pour une preuve de résultat." };
-      if (!resultProofMatches(target, scanned, {
+      const matchingTarget = { ...target, stake: target.sourceStakeCurrency === ticketCurrency && target.sourceStakeAmount !== null
+        ? target.sourceStakeAmount : target.stake };
+      if (!resultProofMatches(matchingTarget, scanned, {
         bookmaker: scanProof.detectedBookmaker ?? scanProof.selectedBookmaker,
       })) {
         return { error: "Le ticket scanné ne correspond pas au pari choisi (référence, date, mise ou cote différente)." };
@@ -447,13 +467,21 @@ export async function importBets(
       const matchContext = { bookmaker: scanProof.detectedBookmaker ?? scanProof.selectedBookmaker };
       const verifiedResultProof = canAutomaticallyUpdateResult(
         scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, scanned.result
-      ) || isStrictUnreferencedResultProof(target, scanned, matchContext);
+      ) || isStrictUnreferencedResultProof(matchingTarget, scanned, matchContext);
+      const convertedCashOut = scanned.result === "CASHE" ? convertTicketToBankroll({
+        amount: scanned.stake!, cashOutAmount: scanned.cashOutAmount,
+        sourceCurrency: ticketCurrency, bankrollCurrency: target.stakeCurrency,
+        referenceCurrency: bankroll.referenceCurrency,
+        referenceCapital: target.referenceCapitalAtBet ?? bankroll.referenceCapital,
+        fxRate: ticketFxRate,
+      }).cashOutAmount : null;
       await prisma.$transaction(async (tx) => {
         await tx.bet.update({
           where: { id: target.id },
           data: {
             result: scanned.result,
-            cashOutAmount: scanned.result === "CASHE" ? scanned.cashOutAmount : null,
+            cashOutAmount: convertedCashOut,
+            sourceCashOutAmount: scanned.result === "CASHE" ? scanned.cashOutAmount : null,
             eventResult: scanned.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
             resultProofAt: verifiedResultProof ? scanProof.createdAt : null,
             resultEntryMethod: verifiedResultProof ? "SCAN" : "MANUAL",
@@ -501,7 +529,8 @@ export async function importBets(
         bankroll: { userId: user.id },
       },
       select: {
-        id: true, ticketRef: true, date: true, stake: true, odds: true,
+        id: true, ticketRef: true, date: true, stake: true, stakeCurrency: true,
+        sourceStakeAmount: true, sourceStakeCurrency: true, referenceCapitalAtBet: true, odds: true,
         bookmaker: true, sport: true, betType: true, description: true, format: true,
         selections: {
           select: { sport: true, betType: true, label: true, odds: true },
@@ -509,6 +538,10 @@ export async function importBets(
         },
       },
     });
+    const matchingResultTargets = pendingResultTargets.map((target) => ({ ...target,
+      stake: target.sourceStakeCurrency === ticketCurrency && target.sourceStakeAmount !== null
+        ? target.sourceStakeAmount : target.stake,
+    }));
     const recordedReferences = await prisma.bet.findMany({
       where: { bankrollId, ticketRef: { not: null }, bankroll: { userId: user.id } },
       select: { ticketRef: true },
@@ -517,7 +550,7 @@ export async function importBets(
       if (bet.sourceScanIndex === undefined) return false;
       const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
-      return Boolean(findPendingTicketMatch(pendingResultTargets, bet, {
+      return Boolean(findPendingTicketMatch(matchingResultTargets, bet, {
         bookmaker: scanProof?.detectedBookmaker ?? scanProof?.selectedBookmaker,
       }));
     })) {
@@ -538,7 +571,7 @@ export async function importBets(
       const scanProof = sourceScanUsageId ? scanUsageById.get(sourceScanUsageId) : null;
       const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
       if (!scanProof || !canAutomaticallyUpdateResult(scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result)
-        || !findAutomaticResultProofTarget(pendingResultTargets, bet)) {
+        || !findAutomaticResultProofTarget(matchingResultTargets, bet)) {
         return { error: "Ce ticket est déjà enregistré. Aucun doublon n’a été créé ; vérifie le résultat du pari existant." };
       }
     }
@@ -553,7 +586,7 @@ export async function importBets(
       const scanProof = scanUsageId ? scanUsageById.get(scanUsageId) : null;
       const bookmaker = scanProof?.detectedBookmaker ?? scanProof?.selectedBookmaker;
       const allCandidateCount = scanProof
-        ? automaticResultProofCandidateCount(pendingResultTargets, bet, { bookmaker })
+        ? automaticResultProofCandidateCount(matchingResultTargets, bet, { bookmaker })
         : 0;
       const hasStandardResultEvidence = Boolean(scanProof && canAutomaticallyUpdateResult(
         scanProof.selectedBookmaker ?? scanProof.detectedBookmaker,
@@ -563,7 +596,7 @@ export async function importBets(
       const mayUpdateResult = hasStandardResultEvidence || Boolean(scanProof && !bet.ticketRef && allCandidateCount > 0);
       const automaticResultTarget = scanProof && mayUpdateResult
         ? findAutomaticResultProofTarget(
-            pendingResultTargets.filter((target) => !plannedResultTargetIds.has(target.id)),
+            matchingResultTargets.filter((target) => !plannedResultTargetIds.has(target.id)),
             bet,
             { bookmaker }
           )
@@ -616,6 +649,13 @@ export async function importBets(
         automaticResultTarget,
       } = automaticResultPlans[index];
       if (automaticResultTarget && scanProof) {
+        const convertedCashOut = bet.result === "CASHE" ? convertTicketToBankroll({
+          amount: bet.stake!, cashOutAmount: bet.cashOutAmount,
+          sourceCurrency: ticketCurrency, bankrollCurrency: automaticResultTarget.stakeCurrency,
+          referenceCurrency: bankroll.referenceCurrency,
+          referenceCapital: automaticResultTarget.referenceCapitalAtBet ?? bankroll.referenceCapital,
+          fxRate: ticketFxRate,
+        }).cashOutAmount : null;
         const evidence = findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef);
         const verifiedResultProof = canAutomaticallyUpdateResult(
           scanProof.selectedBookmaker ?? scanProof.detectedBookmaker, evidence, bet.result
@@ -630,7 +670,8 @@ export async function importBets(
           },
           data: {
             result: bet.result,
-            cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+            cashOutAmount: convertedCashOut,
+            sourceCashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
             eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
             resultProofAt: verifiedResultProof ? scanProof.createdAt : null,
             resultEntryMethod: verifiedResultProof ? "SCAN" : "MANUAL",
@@ -688,6 +729,9 @@ export async function importBets(
           closingOdds: bet.closingOdds,
           estimatedProbability: bet.estimatedProbability,
           selections: bet.selections,
+          ticketCurrency,
+          ticketFxRate,
+          expectedReferenceCapital,
         },
       }, validationMessages, { bankrollValidated: true, taxonomy });
     }

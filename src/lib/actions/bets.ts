@@ -1,6 +1,6 @@
 "use server";
 
-import type { BetEntryMethod, BetFormat, BetResult } from "@prisma/client";
+import type { AccountingCurrency, BetEntryMethod, BetFormat, BetResult } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
@@ -171,7 +171,7 @@ async function getOwnedBet(betId: string, userId: string) {
       id: true, bankrollId: true, tipsterId: true, format: true, referenceCapitalAtBet: true,
       sport: true, betType: true, description: true, eventResult: true, date: true,
       bookmaker: true, ticketRef: true,
-      stake: true, stakeUnits: true, odds: true, closingOdds: true, estimatedProbability: true,
+      stake: true, stakeCurrency: true, stakeUnits: true, odds: true, closingOdds: true, estimatedProbability: true,
       result: true, cashOutAmount: true, boosted: true,
       originalOdds: true, freebet: true, live: true, initialProofAt: true,
       initialProofBeforeEvent: true, resultProofAt: true, resultEntryMethod: true,
@@ -235,6 +235,7 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
     where: { id: targetBankrollId, userId: user.id },
     select: {
       mode: true,
+      currency: true,
       allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
     },
   });
@@ -246,10 +247,13 @@ export async function moveBets(betIds: string[], targetBankrollId: string) {
     : null;
   const bets = await prisma.bet.findMany({
     where: { id: { in: betIds }, bankroll: { userId: user.id } },
-    select: { id: true, bankrollId: true, certificationLockedAt: true },
+    select: { id: true, bankrollId: true, certificationLockedAt: true, stakeCurrency: true },
   });
   if (bets.some((bet) => bet.certificationLockedAt)) {
     throw new Error("Un pari entré dans l’historique de certification ne peut pas être déplacé.");
+  }
+  if (bets.some((bet) => bet.stakeCurrency !== targetBankroll.currency)) {
+    throw new Error("Déplace ces paris uniquement vers une bankroll de même devise native.");
   }
   const sourceLocked = await Promise.all(
     bets.map((bet) => isBankrollLockedForUser(user.id, bet.bankrollId))
@@ -312,8 +316,8 @@ export async function updateBetResult(
       await tx.betCorrection.create({ data: {
         betId,
         kind: "RESULT_MANUAL",
-        before: { result: existing.result, cashOutUnits: cashOutInUnits(existing.cashOutAmount, existing.referenceCapitalAtBet) },
-        after: { result, cashOutUnits: cashOutInUnits(normalizedCashOut, existing.referenceCapitalAtBet) },
+        before: { result: existing.result, cashOutUnits: cashOutInUnits(existing.cashOutAmount, existing.referenceCapitalAtBet, existing.stakeCurrency) },
+        after: { result, cashOutUnits: cashOutInUnits(normalizedCashOut, existing.referenceCapitalAtBet, existing.stakeCurrency) },
         reason: "Résultat renseigné manuellement",
       } });
     }
@@ -332,6 +336,7 @@ export type UpdateBetInput = {
   eventResult: string;
   date: string;
   stake: number;
+  stakeUnits?: number | null;
   odds: number | null;
   closingOdds?: number | null;
   estimatedProbability?: number | null;
@@ -367,6 +372,13 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
 
   if (Number.isNaN(requestedDate.getTime())) throw new Error(t("invalidDate"));
   if (!Number.isFinite(input.stake) || input.stake <= 0) throw new Error(t("stakePositive"));
+  const requestedStakeUnits = input.stakeUnits;
+  if (existing.stakeCurrency === "UNIT" && requestedStakeUnits !== undefined && requestedStakeUnits !== input.stake) {
+    throw new Error("Dans une bankroll en U, la mise native et la mise en unités doivent être identiques.");
+  }
+  const unitsChanged = requestedStakeUnits !== undefined && requestedStakeUnits !== existing.stakeUnits;
+  if (unitsChanged && (typeof requestedStakeUnits !== "number" || !Number.isFinite(requestedStakeUnits)
+    || requestedStakeUnits <= 0)) throw new Error("La mise en unités doit être supérieure à 0.");
   if (!isBetResult(input.result)) throw new Error(t("invalidResult"));
   if (input.odds === null && input.result !== "REMBOURSE") throw new Error(t("oddsPositive"));
   if (input.odds !== null && (!Number.isFinite(input.odds) || input.odds <= 0)) throw new Error(t("oddsPositive"));
@@ -401,11 +413,20 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
     || (existing.description ?? "") !== input.description.trim()
     || existing.date.getTime() !== date.getTime()
     || existing.stake !== input.stake
+    || unitsChanged
     || existing.odds !== input.odds
     || existing.live !== input.live;
   const resultChanged = existing.result !== input.result
     || existing.cashOutAmount !== (input.result === "CASHE" ? input.cashOutAmount : null)
     || (existing.eventResult ?? "") !== input.eventResult.trim();
+  const referenceCapitalAtBet = existing.stakeCurrency === "UNIT" ? existing.referenceCapitalAtBet : unitsChanged
+    ? (input.stake / requestedStakeUnits!) * 100 : existing.referenceCapitalAtBet;
+  if (unitsChanged && (referenceCapitalAtBet === null || !Number.isFinite(referenceCapitalAtBet) || referenceCapitalAtBet <= 0)) {
+    throw new Error("La conversion de la mise en unités est invalide.");
+  }
+  const stakeUnits = existing.stakeCurrency === "UNIT" ? input.stake : unitsChanged ? requestedStakeUnits!
+    : existing.stake === input.stake ? existing.stakeUnits
+      : toUnits(input.stake, referenceCapitalAtBet);
 
   const updated = await prisma.$transaction(async (tx) => {
     const bet = await tx.bet.update({ where: { id: existing.id }, data: {
@@ -417,12 +438,17 @@ export async function updateBet(betId: string, input: UpdateBetInput) {
       eventResult: input.eventResult.trim() || null,
       date,
       stake: input.stake,
-      stakeUnits: toUnits(input.stake, existing.referenceCapitalAtBet),
+      stakeUnits,
+      ...(existing.stakeCurrency === "UNIT" && existing.stake !== input.stake
+        ? { sourceStakeAmount: null, sourceStakeCurrency: null, sourceFxRate: null } : {}),
+      referenceCapitalAtBet,
+      unitsRecordedAt: unitsChanged ? new Date() : undefined,
       odds: input.odds,
       closingOdds: input.closingOdds === undefined ? existing.closingOdds : input.closingOdds,
       estimatedProbability: input.estimatedProbability === undefined ? existing.estimatedProbability : input.estimatedProbability,
       result: input.result,
       cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+      ...(resultChanged ? { sourceCashOutAmount: null } : {}),
       boosted: input.boosted,
       originalOdds: input.boosted ? input.originalOdds : null,
       freebet: input.freebet,
@@ -470,6 +496,7 @@ function auditSnapshot(bet: {
   bookmaker: string | null;
   sport: string; betType: string; description: string | null; eventResult: string | null;
   date: Date; stakeUnits: number | null; odds: number | null; closingOdds: number | null;
+  stakeCurrency: AccountingCurrency;
   estimatedProbability: number | null; result: BetResult; cashOutAmount: number | null;
   referenceCapitalAtBet: number | null;
   boosted: boolean; originalOdds: number | null; freebet: boolean; live: boolean;
@@ -479,11 +506,13 @@ function auditSnapshot(bet: {
     sport: bet.sport, betType: bet.betType, description: bet.description, eventResult: bet.eventResult,
     date: bet.date.toISOString(), stakeUnits: bet.stakeUnits, odds: bet.odds,
     closingOdds: bet.closingOdds, estimatedProbability: bet.estimatedProbability, result: bet.result,
-    cashOutUnits: cashOutInUnits(bet.cashOutAmount, bet.referenceCapitalAtBet), boosted: bet.boosted, originalOdds: bet.originalOdds,
+    cashOutUnits: cashOutInUnits(bet.cashOutAmount, bet.referenceCapitalAtBet, bet.stakeCurrency), boosted: bet.boosted, originalOdds: bet.originalOdds,
     freebet: bet.freebet, live: bet.live,
   };
 }
 
-function cashOutInUnits(amount: number | null, referenceCapital: number | null) {
-  return amount !== null && referenceCapital && referenceCapital > 0 ? (amount / referenceCapital) * 100 : null;
+function cashOutInUnits(amount: number | null, referenceCapital: number | null, stakeCurrency?: AccountingCurrency) {
+  if (amount === null) return null;
+  if (stakeCurrency === "UNIT") return amount;
+  return referenceCapital && referenceCapital > 0 ? (amount / referenceCapital) * 100 : null;
 }

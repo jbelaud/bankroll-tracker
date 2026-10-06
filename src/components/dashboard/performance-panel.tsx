@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CalendarBlank, ChartLine } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
@@ -29,6 +29,7 @@ export function PerformancePanel({
   drawdown,
   drawdownUnits,
   currency,
+  mixedCurrencies = false,
 }: {
   points: Point[];
   unitPoints: UnitPoint[];
@@ -36,7 +37,8 @@ export function PerformancePanel({
   balance: number;
   drawdown: number;
   drawdownUnits: number | null;
-  currency: Currency;
+  currency: AccountingCurrency;
+  mixedCurrencies?: boolean;
 }) {
   const t = useTranslations("dashboard.performance");
   const locale = useLocale();
@@ -67,14 +69,16 @@ export function PerformancePanel({
           <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             {t("eyebrow")}
           </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight">{fmtMoney(balance, locale, currency)}</h2>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight">{mixedCurrencies ? "—" : fmtMoney(balance, locale, currency)}</h2>
         </div>
-        <DrawdownBadge amount={drawdown} units={drawdownUnits} currency={currency} allTime />
+        {mixedCurrencies && !inUnits ? null : <DrawdownBadge amount={drawdown} units={drawdownUnits} currency={currency} allTime />}
       </div>
 
       <p className="mt-3 text-xs font-medium text-muted-foreground">{t(inUnits ? "unitCurveTitle" : "moneyCurveTitle")}</p>
       <div className="mt-2 h-52 lg:h-72">
-        {inUnits && missingUnits > 0 ? (
+        {mixedCurrencies && !inUnits ? (
+          <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border px-4 text-center text-sm text-muted-foreground">Sélectionne une bankroll pour voir sa courbe en devise : les devises ne s’additionnent pas.</div>
+        ) : inUnits && missingUnits > 0 ? (
           <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-border px-4 text-center text-sm text-muted-foreground">
             {t("missingUnitCurve", { count: missingUnits })}
           </div>

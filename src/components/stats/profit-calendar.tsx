@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useLocale, useTranslations } from "next-intl";
 import { currencySymbol, fmtUnits } from "@/lib/format";
@@ -14,7 +14,7 @@ export function ProfitCalendar({
   currency,
 }: {
   entries: Entry[];
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const locale = useLocale();
   const t = useTranslations("stats.calendar");

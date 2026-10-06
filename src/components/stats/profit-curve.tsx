@@ -1,12 +1,12 @@
 "use client";
 
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { currencySymbol } from "@/lib/format";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
-export function ProfitCurve({ data, unitData, missingUnits = 0, currency }: { data: { date: string; cumulative: number }[]; unitData?: { date: string; cumulative: number }[]; missingUnits?: number; currency: Currency }) {
+export function ProfitCurve({ data, unitData, missingUnits = 0, currency }: { data: { date: string; cumulative: number }[]; unitData?: { date: string; cumulative: number }[]; missingUnits?: number; currency: AccountingCurrency }) {
   const t = useTranslations("stats.curve");
   const displayUnit = useDisplayUnit();
   const inUnits = displayUnit === "units" && unitData !== undefined;

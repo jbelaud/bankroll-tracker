@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { Currency } from "@prisma/client";
 import { Warning, Lightbulb, ArrowCounterClockwise, CheckCircle } from "@phosphor-icons/react";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
@@ -18,6 +18,10 @@ import { ReviewBetCard } from "./review-bet-card";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { bankrollOptionLabel, type BankrollOption } from "./scan-flow";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
+import { fmtMoney, fmtUnits } from "@/lib/format";
+import { toUnits } from "@/lib/bankroll-units";
+import { Link } from "@/i18n/navigation";
+import { getBankrollUnitReference } from "@/lib/actions/bankroll-references";
 import type { TipsterOption } from "@/lib/tipsters/types";
 
 export function ReviewList({
@@ -45,7 +49,7 @@ export function ReviewList({
   error: string;
   resultProofMode?: "single" | "batch";
   skippedDuplicateFiles: string[];
-  onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string) => void;
+  onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, ticketCurrency: Currency, ticketFxRate: number | null, expectedReferenceCapital: number | null) => void;
   onRestart: () => void;
   bankrolls: BankrollOption[];
   bankrollId: string;
@@ -65,10 +69,17 @@ export function ReviewList({
   const [qualityIssueType, setQualityIssueType] = useState("INCORRECT");
   const [qualityIssueDetails, setQualityIssueDetails] = useState("");
   const [tipsters, setTipsters] = useState(initialTipsters);
+  const [confirmedUnitScale, setConfirmedUnitScale] = useState<string | null>(null);
+  const [ticketCurrency, setTicketCurrency] = useState<Currency>(currency);
+  const [ticketFxRate, setTicketFxRate] = useState("");
+  const [freshUnitReference, setFreshUnitReference] = useState<{ bankrollId: string; value: number | null } | null>(null);
+  const [refreshingUnitReference, setRefreshingUnitReference] = useState(false);
+  const [unitReferenceError, setUnitReferenceError] = useState(false);
   const duplicateWarningTracked = useRef(false);
   const bookmakerMismatchTracked = useRef(false);
   const reviewChangeRef = useRef(onReviewChange);
   const t = useTranslations("scan.review");
+  const locale = useLocale();
 
   useEffect(() => {
     reviewChangeRef.current = onReviewChange;
@@ -119,6 +130,18 @@ export function ReviewList({
   const suggestedCount = kept.filter(hasSuggestedType).length;
   const taxonomyMismatchCount = kept.filter((bet) => bet.taxonomyMismatch).length;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
+  const referenceCapital = freshUnitReference?.bankrollId === bankrollId
+    ? freshUnitReference.value : selectedBankroll?.referenceCapital ?? null;
+  const targetCurrency = selectedBankroll?.currency === "UNIT" ? selectedBankroll.referenceCurrency : selectedBankroll?.currency;
+  const needsFx = Boolean(targetCurrency && ticketCurrency !== targetCurrency);
+  const parsedFxRate = Number(ticketFxRate.replace(",", "."));
+  const fxRate = needsFx ? Number.isFinite(parsedFxRate) && parsedFxRate > 0 ? parsedFxRate : null : 1;
+  const canConvert = fxRate !== null && (selectedBankroll?.currency !== "UNIT" || Boolean(referenceCapital && referenceCapital > 0));
+  const oversizedUnitStakes = selectedBankroll?.currency === "UNIT" && canConvert && referenceCapital && referenceCapital > 0
+    ? kept.filter((bet) => bet.stake !== null && (bet.stake * fxRate!) / referenceCapital * 100 > 20)
+    : [];
+  const unitScaleKey = `${bankrollId}:${referenceCapital}:${ticketCurrency}:${fxRate}:${kept.map((bet) => bet.stake ?? "").join(",")}`;
+  const unitScaleNeedsConfirmation = oversizedUnitStakes.length > 0 && confirmedUnitScale !== unitScaleKey;
   const selectedBookmaker = selectedBankroll?.bookmaker ?? (selectedBankroll?.allocations.length === 1 ? selectedBankroll.allocations[0].bookmaker : null);
   const bookmakerMismatch = Boolean(
     selectedBookmaker &&
@@ -254,6 +277,52 @@ export function ReviewList({
         </Select>
       </section>
 
+      <section className="rounded-xl border border-primary/25 bg-primary/5 p-3 text-xs leading-relaxed">
+        <label htmlFor="review-ticket-currency" className="block font-semibold">Devise lue sur le ticket</label>
+        <select id="review-ticket-currency" value={ticketCurrency} onChange={(event) => { setTicketCurrency(event.target.value as Currency); setConfirmedUnitScale(null); }} disabled={importing} className="mt-1 min-h-10 w-full rounded-lg border border-border bg-background px-2 text-sm">
+          <option value="EUR">€ — Euro</option><option value="USD">$ — Dollar</option><option value="GBP">£ — Livre</option>
+        </select>
+        {needsFx ? <div className="mt-2"><label htmlFor="review-ticket-fx" className="block font-semibold">Taux explicite : 1 {ticketCurrency} en {targetCurrency}</label><input id="review-ticket-fx" type="number" min="0.000001" step="any" inputMode="decimal" value={ticketFxRate} onChange={(event) => setTicketFxRate(event.target.value)} disabled={importing} className="mt-1 min-h-10 w-full rounded-lg border border-border bg-background px-2 text-sm" /><p className="mt-1 text-muted-foreground">Vérifie ce taux toi-même ; Kalivoa ne récupère aucun taux de change automatiquement.</p></div> : null}
+        {selectedBankroll?.currency === "UNIT" ? <p className="mt-2 font-semibold">Cette bankroll suit les mises et les résultats en U. Les euros du ticket sont conservés comme preuve privée.</p> : null}
+        <p className="font-semibold">{referenceCapital && referenceCapital > 0
+          ? t("unitConversion", {
+            reference: fmtMoney(referenceCapital, locale, selectedBankroll?.referenceCurrency ?? currency),
+            value: fmtMoney(referenceCapital / 100, locale, selectedBankroll?.referenceCurrency ?? currency),
+          })
+          : t("unitConversionMissing")}</p>
+        <p className="mt-1 text-muted-foreground">{t("unitConversionHelp")}</p>
+        {selectedBankroll?.currency === "UNIT" && canConvert && kept.length > 0 ? <div className="mt-3 space-y-1 border-t border-primary/20 pt-2">
+          <p className="font-semibold">Conversion proposée avant enregistrement</p>
+          {kept.map((bet, index) => bet.stake === null ? null : <p key={index} className="num">{fmtMoney(bet.stake, locale, ticketCurrency)} → {fmtUnits(toUnits(bet.stake * fxRate!, referenceCapital)!, locale)}</p>)}
+        </div> : null}
+        {!canConvert ? <p role="alert" className="mt-2 font-semibold text-warning">Renseigne le montant de référence et, si les devises diffèrent, un taux de change valide avant d’importer le ticket.</p> : null}
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Link href="/bankrolls" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline-offset-2 hover:underline">{t("unitConversionSettings")}</Link>
+          <button type="button" disabled={!bankrollId || refreshingUnitReference || importing}
+            className="font-semibold text-primary underline-offset-2 hover:underline disabled:opacity-50"
+            onClick={async () => {
+              setRefreshingUnitReference(true);
+              setUnitReferenceError(false);
+              try {
+                const value = await getBankrollUnitReference(bankrollId);
+                setFreshUnitReference({ bankrollId, value });
+                setConfirmedUnitScale(null);
+              } catch {
+                setUnitReferenceError(true);
+              } finally {
+                setRefreshingUnitReference(false);
+              }
+            }}>{t(refreshingUnitReference ? "unitConversionRefreshing" : "unitConversionRefresh")}</button>
+        </div>
+        {unitReferenceError ? <p role="alert" className="mt-1 text-loss">{t("unitConversionRefreshError")}</p> : null}
+      </section>
+
+      {oversizedUnitStakes.length > 0 ? <label className="flex items-start gap-2 rounded-xl border border-warning/50 bg-warning/10 p-3 text-xs leading-relaxed text-warning">
+        <input type="checkbox" className="mt-0.5 size-4 shrink-0 accent-primary" checked={confirmedUnitScale === unitScaleKey}
+          onChange={(event) => setConfirmedUnitScale(event.target.checked ? unitScaleKey : null)} disabled={importing} />
+        {t("unitConversionWarning", { count: oversizedUnitStakes.length })}
+      </label> : null}
+
       {bookmakerMismatch && selectedBankroll && (
         <section className="flex items-start gap-2 rounded-xl border border-warning/50 bg-warning/10 p-3 text-xs text-warning">
           <Warning size={16} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
@@ -320,8 +389,9 @@ export function ReviewList({
             excluded={excluded.has(i)}
             onPatch={(patch) => patchBet(i, patch)}
             onToggleExcluded={() => toggleExcluded(i)}
-            currency={currency}
-            referenceCapital={selectedBankroll?.referenceCapital ?? null}
+            currency={ticketCurrency}
+            stakeUnitPreview={bet.stake !== null && fxRate !== null && referenceCapital && referenceCapital > 0
+              ? toUnits(bet.stake * fxRate, referenceCapital) : null}
             taxonomy={reviewTaxonomy}
             tipsters={tipsters}
             resultProofMode={Boolean(resultProofMode)}
@@ -342,8 +412,8 @@ export function ReviewList({
       {/* Zone nav + bouton Scan saillant : la confirmation doit rester entièrement au-dessus. */}
       <div className="fixed inset-x-0 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-md px-4 lg:left-64 lg:bottom-[calc(1rem+var(--rg-footer-h))] lg:max-w-none lg:px-8 xl:px-10">
         <Button
-          onClick={() => onConfirm(kept, shareQuality, qualityIssueType, qualityIssueDetails)}
-          disabled={kept.length === 0 || importing}
+          onClick={() => onConfirm(kept, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, needsFx ? fxRate : null, referenceCapital)}
+          disabled={kept.length === 0 || importing || refreshingUnitReference || unitScaleNeedsConfirmation || !canConvert}
           className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg lg:mx-auto lg:max-w-2xl"
         >
           {importing

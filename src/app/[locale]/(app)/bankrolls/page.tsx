@@ -35,6 +35,8 @@ export default async function BankrollsPage({
       id: br.id,
       name: br.name,
       mode: br.mode,
+      currency: br.currency,
+      referenceCurrency: br.referenceCurrency,
       bookmaker: br.bookmaker,
       initial: br.initial,
       referenceCapital: br.referenceCapital,

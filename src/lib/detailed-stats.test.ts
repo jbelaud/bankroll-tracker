@@ -7,6 +7,7 @@ function bet(id: string, day: string, result: Bet["result"], stakeUnits: number 
     id, bankrollId: "bankroll", allocationId: null, bookmaker: null, ticketRef: null,
     date: new Date(day), sport: "Football", betType: "Simple", description: null, eventResult: null,
     stake: stakeUnits ?? 1, stakeUnits, referenceCapitalAtBet: 100, unitsRecordedAt: null,
+    stakeCurrency: "EUR", sourceStakeAmount: null, sourceStakeCurrency: null, sourceFxRate: null, sourceCashOutAmount: null,
     odds, boosted: false, originalOdds: null, freebet: false, live: false, result,
     cashOutAmount: null, createdAt: new Date(day), updatedAt: new Date(day),
     entryMethod: "FILE", format: "SIMPLE", closingOdds: null, estimatedProbability: null,

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { BET_RESULT_LABELS } from "@/lib/bet-result";
 import { translateTaxonomy } from "@/lib/i18n/taxonomy";
 import { hasSuggestedType, type ParsedBet } from "@/lib/scan/types";
-import { currencySymbol, fmtStakeUnits } from "@/lib/format";
+import { currencySymbol, fmtUnits } from "@/lib/format";
 import type { Taxonomy } from "@/lib/taxonomy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ export function ReviewBetCard({
   onPatch,
   onToggleExcluded,
   currency,
-  referenceCapital,
+  stakeUnitPreview,
   taxonomy,
   tipsters,
   resultProofMode = false,
@@ -48,7 +48,7 @@ export function ReviewBetCard({
   onPatch: (patch: Partial<ParsedBet>) => void;
   onToggleExcluded: () => void;
   currency: Currency;
-  referenceCapital: number | null;
+  stakeUnitPreview: number | null;
   taxonomy: Taxonomy;
   tipsters: TipsterOption[];
   resultProofMode?: boolean;
@@ -320,7 +320,7 @@ export function ReviewBetCard({
             onChange={(e) => onPatch({ stake: e.target.value === "" ? null : Number(e.target.value) })}
             className="num min-h-touch rounded-lg px-2 text-sm"
           />
-          {bet.stake !== null && fmtStakeUnits(bet.stake, referenceCapital, locale) ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtStakeUnits(bet.stake, referenceCapital, locale)}</span> : null}
+          {stakeUnitPreview !== null ? <span className="num text-[0.65rem] font-semibold text-primary">{fmtUnits(stakeUnitPreview, locale)}</span> : null}
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor={uid("odds")} className="text-xs">

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ExtensionBatch, useExtensionLink } from "./extension-batch";
 import { useTranslations } from "next-intl";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency, Currency } from "@prisma/client";
 import { ArrowSquareOut, CheckCircle, DiscordLogo, WarningCircle } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import { scanTickets, type ScanTicketResult } from "@/lib/scan/scan-client";
@@ -33,6 +33,8 @@ export type BankrollOption = {
   mode: "SINGLE" | "DISTRIBUTED";
   bookmaker: string | null;
   referenceCapital: number | null;
+  currency: AccountingCurrency;
+  referenceCurrency: Currency;
   allocations: { id: string; bookmaker: string; initial: number }[];
 };
 
@@ -145,7 +147,7 @@ export function ScanFlow({
   }, [flow, extensionLink]);
 
   const confirmImport = useCallback(
-    async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, files: File[], scans: ScanTicketResult[], skippedDuplicateFiles: string[]) => {
+    async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, ticketCurrency: Currency, ticketFxRate: number | null, expectedReferenceCapital: number | null, files: File[], scans: ScanTicketResult[], skippedDuplicateFiles: string[]) => {
       setError("");
       const draftId = (flow.step === "review" || flow.step === "importing") ? flow.draftId : null;
       setFlow({ step: "importing", draftId, bets, files, scans, skippedDuplicateFiles });
@@ -166,7 +168,10 @@ export function ScanFlow({
         scanUsageIdsBySourceIndex(scans),
         scanMeasurements,
         resultProofTarget?.betId,
-        resultBatchMode
+        resultBatchMode,
+        ticketCurrency,
+        ticketFxRate,
+        expectedReferenceCapital
       );
       if (result.imported === undefined) {
         setError(result.error);
@@ -268,7 +273,7 @@ export function ScanFlow({
         error={error}
         resultProofMode={resultProofTarget ? "single" : resultBatchMode ? "batch" : undefined}
         skippedDuplicateFiles={flow.skippedDuplicateFiles}
-        onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, flow.files, flow.scans, flow.skippedDuplicateFiles)}
+        onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital, flow.files, flow.scans, flow.skippedDuplicateFiles)}
         onRestart={restart}
         bankrolls={bankrolls}
         bankrollId={bankrollId}

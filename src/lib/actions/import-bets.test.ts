@@ -52,7 +52,9 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-const { importBets, importExternalBets } = await import("./import-bets");
+const { importBets: importScannedBets, importExternalBets } = await import("./import-bets");
+const importBets: typeof importScannedBets = (bankrollId, bets, scanUsageIds = [], scanMeasurements = [], resultForBetId, resultBatchMode = false, ticketCurrency = "EUR", ticketFxRate = null, expectedReferenceCapital) =>
+  importScannedBets(bankrollId, bets, scanUsageIds, scanMeasurements, resultForBetId, resultBatchMode, ticketCurrency, ticketFxRate, expectedReferenceCapital);
 
 function bet(overrides: Partial<ParsedBet> = {}): ParsedBet {
   return {
@@ -82,6 +84,7 @@ describe("importExternalBets", () => {
     mocks.bankrollFindFirst.mockResolvedValue({
       id: "bankroll-1",
       mode: "DISTRIBUTED",
+      currency: "EUR",
       allocations: [{ id: "allocation-1", bookmaker: "Winamax" }],
     });
     mocks.betFindMany.mockResolvedValue([]);
@@ -137,29 +140,28 @@ describe("importExternalBets", () => {
   });
 
   it("conserve les mises Bet-Analytix en unités indépendamment de la conversion privée", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     const sourceBet = bet({ ticketRef: null, stake: 1.25, odds: 3.75, result: "PERDU" });
-    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv", null, 50);
+    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv");
 
     expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
-    expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_UNITS_V2" }) });
+    expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_UNITS_NATIVE" }) });
     expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
-      stake: 62.5,
+      stake: 1.25,
+      stakeCurrency: "UNIT",
       stakeUnits: 1.25,
-      referenceCapitalAtBet: 5000,
       unitsRecordedAt: expect.any(Date),
     })] });
   });
 
-  it("utilise 1 unité = 1 en devise par défaut pour un export BA", async () => {
-    await importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX");
-    expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
-      stake: 1.25,
-      stakeUnits: 1.25,
-      referenceCapitalAtBet: 100,
-    })] });
+  it("refuse un export BA dans une bankroll en devise", async () => {
+    await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX"))
+      .resolves.toEqual({ error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." });
+    expect(mocks.betCreateMany).not.toHaveBeenCalled();
   });
 
   it("conserve l'heure BA pour ordonner les paris d'un même jour", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     await importExternalBets("bankroll-1", [bet({
       date: "2026-09-03", placedAt: "2026-09-03T19:20:00.000Z",
     })], "BET_ANALYTIX");
@@ -169,6 +171,7 @@ describe("importExternalBets", () => {
   });
 
   it("reconnaît un ancien import BA comme doublon même avec une nouvelle conversion privée", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     mocks.betFindMany.mockResolvedValue([{
       ticketRef: null,
       date: new Date("2026-08-20T12:00:00.000Z"),
@@ -179,7 +182,7 @@ describe("importExternalBets", () => {
       importBatch: { source: "BET_ANALYTIX" },
     }]);
 
-    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv", null, 50);
+    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv");
     expect(response).toEqual({ imported: 0, skippedDuplicates: 1, firstImport: false });
     expect(mocks.betCreateMany).not.toHaveBeenCalled();
   });
@@ -326,6 +329,9 @@ describe("importBets", () => {
     mocks.bankrollFindFirst.mockResolvedValue({
       id: "bankroll-1",
       mode: "SINGLE",
+      currency: "EUR",
+      referenceCurrency: "EUR",
+      referenceCapital: 100,
       allocations: [],
     });
     mocks.betCount.mockResolvedValue(1);

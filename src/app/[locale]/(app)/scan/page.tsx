@@ -108,6 +108,8 @@ export default async function ScanPage({ searchParams, params }: {
           mode: br.mode,
           bookmaker: br.bookmaker,
           referenceCapital: br.referenceCapital,
+          currency: br.currency,
+          referenceCurrency: br.referenceCurrency,
           allocations: br.allocations,
         }))}
         currency={currency}

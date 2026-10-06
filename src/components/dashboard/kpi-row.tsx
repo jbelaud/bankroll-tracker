@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { fmtMoneySigned, fmtPct, fmtUnits } from "@/lib/format";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
 
@@ -46,6 +46,7 @@ export function KpiRow({
   settledCount,
   wonCount,
   currency,
+  mixedCurrencies = false,
 }: {
   profit: number;
   unitProfit: number | null;
@@ -56,7 +57,8 @@ export function KpiRow({
   winRate: number;
   settledCount: number;
   wonCount: number;
-  currency: Currency;
+  currency: AccountingCurrency;
+  mixedCurrencies?: boolean;
 }) {
   const locale = useLocale();
   const t = useTranslations("dashboard.kpi");
@@ -66,11 +68,11 @@ export function KpiRow({
     <section aria-label={t("ariaLabel")} className="flex flex-col gap-2">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-2">
         <KpiTile label={t("allBets")} value={String(totalCount)} sub={t("countBreakdown", { settled: settledCount, pending: pendingCount, refunded: totalCount - settledCount - pendingCount })} />
-        <KpiTile label={t("profit")} value={displayUnit === "units" ? unitProfit === null ? "—" : fmtUnits(unitProfit, locale, true) : fmtMoneySigned(profit, locale, currency)} trend={displayUnit === "units" && unitProfit === null ? undefined : profit} sub={displayUnit === "units" && missingUnitCount > 0 ? t("missingUnits", { count: missingUnitCount }) : undefined} />
+        <KpiTile label={t("profit")} value={displayUnit === "units" ? unitProfit === null ? "—" : fmtUnits(unitProfit, locale, true) : mixedCurrencies ? "—" : fmtMoneySigned(profit, locale, currency)} trend={mixedCurrencies || displayUnit === "units" && unitProfit === null ? undefined : profit} sub={displayUnit === "units" && missingUnitCount > 0 ? t("missingUnits", { count: missingUnitCount }) : mixedCurrencies && displayUnit !== "units" ? "Sélectionne une bankroll : devises différentes." : undefined} />
         <KpiTile
           label={t("roi")}
-          value={fmtPct(roi, locale)}
-          trend={roi}
+          value={mixedCurrencies ? "—" : fmtPct(roi, locale)}
+          trend={mixedCurrencies ? undefined : roi}
           sub={t("roiDescription")}
         />
         <KpiTile

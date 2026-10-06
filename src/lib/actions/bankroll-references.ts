@@ -8,11 +8,24 @@ import { unitSnapshot } from "@/lib/bankroll-units";
 
 export type ReferenceActionState = { error?: string; success?: string };
 
+/** Read the latest conversion without discarding an in-progress scan review. */
+export async function getBankrollUnitReference(bankrollId: string): Promise<number | null> {
+  const user = await requireUser();
+  const bankroll = await prisma.bankroll.findFirst({
+    where: { id: bankrollId, userId: user.id },
+    select: { referenceCapital: true },
+  });
+  if (!bankroll) throw new Error("Bankroll introuvable.");
+  return bankroll.referenceCapital;
+}
+
 async function fillMissingUnits(bankrollId: string, capital: number, where: { date?: { gte: Date; lt: Date } } = {}) {
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${bankrollId} FOR UPDATE`;
+    const bankroll = await tx.bankroll.findUniqueOrThrow({ where: { id: bankrollId }, select: { currency: true } });
+    if (bankroll.currency === "UNIT") throw new Error("Les mises de cette bankroll sont déjà enregistrées en unités.");
     const bets = await tx.bet.findMany({
-      where: { bankrollId, referenceCapitalAtBet: null, ...where },
+      where: { bankrollId, stakeCurrency: { not: "UNIT" }, referenceCapitalAtBet: null, stakeUnits: null, ...where },
       select: { id: true, stake: true, date: true },
     });
     const recordedAt = new Date();

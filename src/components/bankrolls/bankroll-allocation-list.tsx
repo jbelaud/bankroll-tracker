@@ -1,11 +1,11 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import type { Currency } from "@prisma/client";
+import type { AccountingCurrency } from "@prisma/client";
 import { fmtMoney } from "@/lib/format";
 
 export async function BankrollAllocationList({ allocations, unassignedBetCount, currency }: {
   allocations: { id: string; bookmaker: string; balance: number; betCount: number }[];
   unassignedBetCount: number;
-  currency: Currency;
+  currency: AccountingCurrency;
 }) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("bankrollDetail")]);
   return <section className="glass-card rounded-xl p-4 lg:col-span-12">

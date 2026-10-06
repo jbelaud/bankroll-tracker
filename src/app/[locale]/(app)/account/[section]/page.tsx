@@ -64,7 +64,9 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
         listAllBets(),
       ]);
       const now = new Date();
-      const monthProfit = bets.filter((bet) => bet.result !== "EN_ATTENTE" && bet.date.getFullYear() === now.getFullYear() && bet.date.getMonth() === now.getMonth()).reduce((sum, bet) => sum + computeProfit(bet), 0);
+      const monthBets = bets.filter((bet) => bet.result !== "EN_ATTENTE" && bet.date.getFullYear() === now.getFullYear() && bet.date.getMonth() === now.getMonth());
+      const monthProfit = monthBets.every((bet) => bet.stakeCurrency === (dbUser?.currency ?? "EUR"))
+        ? monthBets.reduce((sum, bet) => sum + computeProfit(bet), 0) : null;
       content = <div className="space-y-5">
         <AccountGoalsCard monthProfit={monthProfit} initialProfitGoal={dbUser?.monthlyProfitGoal ?? 0} initialLossLimit={dbUser?.monthlyLossLimit ?? 0} currency={dbUser?.currency ?? "EUR"} />
         <div id="personal-conversion" className="scroll-mt-24"><PersonalConversionForm settings={dbUser?.personalConversion ?? null} currency={dbUser?.currency ?? "EUR"} locale={locale} /></div>
