@@ -206,7 +206,7 @@
       },
       "certify": {
         "title": "Construire tes preuves",
-        "description": "Scanne les tickets avant l’événement puis leurs résultats. Atteins 10 paris clôturés, 20u et au moins 40/100."
+        "description": "Scanne les tickets avant l’événement puis leurs résultats. Atteins 10 paris clôturés et au moins 40/100."
       }
     },
     "bankrollsTitle": "Mes bankrolls et leur certification",
@@ -224,7 +224,7 @@
     "completeVolume": "Volume complet",
     "settledProgress": "Paris clôturés",
     "volumeProgress": "Volume suivi",
-    "observationHelp": "Les seuils de 10 paris clôturés et 20u doivent être atteints ensemble pour quitter l’observation.",
+    "observationHelp": "Le niveau reste en observation avant 10 paris clôturés. Le volume et les résultats financiers ne conditionnent pas la certification.",
     "certificationResult": "Niveau actuel : {level}.",
     "corrections": "{count, plural, one {# correction tracée} other {# corrections tracées}}",
     "missingReference": "Définis le montant de référence privé de cette bankroll avant de la publier.",
@@ -233,10 +233,9 @@
     "manage": "Gérer",
     "viewPublicPage": "Voir la page publique",
     "rulesTitle": "Quand une bankroll devient-elle certifiée ?",
-    "rulesIntro": "Elle quitte l’observation seulement lorsque les deux seuils d’échantillon sont atteints. Son score détermine ensuite son niveau.",
+    "rulesIntro": "Elle quitte l’observation après 10 paris clôturés. La qualité des preuves détermine ensuite son niveau, indépendamment des gains ou des pertes.",
     "rules": {
       "bets": "paris clôturés minimum",
-      "volume": "de volume clôturé minimum",
       "bronze": "minimum pour obtenir Bronze"
     },
     "levels": {

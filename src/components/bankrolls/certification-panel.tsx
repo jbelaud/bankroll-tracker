@@ -88,7 +88,7 @@ export function CertificationPanel({ bankrollId, isPublic, publicSlug, startedAt
           <p className="text-xs leading-relaxed text-muted-foreground sm:col-span-3 lg:col-span-6">
             {startedAt ? `Suivi démarré le ${new Date(startedAt).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}. ` : ""}
             {summary.pendingBets} pari(s) en attente · {summary.settledBets} clôturé(s) · {correctionCount} correction(s) tracée(s) · règles v{summary.rulesVersion}.
-            Le niveau reste « En observation » avant 10 paris clôturés et 20u de volume.
+            Le niveau reste « En observation » avant 10 paris clôturés. Le volume est affiché à titre informatif et ne conditionne pas la certification.
           </p>
         </div>
       )}
