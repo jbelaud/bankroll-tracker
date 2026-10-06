@@ -32,7 +32,7 @@ export type ScanImportMeasurement = {
 };
 
 export type ImportResult =
-  | { imported: number; firstImport: boolean; resultProofsUpdated?: number; error?: undefined }
+  | { imported: number; firstImport: boolean; resultProofsUpdated?: number; resultProofsVerified?: number; error?: undefined }
   | { error: string; imported?: undefined };
 
 export type FileImportResult =
@@ -367,6 +367,7 @@ export async function importBets(
 
   let existingBets = 0;
   let resultProofsUpdated = 0;
+  let resultProofsVerified = 0;
   try {
     const bankroll = await prisma.bankroll.findFirst({
       where: {
@@ -475,7 +476,12 @@ export async function importBets(
       revalidatePath("/[locale]/bankrolls/[id]", "page");
       revalidatePath("/[locale]/history", "page");
       revalidatePath("/[locale]/p/[slug]", "page");
-      return { imported: 1, firstImport: false, resultProofsUpdated: 1 };
+      return {
+        imported: 1,
+        firstImport: false,
+        resultProofsUpdated: 1,
+        resultProofsVerified: verifiedResultProof ? 1 : 0,
+      };
     }
     const allocationByBookmaker = new Map(bankroll.allocations.map((allocation) => [
       normalizeBookmaker(allocation.bookmaker).toLocaleLowerCase("fr"),
@@ -636,6 +642,7 @@ export async function importBets(
           };
         }
         resultProofsUpdated += 1;
+        if (verifiedResultProof) resultProofsVerified += 1;
         console.info("[scan-result] existing pending bet updated", {
           userId: user.id,
           bankrollId,
@@ -771,5 +778,6 @@ export async function importBets(
     imported: bets.length,
     firstImport: existingBets === 0,
     resultProofsUpdated,
+    resultProofsVerified,
   };
 }

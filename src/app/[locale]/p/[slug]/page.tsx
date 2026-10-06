@@ -239,8 +239,8 @@ export default async function PublicBankrollPage({ params, searchParams }: {
             <span className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary"><ShieldCheck size={24} weight="fill" aria-hidden /></span>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-2">
-            <SmallStat label="Paris certifiés" value={`${certification.strongBetPercent}%`} />
-            <SmallStat label="Volume certifié" value={`${certification.strongVolumePercent}%`} />
+            <SmallStat label="Paris avec preuve complète" value={`${certification.strongBetPercent}%`} />
+            <SmallStat label="Volume avec preuve complète" value={`${certification.strongVolumePercent}%`} />
             <SmallStat label="Volume suivi" value={`${number.format(certification.volume)}u`} />
             <SmallStat label="Corrections" value={String(bankroll.bets.reduce((sum, bet) => sum + bet._count.corrections, 0))} />
           </div>

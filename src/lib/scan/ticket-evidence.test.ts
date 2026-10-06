@@ -18,6 +18,9 @@ describe("PMU ticket evidence (anonymized)", () => {
     expect(ticketResultFromHeader("Simple @ 2,63 • En cours")).toBe("EN_ATTENTE");
     expect(ticketResultFromHeader("Simple @ 2,63 • Gagné")).toBe("GAGNE");
     expect(ticketResultFromHeader("Simple @ 2,63 • Perdu")).toBe("PERDU");
+    expect(ticketResultFromHeader("Simple 2,63 Gagné")).toBe("GAGNE");
+    expect(ticketResultFromHeader("Simple @ 2.63 - PERDU")).toBe("PERDU");
+    expect(ticketResultFromHeader("Combiné (2) @ 3,40 · Gagné")).toBe("GAGNE");
     expect(ticketResultFromHeader("Sélection gagnante : 2")).toBeNull();
     expect(ticketResultFromHeader("Cash Out 4,63 €")).toBeNull();
     expect(ticketResultFromHeader("Gain potentiel : 13,15 €")).toBeNull();

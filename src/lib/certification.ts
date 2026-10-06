@@ -41,13 +41,16 @@ export function certificationStatus(bet: CertificationBet, startedAt: Date | nul
   const hasQualifiedInitialProof = bet.initialProofAt !== null
     && bet.initialProofAt >= startedAt
     && bet.initialProofBeforeEvent === true;
-  // La saisie manuelle ne demande qu'un jour : sa date est stockée à minuit.
-  // Un pari ajouté après l'activation le même jour ne doit pas paraître ancien
-  // simplement parce que l'heure de début du suivi est postérieure à minuit.
+  // La date du ticket est stockée à minuit, y compris pour un scan. Un pari
+  // réellement enregistré après l'activation le même jour ne doit donc pas
+  // paraître ancien simplement parce que l'heure du suivi est postérieure à
+  // minuit. Les imports de fichiers et les lignes historiques UNKNOWN restent
+  // exclus : ils ne constituent pas une preuve créée pendant le suivi.
   if (bet.date < startedAt && !hasQualifiedInitialProof) {
     const publicationDay = startedAt.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
     const ticketDay = bet.date.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
-    if (bet.entryMethod !== "MANUAL" || ticketDay !== publicationDay) return "EXCLUDED";
+    const recordedDuringTracking = bet.entryMethod === "MANUAL" || bet.entryMethod === "SCAN";
+    if (!recordedDuringTracking || ticketDay !== publicationDay) return "EXCLUDED";
   }
   if (bet.result === "EN_ATTENTE") {
     if (hasQualifiedInitialProof) return "AWAITING_RESULT";

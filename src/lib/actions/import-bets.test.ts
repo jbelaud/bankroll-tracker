@@ -366,6 +366,7 @@ describe("importBets", () => {
       imported: 1,
       firstImport: false,
       resultProofsUpdated: 1,
+      resultProofsVerified: 1,
     });
     expect(mocks.betUpdateMany).toHaveBeenCalledWith({
       where: {
@@ -707,7 +708,7 @@ describe("importBets", () => {
       bet({ ticketRef: "REF-000002", date: "2026-10-05", stake: 10, odds: 1.8, result: "PERDU", sourceScanIndex: 1 }),
     ], ["scan-result-1", "scan-result-2"], [], undefined, true);
 
-    expect(response).toEqual({ imported: 2, firstImport: false, resultProofsUpdated: 2 });
+    expect(response).toEqual({ imported: 2, firstImport: false, resultProofsUpdated: 2, resultProofsVerified: 2 });
     expect(mocks.betUpdateMany).toHaveBeenCalledTimes(2);
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
