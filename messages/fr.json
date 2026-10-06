@@ -210,10 +210,10 @@
       }
     },
     "bankrollsTitle": "Mes bankrolls et leur certification",
-    "bankrollsIntro": "Chaque bankroll conserve son propre score, son volume, ses followers et son historique de preuves.",
+    "bankrollsIntro": "Chaque bankroll publique conserve son propre score, son volume, ses followers et son historique de preuves.",
     "createBankroll": "Créer une bankroll",
-    "emptyTitle": "Aucune bankroll pour le moment",
-    "emptyDescription": "Crée une première bankroll, définis sa référence puis publie-la pour démarrer.",
+    "emptyTitle": "Aucune bankroll publique",
+    "emptyDescription": "Publie une bankroll pour afficher ici sa progression de certification.",
     "trackingSince": "Suivi démarré le {date}",
     "notStarted": "Certification inactive",
     "public": "Publique",
