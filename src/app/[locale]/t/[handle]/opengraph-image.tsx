@@ -12,7 +12,7 @@ export default async function Image({ params }: { params: Promise<{ handle: stri
   const { handle: rawHandle } = await params;
   const handle = normalizePublicHandle(rawHandle);
   const tipster = await prisma.user.findFirst({
-    where: { publicHandle: handle, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
+    where: { publicHandle: handle, publicProfileSuspended: false, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
     select: { name: true, publicDisplayName: true, publicBio: true, bankrolls: { where: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } }, select: { bets: { select: { result: true, stakeUnits: true, odds: true, cashOutAmount: true, referenceCapitalAtBet: true, freebet: true } } } } },
   });
   const displayName = tipster?.publicDisplayName || tipster?.name || "Tipster Kalivoa";

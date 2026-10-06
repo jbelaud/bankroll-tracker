@@ -13,6 +13,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
+import { PublicTipsterProfileControls } from "@/components/account/public-tipster-profile-controls";
 import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
 import { CertificationExplainer } from "@/components/bankrolls/certification-explainer";
 import { requireUser } from "@/lib/auth";
@@ -36,6 +37,7 @@ export default async function TipsterSpacePage({ params }: { params: Promise<{ l
       publicAvatarUrl: true,
       publicBannerUrl: true,
       publicXHandle: true,
+      publicProfileSuspended: true,
       bankrolls: {
         orderBy: [{ publicOrder: "asc" }, { createdAt: "desc" }, { id: "asc" }],
         select: {
@@ -76,7 +78,7 @@ export default async function TipsterSpacePage({ params }: { params: Promise<{ l
   const certifiedBankrolls = startedBankrolls.filter((bankroll) => CERTIFIED_LEVELS.has(bankroll.summary.level));
   const publicBankrolls = bankrolls.filter((bankroll) => bankroll.isPublic);
   const evaluatedButUncertified = startedBankrolls.some((bankroll) => bankroll.summary.level === "UNVERIFIED");
-  const canViewProfile = Boolean(account.publicHandle && publicBankrolls.length > 0);
+  const canViewProfile = Boolean(!account.publicProfileSuspended && account.publicHandle && publicBankrolls.length > 0);
   const steps = [
     { icon: IdentificationCard, title: t("steps.profile.title"), description: t("steps.profile.description"), done: profileReady },
     { icon: Wallet, title: t("steps.bankroll.title"), description: t("steps.bankroll.description"), done: configuredBankrolls.length > 0 },
@@ -86,6 +88,8 @@ export default async function TipsterSpacePage({ params }: { params: Promise<{ l
   const completedSteps = steps.filter((step) => step.done).length;
   const status = !profileReady
     ? t("status.profileIncomplete")
+    : account.publicProfileSuspended
+      ? t("status.suspended")
     : startedBankrolls.length === 0
       ? t("status.inactive")
       : certifiedBankrolls.length > 0
@@ -160,6 +164,7 @@ export default async function TipsterSpacePage({ params }: { params: Promise<{ l
 
     <div id="identity" className="scroll-mt-24 space-y-5">
       <PublicTipsterProfileForm profile={{ publicDisplayName: account.publicDisplayName, publicHandle: account.publicHandle, publicBio: account.publicBio, publicAvatarUrl: account.publicAvatarUrl, publicBannerUrl: account.publicBannerUrl, publicXHandle: account.publicXHandle }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
+      <PublicTipsterProfileControls hasProfile={profileReady} suspended={account.publicProfileSuspended} />
       <PublicBankrollOrder bankrolls={startedBankrolls.map(({ id, name, isPublic }) => ({ id, name, isPublic }))} />
     </div>
   </div>;

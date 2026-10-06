@@ -21,7 +21,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const bankroll = await prisma.bankroll.findFirst({
-    where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
+    where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null }, user: { publicProfileSuspended: false } },
     select: { name: true, publicDescription: true, user: { select: { name: true, publicDisplayName: true } } },
   });
   if (!bankroll) return { title: "Bankroll publique", robots: { index: false, follow: false } };
@@ -57,7 +57,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
   const [authResult, bankroll] = await Promise.all([
     supabase.auth.getUser(),
     prisma.bankroll.findFirst({
-      where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
+      where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null }, user: { publicProfileSuspended: false } },
       select: {
         id: true, userId: true, name: true, certificationStartedAt: true,
         publicDescription: true, publicSports: true,

@@ -33,6 +33,7 @@ model User {
   publicAvatarUrl  String?
   publicBannerUrl  String?
   publicXHandle    String?
+  publicProfileSuspended Boolean @default(false)
   followingLastViewedAt DateTime @default(now())
 
   // Parrainage bêta : le code est créé avec le profil, tandis que la relation

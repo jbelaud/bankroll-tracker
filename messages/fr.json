@@ -181,6 +181,7 @@
     "manageBankrolls": "Gérer mes bankrolls",
     "status": {
       "profileIncomplete": "Profil public à compléter",
+      "suspended": "Profil suspendu",
       "inactive": "Certification à activer",
       "certified": "{count, plural, one {# bankroll certifiée} other {# bankrolls certifiées}}",
       "unverified": "Niveau de preuve insuffisant",

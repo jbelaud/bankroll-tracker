@@ -37,6 +37,7 @@ export default async function DiscoverPage({ params, searchParams }: {
     supabase.auth.getUser(),
     prisma.user.findMany({
       where: {
+        publicProfileSuspended: false,
         publicHandle: { not: null },
         publicDisplayName: { not: null },
         bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } } },
@@ -72,7 +73,7 @@ export default async function DiscoverPage({ params, searchParams }: {
       },
     }),
     prisma.bankroll.findMany({
-      where: { isPublic: true, certificationStartedAt: { not: null }, publicSports: { isEmpty: false } },
+      where: { isPublic: true, certificationStartedAt: { not: null }, publicSports: { isEmpty: false }, user: { publicProfileSuspended: false } },
       select: { publicSports: true },
       take: 500,
     }),

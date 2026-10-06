@@ -8,6 +8,15 @@ import { normalizePublicHandle, normalizeXHandle, validPublicAvatarUrl, validPub
 
 export type PublicTipsterProfileState = { error?: string; success?: string };
 
+function revalidatePublicProfileSurfaces() {
+  revalidatePath("/[locale]/account", "layout");
+  revalidatePath("/[locale]/tipster-space", "page");
+  revalidatePath("/[locale]/discover", "page");
+  revalidatePath("/[locale]/following", "page");
+  revalidatePath("/[locale]/t/[handle]", "page");
+  revalidatePath("/[locale]/p/[slug]", "page");
+}
+
 export async function savePublicTipsterProfile(_state: PublicTipsterProfileState, form: FormData): Promise<PublicTipsterProfileState> {
   const user = await requireUser();
   const publicDisplayName = String(form.get("publicDisplayName") ?? "").normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 60);
@@ -35,8 +44,56 @@ export async function savePublicTipsterProfile(_state: PublicTipsterProfileState
     return { error: "Impossible d’enregistrer ton profil public pour le moment." };
   }
 
-  revalidatePath("/[locale]/account", "layout");
-  revalidatePath("/[locale]/tipster-space", "page");
-  revalidatePath("/[locale]/p/[slug]", "page");
+  revalidatePublicProfileSurfaces();
   return { success: "Profil public enregistré." };
+}
+
+export async function setPublicTipsterProfileSuspended(_state: PublicTipsterProfileState, form: FormData): Promise<PublicTipsterProfileState> {
+  const user = await requireUser();
+  const suspended = String(form.get("suspended")) === "true";
+
+  const profile = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { publicHandle: true, publicDisplayName: true },
+  });
+  if (!profile?.publicHandle || !profile.publicDisplayName) return { error: "Configure d’abord ton profil public." };
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { publicProfileSuspended: suspended },
+  });
+
+  revalidatePublicProfileSurfaces();
+  return { success: suspended
+    ? "Profil public suspendu. Il n’est plus visible ni accessible publiquement."
+    : "Profil public réactivé." };
+}
+
+export async function deletePublicTipsterProfile(_state: PublicTipsterProfileState, form: FormData): Promise<PublicTipsterProfileState> {
+  const user = await requireUser();
+  if (String(form.get("confirmation")) !== "SUPPRIMER") {
+    return { error: "Confirmation invalide." };
+  }
+
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: user.id },
+      data: {
+        publicDisplayName: null,
+        publicHandle: null,
+        publicBio: null,
+        publicAvatarUrl: null,
+        publicBannerUrl: null,
+        publicXHandle: null,
+        publicProfileSuspended: false,
+      },
+    }),
+    prisma.bankroll.updateMany({
+      where: { userId: user.id, isPublic: true },
+      data: { isPublic: false, publishedAt: null },
+    }),
+  ]);
+
+  revalidatePublicProfileSurfaces();
+  return { success: "Profil public supprimé. Tes bankrolls, tes paris et leur historique de certification sont conservés en privé." };
 }

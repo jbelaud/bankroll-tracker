@@ -25,7 +25,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
     prisma.bankrollFollow.findMany({
       where: {
         userId: user.id,
-        bankroll: { isPublic: true, certificationStartedAt: { not: null } },
+        bankroll: { isPublic: true, certificationStartedAt: { not: null }, user: { publicProfileSuspended: false } },
       },
       orderBy: { createdAt: "desc" },
       select: {
@@ -55,7 +55,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
     prisma.tipsterFollow.findMany({
       where: {
         followerId: user.id,
-        tipster: { bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
+        tipster: { publicProfileSuspended: false, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
       },
       orderBy: { createdAt: "desc" },
       select: {
@@ -90,7 +90,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
   const followedTipsterIds = tipsterFollows.map(({ tipster }) => tipster.id);
   const activity = followedBankrollIds.length > 0 || followedTipsterIds.length > 0 ? await prisma.bet.findMany({
     where: {
-      bankroll: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null } },
+      bankroll: { isPublic: true, certificationStartedAt: { not: null }, publicSlug: { not: null }, user: { publicProfileSuspended: false } },
       OR: [
         { bankrollId: { in: followedBankrollIds } },
         { bankroll: { userId: { in: followedTipsterIds } } },

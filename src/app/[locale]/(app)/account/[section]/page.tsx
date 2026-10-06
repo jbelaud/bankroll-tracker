@@ -16,6 +16,7 @@ import { getScanWallet } from "@/lib/scan/credit-wallet";
 import { AccountGoalsCard } from "@/components/account/account-goals-card";
 import { PersonalConversionForm } from "@/components/account/personal-conversion-form";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
+import { PublicTipsterProfileControls } from "@/components/account/public-tipster-profile-controls";
 import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
 import { ExportDataButton } from "@/components/account/export-data-button";
 import { ScanQualityReports } from "@/components/account/scan-quality-reports";
@@ -72,11 +73,12 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
     }
     case "public-profile": {
       const [dbUser, publicBankrolls] = await Promise.all([
-        prisma.user.findUnique({ where: { id: user.id }, select: { publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true, publicBannerUrl: true, publicXHandle: true } }),
+        prisma.user.findUnique({ where: { id: user.id }, select: { publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true, publicBannerUrl: true, publicXHandle: true, publicProfileSuspended: true } }),
         prisma.bankroll.findMany({ where: { userId: user.id, certificationStartedAt: { not: null } }, orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }, { id: "asc" }], select: { id: true, name: true, isPublic: true } }),
       ]);
       content = <div className="space-y-5">
         <PublicTipsterProfileForm profile={{ publicDisplayName: dbUser?.publicDisplayName ?? null, publicHandle: dbUser?.publicHandle ?? null, publicBio: dbUser?.publicBio ?? null, publicAvatarUrl: dbUser?.publicAvatarUrl ?? null, publicBannerUrl: dbUser?.publicBannerUrl ?? null, publicXHandle: dbUser?.publicXHandle ?? null }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
+        <PublicTipsterProfileControls hasProfile={Boolean(dbUser?.publicDisplayName && dbUser.publicHandle)} suspended={dbUser?.publicProfileSuspended ?? false} />
         <PublicBankrollOrder bankrolls={publicBankrolls} />
       </div>;
       break;
