@@ -206,7 +206,7 @@
       },
       "certify": {
         "title": "Build your proof history",
-        "description": "Scan tickets before the event, then scan their results. Reach 10 settled bets, 20u and at least 40/100."
+        "description": "Scan tickets before the event, then scan their results. Reach 10 settled bets and at least 40/100."
       }
     },
     "bankrollsTitle": "My bankrolls and their certification",
@@ -224,7 +224,7 @@
     "completeVolume": "Complete volume",
     "settledProgress": "Settled bets",
     "volumeProgress": "Tracked volume",
-    "observationHelp": "The thresholds of 10 settled bets and 20u must both be reached before leaving observation.",
+    "observationHelp": "The level remains under observation before 10 settled bets. Volume and financial results do not determine certification.",
     "certificationResult": "Current level: {level}.",
     "corrections": "{count, plural, one {# recorded correction} other {# recorded corrections}}",
     "missingReference": "Set the private reference amount for this bankroll before publishing it.",
@@ -233,10 +233,9 @@
     "manage": "Manage",
     "viewPublicPage": "View public page",
     "rulesTitle": "When does a bankroll become certified?",
-    "rulesIntro": "It leaves observation only after both sample thresholds are reached. Its score then determines its level.",
+    "rulesIntro": "It leaves observation after 10 settled bets. Proof quality then determines its level, regardless of profit or loss.",
     "rules": {
       "bets": "settled bets minimum",
-      "volume": "settled volume minimum",
       "bronze": "minimum score for Bronze"
     },
     "levels": {

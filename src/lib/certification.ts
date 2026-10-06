@@ -22,7 +22,7 @@ export type CertificationBet = {
   resultEntryMethod: BetEntryMethod;
 };
 
-export const CERTIFICATION_RULES_VERSION = "1.0";
+export const CERTIFICATION_RULES_VERSION = "1.1";
 
 export const CERTIFICATION_WEIGHTS: Record<Extract<CertificationStatus, "STRONG" | "PARTIAL" | "WEAK" | "LIMITED" | "UNVERIFIED">, number> = {
   STRONG: 100,
@@ -78,7 +78,7 @@ export function certificationSummary(bets: CertificationBet[], startedAt: Date |
   const strong = scored.filter(({ status }) => status === "STRONG");
   const strongVolume = strong.reduce((sum, { bet }) => sum + Math.abs(bet.stakeUnits ?? 0), 0);
   const score = volume > 0 ? Math.round(weighted / volume) : null;
-  const observation = settled.length < 10 || volume < 20;
+  const observation = settled.length < 10;
   const level = score === null || observation ? "OBSERVATION" : score >= 85 ? "GOLD" : score >= 65 ? "SILVER" : score >= 40 ? "BRONZE" : "UNVERIFIED";
 
   return {

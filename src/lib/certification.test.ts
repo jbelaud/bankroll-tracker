@@ -74,4 +74,23 @@ describe("Kalivoa certification", () => {
     expect(summary.strongVolumePercent).toBe(75);
     expect(summary.level).toBe("OBSERVATION");
   });
+
+  it("leaves observation after 10 settled bets even below 20u and regardless of results", () => {
+    const summary = certificationSummary(
+      Array.from({ length: 10 }, (_, index) => bet({
+        createdAt: new Date(`2026-09-${String(index + 2).padStart(2, "0")}T10:00:00Z`),
+        stakeUnits: 0.1,
+        result: "PERDU",
+      })),
+      startedAt,
+    );
+
+    expect(summary).toMatchObject({
+      settledBets: 10,
+      score: 100,
+      level: "GOLD",
+      rulesVersion: "1.1",
+    });
+    expect(summary.volume).toBeCloseTo(1);
+  });
 });
