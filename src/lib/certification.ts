@@ -22,7 +22,7 @@ export type CertificationBet = {
   resultEntryMethod: BetEntryMethod;
 };
 
-export const CERTIFICATION_RULES_VERSION = "1.1";
+export const CERTIFICATION_RULES_VERSION = "1.2";
 
 export const CERTIFICATION_WEIGHTS: Record<Extract<CertificationStatus, "STRONG" | "PARTIAL" | "WEAK" | "LIMITED" | "UNVERIFIED">, number> = {
   STRONG: 100,
@@ -36,8 +36,10 @@ export function certificationStatus(bet: CertificationBet, startedAt: Date | nul
   if (!startedAt || bet.createdAt < startedAt) return "EXCLUDED";
   // bet.date est la date de PRISE du ticket, pas celle du match. Un ticket
   // ancien ne devient éligible que si sa preuve initiale a été enregistrée
-  // après l'activation et avant l'événement. La simple importation d'un
-  // ancien résultat ne crée donc jamais de certification rétroactive.
+  // après l'activation et qualifiée. La qualification vient soit d'une heure
+  // d'événement vérifiable, soit du cycle d'un ticket en cours dont l'heure de
+  // prise est imprimée par le bookmaker. La simple importation d'un ancien
+  // résultat ne crée donc jamais de certification rétroactive.
   const hasQualifiedInitialProof = bet.initialProofAt !== null
     && bet.initialProofAt >= startedAt
     && bet.initialProofBeforeEvent === true;

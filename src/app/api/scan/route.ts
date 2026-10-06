@@ -504,7 +504,7 @@ export async function POST(request: NextRequest) {
     const raw = rawBets[index] as Record<string, unknown>;
     const hasVerifiedResult = canAutomaticallyUpdateResult(
       normalizedBookmaker ?? detectedBookmaker,
-      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
+      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText, raw.ticketPlacedAtText, bet.result),
       bet.result
     ) || isStrictUnreferencedResultProof(target, bet, { bookmaker: matchBookmaker });
     if (!hasVerifiedResult) continue;
@@ -516,7 +516,13 @@ export async function POST(request: NextRequest) {
   const referralEligible = !isRepeatAnalysis && hasValidReferralScan(bets);
   const proofEvidence = bets.flatMap((bet, index) => {
     const raw = rawBets[index] as Record<string, unknown>;
-    const evidence = makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText);
+    const evidence = makeScanProofEvidence(
+      bet.ticketRef,
+      raw.ticketHeaderText,
+      raw.eventStartText,
+      raw.ticketPlacedAtText,
+      bet.result,
+    );
     return evidence ? [evidence] : [];
   });
   let scanUsage;

@@ -196,11 +196,20 @@ describe("result proof", () => {
     });
     expect(findPendingTicketMatch([target], pending, { bookmaker: "Bet365" })?.id).toBe("bet365-pending");
   });
-  it("confirms a scan 34 minutes before a Paris event, but never an uncertain hour", () => {
+  it("qualifies either a pre-event scan or a pending ticket with a verifiable placement time", () => {
     const eventStart = new Date("2026-09-17T19:00:00Z"); // 21:00 Paris
     expect(initialProofTiming(new Date("2026-09-17T18:26:00Z"), eventStart, false)).toBe(true);
     expect(initialProofTiming(new Date("2026-09-17T19:01:00Z"), eventStart, false)).toBe(false);
     expect(initialProofTiming(new Date("2026-09-17T18:26:00Z"), null, false)).toBeNull();
+    expect(initialProofTiming(
+      new Date("2026-10-05T19:18:55Z"), null, false, new Date("2026-10-05T18:36:00Z")
+    )).toBe(true);
+    expect(initialProofTiming(
+      new Date("2026-10-05T18:00:00Z"), null, false, new Date("2026-10-05T18:36:00Z")
+    )).toBe(false);
     expect(initialProofTiming(new Date("2026-09-17T18:26:00Z"), eventStart, true)).toBe(false);
+    expect(initialProofTiming(
+      new Date("2026-10-05T19:18:55Z"), null, true, new Date("2026-10-05T18:36:00Z")
+    )).toBe(false);
   });
 });

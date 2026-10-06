@@ -12,8 +12,8 @@ describe("public bet proof journal", () => {
 
     expect(html).toContain("Journal de transparence · 1 scan(s) · 0 correction(s)");
     expect(html).toContain("Capture du résultat enregistrée");
-    expect(html).toContain("aucun scan initial avant l’événement n’est confirmé");
-    expect(html).not.toContain("avant l’événement confirmé");
+    expect(html).toContain("aucun ticket initial en cours horodaté n’est confirmé");
+    expect(html).not.toContain("ticket en cours horodaté vérifié");
   });
 
   it("publishes proof dates and correction field names without private values or reason", () => {
@@ -29,7 +29,7 @@ describe("public bet proof journal", () => {
     }));
 
     expect(html).toContain("Journal de transparence · 2 scan(s) · 1 correction(s)");
-    expect(html).toContain("avant l’événement confirmé");
+    expect(html).toContain("ticket en cours horodaté vérifié");
     expect(html).toContain("Preuves du scan vérifiées");
     expect(html).toContain("cote");
     expect(html).not.toContain("PRIVATE-TICKET");

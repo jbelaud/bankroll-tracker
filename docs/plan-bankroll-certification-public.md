@@ -14,7 +14,7 @@
 - Les nouveaux paris publiés conservent l'origine disponible, les horodatages de preuve et un verrou de certification. Les corrections demandent une justification, invalident les preuves devenues incohérentes et alimentent un journal append-only.
 - Le score v1 est calculé par volume d'unités avec les coefficients 100/70/40/20/0. Un minimum de 10 paris clôturés et 20u maintient le niveau « En observation ».
 - Une première page publique expose uniquement les unités, cotes décimales, résultats, statistiques normalisées et niveaux de preuve. Les euros, références privées, allocations et fichiers originaux ne sont pas transmis.
-- Limite volontaire actuelle : le scan extrait la date du ticket, pas l'heure vérifiée de l'événement. Une preuve initiale est donc conservée mais n'obtient pas automatiquement le niveau fort. Le rapprochement d'un second scan de résultat avec le ticket initial reste le prochain lot.
+- Une preuve initiale peut être qualifiée par l'heure vérifiable de l'événement ou par un ticket encore en cours dont l'heure de prise exacte est imprimée par le bookmaker. Un second scan terminal du même ticket complète alors le cycle de preuve.
 
 ## Périmètre impératif
 
@@ -56,7 +56,7 @@ Présenter les écarts de référence comme des notifications configurables. Tou
 
 Conserver l'origine du pari, les preuves reçues, leur horodatage serveur et les informations extraites. Les fichiers restent privés et les montants en euros ne figurent jamais dans les réponses publiques.
 
-Utiliser l'heure de réception par Kalivoa pour déterminer si une preuve a été reçue avant l'événement. Ne pas se fier à la date du fichier. En cas d'heure de début inconnue ou incertaine, ne pas attribuer automatiquement le niveau fort. Pour un combiné, considérer le début de la première sélection.
+Utiliser l'heure de réception par Kalivoa et les informations imprimées par le bookmaker. Ne jamais se fier à la date du fichier. La preuve initiale est qualifiée si elle précède une heure d'événement vérifiable, ou si elle montre un ticket encore en cours avec une heure de prise exacte antérieure au scan. Un second scan terminal portant la même référence complète le cycle même si le bookmaker n'affiche pas l'heure de l'événement. Pour un combiné dont l'heure de l'événement est disponible, considérer le début de la première sélection.
 
 Rattacher le scan résultat au ticket initial par identifiant bookmaker lorsque disponible, puis par cohérence des informations. Un rapprochement ambigu demande validation. Détecter les preuves et tickets réutilisés sans révéler les données d'autres utilisateurs.
 

@@ -70,6 +70,10 @@ export function resolveScannedTicketResult(headerText: unknown, modelResult: unk
 export type ScanProofEvidence = {
   ticketRefHash: string;
   headerResult: BetResult | null;
+  /** Résultat normalisé directement depuis la capture, avant toute revue. */
+  observedResult?: BetResult | null;
+  /** Heure de prise du ticket telle qu'elle est imprimée par le bookmaker. */
+  ticketPlacedAt?: string | null;
   eventStartAt: string | null;
 };
 
@@ -87,13 +91,18 @@ export function sameTicketReference(left: string | null | undefined, right: stri
 export function makeScanProofEvidence(
   ticketRef: string | null,
   ticketHeaderText: unknown,
-  eventStartText: unknown
+  eventStartText: unknown,
+  ticketPlacedAtText?: unknown,
+  observedResult?: BetResult | null,
 ): ScanProofEvidence | null {
   const hash = ticketRefHash(ticketRef);
   if (!hash) return null;
+  const headerResult = ticketResultFromHeader(ticketHeaderText);
   return {
     ticketRefHash: hash,
-    headerResult: ticketResultFromHeader(ticketHeaderText),
+    headerResult,
+    observedResult: headerResult ?? observedResult ?? null,
+    ticketPlacedAt: parseVisibleParisDateTime(ticketPlacedAtText)?.toISOString() ?? null,
     eventStartAt: parseVisibleParisDateTime(eventStartText)?.toISOString() ?? null,
   };
 }
@@ -104,8 +113,12 @@ export function findScanProofEvidence(value: unknown, ticketRef: string | null):
   const matches = value.filter((item): item is ScanProofEvidence => {
     if (!item || typeof item !== "object" || Array.isArray(item)) return false;
     const row = item as Record<string, unknown>;
+    const validResult = (candidate: unknown) => candidate === null || candidate === undefined
+      || ["EN_ATTENTE", "GAGNE", "PERDU", "REMBOURSE", "CASHE"].includes(String(candidate));
     return row.ticketRefHash === hash && (row.headerResult === null ||
       ["EN_ATTENTE", "GAGNE", "PERDU", "REMBOURSE", "CASHE"].includes(String(row.headerResult)))
+      && validResult(row.observedResult)
+      && (row.ticketPlacedAt === null || row.ticketPlacedAt === undefined || typeof row.ticketPlacedAt === "string")
       && (row.eventStartAt === null || typeof row.eventStartAt === "string");
   });
   return matches.length === 1 ? matches[0] : null;
@@ -120,6 +133,8 @@ export function canAutomaticallyUpdateResult(
   // A PMU terminal result without a readable ticket header can be a selection
   // result or a potential gain. The same caution applies when the bankroll has
   // no bookmaker and detection cannot identify one from the screenshot.
-  if (!selectedBookmaker || selectedBookmaker === "PMU") return evidence?.headerResult === result;
+  if (!selectedBookmaker || selectedBookmaker === "PMU") {
+    return (evidence?.headerResult ?? evidence?.observedResult ?? null) === result;
+  }
   return true;
 }
