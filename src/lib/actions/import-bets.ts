@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
-import { Prisma, type Currency } from "@prisma/client";
+import { Prisma, type AccountingCurrency, type Currency } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
@@ -67,7 +67,8 @@ export async function importExternalBets(
   bets: ParsedBet[],
   sourceFormat: string,
   fileName?: string,
-  requestedAllocationId?: string | null
+  requestedAllocationId?: string | null,
+  sourceCurrency?: AccountingCurrency
 ): Promise<FileImportResult> {
   const user = await requireUser();
   const isBetAnalytix = sourceFormat === "BET_ANALYTIX";
@@ -92,7 +93,12 @@ export async function importExternalBets(
     prisma.bet.count({ where: { bankroll: { userId: user.id } } }),
   ]);
   if (!bankroll) return { error: "Bankroll introuvable." };
-  if (isBetAnalytix && bankroll.currency !== "UNIT") return { error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." };
+  if (isBetAnalytix && !["EUR", "USD", "GBP", "UNIT"].includes(sourceCurrency ?? "")) {
+    return { error: "Choisis la devise de la bankroll Bet-Analytix d’origine avant l’import." };
+  }
+  if (isBetAnalytix && bankroll.currency !== sourceCurrency) {
+    return { error: "La devise de l’export Bet-Analytix doit correspondre à celle de la bankroll de destination." };
+  }
   if (!isBetAnalytix && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
@@ -111,7 +117,7 @@ export async function importExternalBets(
 
   const existingKeys = new Set(existingBets.map((bet) => duplicateKey(
     bet,
-    isBetAnalytix && bet.importBatch?.source.startsWith("BET_ANALYTIX_UNITS_")
+    isBetAnalytix && sourceCurrency === "UNIT" && bet.importBatch?.source.startsWith("BET_ANALYTIX_UNITS_")
   )));
   const acceptedKeys = new Set<string>();
   const taxonomyEntries = new Map<string, { userId: string; sport: string; betType: string }>();
@@ -202,11 +208,11 @@ export async function importExternalBets(
       betType: normalized.betType,
       description,
       eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-      // Dans une bankroll UNIT, stake et cashOutAmount sont nativement en U.
-      // Aucun montant fictif en devise n'est inventé pour les lignes BA.
+      // Les montants BA sont repris dans la devise native déclarée par l'utilisateur.
+      // Aucun taux de conversion ni montant fictif n'est inventé pour ces lignes.
       stake: bet.stake as number,
       stakeCurrency: bankroll.currency,
-      ...(isBetAnalytix ? {
+      ...(isBetAnalytix && sourceCurrency === "UNIT" ? {
         stakeUnits: bet.stake as number,
         unitsRecordedAt: new Date(),
       } : {}),
@@ -227,7 +233,7 @@ export async function importExternalBets(
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
       selections: normalizedSelections,
     };
-    const key = duplicateKey(row, isBetAnalytix);
+    const key = duplicateKey(row, isBetAnalytix && sourceCurrency === "UNIT");
     if (existingKeys.has(key) || acceptedKeys.has(key)) {
       skippedDuplicates += 1;
       continue;
@@ -264,7 +270,8 @@ export async function importExternalBets(
       const batch = await tx.importBatch.create({
         data: {
           userId: user.id,
-          source: isBetAnalytix ? "BET_ANALYTIX_UNITS_NATIVE" : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
+          source: isBetAnalytix ? sourceCurrency === "UNIT" ? "BET_ANALYTIX_UNITS_NATIVE" : `BET_ANALYTIX_${sourceCurrency}_NATIVE`
+            : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
           fileName: fileName?.normalize("NFKC").trim().replace(/[\\/]/g, "_").slice(0, 255) || null,
           importedCount: rows.length,
           skippedDuplicates,

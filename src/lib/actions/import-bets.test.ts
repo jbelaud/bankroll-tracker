@@ -142,7 +142,7 @@ describe("importExternalBets", () => {
   it("conserve les mises Bet-Analytix en unités indépendamment de la conversion privée", async () => {
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     const sourceBet = bet({ ticketRef: null, stake: 1.25, odds: 3.75, result: "PERDU" });
-    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv");
+    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv", null, "UNIT");
 
     expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
     expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_UNITS_NATIVE" }) });
@@ -154,17 +154,30 @@ describe("importExternalBets", () => {
     })] });
   });
 
-  it("refuse un export BA dans une bankroll en devise", async () => {
+  it("exige la devise BA et refuse une bankroll de destination différente", async () => {
     await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX"))
-      .resolves.toEqual({ error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." });
+      .resolves.toEqual({ error: "Choisis la devise de la bankroll Bet-Analytix d’origine avant l’import." });
+    await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX", "ba.csv", null, "UNIT"))
+      .resolves.toEqual({ error: "La devise de l’export Bet-Analytix doit correspondre à celle de la bankroll de destination." });
     expect(mocks.betCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("conserve un export BA en euros comme des mises en euros sans inventer des unités", async () => {
+    const response = await importExternalBets("bankroll-1", [bet({ stake: 12.5 })], "BET_ANALYTIX", "ba-eur.csv", null, "EUR");
+
+    expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
+    expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_EUR_NATIVE" }) });
+    const row = mocks.betCreateMany.mock.calls[0][0].data[0];
+    expect(row).toEqual(expect.objectContaining({ stake: 12.5, stakeCurrency: "EUR" }));
+    expect(row).not.toHaveProperty("stakeUnits");
+    expect(row).not.toHaveProperty("referenceCapitalAtBet");
   });
 
   it("conserve l'heure BA pour ordonner les paris d'un même jour", async () => {
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     await importExternalBets("bankroll-1", [bet({
       date: "2026-09-03", placedAt: "2026-09-03T19:20:00.000Z",
-    })], "BET_ANALYTIX");
+    })], "BET_ANALYTIX", undefined, null, "UNIT");
     expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
       date: new Date("2026-09-03T19:20:00.000Z"),
     })] });
@@ -182,7 +195,7 @@ describe("importExternalBets", () => {
       importBatch: { source: "BET_ANALYTIX" },
     }]);
 
-    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv");
+    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv", null, "UNIT");
     expect(response).toEqual({ imported: 0, skippedDuplicates: 1, firstImport: false });
     expect(mocks.betCreateMany).not.toHaveBeenCalled();
   });
