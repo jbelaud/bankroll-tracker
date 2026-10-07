@@ -7,6 +7,8 @@ const publicPaths = [
   { path: "/extension", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/screenshot-import", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/bankroll-tracking", priority: 0.7, changeFrequency: "monthly" as const },
+  { path: "/academie", priority: 0.6, changeFrequency: "monthly" as const },
+  { path: "/academie/verifier-ticket-pari-scan", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/bookmakers", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/partenaires", priority: 0.6, changeFrequency: "weekly" as const },
   { path: "/bookmakers/unibet", priority: 0.7, changeFrequency: "monthly" as const },

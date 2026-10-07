@@ -25,6 +25,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
             ["/pricing", t("pricing")],
           ]} />
           <FooterColumn title={t("learn")} locale={locale} links={[
+            ["/academie", locale === "fr" ? "Académie" : "Academy"],
             ["/bankroll-tracking", t("bankroll")],
             ["/partenaires", t("partners")],
             ["/faq", t("faq")],
