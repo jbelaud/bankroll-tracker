@@ -46,6 +46,9 @@ export default async function BookmakersPage({ params }: { params: Promise<{ loc
           {PUBLIC_MARKETING_BOOKMAKERS.map((profile) => {
             const presentation = statusPresentation(profile.supportStatus);
             const StatusIcon = presentation.Icon;
+            const bookmakerName = profile.bookmaker === "Parions Sport"
+              ? locale === "fr" ? "Parions Sport (points de vente)" : "Parions Sport (retail locations)"
+              : profile.bookmaker;
             const content = (
               <>
                 <span className={`flex size-11 shrink-0 items-center justify-center rounded-xl md:mb-5 ${presentation.className}`}>
@@ -53,12 +56,12 @@ export default async function BookmakersPage({ params }: { params: Promise<{ loc
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3 md:block">
-                    <h2 className="text-lg font-semibold md:text-xl">{profile.bookmaker}</h2>
+                    <h2 className="text-lg font-semibold md:text-xl">{bookmakerName}</h2>
                     {profile.slug ? <ArrowRight className="shrink-0 text-primary transition-transform group-hover:translate-x-1 md:hidden" size={18} weight="bold" aria-hidden /> : null}
                   </div>
                   <span className="mt-1 block text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground md:mt-2 md:text-xs">{statusLabel(locale, profile.supportStatus)}</span>
                   <span className="mt-3 hidden text-sm leading-6 text-muted-foreground md:block">
-                    {locale === "fr" ? `Découvrir le suivi de paris ${profile.bookmaker} avec Kalivoa Scan.` : `Discover ${profile.bookmaker} bet tracking with Kalivoa Scan.`}
+                    {locale === "fr" ? `Découvrir le suivi de paris ${bookmakerName} avec Kalivoa Scan.` : `Discover ${bookmakerName} bet tracking with Kalivoa Scan.`}
                   </span>
                   {profile.slug ? <span className="mt-5 hidden items-center gap-2 text-sm font-semibold text-primary md:inline-flex">
                     {locale === "fr" ? "Voir la page" : "View page"}
