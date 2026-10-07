@@ -49,6 +49,16 @@ export function parisCalendarDate(value: Date): string {
 
 export function ticketResultFromHeader(value: unknown): BetResult | null {
   if (typeof value !== "string") return null;
+  // Cropped English tickets need no bookmaker logo to establish their status.
+  // Require the whole header (reference, placement text, format and financials),
+  // so a selection status or a potential return cannot settle the ticket.
+  const englishHeader = /^(Won|Lost|Current|Returned)\s+#\s*\d+\s+.+?\s+Single\s+\d+(?:[,.]\d+)?\s+EUR\s+\d+(?:[,.]\d+)?\s+\d+(?:[,.]\d+)?\s+EUR(?:\s+Rebet(?:\s*\+)?)?$/i.exec(value.trim().replace(/\s+/g, " "));
+  if (englishHeader) {
+    const results: Record<string, BetResult> = {
+      won: "GAGNE", lost: "PERDU", current: "EN_ATTENTE", returned: "REMBOURSE",
+    };
+    return results[englishHeader[1].toLowerCase()];
+  }
   const normalized = value.normalize("NFKC").trim();
   // Les books et les modèles restituent parfois le même en-tête sans « @ »
   // ou avec un tiret à la place de la puce. On exige toujours le type, une

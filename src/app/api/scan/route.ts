@@ -384,7 +384,7 @@ export async function POST(request: NextRequest) {
   }));
   const existingTicketRefs = existing.map((bet) => bet.ticketRef);
   const requiresVisibleDateText = [normalizedBookmaker, detectedBookmaker]
-    .some((bookmaker) => normalizeBookmaker(bookmaker ?? "") === "Unibet");
+    .some((bookmaker) => ["Unibet", "MyStake"].includes(normalizeBookmaker(bookmaker ?? "")));
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
@@ -452,8 +452,10 @@ export async function POST(request: NextRequest) {
     const eventStartAt = parseVisibleParisDateTime(r.eventStartText);
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
-      date: placedAt ? parisCalendarDate(placedAt) : r.ticketPlacedAtText ? null
-        : normalizeExtractedTicketDate(r.dateText, r.date, { requireVisibleText: requiresVisibleDateText }),
+      date: placedAt ? parisCalendarDate(placedAt)
+        : normalizeExtractedTicketDate(r.ticketPlacedAtText || r.dateText, r.date, {
+          requireVisibleText: requiresVisibleDateText || Boolean(r.ticketPlacedAtText),
+        }),
       eventStartAt: eventStartAt?.toISOString() ?? null,
       sport: resolvedPair.sport,
       // Les nouveaux couples restent disponibles pour validation ; seuls les

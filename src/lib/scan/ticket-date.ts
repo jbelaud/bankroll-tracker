@@ -5,6 +5,13 @@ const FRENCH_MONTHS: Record<string, number> = {
   novembre: 11, nov: 11, decembre: 12, dec: 12,
 };
 
+const ENGLISH_MONTHS: Record<string, number> = {
+  january: 1, jan: 1, february: 2, feb: 2, march: 3, mar: 3,
+  april: 4, apr: 4, may: 5, june: 6, jun: 6, july: 7, jul: 7,
+  august: 8, aug: 8, september: 9, sep: 9, october: 10, oct: 10,
+  november: 11, nov: 11, december: 12, dec: 12,
+};
+
 function validIsoDate(year: number, month: number, day: number): string | null {
   const iso = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   const parsed = new Date(`${iso}T00:00:00.000Z`);
@@ -21,8 +28,8 @@ function isoDateOrNull(value: unknown): string | null {
 }
 
 /**
- * Prefer the literal footer copied from a ticket over a date interpreted by
- * the vision model. Support Unibet numeric dates and Winamax French footers.
+ * Prefer literal placement text over a date interpreted by the vision model.
+ * Support numeric dates and French/English month names with a visible year.
  */
 export function normalizeExtractedTicketDate(
   visibleDateText: unknown,
@@ -41,11 +48,11 @@ export function normalizeExtractedTicketDate(
       if (parsed) return parsed;
       return null;
     }
-    const frenchText = normalized.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const frenchDate = /\b(\d{1,2})\s+([a-z]+)\.?\s+(\d{4})\b/.exec(frenchText);
-    if (frenchDate) {
-      const month = FRENCH_MONTHS[frenchDate[2]];
-      return month ? validIsoDate(Number(frenchDate[3]), month, Number(frenchDate[1])) : null;
+    const text = normalized.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const writtenDate = /\b(\d{1,2})\s+([a-z]+)\.?\s+(\d{4})\b/.exec(text);
+    if (writtenDate) {
+      const month = FRENCH_MONTHS[writtenDate[2]] ?? ENGLISH_MONTHS[writtenDate[2]];
+      return month ? validIsoDate(Number(writtenDate[3]), month, Number(writtenDate[1])) : null;
     }
   }
 
