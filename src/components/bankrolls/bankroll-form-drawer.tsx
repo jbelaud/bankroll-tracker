@@ -91,7 +91,7 @@ export function BankrollFormDrawer({ open, onOpenChange, bankroll, currency, ret
               setBankrollCurrency(next);
               if (next !== "UNIT") setReferenceCurrency(next);
             }} className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm">
-              <option value="EUR">€ — Euro</option><option value="USD">$ — Dollar</option><option value="GBP">£ — Livre</option><option value="UNIT">U — Unit (bankroll BA)</option>
+              <option value="EUR">€ — Euro</option><option value="USD">$ — Dollar</option><option value="GBP">£ — Livre</option><option value="UNIT">U — Unité</option>
             </select>
             {bankrollCurrency === "UNIT" ? <p className="text-xs text-muted-foreground">Capital, mises et résultats sont suivis en U. Le montant de référence ci-dessous sert uniquement à convertir les tickets scannés.</p> : null}
           </div>
