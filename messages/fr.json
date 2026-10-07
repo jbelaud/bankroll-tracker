@@ -416,11 +416,11 @@
       "upgradeCta": "Débloquer plus de scans"
     },
     "personalConversion": {
-      "title": "Montant de référence personnel",
+      "title": "Ma conversion personnelle",
       "privateBadge": "Privé",
-      "reference": "{amount} de référence",
+      "reference": "Capital personnel : {amount}",
       "oneUnit": "1u = {amount} pour toi",
-      "missing": "Configure ta référence globale pour convertir les unités des tipsters.",
+      "missing": "Configure ton capital personnel pour voir l'équivalent des unités des tipsters.",
       "edit": "Éditer",
       "configure": "Configurer"
     },
@@ -540,9 +540,9 @@
       "namePlaceholder": "Ex : Bankroll principale",
       "initialLabel": "Capital de départ ({currency})",
       "initialHint": "Modifier le capital de départ recalcule automatiquement le solde actuel de cette bankroll.",
-      "referenceLabel": "Montant de référence (optionnel, {currency})",
+      "referenceLabel": "Capital correspondant à 100 U pour cette bankroll (optionnel, {currency})",
       "referencePlaceholder": "Ex : 5 000",
-      "referenceHint": "1 u = 1 % du montant de référence. Avec 5 000 € de référence, 1 u = 50 € et une mise scannée de 125 € vaut 2,5 u. Ce réglage ne modifie pas les unités des paris déjà enregistrés ni la conversion privée des abonnés.",
+      "referenceHint": "Saisis la valeur de 100 U, pas celle de 1 U : 5 000 € pour 100 U donnent 1 U = 50 €. Cette valeur convertit les tickets de cette bankroll. Elle ne recalcule pas les anciens paris et ne change pas le réglage personnel des visiteurs.",
       "singleHistoryHint": "Les anciennes informations par bookmaker restent conservées dans l'historique. Les nouveaux paris utiliseront le solde unique.",
       "submitCreate": "Créer la bankroll",
       "submitEdit": "Enregistrer les modifications",

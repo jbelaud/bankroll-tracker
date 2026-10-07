@@ -40,20 +40,20 @@ export function PersonalConversionForm({ settings, currency, locale }: {
 
   return <section id="personal-conversion" aria-labelledby="personal-conversion-title" className="glass-card scroll-mt-6 rounded-xl p-4 xl:col-span-12">
     <div className="max-w-3xl">
-      <h2 id="personal-conversion-title" className="text-base font-semibold">Ma conversion personnelle</h2>
+      <h2 id="personal-conversion-title" className="text-base font-semibold">Ma conversion personnelle « Pour toi »</h2>
       <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-        Ce réglage privé est commun à tout ton compte. Il convertit les unités de tous les tipsters en un montant indicatif pour toi, quelle que soit la bankroll publique consultée.
+        Ce réglage privé convertit les unités des tipsters en un montant indicatif pour toi. Il ne modifie ni leurs bankrolls ni leurs paris.
       </p>
     </div>
 
     <form action={action} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <input type="hidden" name="rounding" value={rounding} />
       <label className="grid gap-1.5 text-sm font-medium">
-        Montant global de référence ({currency})
+        Mon capital personnel ({currency})
         <Input name="referenceCapital" type="number" min="0.01" step="0.01" inputMode="decimal" required value={reference} onChange={(event) => setReference(event.target.value)} className="h-11 rounded-xl px-3 text-sm" />
       </label>
       <label className="grid gap-1.5 text-sm font-medium">
-        Valeur de 1u (%)
+        Part de mon capital pour 1 U (%)
         <Input name="unitPercent" type="number" min="0.01" max="100" step="0.01" inputMode="decimal" required value={percent} onChange={(event) => setPercent(event.target.value)} className="h-11 rounded-xl px-3 text-sm" />
       </label>
       <label className="grid gap-1.5 text-sm font-medium sm:col-span-2 lg:col-span-1">
@@ -68,9 +68,9 @@ export function PersonalConversionForm({ settings, currency, locale }: {
 
       <div className="flex flex-col gap-3 rounded-xl bg-primary/10 p-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between lg:col-span-3">
         <div>
-          <p className="text-sm font-semibold">Ton équivalent global pour 1u</p>
+          <p className="text-sm font-semibold">Ta valeur personnelle de 1 U</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {oneUnit === null ? "Renseigne des valeurs valides pour voir ton montant." : `1u affichera ${fmtMoney(oneUnit, locale, currency)} sur toutes les pages publiques.`}
+            {oneUnit === null ? "Renseigne des valeurs valides pour voir ton montant." : `Pour toi, 1 U = ${fmtMoney(oneUnit, locale, currency)} sur les pages publiques.`}
           </p>
         </div>
         <Button className="min-h-11 shrink-0 rounded-xl" type="submit" disabled={pending}>{pending ? "Enregistrement…" : "Enregistrer"}</Button>
