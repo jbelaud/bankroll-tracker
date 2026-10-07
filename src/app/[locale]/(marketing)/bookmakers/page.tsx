@@ -46,9 +46,7 @@ export default async function BookmakersPage({ params }: { params: Promise<{ loc
           {PUBLIC_MARKETING_BOOKMAKERS.map((profile) => {
             const presentation = statusPresentation(profile.supportStatus);
             const StatusIcon = presentation.Icon;
-            const bookmakerName = profile.bookmaker === "Parions Sport"
-              ? locale === "fr" ? "Parions Sport (points de vente)" : "Parions Sport (retail locations)"
-              : profile.bookmaker;
+            const bookmakerName = profile.bookmaker;
             const content = (
               <>
                 <span className={`flex size-11 shrink-0 items-center justify-center rounded-xl md:mb-5 ${presentation.className}`}>

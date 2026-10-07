@@ -25,10 +25,9 @@ const ACTIVE_ANJ_BOOKMAKERS = [
 
 const OTHER_VALIDATED_BOOKMAKERS = ["1xBet", "MyStake", "PEC.bet"] as const;
 
-// ZeBet a été abandonné et Polymarket est bloqué en France. Parions Sport
-// reste une marque de points de vente ; son ancienne offre en ligne a fusionné
-// avec Unibet. On conserve ces noms dans le catalogue Scan pour les anciens tickets.
-const HIDDEN_FROM_PUBLIC_BOOKMAKERS = new Set(["Zebet", "Polymarket"]);
+// ZeBet a été abandonné, Polymarket est bloqué en France et Parions Sport
+// n'est plus proposé. On conserve ces noms dans le catalogue Scan pour les anciens tickets.
+const HIDDEN_FROM_PUBLIC_BOOKMAKERS = new Set(["Zebet", "Polymarket", "Parions Sport"]);
 
 type PublicBookmaker = {
   bookmaker: string;
