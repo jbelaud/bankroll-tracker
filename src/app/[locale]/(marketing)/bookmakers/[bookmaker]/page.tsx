@@ -40,6 +40,6 @@ export default async function BookmakerPage({ params }: Props) {
   const { locale, bookmaker: slug } = await params;
   const bookmaker = priorityMarketingBookmaker(slug);
   if (!bookmaker) notFound();
-  const supportStatus = await getPublicBookmakerSupportStatus(bookmaker.bookmaker);
+  const supportStatus = getPublicBookmakerSupportStatus(bookmaker.bookmaker);
   return <BookmakerSeoPage locale={locale} bookmaker={bookmaker.bookmaker} supportStatus={supportStatus} />;
 }

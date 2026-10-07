@@ -93,17 +93,17 @@ function statusCopy(locale: Locale, status: BookmakerSupportStatus) {
   const fr = locale === "fr";
   if (status === "TESTED") {
     return {
-      label: fr ? "Format testé" : "Tested format",
+      label: fr ? "Validé" : "Validated",
       description: fr
-        ? "Ce format est actuellement indiqué comme testé dans l’administration Kalivoa. Vous vérifiez toujours le résultat avant import."
-        : "This format is currently marked as tested in Kalivoa administration. You always review the result before importing.",
+        ? "La compatibilité de ce bookmaker avec Kalivoa Scan est validée. Vous vérifiez toujours le résultat avant import."
+        : "This bookmaker’s compatibility with Kalivoa Scan is validated. You always review the result before importing.",
       Icon: CheckCircle,
       className: "border-profit/30 bg-profit-muted",
     };
   }
   if (status === "VALIDATING") {
     return {
-      label: fr ? "Support en validation" : "Support being validated",
+      label: fr ? "En cours de validation" : "Validation in progress",
       description: fr
         ? "Le support de ce bookmaker est en cours de validation pendant la bêta. Kalivoa ne revendique pas encore un import validé pour tous les tickets."
         : "Support for this bookmaker is being validated during beta. Kalivoa does not yet claim validated import for every ticket.",

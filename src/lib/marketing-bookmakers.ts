@@ -1,8 +1,5 @@
-import "server-only";
-
-import { cache } from "react";
+import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
 import type { BookmakerSupportStatus } from "@/lib/scan/bookmaker-profile";
-import { prisma } from "@/lib/prisma";
 
 export const PRIORITY_MARKETING_BOOKMAKERS = [
   { slug: "unibet", bookmaker: "Unibet" },
@@ -16,19 +13,33 @@ export function priorityMarketingBookmaker(slug: string): PriorityMarketingBookm
   return PRIORITY_MARKETING_BOOKMAKERS.find((bookmaker) => bookmaker.slug === slug);
 }
 
-// La page publique ne doit jamais déduire un statut marketing depuis une
-// simple liste locale. L'administration reste la source de vérité : en cas
-// d'absence de profil ou d'indisponibilité ponctuelle de la base, on adopte
-// le statut le plus prudent et on ne promet pas de compatibilité validée.
-export const getPublicBookmakerSupportStatus = cache(async (bookmaker: string): Promise<BookmakerSupportStatus> => {
-  try {
-    const profile = await prisma.bookmakerScanProfile.findUnique({
-      where: { bookmaker },
-      select: { supportStatus: true },
-    });
-    return profile?.supportStatus ?? "UNTESTED";
-  } catch (error) {
-    console.error("[marketing] bookmaker support lookup failed", { bookmaker, error });
-    return "UNTESTED";
-  }
-});
+// Statuts publics approuvés : ils ne pilotent pas l'activation des règles OCR.
+// Périmètre ANJ vérifié le 7 octobre 2026 :
+// https://www.anj.fr/offre-de-jeu-et-marche/operateurs-agrees
+// https://anj.fr/offre-de-jeu-et-marche/categories-de-jeux-et-canaux-de-distribution
+const ANJ_BOOKMAKERS = [
+  "Winamax", "Betclic", "Unibet", "Bet365", "PMU", "Parions Sport", "Bwin",
+  "Zebet", "NetBet", "PokerStars Sports", "Betsson", "Circusbet", "DAZN Bet",
+  "Feelingbet", "OlyBet", "Genybet", "VBET", "YesOrNo", "Zeturf",
+] as const;
+
+type PublicBookmaker = {
+  bookmaker: string;
+  slug?: string;
+  supportStatus: BookmakerSupportStatus;
+};
+
+const anjBookmakers = new Set<string>(ANJ_BOOKMAKERS);
+
+export const PUBLIC_MARKETING_BOOKMAKERS: PublicBookmaker[] = [
+  ...ANJ_BOOKMAKERS,
+  ...KNOWN_BOOKMAKERS.filter((bookmaker) => bookmaker !== "Autre" && !anjBookmakers.has(bookmaker)),
+].map((bookmaker) => ({
+  bookmaker,
+  slug: PRIORITY_MARKETING_BOOKMAKERS.find((profile) => profile.bookmaker === bookmaker)?.slug,
+  supportStatus: anjBookmakers.has(bookmaker) ? "TESTED" : "VALIDATING",
+}));
+
+export function getPublicBookmakerSupportStatus(bookmaker: string): BookmakerSupportStatus {
+  return PUBLIC_MARKETING_BOOKMAKERS.find((profile) => profile.bookmaker === bookmaker)?.supportStatus ?? "VALIDATING";
+}
