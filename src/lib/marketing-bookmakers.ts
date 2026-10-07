@@ -18,10 +18,10 @@ export function priorityMarketingBookmaker(slug: string): PriorityMarketingBookm
 // https://www.anj.fr/offre-de-jeu-et-marche/operateurs-agrees
 // https://anj.fr/offre-de-jeu-et-marche/categories-de-jeux-et-canaux-de-distribution
 const ANJ_BOOKMAKERS = [
-  "Winamax", "Betclic", "Unibet", "Bet365", "PMU", "Parions Sport", "Bwin",
-  "Zebet", "NetBet", "PokerStars Sports", "Betsson", "Circusbet", "DAZN Bet",
-  "Feelingbet", "OlyBet", "Genybet", "VBET", "YesOrNo", "Zeturf",
+  "Winamax", "Betclic", "Unibet", "Bet365", "PMU",
 ] as const;
+
+const OTHER_VALIDATED_BOOKMAKERS = ["1xBet", "MyStake", "PEC.bet"] as const;
 
 type PublicBookmaker = {
   bookmaker: string;
@@ -30,6 +30,7 @@ type PublicBookmaker = {
 };
 
 const anjBookmakers = new Set<string>(ANJ_BOOKMAKERS);
+const validatedBookmakers = new Set<string>([...ANJ_BOOKMAKERS, ...OTHER_VALIDATED_BOOKMAKERS]);
 
 export const PUBLIC_MARKETING_BOOKMAKERS: PublicBookmaker[] = [
   ...ANJ_BOOKMAKERS,
@@ -37,7 +38,7 @@ export const PUBLIC_MARKETING_BOOKMAKERS: PublicBookmaker[] = [
 ].map((bookmaker) => ({
   bookmaker,
   slug: PRIORITY_MARKETING_BOOKMAKERS.find((profile) => profile.bookmaker === bookmaker)?.slug,
-  supportStatus: anjBookmakers.has(bookmaker) ? "TESTED" : "VALIDATING",
+  supportStatus: validatedBookmakers.has(bookmaker) ? "TESTED" : "VALIDATING",
 }));
 
 export function getPublicBookmakerSupportStatus(bookmaker: string): BookmakerSupportStatus {
