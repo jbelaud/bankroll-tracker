@@ -42,3 +42,12 @@ export function personalStake(units: number, reference: number, unitPercent = 1,
   const rounded = rounding > 0 ? Math.floor((amount + 1e-10) / rounding) * rounding : amount;
   return { amount, rounded: Math.round(rounded * 1e8) / 1e8 };
 }
+
+/** Match the two-decimal unit stake shown beside a viewer's converted amount. */
+export function personalStakeForDisplayedUnits(units: number, reference: number, unitPercent = 1, rounding = 0) {
+  const displayedUnits = Number(new Intl.NumberFormat("en-US", {
+    useGrouping: false,
+    maximumFractionDigits: 2,
+  }).format(units));
+  return personalStake(displayedUnits, reference, unitPercent, rounding);
+}

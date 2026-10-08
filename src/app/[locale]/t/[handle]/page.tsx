@@ -10,7 +10,7 @@ import { PublicBanner } from "@/components/tipsters/public-banner";
 import { PublicTipsterFollowButton } from "@/components/tipsters/public-tipster-follow-button";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
-import { personalStake } from "@/lib/bankroll-units";
+import { personalStake, personalStakeForDisplayedUnits } from "@/lib/bankroll-units";
 import { certificationStatus, certificationSummary, type CertificationStatus } from "@/lib/certification";
 import { fmtMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -214,7 +214,7 @@ function Activity({ bet, locale, date, number, viewerSettings, selectedProfile }
 }) {
   const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
   const profit = canCalculateProfit ? profitInUnits(bet) : null;
-  const personal = bet.stakeUnits !== null && viewerSettings && selectedProfile ? fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
+  const personal = bet.stakeUnits !== null && viewerSettings && selectedProfile ? fmtMoney(personalStakeForDisplayedUnits(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
   return <PublicActivityCard title={bet.description || `${bet.sport} · ${bet.betType}`} meta={`${date.format(bet.date)} · ${bet.sport} · ${bet.betType}`} bankrollName={bet.bankrollName} bankrollSlug={bet.bankrollSlug} odds={bet.odds === null ? "—" : number.format(bet.odds)} stake={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} personalStake={personal ? `Pour toi : ${personal}` : undefined} profit={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} result={betResultToLabel(bet.result)} resultTone={resultTone(bet.result)} proof={PROOF_LABELS[certificationStatus(bet, bet.certificationStartedAt)]} />;
 }
 

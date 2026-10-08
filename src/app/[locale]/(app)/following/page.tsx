@@ -5,7 +5,7 @@ import { MarkFollowingViewed } from "@/components/following/mark-following-viewe
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth";
 import { betResultToLabel } from "@/lib/bet-result";
-import { personalStake } from "@/lib/bankroll-units";
+import { personalStake, personalStakeForDisplayedUnits } from "@/lib/bankroll-units";
 import { certificationStatus, certificationSummary, type CertificationStatus } from "@/lib/certification";
 import { fmtMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -157,7 +157,7 @@ export default async function FollowingPage({ params, searchParams }: { params: 
         {visibleActivity.map((bet) => {
           const canCalculateProfit = bet.stakeUnits !== null && bet.result !== "EN_ATTENTE" && (bet.result !== "CASHE" || bet.stakeCurrency === "UNIT" || Boolean(bet.referenceCapitalAtBet));
           const profit = canCalculateProfit ? profitInUnits(bet) : null;
-          const personal = bet.stakeUnits !== null && selectedProfile && viewerSettings ? fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
+          const personal = bet.stakeUnits !== null && selectedProfile && viewerSettings ? fmtMoney(personalStakeForDisplayedUnits(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency) : undefined;
           const tipsterName = bet.bankroll.user.publicDisplayName || bet.bankroll.user.name || "Tipster Kalivoa";
           return <PublicActivityCard key={bet.id} title={bet.description || `${bet.sport} · ${bet.betType}`} meta={`${date.format(bet.date)} · ${tipsterName} · ${bet.sport}`} bankrollName={bet.bankroll.name} bankrollSlug={bet.bankroll.publicSlug!} odds={bet.odds === null ? "—" : number.format(bet.odds)} stake={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} personalStake={personal ? `Pour toi : ${personal}` : undefined} profit={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} result={betResultToLabel(bet.result)} resultTone={resultTone(bet.result)} proof={PROOF_LABELS[certificationStatus(bet, bet.bankroll.certificationStartedAt)]} isNew={isNewActivity(bet)} />;
         })}

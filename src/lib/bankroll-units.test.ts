@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { personalStake, referenceAt, referenceDateForImport, toUnits, unitSnapshot } from "./bankroll-units";
+import { personalStake, personalStakeForDisplayedUnits, referenceAt, referenceDateForImport, toUnits, unitSnapshot } from "./bankroll-units";
 
 const periods = [
   { referenceCapital: 1000, effectiveFrom: new Date("2026-09-01T00:00:00Z") },
@@ -27,6 +27,11 @@ describe("historical units", () => {
     expect(personalStake(2, 750)).toEqual({ amount: 15, rounded: 15 });
     expect(personalStake(2, 750, 0.5, 5)).toEqual({ amount: 7.5, rounded: 5 });
     expect(() => personalStake(2, 750, 0)).toThrow();
+  });
+  it("converts the two-decimal unit stake shown to the viewer", () => {
+    expect(personalStake(1.2514, 1000).rounded).toBe(12.514);
+    expect(personalStakeForDisplayedUnits(1.2514, 1000).rounded).toBe(12.5);
+    expect(personalStakeForDisplayedUnits(2.1514, 1000).rounded).toBe(21.5);
   });
   it("uses the current reference shown during interactive imports but preserves dated file imports", () => {
     const now = new Date("2026-09-05T15:00:00Z");

@@ -11,7 +11,7 @@ import { PublicAvatar } from "@/components/tipsters/public-avatar";
 import { PublicBanner } from "@/components/tipsters/public-banner";
 import { Link } from "@/i18n/navigation";
 import { betResultToLabel } from "@/lib/bet-result";
-import { personalStake } from "@/lib/bankroll-units";
+import { personalStake, personalStakeForDisplayedUnits } from "@/lib/bankroll-units";
 import { certificationStatus, certificationSummary, type CertificationStatus } from "@/lib/certification";
 import { fmtMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -303,7 +303,7 @@ export default async function PublicBankrollPage({ params, searchParams }: {
                       corrections={bet.corrections}
                     />
                   </div>
-                  <div className="grid grid-cols-3 border-t border-border sm:w-[25rem] sm:border-l sm:border-t-0"><BetValue label="Cote" value={bet.odds === null ? "—" : number.format(bet.odds)} /><BetValue label="Mise" value={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} detail={bet.stakeUnits !== null && selectedProfile && viewerSettings ? `Pour toi : ${fmtMoney(personalStake(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)}` : undefined} /><BetValue label="Bénéfice" value={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} tone={profit === null ? "neutral" : profit >= 0 ? "profit" : "loss"} /></div>
+                  <div className="grid grid-cols-3 border-t border-border sm:w-[25rem] sm:border-l sm:border-t-0"><BetValue label="Cote" value={bet.odds === null ? "—" : number.format(bet.odds)} /><BetValue label="Mise" value={bet.stakeUnits === null ? "—" : `${number.format(bet.stakeUnits)}u`} detail={bet.stakeUnits !== null && selectedProfile && viewerSettings ? `Pour toi : ${fmtMoney(personalStakeForDisplayedUnits(bet.stakeUnits, selectedProfile.referenceCapital, selectedProfile.unitPercent, selectedProfile.rounding).rounded, locale, viewerSettings.currency)}` : undefined} /><BetValue label="Bénéfice" value={profit === null ? "—" : `${profit >= 0 ? "+" : ""}${number.format(profit)}u`} tone={profit === null ? "neutral" : profit >= 0 ? "profit" : "loss"} /></div>
                   <div className={`flex min-h-9 items-center justify-center px-3 text-[0.65rem] font-bold sm:[writing-mode:vertical-rl] ${resultBlockTone(bet.result)}`}>{betResultToLabel(bet.result)}</div>
                 </div>
               </li>;
