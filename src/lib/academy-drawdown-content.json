@@ -1,0 +1,174 @@
+{
+  "fr": {
+    "title": "Comment lire le drawdown de sa bankroll en unités ?",
+    "description": "Calculez la baisse depuis un précédent sommet et comprenez ses limites. Exemple réel de trois pertes dans la bankroll publique d’EGS Betting.",
+    "category": "Comprendre ses statistiques",
+    "lead": "Le drawdown mesure la baisse entre le plus haut atteint par une courbe et un point qui le suit. Sur une courbe de bénéfice cumulé en unités : drawdown = sommet précédent − bénéfice cumulé actuel. Le drawdown maximal est la plus grande de ces baisses sur la période observée. Un résultat final positif peut donc coexister avec une baisse importante en cours de route.",
+    "sections": [
+      {
+        "title": "Quelle courbe faut-il observer ?",
+        "paragraphs": [
+          "Précisez ce que représente la courbe : un solde, un capital ou un bénéfice cumulé. La bankroll publique Kalivoa montre les bénéfices et les pertes cumulés en unités. Elle ne représente pas le solde réel du compte bookmaker.",
+          "Choisissez une période et un historique cohérent. Des paris manquants, des résultats corrigés ou une autre convention d’unités changent le parcours. Pour reproduire un calcul, conservez le même point de départ, les mêmes paris et le même ordre."
+        ]
+      },
+      {
+        "title": "Comment calculer la baisse, étape par étape ?",
+        "paragraphs": [
+          "Parcourez les résultats dans l’ordre chronologique. Après chaque pari réglé, ajoutez son bénéfice ou sa perte au cumul. Gardez en mémoire le plus haut cumul déjà atteint, en incluant le point de départ.",
+          "À chaque point, soustrayez le cumul actuel de ce sommet précédent. Un nouveau sommet a une baisse nulle à cet instant. Conservez la plus grande baisse rencontrée pour obtenir le drawdown maximal du périmètre.",
+          "Une remontée réduit le drawdown courant ; elle n’efface pas la baisse maximale déjà traversée. Un nouveau sommet devient la référence pour les points suivants."
+        ]
+      },
+      {
+        "title": "Exemple réel : une baisse de 3,50 u du 12 au 16 septembre",
+        "paragraphs": [
+          "Le 8 octobre 2026, l’historique public d’EGS Betting montrait un pari gagné le 12 septembre, puis trois paris perdus les 13, 15 et 16 septembre. Les pertes affichées étaient de 1,25 u, 1 u et 1,25 u. Aucune autre ligne n’était visible entre ces dates dans cet historique.",
+          "Pour lire cet extrait, plaçons l’origine à 0 u juste après le pari du 12 septembre. Ce zéro est un point de référence du calcul, pas le capital du tipster. Les pertes donnent ensuite −1,25 u, −2,25 u et −3,50 u de variation cumulée.",
+          "La baisse maximale de cet extrait est donc 0 − (−3,50) = 3,50 u. Elle ne doit pas être présentée comme le drawdown maximal de toute la bankroll."
+        ],
+        "table": [
+          [
+            "Point de l’extrait",
+            "Résultat ajouté",
+            "Variation cumulée",
+            "Baisse depuis le sommet de l’extrait"
+          ],
+          [
+            "Après le pari du 12/09/2026",
+            "Point de référence",
+            "0 u",
+            "0 u"
+          ],
+          [
+            "13/09/2026",
+            "−1,25 u",
+            "−1,25 u",
+            "1,25 u"
+          ],
+          [
+            "15/09/2026",
+            "−1 u",
+            "−2,25 u",
+            "2,25 u"
+          ],
+          [
+            "16/09/2026",
+            "−1,25 u",
+            "−3,50 u",
+            "3,50 u"
+          ]
+        ]
+      },
+      {
+        "title": "Pourquoi la page indique-t-elle un drawdown maximal de 4,15 u ?",
+        "paragraphs": [
+          "Au même relevé, la page publique affichait 25 paris réglés, un bénéfice cumulé de +9,41 u et un « Drawdown max » de −4,15 u. Ce dernier chiffre concerne toute la série affichée ; notre tableau décrit seulement l’extrait du 12 au 16 septembre.",
+          "Le signe négatif de l’interface décrit une baisse ; sa profondeur est de 4,15 u. Le bénéfice final donne le résultat cumulé à la fin. Le drawdown décrit le recul depuis un sommet antérieur. Un bilan positif ne signifie pas une progression sans pertes."
+        ]
+      },
+      {
+        "title": "4,15 u ne signifie pas automatiquement 4,15 % du capital",
+        "paragraphs": [
+          "Pour exprimer une baisse en pourcentage de capital, il faut connaître le capital au sommet et utiliser une série de capital compatible : baisse relative = (capital au sommet − capital après la baisse) ÷ capital au sommet × 100.",
+          "Le bénéfice cumulé peut commencer à zéro ou devenir négatif. Diviser la baisse par ce bénéfice ne donne pas un pourcentage de capital exploitable. Les montants privés du tipster ne sont pas connus : nous ne convertissons pas son drawdown en euros ou en pourcentage de son compte."
+        ]
+      },
+      {
+        "title": "Quelles limites garder en tête ?",
+        "paragraphs": [
+          "La période, la fréquence des points et l’ordre des paris influencent le drawdown. Un regroupement par jour peut masquer un sommet ou un creux entre deux paris. Vérifiez ces conventions et le nombre de paris avant de comparer des historiques.",
+          "Le drawdown ne prouve pas que tous les tickets sont vérifiés et ne fixe pas un plafond aux pertes futures. Lisez séparément les preuves, le ROI et les baisses de la courbe. Ne relevez pas vos mises pour retrouver un ancien sommet : le suivi sert à comprendre votre exposition et vos limites."
+        ]
+      }
+    ],
+    "source": "Source : bankroll publique d’EGS Betting, relevé du 8 octobre 2026 après consultation des 25 paris visibles. Calcul sur les pertes des 13, 15 et 16 septembre. Les données peuvent évoluer. Exemple autorisé par le tipster ; aucune conversion personnelle ni référence de ticket reproduite.",
+    "citation": "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL?view=all"
+  },
+  "en": {
+    "title": "How do you read a bankroll’s drawdown in units?",
+    "description": "Calculate the decline from a previous peak and understand its limits. A real three-loss example from EGS Betting’s public bankroll.",
+    "category": "Understand your statistics",
+    "lead": "Drawdown measures the decline from a curve’s previous high to a later point. For cumulative profit in units: drawdown = previous peak − current cumulative profit. Maximum drawdown is the largest such decline within the observed period. A positive final result can therefore coexist with a substantial decline along the way.",
+    "sections": [
+      {
+        "title": "Which curve should you use?",
+        "paragraphs": [
+          "First identify what the curve represents: balance, capital or cumulative profit. A public Kalivoa bankroll chart shows cumulative profits and losses in units. It does not show the actual bookmaker account balance.",
+          "Choose a period and consistent history. Missing bets, corrected results or a different unit convention change the path. Reproducing a calculation requires the same starting point, bets and order."
+        ]
+      },
+      {
+        "title": "How do you calculate the decline step by step?",
+        "paragraphs": [
+          "Read results chronologically. After each settled bet, add its profit or loss to the running total. Keep track of the highest cumulative value reached so far, including the starting point.",
+          "At each point, subtract the current cumulative value from that previous peak. A new high has zero drawdown at that instant. Retain the greatest decline to obtain maximum drawdown for your chosen scope.",
+          "A recovery reduces current drawdown; it does not erase the maximum decline already experienced. A new peak becomes the reference for subsequent points."
+        ]
+      },
+      {
+        "title": "A real example: a 3.50 u decline from September 12 to 16",
+        "paragraphs": [
+          "On October 8, 2026, EGS Betting’s public history showed a winning bet on September 12 followed by three losing bets on September 13, 15 and 16. Displayed losses were 1.25 u, 1 u and 1.25 u. No other entry was visible between those dates in that history.",
+          "For this excerpt, set the origin to 0 u immediately after the September 12 bet. This zero is a calculation reference, not the tipster’s capital. The losses then produce cumulative changes of −1.25 u, −2.25 u and −3.50 u.",
+          "Maximum decline within this excerpt is 0 − (−3.50) = 3.50 u. It must not be presented as the complete bankroll’s maximum drawdown."
+        ],
+        "table": [
+          [
+            "Excerpt point",
+            "Added outcome",
+            "Cumulative change",
+            "Decline from excerpt peak"
+          ],
+          [
+            "After the September 12, 2026 bet",
+            "Reference point",
+            "0 u",
+            "0 u"
+          ],
+          [
+            "September 13, 2026",
+            "−1.25 u",
+            "−1.25 u",
+            "1.25 u"
+          ],
+          [
+            "September 15, 2026",
+            "−1 u",
+            "−2.25 u",
+            "2.25 u"
+          ],
+          [
+            "September 16, 2026",
+            "−1.25 u",
+            "−3.50 u",
+            "3.50 u"
+          ]
+        ]
+      },
+      {
+        "title": "Why does the page show 4.15 u maximum drawdown?",
+        "paragraphs": [
+          "At the same observation, the page displayed 25 settled bets, +9.41 u cumulative profit and “Drawdown max” of −4.15 u. That figure covers the complete displayed series; our table covers only September 12–16.",
+          "The negative sign describes a decline; its depth is 4.15 u. Final profit gives the final cumulative result. Drawdown describes the decline from an earlier peak. A positive result does not mean a path without losses."
+        ]
+      },
+      {
+        "title": "4.15 u does not automatically mean 4.15% of capital",
+        "paragraphs": [
+          "Expressing a decline as a percentage of capital requires the peak capital and a compatible capital series: relative decline = (peak capital − capital after decline) ÷ peak capital × 100.",
+          "Cumulative profit can start at zero or become negative. Dividing drawdown by that profit does not give a meaningful capital percentage. The tipster’s private cash amounts are unknown, so we do not convert this drawdown into euros or an account percentage."
+        ]
+      },
+      {
+        "title": "Which limits matter?",
+        "paragraphs": [
+          "Period, sampling frequency and bet order affect drawdown. Daily grouping can hide a peak or trough between bets. Check those conventions and bet count before comparing histories.",
+          "Drawdown does not prove that every slip was verified or cap future losses. Read evidence, ROI and curve declines separately. Do not increase stakes to recover an earlier peak: tracking helps you understand exposure and personal limits."
+        ]
+      }
+    ],
+    "source": "Source: EGS Betting’s public bankroll, observed on October 8, 2026 after reviewing 25 visible bets. Calculations use losses from September 13, 15 and 16. Values can change. The tipster authorized this example; no personal conversion or ticket reference is reproduced.",
+    "citation": "https://kalivoa.com/en/p/Gi4RdWxXhbHFOIJL?view=all"
+  }
+}

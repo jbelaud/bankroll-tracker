@@ -11,6 +11,7 @@ const publicPaths = [
   { path: "/academie/verifier-ticket-pari-scan", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/academie/verifier-paris-tipster", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/academie/suivre-pari-combine", priority: 0.6, changeFrequency: "monthly" as const },
+  { path: "/academie/comprendre-drawdown-bankroll", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/academie/calculer-roi-paris", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/academie/comprendre-unites-bankroll", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/bookmakers", priority: 0.7, changeFrequency: "monthly" as const },
