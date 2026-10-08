@@ -1,0 +1,156 @@
+{
+  "fr": {
+    "title": "Comment calculer le ROI de ses paris et le distinguer du taux de réussite ?",
+    "description": "Calculez le ROI et le taux de réussite sur un exemple réel de deux paris réglés. Comprenez le périmètre, les mises et les limites de ces indicateurs.",
+    "category": "Comprendre ses statistiques",
+    "lead": "Le ROI mesure le bénéfice ou la perte par rapport aux mises engagées. Pour un ensemble de paris réglés en argent réel, sans remboursement ni cash out, calculez ROI = bénéfice net ÷ total des mises × 100. Le taux de réussite répond à une autre question : quelle proportion de ces paris a été gagnée ? Un pourcentage de paris gagnés ne suffit donc pas à décrire le résultat financier.",
+    "sections": [
+      {
+        "title": "Définissez le périmètre avant de calculer",
+        "paragraphs": [
+          "Choisissez une période et gardez les mêmes filtres pour tous les chiffres : bankroll, bookmaker, sport ou type de pari. Pour commencer, sélectionnez des paris simples réglés, avec des mises en argent réel et une devise commune. Laissez les paris en attente hors de cet exemple : leur résultat n’est pas encore connu.",
+          "Les remboursements, freebets et cash outs demandent une convention explicite. Avant de rapprocher votre calcul d’un chiffre affiché par un outil, vérifiez quels paris entrent dans le total des mises et dans le décompte des gagnants. Deux pourcentages construits sur des périmètres différents ne sont pas directement comparables."
+        ]
+      },
+      {
+        "title": "Distinguez retour brut et bénéfice net",
+        "paragraphs": [
+          "Le retour brut correspond à la somme reversée pour le ticket. Lorsqu’il inclut la mise, il faut retirer celle-ci pour obtenir le bénéfice net. Pour un pari perdu sans remboursement, le retour est nul et le bénéfice net est négatif : il vaut l’opposé de la mise.",
+          "Additionnez ensuite les bénéfices nets des paris du périmètre. Ce total se rapporte aux mises engagées dans ces paris. Un dépôt dans la bankroll n’est pas un bénéfice de pari ; un retrait n’est pas une perte sportive. Les intégrer au numérateur changerait la signification du ROI."
+        ]
+      },
+      {
+        "title": "Exemple réel : deux paris perdus, 17,50 € engagés",
+        "paragraphs": [
+          "Les captures fournies par Jeremy le 25 septembre 2026 montrent deux paris simples datés du 18 septembre : un pari de tennis avec une mise de 10 € et un pari de cyclisme avec une mise de 7,50 €. Tous deux sont indiqués comme perdus, avec un retour nul. L’historique Kalivoa affiche respectivement −10 € et −7,50 €.",
+          "Le calcul est reproductible : −17,50 ÷ 17,50 × 100 = −100 % de ROI. Pour ce même échantillon, 0 ÷ 2 × 100 = 0 % de réussite.",
+          "Cet exemple porte uniquement sur ces deux tickets. Il ne décrit pas le résultat de la bankroll complète, ni un mois de performance. Les autres tickets sont exclus de ce périmètre."
+        ],
+        "table": [
+          [
+            "Donnée relevée",
+            "Tennis",
+            "Cyclisme",
+            "Total de cet exemple"
+          ],
+          [
+            "Mise",
+            "10,00 €",
+            "7,50 €",
+            "17,50 €"
+          ],
+          [
+            "Retour affiché",
+            "0,00 €",
+            "0,00 €",
+            "0,00 €"
+          ],
+          [
+            "Bénéfice net",
+            "−10,00 €",
+            "−7,50 €",
+            "−17,50 €"
+          ],
+          [
+            "Paris gagnés",
+            "0",
+            "0",
+            "0 sur 2"
+          ]
+        ]
+      },
+      {
+        "title": "Pourquoi ROI et taux de réussite ne disent-ils pas la même chose ?",
+        "paragraphs": [
+          "Le taux de réussite compte les résultats. Le ROI tient aussi compte des montants et des retours. Gagner un petit pari puis perdre un pari beaucoup plus important peut donner un taux de réussite de 50 % tout en produisant une perte financière. Inversement, les cotes et les mises peuvent rendre deux historiques au même taux de réussite très différents financièrement.",
+          "Quand vous comparez deux périodes, regardez ensemble le ROI, les mises totales, le nombre de paris réglés et le taux de réussite. Vérifiez également si la taille des mises a changé. Un pourcentage isolé masque ces différences."
+        ]
+      },
+      {
+        "title": "Un ROI passé ne prédit pas le résultat suivant",
+        "paragraphs": [
+          "Deux paris constituent un exemple de calcul, pas une conclusion sur une méthode de pari. Même un historique plus long reste un relevé de résultats passés. Le ROI ne mesure pas à lui seul les baisses intermédiaires, l’exposition financière ni la qualité des preuves associées aux tickets.",
+          "Gardez une trace vérifiable des mises et des résultats, et ne compensez pas une perte en augmentant vos mises. Le suivi sert à comprendre ce qui a été engagé et perdu ; il ne garantit aucun gain."
+        ]
+      }
+    ],
+    "source": "Source : ticket original et historique Kalivoa fournis par Jeremy le 25 septembre 2026. Le calcul porte uniquement sur deux paris simples perdus datés du 18 septembre."
+  },
+  "en": {
+    "title": "How do you calculate betting ROI and distinguish it from win rate?",
+    "description": "Calculate ROI and win rate using two real settled bets. Understand stakes, scope and the limits of these statistics.",
+    "category": "Understand your statistics",
+    "lead": "ROI measures profit or loss relative to the amount staked. For settled cash bets without refunds or cash outs, calculate ROI = net profit ÷ total stakes × 100. Win rate answers a different question: what proportion of those bets won? A winning percentage alone does not describe the financial result.",
+    "sections": [
+      {
+        "title": "Choose your scope before calculating",
+        "paragraphs": [
+          "Choose a period and apply the same filters to every figure: bankroll, bookmaker, sport or bet type. Start with settled singles, cash stakes and one currency. Exclude pending bets from this example because their result is not yet known.",
+          "Refunds, free bets and cash outs need an explicit convention. Before comparing your calculation with a tool’s figure, check which bets count towards stakes and wins. Percentages built on different scopes are not directly comparable."
+        ]
+      },
+      {
+        "title": "Separate gross returns from net profit",
+        "paragraphs": [
+          "Gross returns are the amount paid back for a slip. If they include the stake, subtract that stake to find net profit. For a lost bet without a refund, returns are zero and net profit equals the negative stake.",
+          "Add net profits within your scope, then divide by the stakes placed on those bets. A bankroll deposit is not betting profit, and a withdrawal is not a sporting loss. Including them would change what ROI means."
+        ]
+      },
+      {
+        "title": "A real example: two lost bets and €17.50 staked",
+        "paragraphs": [
+          "Screenshots supplied by Jeremy on September 25, 2026 show two singles dated September 18: a tennis bet with a €10 stake and a cycling bet with a €7.50 stake. Both are marked lost with zero returns. Kalivoa’s history shows −€10 and −€7.50 respectively.",
+          "The calculation is reproducible: −17.50 ÷ 17.50 × 100 = −100% ROI. For the same sample, 0 ÷ 2 × 100 = 0% win rate.",
+          "This example covers only these two slips, not the complete bankroll or a month’s performance. Other slips are excluded from this scope."
+        ],
+        "table": [
+          [
+            "Observed figure",
+            "Tennis",
+            "Cycling",
+            "Example total"
+          ],
+          [
+            "Stake",
+            "€10.00",
+            "€7.50",
+            "€17.50"
+          ],
+          [
+            "Displayed returns",
+            "€0.00",
+            "€0.00",
+            "€0.00"
+          ],
+          [
+            "Net profit",
+            "−€10.00",
+            "−€7.50",
+            "−€17.50"
+          ],
+          [
+            "Winning bets",
+            "0",
+            "0",
+            "0 out of 2"
+          ]
+        ]
+      },
+      {
+        "title": "Why do ROI and win rate tell different stories?",
+        "paragraphs": [
+          "Win rate counts outcomes. ROI also accounts for amounts staked and returned. Winning a small bet and losing a much larger one can produce a 50% win rate alongside a financial loss. Odds and stakes can also make two histories with the same win rate financially different.",
+          "When comparing periods, review ROI, total stakes, settled bet count and win rate together. Check whether stake sizes changed. One percentage hides those differences."
+        ]
+      },
+      {
+        "title": "Past ROI does not predict the next result",
+        "paragraphs": [
+          "Two bets illustrate a calculation, not a conclusion about a betting method. A longer history still records past outcomes. ROI alone does not measure intermediate declines, financial exposure or the evidence attached to slips.",
+          "Keep verifiable records of stakes and results, and do not increase stakes to recover a loss. Tracking helps you understand what was risked and lost; it guarantees no profit."
+        ]
+      }
+    ],
+    "source": "Source: original slips and Kalivoa history supplied by Jeremy on September 25, 2026. This calculation covers only two lost singles dated September 18."
+  }
+}
