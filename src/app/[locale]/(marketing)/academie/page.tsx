@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { academyArticlePath, academyContent } from "@/lib/academy-content";
+import { academyTipsterContent, academyTipsterPath } from "@/lib/academy-tipster-content";
 import { marketingMetadata } from "@/lib/marketing-seo";
 import { getSiteUrlForPath } from "@/lib/site";
 
@@ -46,7 +47,17 @@ export default async function AcademyPage({ params }: Props) {
           <p className="mt-3 leading-7 text-muted-foreground">{copy.hub.intro}</p>
         </section>
 
-        <section aria-label={locale === "fr" ? "Articles de l'Académie" : "Academy articles"} className="mt-8 max-w-3xl">
+        <section aria-label={locale === "fr" ? "Articles de l'Académie" : "Academy articles"} className="mt-8 max-w-3xl space-y-5">
+          <article className="marketing-card p-6 sm:p-8">
+            <p className="marketing-eyebrow">{copy.hub.tipsterLabel}</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+              <Link href={academyTipsterPath} locale={locale} className="hover:text-primary">{academyTipsterContent[locale].title}</Link>
+            </h2>
+            <p className="mt-3 leading-7 text-muted-foreground">{copy.hub.tipsterSummary}</p>
+            <Link href={academyTipsterPath} locale={locale} className="mt-5 inline-flex font-semibold text-primary hover:underline">
+              {copy.hub.readArticle} →
+            </Link>
+          </article>
           <article className="marketing-card p-6 sm:p-8">
             <p className="marketing-eyebrow">{copy.hub.articleLabel}</p>
             <h2 className="mt-3 text-2xl font-semibold tracking-tight">

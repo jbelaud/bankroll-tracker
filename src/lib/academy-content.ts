@@ -9,6 +9,8 @@ type AcademyContent = {
     intro: string;
     articleLabel: string;
     articleSummary: string;
+    tipsterLabel: string;
+    tipsterSummary: string;
     readArticle: string;
   };
   article: {
@@ -47,6 +49,8 @@ export const academyContent: Record<Locale, AcademyContent> = {
       intro: "Chaque article répond à une question précise à partir d'un parcours réel dans Kalivoa. Les captures montrent ce que l'outil fait et les limites à garder en tête.",
       articleLabel: "Lecture d'un ticket",
       articleSummary: "Une checklist pour contrôler la sélection, la cote, la mise et le résultat après la lecture d'une capture.",
+      tipsterLabel: "Transparence des tipsters",
+      tipsterSummary: "Comment lire l'historique et les preuves d'une bankroll publique, avec le cas réel d'EGS Betting.",
       readArticle: "Lire l'article",
     },
     article: {
@@ -88,6 +92,8 @@ export const academyContent: Record<Locale, AcademyContent> = {
       intro: "Each article answers a specific question using a real Kalivoa workflow. Screenshots show what the tool does and where review is still needed.",
       articleLabel: "Bet slip review",
       articleSummary: "A checklist for checking the selection, odds, stake and result after reading a screenshot.",
+      tipsterLabel: "Tipster transparency",
+      tipsterSummary: "How to read a public bankroll and its bet evidence, using EGS Betting's real example.",
       readArticle: "Read the article",
     },
     article: {
