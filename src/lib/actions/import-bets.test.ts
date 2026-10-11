@@ -362,6 +362,31 @@ describe("importBets", () => {
     mocks.sportContextNormalize.mockImplementation((_taxonomy, sport: string) => ({ sport, competition: null }));
   });
 
+  it("réutilise un même Scan dans deux bankrolls et refuse la référence déjà importée dans la première", async () => {
+    const importedBankrolls = new Set<string>();
+    mocks.bankrollFindFirst.mockImplementation(async ({ where }: { where: { id: string } }) => ({
+      id: where.id,
+      mode: "SINGLE",
+      currency: "EUR",
+      referenceCurrency: "EUR",
+      referenceCapital: 100,
+      allocations: [],
+    }));
+    mocks.betFindMany.mockImplementation(async ({ where }: { where: { bankrollId: string; ticketRef?: unknown } }) =>
+      where.ticketRef && importedBankrolls.has(where.bankrollId) ? [{ ticketRef: "REF-SHARED" }] : []
+    );
+    mocks.createOwnedBet.mockImplementation(async (_userId: string, input: { bankrollId: string }) => {
+      importedBankrolls.add(input.bankrollId);
+      return { id: `bet-${input.bankrollId}` };
+    });
+
+    const scannedBet = bet({ ticketRef: "REF-SHARED", result: "GAGNE", sourceScanIndex: 0 });
+    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"])).toMatchObject({ imported: 1 });
+    expect(await importBets("bankroll-2", [scannedBet], ["scan-result"])).toMatchObject({ imported: 1 });
+    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"])).toEqual({ error: expect.stringContaining("déjà enregistré") });
+    expect(mocks.createOwnedBet).toHaveBeenCalledTimes(2);
+  });
+
   it("met à jour le pari en attente correspondant au lieu de créer un doublon", async () => {
     mocks.betFindMany.mockResolvedValue([{
       id: "pending-bet",

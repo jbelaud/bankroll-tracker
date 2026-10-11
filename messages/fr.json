@@ -876,7 +876,10 @@
       "discordDescription": "Rejoins le Discord bêta pour partager tes retours et tes captures de bookmakers, après avoir masqué toute donnée personnelle.",
       "joinDiscord": "Rejoindre le Discord",
       "scanAgainCta": "Scanner d’autres captures",
-      "dashboardCta": "Accéder à mon tableau de bord"
+      "dashboardCta": "Accéder à mon tableau de bord",
+      "reuseBankrollTitle": "Ajouter ces mêmes paris à une autre bankroll",
+      "reuseBankrollDescription": "Choisis une autre bankroll puis vérifie à nouveau les mises, la devise et la conversion avant l’enregistrement. Cette réutilisation ne consomme pas de Scan.",
+      "reuseBankrollCta": "Vérifier pour cette bankroll"
     },
     "empty": {
       "title": "Aucun pari trouvé",
@@ -1014,7 +1017,7 @@
     "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
     "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Reviens le mois prochain.",
     "duplicateScan": "Cette capture a déjà été analysée. Elle ne compte pas deux fois.",
-    "duplicateScanImported": "Cette capture a déjà été importée ({count} pari(s)). Elle ne compte pas deux fois.",
+    "duplicateScanImported": "Cette capture a déjà été importée dans cette bankroll. Elle ne compte pas deux fois ici.",
     "duplicateScanPending": "Cette capture a été analysée, mais pas encore importée. Reprends-la dans « Imports en attente ».",
     "bankrollLocked": "Cette bankroll est verrouillée avec le forfait Freemium. Passe à Premium pour y accéder.",
     "forbiddenOrigin": "Origine non autorisée."

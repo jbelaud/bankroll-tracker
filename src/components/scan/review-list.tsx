@@ -43,6 +43,7 @@ export function ReviewList({
   initialExcludedIndexes = [],
   onReviewChange,
   bankrollSelectionLocked = false,
+  initialTicketCurrency,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
@@ -62,6 +63,7 @@ export function ReviewList({
   initialExcludedIndexes?: number[];
   onReviewChange?: (bets: ParsedBet[], excludedIndexes: number[], bankrollId: string) => void;
   bankrollSelectionLocked?: boolean;
+  initialTicketCurrency?: Currency;
 }) {
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(() => new Set(initialExcludedIndexes));
@@ -70,7 +72,7 @@ export function ReviewList({
   const [qualityIssueDetails, setQualityIssueDetails] = useState("");
   const [tipsters, setTipsters] = useState(initialTipsters);
   const [confirmedUnitScale, setConfirmedUnitScale] = useState<string | null>(null);
-  const [ticketCurrency, setTicketCurrency] = useState<Currency>(currency);
+  const [ticketCurrency, setTicketCurrency] = useState<Currency>(initialTicketCurrency ?? currency);
   const [ticketFxRate, setTicketFxRate] = useState("");
   const [freshUnitReference, setFreshUnitReference] = useState<{ bankrollId: string; value: number | null } | null>(null);
   const [refreshingUnitReference, setRefreshingUnitReference] = useState(false);

@@ -49,10 +49,10 @@ export function bankrollOptionLabel(bankroll: BankrollOption) {
 type FlowState =
   | { step: "idle" }
   | { step: "scanning"; files: File[]; done: number }
-  | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
+  | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds?: string[]; initialTicketCurrency?: Currency }
   | { step: "empty"; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
-  | { step: "importing"; draftId: string | null; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
-  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number; resultProofsVerified: number };
+  | { step: "importing"; draftId: string | null; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds?: string[]; initialTicketCurrency?: Currency }
+  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number; resultProofsVerified: number; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds: string[]; ticketCurrency: Currency };
 
 export function ScanFlow({
   userId,
@@ -83,6 +83,7 @@ export function ScanFlow({
   const resultProofMode = Boolean(resultProofTarget) || resultBatchMode;
   const resultProofBankrollId = resultProofTarget?.bankrollId ?? resultProofBatch?.bankrollId;
   const [bankrollId, setBankrollId] = useState(resultProofBankrollId ?? bankrolls[0]?.id ?? "");
+  const [reuseBankrollId, setReuseBankrollId] = useState("");
   const [flow, setFlow] = useState<FlowState>({ step: "idle" });
   const extensionLink = useExtensionLink();
   const [error, setError] = useState("");
@@ -150,7 +151,8 @@ export function ScanFlow({
     async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, ticketCurrency: Currency, ticketFxRate: number | null, expectedReferenceCapital: number | null, files: File[], scans: ScanTicketResult[], skippedDuplicateFiles: string[]) => {
       setError("");
       const draftId = (flow.step === "review" || flow.step === "importing") ? flow.draftId : null;
-      setFlow({ step: "importing", draftId, bets, files, scans, skippedDuplicateFiles });
+      const importedBankrollIds = (flow.step === "review" || flow.step === "importing") ? flow.importedBankrollIds ?? [] : [];
+      setFlow({ step: "importing", draftId, bets, files, scans, skippedDuplicateFiles, importedBankrollIds, initialTicketCurrency: ticketCurrency });
       const readyScans = scans.filter((scan) => scan.outcome === "READY");
       const scanMeasurements = readyScans.map((scan) => {
         const finalExtraction = finalBetsForScan(bets, scan.sourceFileIndex);
@@ -175,7 +177,7 @@ export function ScanFlow({
       );
       if (result.imported === undefined) {
         setError(result.error);
-        setFlow({ step: "review", draftId, bets, excludedIndexes: [], files, scans, skippedDuplicateFiles });
+        setFlow({ step: "review", draftId, bets, excludedIndexes: [], files, scans, skippedDuplicateFiles, importedBankrollIds, initialTicketCurrency: ticketCurrency });
         return;
       }
       if (shareQuality) {
@@ -210,9 +212,15 @@ export function ScanFlow({
         step: "completed",
         imported: result.imported,
         firstImport: result.firstImport,
-        earnedReferralScans: scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0),
+        earnedReferralScans: importedBankrollIds.length === 0 ? scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0) : 0,
         resultProofsUpdated: result.resultProofsUpdated ?? 0,
         resultProofsVerified: result.resultProofsVerified ?? 0,
+        bets,
+        files,
+        scans,
+        skippedDuplicateFiles,
+        importedBankrollIds: [...importedBankrollIds, bankrollId],
+        ticketCurrency,
       });
     },
     [bankrollId, flow, resultBatchMode, resultProofTarget?.betId]
@@ -269,13 +277,14 @@ export function ScanFlow({
     return (
       <ReviewList
         initialBets={flow.bets}
+        initialTicketCurrency={flow.initialTicketCurrency}
         importing={flow.step === "importing"}
         error={error}
         resultProofMode={resultProofTarget ? "single" : resultBatchMode ? "batch" : undefined}
         skippedDuplicateFiles={flow.skippedDuplicateFiles}
         onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital, flow.files, flow.scans, flow.skippedDuplicateFiles)}
         onRestart={restart}
-        bankrolls={bankrolls}
+        bankrolls={bankrolls.filter((bankroll) => !flow.importedBankrollIds?.includes(bankroll.id))}
         bankrollId={bankrollId}
         onBankrollChange={setBankrollId}
         bankrollSelectionLocked={resultProofMode}
@@ -305,6 +314,8 @@ export function ScanFlow({
   }
 
   if (flow.step === "completed") {
+    const availableBankrolls = resultProofMode ? [] : bankrolls.filter((bankroll) => !flow.importedBankrollIds.includes(bankroll.id));
+    const nextBankrollId = availableBankrolls.some((bankroll) => bankroll.id === reuseBankrollId) ? reuseBankrollId : availableBankrolls[0]?.id;
     const automaticResultUpdate = !resultProofMode && flow.resultProofsUpdated > 0;
     const title = resultProofMode || automaticResultUpdate
       ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
@@ -341,6 +352,37 @@ export function ScanFlow({
           <p role="status" className="w-full rounded-xl border border-profit/30 bg-profit/10 px-3 py-2.5 text-left text-sm text-profit">
             {tReferral("referredRewardMessage", { count: flow.earnedReferralScans })}
           </p>
+        ) : null}
+
+        {availableBankrolls.length > 0 && (flow.imported > 0 || flow.resultProofsUpdated > 0) ? (
+          <div className="w-full rounded-xl border border-primary/30 bg-primary/5 p-4 text-left">
+            <label htmlFor="reuse-scan-bankroll" className="text-sm font-semibold">{tComplete("reuseBankrollTitle")}</label>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tComplete("reuseBankrollDescription")}</p>
+            <select
+              id="reuse-scan-bankroll"
+              value={nextBankrollId}
+              onChange={(event) => setReuseBankrollId(event.target.value)}
+              className="mt-3 min-h-touch w-full rounded-lg border border-border bg-background px-3 text-sm"
+            >
+              {availableBankrolls.map((bankroll) => <option key={bankroll.id} value={bankroll.id}>{bankrollOptionLabel(bankroll)}</option>)}
+            </select>
+            <Button type="button" className="mt-3 min-h-touch w-full rounded-lg text-sm font-semibold" onClick={() => {
+              if (!nextBankrollId) return;
+              setBankrollId(nextBankrollId);
+              setError("");
+              setFlow({
+                step: "review",
+                draftId: null,
+                bets: flow.bets.map((bet) => ({ ...bet, possibleDuplicate: undefined, updatesExistingBet: undefined, pendingTicketAlreadyExists: undefined })),
+                excludedIndexes: [],
+                files: flow.files,
+                scans: flow.scans,
+                skippedDuplicateFiles: [],
+                importedBankrollIds: flow.importedBankrollIds,
+                initialTicketCurrency: flow.ticketCurrency,
+              });
+            }}>{tComplete("reuseBankrollCta")}</Button>
+          </div>
         ) : null}
 
         {!resultProofMode && flow.firstImport ? (

@@ -876,7 +876,10 @@
       "discordDescription": "Join the beta Discord to share feedback and bookmaker screenshots, after hiding any personal data.",
       "joinDiscord": "Join Discord",
       "scanAgainCta": "Scan more screenshots",
-      "dashboardCta": "Go to my dashboard"
+      "dashboardCta": "Go to my dashboard",
+      "reuseBankrollTitle": "Add these bets to another bankroll",
+      "reuseBankrollDescription": "Choose another bankroll, then review stakes, currency and conversion before saving. Reusing this scan does not use another Scan credit.",
+      "reuseBankrollCta": "Review for this bankroll"
     },
     "empty": {
       "title": "No bets found",
@@ -1014,7 +1017,7 @@
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
     "duplicateScan": "This screenshot has already been analyzed. It cannot count twice.",
-    "duplicateScanImported": "This screenshot has already been imported ({count} bet(s)). It cannot count twice.",
+    "duplicateScanImported": "This screenshot has already been imported into this bankroll. It cannot count twice here.",
     "duplicateScanPending": "This screenshot was analyzed but has not been imported yet. Resume it in “Pending imports”.",
     "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "forbiddenOrigin": "Origin not allowed."

@@ -35,6 +35,7 @@ import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
 import { normalizeScannedMarketType } from "@/lib/scan/market-type";
 import { extensionScanReplay } from "@/lib/scan/extension-replay";
+import { bankrollScanSourceHash, scanSourcePolicy } from "@/lib/scan/source-identity";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -159,10 +160,29 @@ export async function POST(request: NextRequest) {
   }) : null;
   const supportStatus = profile?.supportStatus ?? (normalizedBookmaker && bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
-  const duplicateScan = await prisma.scanUsage.findUnique({
-    where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true, betsImported: true, promptVersion: true, extensionReceipt: true, verificationCompletedAt: true },
-  });
+  const scopedSourceHash = bankrollScanSourceHash(sourceHash, bankrollId);
+  const [scopedScan, originalScan] = await Promise.all([
+    prisma.scanUsage.findUnique({
+      where: { userId_sourceHash: { userId: user.id, sourceHash: scopedSourceHash } },
+      select: { id: true, betsImported: true, promptVersion: true, extensionReceipt: true, verificationCompletedAt: true },
+    }),
+    prisma.scanUsage.findUnique({
+      where: { userId_sourceHash: { userId: user.id, sourceHash } },
+      select: {
+        id: true, betsImported: true, promptVersion: true, extensionReceipt: true,
+        verificationCompletedAt: true,
+        bets: { where: { bankrollId }, select: { id: true }, take: 1 },
+      },
+    }),
+  ]);
+  const sourcePolicy = scanSourcePolicy(sourceHash, bankrollId,
+    originalScan ? { betsImported: originalScan.betsImported, importedHere: originalScan.bets.length > 0 } : null,
+    Boolean(scopedScan));
+  // Un rescannage dans une autre bankroll consomme un Scan, sans remplacer
+  // le hash original qui protège le parrainage et les premiers imports.
+  let usageSourceHash = sourcePolicy.usageSourceHash;
+  const duplicateScan = sourcePolicy.duplicateSource === "scoped" ? scopedScan
+    : sourcePolicy.duplicateSource === "original" ? originalScan : null;
   // Une analyse de la version courante devient un doublon bloquant lorsque ses
   // paris ont été importés ou que son brouillon existe encore. Après une mise
   // à niveau du prompt, la même image peut être retraitée une fois afin de
@@ -179,14 +199,14 @@ export async function POST(request: NextRequest) {
     );
     if (duplicateScan.betsImported > 0 && !promptWasUpgraded) {
       return NextResponse.json(
-        { error: t("duplicateScanImported", { count: duplicateScan.betsImported }) },
+        { error: t("duplicateScanImported") },
         { status: 409 }
       );
     }
 
     if (!promptWasUpgraded) {
       const drafts = await prisma.scanDraft.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, bankrollId },
         select: { payload: true },
         take: 20,
       });
@@ -201,15 +221,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // On garde la ligne de coût historique, mais son hash est libéré. Une
-    // nouvelle version du prompt peut ainsi corriger une capture déjà importée
-    // sans rendre le même fichier rescannable plusieurs fois avec cette version.
-    await prisma.scanUsage.update({
-      where: { id: duplicateScan.id },
-      data: { sourceHash: null },
-    });
+    // Le premier hash reste la trace de la capture pour le parrainage. Une
+    // nouvelle analyse utilise la clé de cette bankroll. Seule une ancienne
+    // analyse déjà scoped doit libérer sa clé après un changement de prompt.
+    if (scopedScan) {
+      await prisma.scanUsage.update({
+        where: { id: duplicateScan.id },
+        data: { sourceHash: null },
+      });
+    }
     isRepeatAnalysis = true;
+    usageSourceHash = scopedSourceHash;
   }
+  if (!duplicateScan) isRepeatAnalysis = sourcePolicy.isRepeatAnalysis;
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
   if (!rateLimit.allowed) {
@@ -222,7 +246,7 @@ export async function POST(request: NextRequest) {
       { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
     );
   }
-  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan, sourceHash);
+  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan, usageSourceHash);
   if (!monthlyQuota.allowed) {
     if (monthlyQuota.reason === "DUPLICATE") {
       return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
@@ -311,7 +335,7 @@ export async function POST(request: NextRequest) {
           inputTokens: scanInputTokens,
           outputTokens: scanOutputTokens,
           costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
-          sourceHash,
+          sourceHash: usageSourceHash,
           referralEligible: false,
           outcome: "EMPTY",
           selectedBookmaker: normalizedBookmaker,
@@ -354,10 +378,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
+  // 5. Repérage des doublons dans la bankroll choisie uniquement.
   const [existing, pendingResultTargets] = await Promise.all([
     prisma.bet.findMany({
-      where: { bankroll: { userId: user.id } },
+      where: { bankrollId, bankroll: { userId: user.id } },
       select: { date: true, stake: true, odds: true, description: true, ticketRef: true },
     }),
     prisma.bet.findMany({
@@ -553,7 +577,7 @@ export async function POST(request: NextRequest) {
         inputTokens: scanInputTokens,
         outputTokens: scanOutputTokens,
         costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
-        sourceHash,
+        sourceHash: usageSourceHash,
         referralEligible,
         outcome: "READY",
         selectedBookmaker: normalizedBookmaker,
