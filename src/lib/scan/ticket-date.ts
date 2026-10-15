@@ -29,12 +29,12 @@ function isoDateOrNull(value: unknown): string | null {
 
 /**
  * Prefer literal placement text over a date interpreted by the vision model.
- * Support numeric dates and French/English month names with a visible year.
+ * An explicit MyStake policy can complete a partial date with the current year.
  */
 export function normalizeExtractedTicketDate(
   visibleDateText: unknown,
   interpretedDate: unknown,
-  options: { requireVisibleText?: boolean } = {}
+  options: { requireVisibleText?: boolean; assumeCurrentYear?: boolean; now?: Date } = {}
 ): string | null {
   if (typeof visibleDateText === "string") {
     const normalized = visibleDateText.normalize("NFKC").replace(/[–—−]/g, "-").trim();
@@ -54,8 +54,33 @@ export function normalizeExtractedTicketDate(
       const month = FRENCH_MONTHS[writtenDate[2]] ?? ENGLISH_MONTHS[writtenDate[2]];
       return month ? validIsoDate(Number(writtenDate[3]), month, Number(writtenDate[1])) : null;
     }
+    if (options.assumeCurrentYear) {
+      const reference = options.now ?? new Date();
+      if (Number.isNaN(reference.getTime())) return null;
+      const parts = Object.fromEntries(new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit",
+      }).formatToParts(reference).map((part) => [part.type, part.value]));
+      const year = Number(parts.year);
+      const literal = text.replace(/\s+/g, " ");
+      const relative = /^(today|yesterday|aujourd['’]hui|hier)(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      if (relative) {
+        const date = new Date(Date.UTC(year, Number(parts.month) - 1, Number(parts.day)));
+        if (["yesterday", "hier"].includes(relative[1])) date.setUTCDate(date.getUTCDate() - 1);
+        return date.toISOString().slice(0, 10);
+      }
+      const numeric = /^(?:le\s+)?(\d{1,2})\s*[-/.]\s*(\d{1,2})(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      if (numeric) return validIsoDate(year, Number(numeric[2]), Number(numeric[1]));
+      const partial = /^(?:le\s+)?(\d{1,2})\s+([a-z]+)\.?(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      if (partial) {
+        const month = FRENCH_MONTHS[partial[2]] ?? ENGLISH_MONTHS[partial[2]];
+        return month ? validIsoDate(year, month, Number(partial[1])) : null;
+      }
+      // With no readable day/month, never replace the ticket date with today
+      // or accept a year guessed by the model.
+      return null;
+    }
   }
 
-  if (options.requireVisibleText) return null;
+  if (options.requireVisibleText || options.assumeCurrentYear) return null;
   return isoDateOrNull(interpretedDate);
 }

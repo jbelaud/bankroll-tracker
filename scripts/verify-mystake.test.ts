@@ -59,7 +59,9 @@ describe.skipIf(!fixtureDir)("MyStake live screenshot verification", () => {
         .toEqual({ sport: expected.sport, betType: expected.type, taxonomyMismatch: false });
       expect(resolveScannedTicketResult(raw.ticketHeaderText, raw.result)).toBe(expected.result);
       expect(raw.date).toBeNull();
-      expect(normalizeExtractedTicketDate(raw.dateText, raw.date, { requireVisibleText: true })).toBeNull();
+      expect(normalizeExtractedTicketDate(raw.ticketPlacedAtText || raw.dateText, raw.date, {
+        requireVisibleText: true, assumeCurrentYear: true,
+      })).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(raw.format).toBe("SIMPLE");
       expect(raw.boosted).toBe(false);
       expect(raw.freebet).toBe(false);

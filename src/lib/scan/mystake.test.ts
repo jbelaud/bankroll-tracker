@@ -3,7 +3,8 @@ import { bookmakerKind, canonicalKnownBookmaker, normalizeBookmaker } from "@/li
 import { mergeTaxonomy, normalizeTaxonomyPair } from "@/lib/taxonomy";
 import { getBetTypesForSport } from "@/lib/sports";
 import { normalizeExtractedTicketDate } from "./ticket-date";
-import { makeScanProofEvidence, resolveScannedTicketResult, ticketResultFromHeader } from "./ticket-evidence";
+import { horizontalTicketResultFromHeader, makeScanProofEvidence, resolveScannedTicketResult, ticketResultFromHeader } from "./ticket-evidence";
+import { normalizeScannedMarketType } from "./market-type";
 import { buildExtractionPrompt } from "./extraction-prompt";
 import { parseScanAnalysis } from "./response";
 
@@ -44,7 +45,7 @@ describe("MyStake screenshot import", () => {
   });
 
   it.each(["Today 09:42", "Yesterday 12:04", "3 October 12:04", "03/10 15:00"])(
-    "refuses an invented year for %s", (dateText) => {
+    "keeps dates strict without the MyStake current-year policy for %s", (dateText) => {
       expect(normalizeExtractedTicketDate(dateText, "2026-10-04", { requireVisibleText: true })).toBeNull();
     }
   );
@@ -78,5 +79,39 @@ describe("MyStake screenshot import", () => {
     expect(prompt).toContain("« 2 » le second");
     expect(prompt).toContain("Le premier montant EUR après « Single » est la mise");
     expect(prompt).toContain("Ne déduis jamais le bookmaker depuis la bankroll fournie.");
+  });
+
+  it("reads the French tennis ticket and corrects a model's total-games classification", () => {
+    const header = "Gagné # 305676780 25 Septembre 06:49 Simple 4.00 EUR 1.62 6.48 EUR";
+    expect(horizontalTicketResultFromHeader(header)).toBe("GAGNE");
+    expect(resolveScannedTicketResult(header, "En attente")).toBe("GAGNE");
+    const market = normalizeScannedMarketType("Tennis", "Total de jeux", [
+      "Jeu Handicap — Choisir: 2 (4.5) — Wang, Xinyu - Prozorova, Tatiana",
+    ]);
+    expect(normalizeTaxonomyPair(mergeTaxonomy(), "Tennis", market)).toEqual({
+      sport: "Tennis", betType: "Handicap asiatique", taxonomyMismatch: false,
+    });
+    expect(normalizeExtractedTicketDate("25 Septembre 06:49", "2025-09-25", {
+      requireVisibleText: true, assumeCurrentYear: true, now: new Date("2026-10-15T10:00:00Z"),
+    })).toBe("2026-09-25");
+    // An assumed year must not manufacture an exact proof timestamp.
+    expect(makeScanProofEvidence("305676780", header, "25/09 08:50"))
+      .toMatchObject({ headerResult: "GAGNE", eventStartAt: null });
+  });
+
+  it.each([
+    ["Gagné", "GAGNE"], ["Perdu", "PERDU"], ["En cours", "EN_ATTENTE"],
+    ["En attente", "EN_ATTENTE"], ["Remboursé", "REMBOURSE"], ["Annulé", "REMBOURSE"],
+  ])("reads the localized horizontal status %s", (status, expected) => {
+    expect(ticketResultFromHeader(`${status} # 12345678 25 Septembre 06:49 Simple 4.00 EUR 1,62 0.00 EUR`))
+      .toBe(expected);
+  });
+
+  it("explains the tennis handicap and the server's current-year policy", () => {
+    const prompt = buildExtractionPrompt();
+    expect(prompt).toContain("HANDICAP ASIATIQUE EN TENNIS");
+    expect(prompt).toContain("Choisir: 2 (4.5)");
+    expect(prompt).toContain("POLITIQUE DE DATE MYSTAKE");
+    expect(prompt).toContain("année automatiquement, au calendrier Europe/Paris");
   });
 });

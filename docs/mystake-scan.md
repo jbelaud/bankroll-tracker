@@ -27,6 +27,7 @@ détection de bookmaker nulle ; la bankroll sélectionnée ne prouve pas la marq
 | --- | --- | --- |
 | Basketball | Total points (incl. overtime) | Total points (prolongations incluses) |
 | Tennis | Total games | Total de jeux |
+| Tennis | Jeu Handicap / Game Handicap | Handicap asiatique (jeux) |
 | Football | Total / Over ou Under | Over/Under buts |
 | Football | Handicap / Pick: 1 (0) ou 2 (0) | Handicap asiatique |
 
@@ -50,9 +51,19 @@ ajouts se font après validation par l'utilisateur.
 | 306562379 | 3 EUR | 1,85 | Perdu | Total points (prolongations incluses) |
 | 306700189 | 5 EUR | 1,32 | En attente | Handicap asiatique |
 
-Toutes ces dates de prise du pari sont partielles (`Today` ou `3 October`). Le
-scan conserve le texte mais laisse la date à confirmer, sans inventer l'année.
-La date à gauche de l'affiche est celle de l'événement.
+À la demande de l'utilisateur, depuis le 15 octobre 2026, les dates de prise du
+pari sans année sont complétées avec l'année en cours, au calendrier Europe/Paris.
+Le jour et le mois visibles sont conservés : `25 Septembre 06:49` devient
+`2026-09-25` pour un scan en 2026. Une année explicitement affichée reste prioritaire.
+`Today` / `Aujourd'hui` et `Yesterday` / `Hier` sont résolus par rapport au jour
+du scan. Une date absente ou illisible reste à confirmer. La date à gauche de
+l'affiche reste celle de l'événement ; elle ne remplace pas la date du ticket.
+L'année supposée ne crée aucune preuve d'heure exacte pour la certification.
+
+Le ticket français `305676780` est un exemple de handicap asiatique en tennis :
+`Jeu Handicap`, `Choisir: 2 (4.5)` joue Prozorova, Tatiana avec la ligne 4.5 jeux,
+dans l'affiche Wang, Xinyu - Prozorova, Tatiana. Sa mise est 4 EUR, sa cote 1,62
+et son statut Gagné. Le score 1:2 est uniquement le résultat du match.
 
 ## Vérification
 

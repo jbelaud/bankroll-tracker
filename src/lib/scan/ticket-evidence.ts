@@ -47,18 +47,27 @@ export function parisCalendarDate(value: Date): string {
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
-export function ticketResultFromHeader(value: unknown): BetResult | null {
+export function horizontalTicketResultFromHeader(value: unknown): BetResult | null {
   if (typeof value !== "string") return null;
   // Cropped English tickets need no bookmaker logo to establish their status.
   // Require the whole header (reference, placement text, format and financials),
   // so a selection status or a potential return cannot settle the ticket.
-  const englishHeader = /^(Won|Lost|Current|Returned)\s+#\s*\d+\s+.+?\s+Single\s+\d+(?:[,.]\d+)?\s+EUR\s+\d+(?:[,.]\d+)?\s+\d+(?:[,.]\d+)?\s+EUR(?:\s+Rebet(?:\s*\+)?)?$/i.exec(value.trim().replace(/\s+/g, " "));
+  const englishHeader = /^(Won|Lost|Current|Returned|Gagné|Perdu|En cours|En attente|Remboursé|Annulé)\s+#\s*\d+\s+.+?\s+(?:Single|Simple)\s+\d+(?:[,.]\d+)?\s+EUR\s+\d+(?:[,.]\d+)?\s+\d+(?:[,.]\d+)?\s+EUR(?:\s+(?:Rebet|Rejouer)(?:\s*\+)?)?$/iu.exec(value.normalize("NFKC").trim().replace(/\s+/g, " "));
   if (englishHeader) {
     const results: Record<string, BetResult> = {
       won: "GAGNE", lost: "PERDU", current: "EN_ATTENTE", returned: "REMBOURSE",
+      "gagné": "GAGNE", perdu: "PERDU", "en cours": "EN_ATTENTE", "en attente": "EN_ATTENTE",
+      "remboursé": "REMBOURSE", "annulé": "REMBOURSE",
     };
     return results[englishHeader[1].toLowerCase()];
   }
+  return null;
+}
+
+export function ticketResultFromHeader(value: unknown): BetResult | null {
+  if (typeof value !== "string") return null;
+  const horizontalResult = horizontalTicketResultFromHeader(value);
+  if (horizontalResult) return horizontalResult;
   const normalized = value.normalize("NFKC").trim();
   // Les books et les modèles restituent parfois le même en-tête sans « @ »
   // ou avec un tiret à la place de la puce. On exige toujours le type, une

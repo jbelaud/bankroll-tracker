@@ -16,6 +16,11 @@ function playerMarket(value: string): "combined" | "assist" | "scorer" | null {
 }
 
 export function normalizeScannedMarketType(sport: string, extractedType: string, visibleMarketTexts: string[] = []) {
+  if (sport === "Tennis") {
+    const gamesHandicap = /\b(?:jeux? handicap|handicap (?:de |sur les )?jeux?|games? handicap|handicap (?:on )?games?)\b/;
+    return [extractedType, ...visibleMarketTexts].some((text) => gamesHandicap.test(marketKey(text)))
+      ? "Handicap asiatique" : extractedType;
+  }
   if (sport !== "Football") return extractedType;
   // Visible ticket wording takes priority over a type inferred by the model.
   const visibleMarket = visibleMarketTexts.map(playerMarket).find((market) => market !== null);

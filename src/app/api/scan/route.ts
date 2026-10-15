@@ -28,7 +28,7 @@ import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof } from "@/lib/result-proof";
-import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
+import { canAutomaticallyUpdateResult, horizontalTicketResultFromHeader, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
 import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
@@ -409,6 +409,8 @@ export async function POST(request: NextRequest) {
   const existingTicketRefs = existing.map((bet) => bet.ticketRef);
   const requiresVisibleDateText = [normalizedBookmaker, detectedBookmaker]
     .some((bookmaker) => ["Unibet", "MyStake"].includes(normalizeBookmaker(bookmaker ?? "")));
+  const isMyStake = [normalizedBookmaker, detectedBookmaker]
+    .some((bookmaker) => normalizeBookmaker(bookmaker ?? "") === "MyStake");
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
@@ -479,6 +481,8 @@ export async function POST(request: NextRequest) {
       date: placedAt ? parisCalendarDate(placedAt)
         : normalizeExtractedTicketDate(r.ticketPlacedAtText || r.dateText, r.date, {
           requireVisibleText: requiresVisibleDateText || Boolean(r.ticketPlacedAtText),
+          assumeCurrentYear: isMyStake || horizontalTicketResultFromHeader(r.ticketHeaderText) !== null,
+          now: new Date(scanStartedAt),
         }),
       eventStartAt: eventStartAt?.toISOString() ?? null,
       sport: resolvedPair.sport,
