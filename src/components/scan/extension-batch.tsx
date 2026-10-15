@@ -2,6 +2,7 @@
 
 import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import { clearUserReceipts, combineReceipts, extensionLink, extensionMessage, processReceipt, receipt, receiptKey, type BatchReceipt, type CaptureInfo, type ExtensionLink } from "@/lib/scan/extension-batch";
 import type { BankrollOption } from "./scan-flow";
@@ -126,7 +127,15 @@ function ExtensionBatchContent({ userId, bankrolls, bankrollId, onBankrollChange
   return <section className="glass-card rounded-xl p-4">
     <h2 className="font-semibold">Scanner vos captures</h2>
     <p className="mt-2 text-sm text-muted-foreground">Choisissez où importer vos paris. Kalivoa lira les tickets, puis vous pourrez vérifier les informations avant l’import.</p>
-    <label className="mt-3 block text-sm">Bankroll <select className="ml-2 rounded border p-2" disabled={busy || !!ready} value={bankrollId} onChange={(event) => onBankrollChange(event.target.value)}>{bankrolls.map((bankroll) => <option key={bankroll.id} value={bankroll.id}>{bankroll.name}</option>)}</select></label>
+    <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+      <label htmlFor="extension-scan-bankroll">Bankroll</label>
+      <Select disabled={busy || !!ready} value={bankrollId} onValueChange={(value) => { if (value) onBankrollChange(value); }} items={Object.fromEntries(bankrolls.map((bankroll) => [bankroll.id, bankroll.name]))}>
+        <SelectTrigger id="extension-scan-bankroll" className="min-h-touch w-full rounded-lg bg-background px-3 text-sm sm:w-auto sm:min-w-56"><SelectValue /></SelectTrigger>
+        <SelectContent className="rounded-lg">
+          {bankrolls.map((bankroll) => <SelectItem key={bankroll.id} value={bankroll.id} className="min-h-touch text-sm">{bankroll.name}</SelectItem>)}
+        </SelectContent>
+      </Select>
+    </div>
     <p role="status" className="my-3 text-sm">{status}</p>
     <Button disabled={busy || !bankrollId} onClick={() => void start().catch((error) => setStatus(String(error)))}>{failures.length ? "Réessayer les captures en échec" : "Analyser les captures"}</Button>
     {!!failures.length && ready?.rows.length ? <Button className="ml-2" disabled={busy} onClick={() => void review().catch((error) => setStatus(String(error)))}>Vérifier les captures réussies</Button> : null}

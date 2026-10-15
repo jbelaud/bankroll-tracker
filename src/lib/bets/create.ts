@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { BetEntryMethod, BetFormat, BetResult, Currency } from "@prisma/client";
-import { referenceAt, referenceDateForImport, unitSnapshot } from "@/lib/bankroll-units";
+import type { Bankroll, BetEntryMethod, BetFormat, BetResult, Currency, Prisma } from "@prisma/client";
+import { referenceAt, referenceDateForImport, unitSnapshot, type ReferencePeriod } from "@/lib/bankroll-units";
 import { convertTicketToBankroll } from "@/lib/native-stake";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
 import { isBetResult } from "@/lib/bet-result";
@@ -85,6 +85,28 @@ export async function createOwnedBet(
   }
 
   const taxonomy = options.taxonomy ?? await getUserTaxonomy(userId, false);
+  const prepared = prepareOwnedBet(input, messages, taxonomy);
+  const { source } = prepared;
+  const bet = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${input.bankrollId} FOR UPDATE`;
+    const bankrollState = await tx.bankroll.findUniqueOrThrow({
+      where: { id: input.bankrollId },
+      select: { isPublic: true, certificationStartedAt: true, currency: true, referenceCurrency: true },
+    });
+    const periods = await tx.bankrollReferencePeriod.findMany({ where: { bankrollId: input.bankrollId } });
+    const scanProof = source.scanUsageId ? await tx.scanUsage.findFirst({
+      where: { id: source.scanUsageId, userId, outcome: "READY" },
+      select: { createdAt: true },
+    }) : null;
+    return tx.bet.create({ data: ownedBetData(input, prepared, bankrollState, periods, scanProof, new Date()) });
+  });
+  const selections = ownedBetSelections(prepared, bet.id);
+  if (selections.length) await prisma.betSelection.createMany({ data: selections });
+  await saveUserTaxonomyEntries(userId, ownedBetTaxonomyEntries(prepared));
+  return bet;
+}
+
+export function prepareOwnedBet(input: CreateOwnedBetInput, messages: BetValidationMessages, taxonomy: Taxonomy) {
   const normalizedTaxonomy = normalizeTaxonomyPair(taxonomy, input.sport, input.betType);
   if (!Number.isFinite(input.stake) || input.stake <= 0) throw new Error(messages.stakePositive);
   if (!isBetResult(input.result)) throw new Error(messages.invalidResult);
@@ -113,113 +135,113 @@ export async function createOwnedBet(
       betType: selection.betType ? normalized.betType : null,
     };
   });
-  const bet = await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${input.bankrollId} FOR UPDATE`;
-    const bankrollState = await tx.bankroll.findUniqueOrThrow({
-      where: { id: input.bankrollId },
-      select: { isPublic: true, certificationStartedAt: true, currency: true, referenceCurrency: true },
-    });
-    const periods = await tx.bankrollReferencePeriod.findMany({ where: { bankrollId: input.bankrollId } });
-    const scanProof = source.scanUsageId ? await tx.scanUsage.findFirst({
-      where: { id: source.scanUsageId, userId, outcome: "READY" },
-      select: { createdAt: true },
-    }) : null;
-    const recordedAt = new Date();
-    const referenceDate = referenceDateForImport(input.date, source.entryMethod === "FILE", recordedAt);
-    const referenceCapitalAtBet = referenceAt(periods, referenceDate);
-    const fromTicket = source.ticketCurrency !== undefined;
-    if (fromTicket && source.expectedReferenceCapital !== undefined
-      && source.expectedReferenceCapital !== referenceCapitalAtBet) {
-      throw new Error("La référence de conversion a changé depuis la vérification du scan. Actualise-la puis confirme à nouveau.");
-    }
-    const converted = fromTicket ? convertTicketToBankroll({
-      amount: input.stake,
-      cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
-      sourceCurrency: source.ticketCurrency!,
-      bankrollCurrency: bankrollState.currency,
-      referenceCurrency: bankrollState.referenceCurrency,
-      referenceCapital: referenceCapitalAtBet,
-      fxRate: source.ticketFxRate,
-    }) : null;
-    const nativeStake = converted?.stake ?? input.stake;
-    const unitFields = bankrollState.currency === "UNIT"
-      ? { referenceCapitalAtBet: fromTicket ? referenceCapitalAtBet : null, stakeUnits: nativeStake, unitsRecordedAt: recordedAt }
-      : unitSnapshot(nativeStake, periods, referenceDate, recordedAt);
-    // Une fois démarrée, la certification suit définitivement la bankroll,
-    // même si sa page publique est temporairement masquée.
-    const certificationActive = bankrollState.certificationStartedAt !== null;
-    const pendingScan = certificationActive && source.entryMethod === "SCAN" && input.result === "EN_ATTENTE" && scanProof;
-    const settledScan = certificationActive && source.entryMethod === "SCAN" && input.result !== "EN_ATTENTE" && scanProof;
-    return tx.bet.create({
-    data: {
-      bankrollId: input.bankrollId,
-      allocationId: input.allocationId ?? null,
-      bookmaker: input.bookmaker?.trim() || null,
-      sport: normalizedTaxonomy.sport,
-      betType: normalizedTaxonomy.betType,
-      description: input.description.trim() || null,
-      eventResult: input.eventResult?.trim() || null,
-      stake: nativeStake,
-      stakeCurrency: bankrollState.currency,
-      ...(fromTicket ? {
-        sourceStakeAmount: input.stake,
-        sourceStakeCurrency: source.ticketCurrency,
-        sourceFxRate: converted!.fxRate,
-        sourceCashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
-      } : {}),
-      ...unitFields,
-      odds: input.odds,
-      boosted: input.boosted,
-      originalOdds: input.boosted ? input.originalOdds : null,
-      freebet: input.freebet,
-      live: input.live,
-      result: input.result,
-      cashOutAmount: input.result === "CASHE" ? (converted?.cashOutAmount ?? input.cashOutAmount) : null,
-      ticketRef: input.ticketRef?.trim() || null,
-      date: input.date,
-      entryMethod: source.entryMethod ?? "MANUAL",
-      format: source.format ?? "SIMPLE",
-      closingOdds: source.closingOdds ?? null,
-      estimatedProbability: source.estimatedProbability ?? null,
-      importBatchId: source.importBatchId ?? null,
-      tipsterId: source.resolvedTipsterId ?? null,
-      scanUsageId: source.scanUsageId ?? null,
-      initialProofAt: pendingScan ? scanProof.createdAt : null,
-      // Les heures proviennent des métadonnées du scan conservées côté
-      // serveur, jamais d'une valeur corrigée librement dans la revue. Une
-      // preuve initiale est qualifiée soit par l'heure de l'événement, soit
-      // par un ticket en cours dont l'heure de prise est vérifiable.
-      initialProofBeforeEvent: pendingScan ? initialProofTiming(
-        scanProof.createdAt,
-        source.eventStartAt ?? null,
-        input.live,
-        source.ticketPlacedAt ?? null,
-      ) : null,
-      resultProofAt: settledScan ? scanProof.createdAt : null,
-      resultEntryMethod: input.result === "EN_ATTENTE" ? "UNKNOWN" : settledScan ? "SCAN" : source.entryMethod === "MANUAL" ? "MANUAL" : "UNKNOWN",
-      certificationLockedAt: certificationActive ? recordedAt : null,
-    },
-    });
-  });
-  if (normalizedSelections.length) {
-    await prisma.betSelection.createMany({
-      data: normalizedSelections.map((selection, position) => ({
-        betId: bet.id,
-        position,
-        sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || normalizedTaxonomy.sport,
-        competition: selection.competition?.normalize("NFKC").trim().slice(0, 255) || null,
-        betType: selection.betType?.normalize("NFKC").trim().slice(0, 255) || null,
-        label: selection.label.normalize("NFKC").trim().slice(0, 1_000) || `Sélection ${position + 1}`,
-        odds: Number.isFinite(selection.odds) && (selection.odds as number) > 0 ? selection.odds : null,
-        result: selection.result,
-      })),
-    });
+  return { normalizedTaxonomy, normalizedSelections, source };
+}
+
+export type OwnedBetState = Pick<Bankroll, "isPublic" | "certificationStartedAt" | "currency" | "referenceCurrency">;
+
+export function ownedBetData(
+  input: CreateOwnedBetInput,
+  prepared: ReturnType<typeof prepareOwnedBet>,
+  bankrollState: OwnedBetState,
+  periods: ReferencePeriod[],
+  scanProof: { createdAt: Date } | null,
+  recordedAt: Date
+): Prisma.BetUncheckedCreateInput {
+  const { normalizedTaxonomy, source } = prepared;
+  const referenceDate = referenceDateForImport(input.date, source.entryMethod === "FILE", recordedAt);
+  const referenceCapitalAtBet = referenceAt(periods, referenceDate);
+  const fromTicket = source.ticketCurrency !== undefined;
+  if (fromTicket && source.expectedReferenceCapital !== undefined
+    && source.expectedReferenceCapital !== referenceCapitalAtBet) {
+    throw new Error("La référence de conversion a changé depuis la vérification du scan. Actualise-la puis confirme à nouveau.");
   }
-  await saveUserTaxonomyEntries(userId, [
-    { sport: normalizedTaxonomy.sport, betType: normalizedTaxonomy.betType },
-    ...normalizedSelections.flatMap((selection) => selection.betType
-      ? [{ sport: selection.sport, betType: selection.betType }]
-      : []),
-  ]);
-  return bet;
+  const converted = fromTicket ? convertTicketToBankroll({
+    amount: input.stake,
+    cashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+    sourceCurrency: source.ticketCurrency!,
+    bankrollCurrency: bankrollState.currency,
+    referenceCurrency: bankrollState.referenceCurrency,
+    referenceCapital: referenceCapitalAtBet,
+    fxRate: source.ticketFxRate,
+  }) : null;
+  const nativeStake = converted?.stake ?? input.stake;
+  const unitFields = bankrollState.currency === "UNIT"
+    ? { referenceCapitalAtBet: fromTicket ? referenceCapitalAtBet : null, stakeUnits: nativeStake, unitsRecordedAt: recordedAt }
+    : unitSnapshot(nativeStake, periods, referenceDate, recordedAt);
+  // Une fois démarrée, la certification suit définitivement la bankroll,
+  // même si sa page publique est temporairement masquée.
+  const certificationActive = bankrollState.certificationStartedAt !== null;
+  const pendingScan = certificationActive && source.entryMethod === "SCAN" && input.result === "EN_ATTENTE" && scanProof;
+  const settledScan = certificationActive && source.entryMethod === "SCAN" && input.result !== "EN_ATTENTE" && scanProof;
+  return {
+    bankrollId: input.bankrollId,
+    allocationId: input.allocationId ?? null,
+    bookmaker: input.bookmaker?.trim() || null,
+    sport: normalizedTaxonomy.sport,
+    betType: normalizedTaxonomy.betType,
+    description: input.description.trim() || null,
+    eventResult: input.eventResult?.trim() || null,
+    stake: nativeStake,
+    stakeCurrency: bankrollState.currency,
+    ...(fromTicket ? {
+      sourceStakeAmount: input.stake,
+      sourceStakeCurrency: source.ticketCurrency,
+      sourceFxRate: converted!.fxRate,
+      sourceCashOutAmount: input.result === "CASHE" ? input.cashOutAmount : null,
+    } : {}),
+    ...unitFields,
+    odds: input.odds,
+    boosted: input.boosted,
+    originalOdds: input.boosted ? input.originalOdds : null,
+    freebet: input.freebet,
+    live: input.live,
+    result: input.result,
+    cashOutAmount: input.result === "CASHE" ? (converted?.cashOutAmount ?? input.cashOutAmount) : null,
+    ticketRef: input.ticketRef?.trim() || null,
+    date: input.date,
+    entryMethod: source.entryMethod ?? "MANUAL",
+    format: source.format ?? "SIMPLE",
+    closingOdds: source.closingOdds ?? null,
+    estimatedProbability: source.estimatedProbability ?? null,
+    importBatchId: source.importBatchId ?? null,
+    tipsterId: source.resolvedTipsterId ?? null,
+    scanUsageId: source.scanUsageId ?? null,
+    initialProofAt: pendingScan ? scanProof.createdAt : null,
+    // Les heures proviennent des métadonnées du scan conservées côté
+    // serveur, jamais d'une valeur corrigée librement dans la revue. Une
+    // preuve initiale est qualifiée soit par l'heure de l'événement, soit
+    // par un ticket en cours dont l'heure de prise est vérifiable.
+    initialProofBeforeEvent: pendingScan ? initialProofTiming(
+      scanProof.createdAt,
+      source.eventStartAt ?? null,
+      input.live,
+      source.ticketPlacedAt ?? null,
+    ) : null,
+    resultProofAt: settledScan ? scanProof.createdAt : null,
+    resultEntryMethod: input.result === "EN_ATTENTE" ? "UNKNOWN" : settledScan ? "SCAN" : source.entryMethod === "MANUAL" ? "MANUAL" : "UNKNOWN",
+    certificationLockedAt: certificationActive ? recordedAt : null,
+  };
+}
+
+export function ownedBetSelections(prepared: ReturnType<typeof prepareOwnedBet>, betId: string): Prisma.BetSelectionCreateManyInput[] {
+  const { normalizedTaxonomy, normalizedSelections } = prepared;
+  return normalizedSelections.map((selection, position) => ({
+    betId,
+    position,
+    sport: selection.sport.normalize("NFKC").trim().slice(0, 120) || normalizedTaxonomy.sport,
+    competition: selection.competition?.normalize("NFKC").trim().slice(0, 255) || null,
+    betType: selection.betType?.normalize("NFKC").trim().slice(0, 255) || null,
+    label: selection.label.normalize("NFKC").trim().slice(0, 1_000) || `Sélection ${position + 1}`,
+    odds: Number.isFinite(selection.odds) && (selection.odds as number) > 0 ? selection.odds : null,
+    result: selection.result,
+  }));
+}
+
+export function ownedBetTaxonomyEntries(prepared: ReturnType<typeof prepareOwnedBet>) {
+  return [
+    { sport: prepared.normalizedTaxonomy.sport, betType: prepared.normalizedTaxonomy.betType },
+    ...prepared.normalizedSelections.flatMap((selection) => selection.betType
+      ? [{ sport: selection.sport, betType: selection.betType }] : []),
+  ];
 }

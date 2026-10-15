@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   scanUsageFindMany: vi.fn(),
   scanUsageUpdate: vi.fn(),
   createOwnedBet: vi.fn(),
+  createOwnedBets: vi.fn(),
   taxonomyCreateMany: vi.fn(),
   importBatchCreate: vi.fn(),
   tipsterCreateMany: vi.fn(),
@@ -34,6 +35,7 @@ vi.mock("next-intl/server", () => ({ getTranslations: vi.fn().mockResolvedValue(
 vi.mock("@/lib/i18n/get-server-locale", () => ({ getServerLocale: vi.fn().mockResolvedValue("fr") }));
 vi.mock("@/lib/actions/bets", () => ({ createBet: vi.fn() }));
 vi.mock("@/lib/bets/create", () => ({ createOwnedBet: mocks.createOwnedBet }));
+vi.mock("@/lib/bets/create-batch", () => ({ createOwnedBets: mocks.createOwnedBets }));
 vi.mock("@/lib/taxonomy", () => ({
   getUserTaxonomy: vi.fn().mockResolvedValue({}),
   normalizeTaxonomyPair: mocks.taxonomyNormalize,
@@ -360,6 +362,42 @@ describe("importBets", () => {
     mocks.recordEvent.mockResolvedValue(undefined);
     mocks.taxonomyNormalize.mockImplementation((_taxonomy, sport: string, betType: string) => ({ sport, betType, taxonomyMismatch: false }));
     mocks.sportContextNormalize.mockImplementation((_taxonomy, sport: string) => ({ sport, competition: null }));
+  });
+
+  it("enregistre un lot de nouveaux paris en une seule opération groupée", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.createOwnedBets.mockResolvedValue(50);
+    const tickets = Array.from({ length: 50 }, (_, index) => bet({
+      ticketRef: `NEW-${index}`, sourceScanIndex: 0,
+    }));
+    const response = await importBets("bankroll-1", tickets, ["scan-result"]);
+    expect(response).toMatchObject({ imported: 50, resultProofsUpdated: 0 });
+    expect(mocks.createOwnedBets).toHaveBeenCalledTimes(1);
+    expect(mocks.createOwnedBets.mock.calls[0][1]).toHaveLength(50);
+    expect(mocks.createOwnedBets.mock.calls[0][1][0]).toMatchObject({
+      bankrollId: "bankroll-1", ticketRef: "NEW-0", source: { scanUsageId: "scan-result" },
+    });
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+  });
+
+  it("ne confirme pas l'import si l'écriture du lot échoue", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.createOwnedBets.mockRejectedValueOnce(new Error("Écriture annulée"));
+    const response = await importBets("bankroll-1", [bet({ ticketRef: "NEW-A" }), bet({ ticketRef: "NEW-B" })]);
+    expect(response).toEqual({ error: "Écriture annulée" });
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+    expect(mocks.scanUsageUpdate).not.toHaveBeenCalled();
+  });
+
+  it("envoie les métriques indépendantes ensemble sans attendre une réponse entre chaque événement", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.betCount.mockResolvedValue(0);
+    const finish: (() => void)[] = [];
+    mocks.recordEvent.mockImplementation(() => new Promise<void>((resolve) => finish.push(resolve)));
+    const pending = importBets("bankroll-1", [bet({ ticketRef: "NEW-PARALLEL", sourceScanIndex: 0 })], ["scan-result"]);
+    await vi.waitFor(() => expect(finish).toHaveLength(4));
+    finish.forEach((resolve) => resolve());
+    expect(await pending).toMatchObject({ imported: 1, firstImport: true });
   });
 
   it("réutilise un même Scan dans deux bankrolls et refuse la référence déjà importée dans la première", async () => {

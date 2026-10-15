@@ -208,7 +208,8 @@ export async function saveUserTaxonomyEntry(userId: string, sport: string, betTy
  */
 export async function saveUserTaxonomyEntries(
   userId: string,
-  entries: ReadonlyArray<{ sport: string; betType: string }>
+  entries: ReadonlyArray<{ sport: string; betType: string }>,
+  client: Pick<typeof prisma, "userTaxonomyEntry"> = prisma
 ) {
   const uniqueEntries = new Map<string, { userId: string; sport: string; betType: string }>();
   for (const { sport, betType } of entries) {
@@ -217,7 +218,7 @@ export async function saveUserTaxonomyEntries(
   }
   if (uniqueEntries.size === 0) return;
 
-  await prisma.userTaxonomyEntry.createMany({
+  await client.userTaxonomyEntry.createMany({
     data: [...uniqueEntries.values()],
     skipDuplicates: true,
   });

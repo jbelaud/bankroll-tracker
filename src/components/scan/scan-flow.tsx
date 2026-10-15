@@ -5,7 +5,7 @@ import { ExtensionBatch, useExtensionLink } from "./extension-batch";
 import { useTranslations } from "next-intl";
 import type { AccountingCurrency, Currency } from "@prisma/client";
 import { ArrowSquareOut, CheckCircle, DiscordLogo, WarningCircle } from "@phosphor-icons/react";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { scanTickets, type ScanTicketResult } from "@/lib/scan/scan-client";
 import type { ParsedBet } from "@/lib/scan/types";
 import { importBets } from "@/lib/actions/import-bets";
@@ -18,6 +18,7 @@ import {
 } from "@/lib/actions/scan-drafts";
 import { correctionSummary, finalBetsForScan } from "@/lib/scan/quality";
 import { scanUsageIdsBySourceIndex } from "@/lib/scan/import-sources";
+import { isOutdatedScanPage, runScanImport } from "@/lib/scan/import-lifecycle";
 import { canonicalKnownBookmaker } from "@/lib/bookmakers";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
 import type { Taxonomy } from "@/lib/taxonomy";
@@ -47,6 +48,7 @@ export function bankrollOptionLabel(bankroll: BankrollOption) {
 // Machine à états sur une seule route : les File[] vivent en mémoire,
 // une navigation les perdrait — le contenu se transforme en place.
 type FlowState =
+  | { step: "interrupted"; outdated: boolean }
   | { step: "idle" }
   | { step: "scanning"; files: File[]; done: number }
   | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds?: string[]; initialTicketCurrency?: Currency }
@@ -91,6 +93,8 @@ export function ScanFlow({
   const [emptyShared, setEmptyShared] = useState(false);
   const extensionCleanup = useRef<(() => Promise<void>) | null>(null);
   const [localCleanupWarning, setLocalCleanupWarning] = useState("");
+  const [importDelayed, setImportDelayed] = useState(false);
+  const importInFlight = useRef(false);
 
   const buildDraftPayload = useCallback((bets: ParsedBet[], scans: ScanTicketResult[], skippedDuplicateFiles: string[], excludedIndexes: number[] = []): ScanDraftPayload => ({
     bets,
@@ -149,7 +153,11 @@ export function ScanFlow({
 
   const confirmImport = useCallback(
     async (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, ticketCurrency: Currency, ticketFxRate: number | null, expectedReferenceCapital: number | null, files: File[], scans: ScanTicketResult[], skippedDuplicateFiles: string[]) => {
+      if (importInFlight.current) return;
+      importInFlight.current = true;
       setError("");
+      setImportDelayed(false);
+      setLocalCleanupWarning("");
       const draftId = (flow.step === "review" || flow.step === "importing") ? flow.draftId : null;
       const importedBankrollIds = (flow.step === "review" || flow.step === "importing") ? flow.importedBankrollIds ?? [] : [];
       setFlow({ step: "importing", draftId, bets, files, scans, skippedDuplicateFiles, importedBankrollIds, initialTicketCurrency: ticketCurrency });
@@ -164,67 +172,88 @@ export function ScanFlow({
           correctedFields: corrections.types,
         };
       });
-      const result = await importBets(
-        bankrollId,
-        bets,
-        scanUsageIdsBySourceIndex(scans),
-        scanMeasurements,
-        resultProofTarget?.betId,
-        resultBatchMode,
-        ticketCurrency,
-        ticketFxRate,
-        expectedReferenceCapital
-      );
-      if (result.imported === undefined) {
-        setError(result.error);
-        setFlow({ step: "review", draftId, bets, excludedIndexes: [], files, scans, skippedDuplicateFiles, importedBankrollIds, initialTicketCurrency: ticketCurrency });
-        return;
-      }
-      if (shareQuality) {
-        await Promise.allSettled(scans.map((scan) => {
-          const finalExtraction = finalBetsForScan(bets, scan.sourceFileIndex);
-          const image = files[scan.sourceFileIndex];
-          if (!image) return Promise.resolve();
-          const form = new FormData();
-          form.append("consent", "true");
-          form.append("issueType", qualityIssueType);
-          if (qualityIssueDetails) form.append("issueDetails", qualityIssueDetails);
-          form.append("bankrollId", bankrollId);
-          form.append("image", image);
-          form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
-          form.append("finalExtraction", JSON.stringify(finalExtraction));
-          form.append("model", scan.model);
-          if (scan.detectedBookmaker) form.append("detectedBookmaker", scan.detectedBookmaker);
-          if (scan.detectionConfidence !== null) form.append("detectionConfidence", String(scan.detectionConfidence));
-          return fetch("/api/scan-quality", { method: "POST", body: form });
-        }));
-      }
-      if (draftId) await deleteScanDraft(draftId);
-      if (extensionCleanup.current) {
-        await extensionCleanup.current().catch(() => {
-          // Import succeeded: cleanup failure must never trigger a second import.
-          console.warn("[extension] Nettoyage local incomplet ; suppression disponible dans l’extension.");
-          setLocalCleanupWarning("L’import a réussi, mais certaines captures locales n’ont pas pu être supprimées. Supprimez-les depuis l’extension Kalivoa.");
-        });
-        extensionCleanup.current = null;
-      }
-      setFlow({
-        step: "completed",
-        imported: result.imported,
-        firstImport: result.firstImport,
-        earnedReferralScans: importedBankrollIds.length === 0 ? scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0) : 0,
-        resultProofsUpdated: result.resultProofsUpdated ?? 0,
-        resultProofsVerified: result.resultProofsVerified ?? 0,
-        bets,
-        files,
-        scans,
-        skippedDuplicateFiles,
-        importedBankrollIds: [...importedBankrollIds, bankrollId],
-        ticketCurrency,
+      const cleanup = extensionCleanup.current;
+      await runScanImport({
+        save: () => importBets(
+          bankrollId,
+          bets,
+          scanUsageIdsBySourceIndex(scans),
+          scanMeasurements,
+          resultProofTarget?.betId,
+          resultBatchMode,
+          ticketCurrency,
+          ticketFxRate,
+          expectedReferenceCapital
+        ),
+        onSlow: () => setImportDelayed(true),
+        onRejected: (cause) => {
+          importInFlight.current = false;
+          setFlow({ step: "interrupted", outdated: isOutdatedScanPage(cause) });
+        },
+        onRefused: (result) => {
+          importInFlight.current = false;
+          setError(result.error ?? t("analysisFailed"));
+          setFlow({ step: "review", draftId, bets, excludedIndexes: [], files, scans, skippedDuplicateFiles, importedBankrollIds, initialTicketCurrency: ticketCurrency });
+        },
+        cleanup: [
+          ...(shareQuality ? scans.map((scan) => async () => {
+            const finalExtraction = finalBetsForScan(bets, scan.sourceFileIndex);
+            const image = files[scan.sourceFileIndex];
+            if (!image) return;
+            const form = new FormData();
+            form.append("consent", "true");
+            form.append("issueType", qualityIssueType);
+            if (qualityIssueDetails) form.append("issueDetails", qualityIssueDetails);
+            form.append("bankrollId", bankrollId);
+            form.append("image", image);
+            form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
+            form.append("finalExtraction", JSON.stringify(finalExtraction));
+            form.append("model", scan.model);
+            if (scan.detectedBookmaker) form.append("detectedBookmaker", scan.detectedBookmaker);
+            if (scan.detectionConfidence !== null) form.append("detectionConfidence", String(scan.detectionConfidence));
+            const response = await fetch("/api/scan-quality", { method: "POST", body: form, signal: AbortSignal.timeout(30_000) });
+            if (!response.ok) throw new Error("Scan quality upload failed");
+          }) : []),
+          ...(draftId ? [() => deleteScanDraft(draftId)] : []),
+          ...(cleanup ? [cleanup] : []),
+        ],
+        onCleanupFailure: () => {
+          setLocalCleanupWarning("L’import a réussi, mais une opération de partage ou de nettoyage n’a pas abouti. Ne réimporte pas ce lot ; les captures restantes peuvent être supprimées depuis l’extension.");
+        },
+        onCompleted: (result) => {
+          if (result.imported === undefined) return;
+          importInFlight.current = false;
+          extensionCleanup.current = null;
+          setFlow({
+            step: "completed",
+            imported: result.imported,
+            firstImport: result.firstImport ?? false,
+            earnedReferralScans: importedBankrollIds.length === 0 ? scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0) : 0,
+            resultProofsUpdated: result.resultProofsUpdated ?? 0,
+            resultProofsVerified: result.resultProofsVerified ?? 0,
+            bets,
+            files,
+            scans,
+            skippedDuplicateFiles,
+            importedBankrollIds: [...importedBankrollIds, bankrollId],
+            ticketCurrency,
+          });
+        },
       });
     },
-    [bankrollId, flow, resultBatchMode, resultProofTarget?.betId]
+    [bankrollId, flow, resultBatchMode, resultProofTarget?.betId, t]
   );
+
+  if (flow.step === "interrupted") {
+    return <section className="glass-card mx-auto flex w-full max-w-md flex-col gap-4 rounded-2xl p-6">
+      <h2 className="text-xl font-semibold">{flow.outdated ? "Cette page doit être actualisée" : "L’import n’a pas pu être confirmé"}</h2>
+      <p role="alert" className="text-sm text-muted-foreground">{flow.outdated
+        ? "Le site a été mis à jour pendant que cette page était ouverte. La demande n’a pas pu être traitée par cette version."
+        : "La connexion a été interrompue. Certains paris peuvent déjà avoir été enregistrés."} Vérifie ta bankroll dans un autre onglet avant de relancer l’import. Le brouillon reste disponible s’il a été sauvegardé.</p>
+      <Link href={`/bankrolls/${bankrollId}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary underline">Vérifier ma bankroll</Link>
+      <Button type="button" onClick={() => window.location.reload()}>Actualiser la page</Button>
+    </section>;
+  }
 
   if (flow.step === "scanning") {
     return (
@@ -275,6 +304,8 @@ export function ScanFlow({
 
   if (flow.step === "review" || flow.step === "importing") {
     return (
+      <>
+      {flow.step === "importing" && importDelayed ? <p role="status" className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm">La confirmation prend plus de temps que prévu. Ne relance pas l’import pendant cette vérification. <Link href={`/bankrolls/${bankrollId}`} target="_blank" rel="noopener noreferrer" className="font-semibold underline">Vérifier ma bankroll dans un autre onglet</Link></p> : null}
       <ReviewList
         initialBets={flow.bets}
         initialTicketCurrency={flow.initialTicketCurrency}
@@ -310,6 +341,7 @@ export function ScanFlow({
         taxonomy={taxonomy}
         initialTipsters={tipsters}
       />
+      </>
     );
   }
 
