@@ -380,6 +380,22 @@ describe("importBets", () => {
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });
 
+  it("identifie le ticket MyStake sans date et ne crée aucun pari du lot incomplet", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-result", detectedBookmaker: null, selectedBookmaker: "MyStake",
+      createdAt: new Date("2026-10-15T12:00:00Z"), proofEvidence: null,
+    }]);
+    const response = await importBets("bankroll-1", [
+      bet({ ticketRef: "MYSTAKE-DATED", sourceScanIndex: 0 }),
+      bet({ ticketRef: "MYSTAKE-NO-DATE", date: null, sourceScanIndex: 0 }),
+    ], ["scan-result"]);
+    expect(response).toEqual({ error: expect.stringContaining("ticket MYSTAKE-NO-DATE") });
+    expect(response.error).not.toContain("Bet365");
+    expect(mocks.createOwnedBet).not.toHaveBeenCalled();
+    expect(mocks.createOwnedBets).not.toHaveBeenCalled();
+  });
+
   it("ne confirme pas l'import si l'écriture du lot échoue", async () => {
     mocks.betFindMany.mockResolvedValue([]);
     mocks.createOwnedBets.mockRejectedValueOnce(new Error("Écriture annulée"));

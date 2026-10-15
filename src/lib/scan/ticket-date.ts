@@ -62,15 +62,16 @@ export function normalizeExtractedTicketDate(
       }).formatToParts(reference).map((part) => [part.type, part.value]));
       const year = Number(parts.year);
       const literal = text.replace(/\s+/g, " ");
-      const relative = /^(today|yesterday|aujourd['’]hui|hier)(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      const timeSuffix = "(?:(?:\\s*[,•|\\-]\\s*|\\s+(?:(?:a|at)\\s+)?)(?:[01]?\\d|2[0-3])[:h][0-5]\\d)?";
+      const relative = new RegExp("^(today|yesterday|aujourd['’]hui|hier)" + timeSuffix + "$").exec(literal);
       if (relative) {
         const date = new Date(Date.UTC(year, Number(parts.month) - 1, Number(parts.day)));
         if (["yesterday", "hier"].includes(relative[1])) date.setUTCDate(date.getUTCDate() - 1);
         return date.toISOString().slice(0, 10);
       }
-      const numeric = /^(?:le\s+)?(\d{1,2})\s*[-/.]\s*(\d{1,2})(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      const numeric = new RegExp("^(?:le\\s+)?(\\d{1,2})\\s*[-/.]\\s*(\\d{1,2})" + timeSuffix + "$").exec(literal);
       if (numeric) return validIsoDate(year, Number(numeric[2]), Number(numeric[1]));
-      const partial = /^(?:le\s+)?(\d{1,2})\s+([a-z]+)\.?(?:\s+(?:a\s+|at\s+|[•,]\s*)?\d{1,2}[:h]\d{2})?$/.exec(literal);
+      const partial = new RegExp("^(?:le\\s+)?(\\d{1,2})\\s+([a-z]+)\\.?" + timeSuffix + "$").exec(literal);
       if (partial) {
         const month = FRENCH_MONTHS[partial[2]] ?? ENGLISH_MONTHS[partial[2]];
         return month ? validIsoDate(year, month, Number(partial[1])) : null;

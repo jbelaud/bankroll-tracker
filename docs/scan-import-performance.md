@@ -96,3 +96,23 @@ serveur, le client HTTP et la préparation de la revue avec des réponses simul�
 Il vérifie le passage au handicap asiatique, la date du 25 septembre de l’année
 en cours et l’absence d’un second appel lors de la reprise du résultat corrigé.
 Aucune capture utilisateur n’est envoyée à un fournisseur pendant ce test.
+
+## Dates partielles sans logo (v18)
+
+L’analyse des nouveaux résultats a confirmé des dates absentes malgré des
+références reconnues. Sans bookmaker sélectionné ni logo, l’année courante
+était conditionnée à une transcription très stricte de l’en-tête complet.
+Le fournisseur indique maintenant la structure horizontale indépendamment du
+bookmaker, et les consignes conservent les dates partielles françaises comme
+anglaises. Elles ne demandent plus contradictoirement de supprimer ces dates.
+
+Le serveur essaie successivement le texte de prise du pari, le texte de date
+et le bloc entre la référence et le format dans l’en-tête. Un horaire isolé ne
+masque donc plus une date présente dans un autre champ. Les séparateurs usuels
+entre date et heure sont acceptés. Une année visible est conservée ; sans date
+lisible, la date reste vide. La date de l’événement ne sert jamais de substitut.
+Le contrat v18 évite que les résultats v17 incomplets soient repris en cache.
+
+La revue affiche également la référence lue, et son bandeau de doublon ne
+prétend plus qu’elle est absente lorsqu’elle existe déjà dans l’historique.
+Les paris déjà importés ne sont pas réécrits par ce correctif.

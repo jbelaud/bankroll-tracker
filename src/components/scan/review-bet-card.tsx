@@ -111,10 +111,11 @@ export function ReviewBetCard({
               {t("selectionsDetected", { count: bet.selections.length })}
             </span>
           ) : null}
+          {bet.ticketRef ? <span className="break-all text-xs text-muted-foreground">{t("ticketReference", { reference: bet.ticketRef })}</span> : null}
           {!resultProofMode && bet.possibleDuplicate && (
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
-              {t("duplicateBadge")}
+              {t(bet.ticketRef ? "duplicateReferenceBadge" : "duplicateBadge")}
             </span>
           )}
           {bet.updatesExistingBet && (

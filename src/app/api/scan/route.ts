@@ -28,8 +28,8 @@ import { processValidReferralScan } from "@/lib/referral/service";
 import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof } from "@/lib/result-proof";
-import { canAutomaticallyUpdateResult, horizontalTicketResultFromHeader, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
-import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
+import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
+import { normalizeScannedPlacementDate } from "@/lib/scan/placement-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
@@ -479,9 +479,9 @@ export async function POST(request: NextRequest) {
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: placedAt ? parisCalendarDate(placedAt)
-        : normalizeExtractedTicketDate(r.ticketPlacedAtText || r.dateText, r.date, {
-          requireVisibleText: requiresVisibleDateText || Boolean(r.ticketPlacedAtText),
-          assumeCurrentYear: isMyStake || horizontalTicketResultFromHeader(r.ticketHeaderText) !== null,
+        : normalizeScannedPlacementDate(r, {
+          requireVisibleText: requiresVisibleDateText,
+          isMyStake,
           now: new Date(scanStartedAt),
         }),
       eventStartAt: eventStartAt?.toISOString() ?? null,

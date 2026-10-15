@@ -648,7 +648,7 @@ export async function importBets(
       }
       if (!bet.date && !plan.automaticResultTarget) {
         return {
-          error: "La date doit être renseignée pour créer un nouveau pari. Une capture de résultat Bet365 sans date peut uniquement mettre à jour un pari en attente correspondant.",
+          error: `La date doit être renseignée pour créer ce nouveau pari${bet.ticketRef ? ` (ticket ${bet.ticketRef.trim().slice(0, 120)})` : ""}. Complète la date de prise du pari dans la liste, puis confirme l’import.`,
         };
       }
     }
