@@ -1,5 +1,6 @@
 import { scanTickets, type ScanTicketResult } from "./scan-client";
 import type { ParsedBet } from "./types";
+import { isCurrentScanDraft } from "./scan-draft-version";
 
 export type ExtensionLink = { extension: string; batch: string };
 export function extensionLink(hash: string): ExtensionLink | null {
@@ -23,6 +24,10 @@ export async function extensionMessage<T>(link: ExtensionLink, message: object):
 }
 export type CaptureInfo = { id: string; createdAt: number; hostname: string; size: number };
 export type BatchReceipt = { key: string; file: File; scan?: ScanTicketResult; skipped?: string[] };
+export function canReuseExtensionReceipt(row: BatchReceipt): boolean {
+  if (row.scan) return isCurrentScanDraft([row.scan]);
+  return Boolean(row.skipped);
+}
 export function receiptKey(userId: string, bankrollId: string, captureId: string) { return `${userId}:${bankrollId}:${captureId}`; }
 async function database() {
   return new Promise<IDBDatabase>((resolve, reject) => {
@@ -84,7 +89,7 @@ export function combineReceipts(rows: BatchReceipt[]) {
   return { files: rows.map((row) => row.file), bets, scans, skippedDuplicateFiles: rows.flatMap((row) => row.skipped ?? []) };
 }
 export async function processReceipt(row: BatchReceipt, bankrollId: string, scan = scanTickets): Promise<BatchReceipt> {
-  if (row.scan || row.skipped) return row;
+  if (canReuseExtensionReceipt(row)) return row;
   const result = await scan([row.file], bankrollId, undefined, true);
   return { ...row, scan: result.scans[0], skipped: result.skippedDuplicateFiles.length ? result.skippedDuplicateFiles : undefined };
 }

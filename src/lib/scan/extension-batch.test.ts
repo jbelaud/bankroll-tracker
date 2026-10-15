@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { combineReceipts, extensionLink, processReceipt, receiptKey, type BatchReceipt } from "./extension-batch";
+import { canReuseExtensionReceipt, combineReceipts, extensionLink, processReceipt, receiptKey, type BatchReceipt } from "./extension-batch";
+import { SCAN_PROMPT_VERSION } from "./quality";
 import type { ScanTicketResult } from "./scan-client";
 import type { ParsedBet } from "./types";
 function scan(id: string, reference: string, result = "EN_ATTENTE"): ScanTicketResult {
-  return { sourceFileIndex: 0, usageId: id, bets: [{ ticketRef: reference, result } as ParsedBet], rawExtraction: [], model: "test", promptVersion: "v1", supportStatus: "TESTED", detectedBookmaker: null, detectionConfidence: null, earnedReferralScans: 0, outcome: "READY" };
+  return { sourceFileIndex: 0, usageId: id, bets: [{ ticketRef: reference, result } as ParsedBet], rawExtraction: [], model: "test", promptVersion: SCAN_PROMPT_VERSION, supportStatus: "TESTED", detectedBookmaker: null, detectionConfidence: null, earnedReferralScans: 0, outcome: "READY" };
 }
 function row(id: string): BatchReceipt { return { key: id, file: new File(["image"], `${id}.webp`, { type: "image/webp" }) }; }
 describe("extension batch", () => {
@@ -30,6 +31,28 @@ describe("extension batch", () => {
     const duplicate = { ...source, skipped: ["déjà importée"] };
     expect(await processReceipt(duplicate, "b", extract)).toBe(duplicate);
     expect(extract).toHaveBeenCalledTimes(1);
+  });
+  it("reanalyses only obsolete receipts and keeps current results reusable", async () => {
+    const obsolete = { ...row("old"), scan: { ...scan("old", "306576780"), promptVersion: "2026-10-15-mystake-v16" } };
+    const current = { ...row("current"), scan: scan("current", "new") };
+    const updatedScan = scan("updated", "306576780");
+    const extract = vi.fn().mockResolvedValue({ bets: updatedScan.bets, scans: [updatedScan], skippedDuplicateFiles: [] });
+    expect(canReuseExtensionReceipt(obsolete)).toBe(false);
+    expect(canReuseExtensionReceipt(current)).toBe(true);
+    const updated = await processReceipt(obsolete, "bankroll", extract);
+    expect(updated.scan).toBe(updatedScan);
+    expect(extract).toHaveBeenCalledWith([obsolete.file], "bankroll", undefined, true);
+    expect(await processReceipt(current, "bankroll", extract)).toBe(current);
+    expect(await processReceipt(updated, "bankroll", extract)).toBe(updated);
+    expect(extract).toHaveBeenCalledTimes(1);
+    expect(obsolete.scan.promptVersion).toBe("2026-10-15-mystake-v16");
+  });
+  it("retains the obsolete receipt and image if the new analysis fails", async () => {
+    const obsolete = { ...row("old"), scan: { ...scan("old", "ref"), promptVersion: "v16" } };
+    const extract = vi.fn().mockRejectedValue(new Error("Quota atteint"));
+    await expect(processReceipt(obsolete, "bankroll", extract)).rejects.toThrow("Quota atteint");
+    expect(obsolete.scan.promptVersion).toBe("v16");
+    expect(obsolete.file.name).toBe("old.webp");
   });
   it("keeps source mappings after a failure and prefers the settled ticket", () => {
     const result = combineReceipts([

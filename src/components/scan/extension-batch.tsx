@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore } fro
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trackPublicGrowthEvent } from "@/lib/growth/client";
-import { clearUserReceipts, combineReceipts, extensionLink, extensionMessage, processReceipt, receipt, receiptKey, type BatchReceipt, type CaptureInfo, type ExtensionLink } from "@/lib/scan/extension-batch";
+import { canReuseExtensionReceipt, clearUserReceipts, combineReceipts, extensionLink, extensionMessage, processReceipt, receipt, receiptKey, type BatchReceipt, type CaptureInfo, type ExtensionLink } from "@/lib/scan/extension-batch";
 import type { BankrollOption } from "./scan-flow";
 import { ScanRequestError } from "@/lib/scan/scan-client";
 import { ScanningView } from "./scanning-view";
@@ -27,7 +27,7 @@ function ExtensionBatchContent({ userId, bankrolls, bankrollId, onBankrollChange
   const [status, setStatus] = useState("");
   const [failures, setFailures] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
-  const [progress, setProgress] = useState<{ file: File | null; done: number; total: number; phase: "transfer" | "analysis" | "restore" | "review"; failed: number }>({ file: null, done: 0, total: 0, phase: "transfer", failed: 0 });
+  const [progress, setProgress] = useState<{ file: File | null; done: number; total: number; phase: "transfer" | "analysis" | "restore" | "review"; failed: number; updatingOldAnalysis?: boolean }>({ file: null, done: 0, total: 0, phase: "transfer", failed: 0 });
   const lock = useRef(false);
   const [ready, setReady] = useState<{ rows: BatchReceipt[]; captures: CaptureInfo[]; bankrollId: string } | null>(null);
   const autoStarted = useRef(false);
@@ -81,8 +81,8 @@ function ExtensionBatchContent({ userId, bankrolls, bankrollId, onBankrollChange
             row = { key, file: new File([bytes], `${capture.id}.webp`, { type: data.mime }) };
             await receipt(key, row);
           }
-          const alreadyProcessed = !!(row.scan || row.skipped);
-          setProgress({ file: row.file, done: i, total: captures.length, phase: alreadyProcessed ? "restore" : "analysis", failed: failed.length });
+          const alreadyProcessed = canReuseExtensionReceipt(row);
+          setProgress({ file: row.file, done: i, total: captures.length, phase: alreadyProcessed ? "restore" : "analysis", failed: failed.length, updatingOldAnalysis: Boolean(row.scan) && !alreadyProcessed });
           row = await processReceipt(row, selectedBankroll);
           await receipt(key, row);
           rows.push(row);
@@ -102,7 +102,7 @@ function ExtensionBatchContent({ userId, bankrolls, bankrollId, onBankrollChange
       setStatus(`${rows.length} capture(s) traitée(s), ${failed.length} échec(s). Les résultats sont conservés pour la reprise.`);
       void trackPublicGrowthEvent(failed.length ? "batch_upload_failed" : "batch_upload_completed", { screenshots_count: captures.length, failed_count: failed.length });
       if (!failed.length && rows.length) {
-        setProgress((previous) => ({ ...previous, done: captures.length, phase: "review" }));
+        setProgress((previous) => ({ ...previous, done: captures.length, phase: "review", updatingOldAnalysis: false }));
         await review(completedBatch);
       }
     } catch (error) { setStatus(error instanceof Error ? error.message : "Connexion interrompue."); }
@@ -123,10 +123,14 @@ function ExtensionBatchContent({ userId, bankrolls, bankrollId, onBankrollChange
     const timer = window.setTimeout(() => autoLaunch(), 0);
     return () => window.clearTimeout(timer);
   }, [bankrolls.length]);
-  if (busy) return <ScanningView currentFile={progress.file} done={progress.done} total={progress.total} phase={progress.phase} failed={progress.failed} />;
+  if (busy) return <>
+    <ScanningView currentFile={progress.file} done={progress.done} total={progress.total} phase={progress.phase} failed={progress.failed} />
+    {progress.updatingOldAnalysis ? <p role="status" className="mt-3 text-center text-sm text-muted-foreground">Mise à jour de cette ancienne analyse. Un Scan est utilisé si une nouvelle lecture de la capture est nécessaire.</p> : null}
+  </>;
   return <section className="glass-card rounded-xl p-4">
     <h2 className="font-semibold">Scanner vos captures</h2>
     <p className="mt-2 text-sm text-muted-foreground">Choisissez où importer vos paris. Kalivoa lira les tickets, puis vous pourrez vérifier les informations avant l’import.</p>
+    <p className="mt-2 text-xs text-muted-foreground">Les analyses à jour sont reprises sans nouveau Scan. Si une nouvelle lecture est nécessaire pour appliquer les corrections, elle utilise un Scan par capture.</p>
     <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
       <label htmlFor="extension-scan-bankroll">Bankroll</label>
       <Select disabled={busy || !!ready} value={bankrollId} onValueChange={(value) => { if (value) onBankrollChange(value); }} items={Object.fromEntries(bankrolls.map((bankroll) => [bankroll.id, bankroll.name]))}>

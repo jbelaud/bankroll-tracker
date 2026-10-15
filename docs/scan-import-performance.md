@@ -76,3 +76,23 @@ localement. Sa présence en production doit être confirmée après publication.
 
 Le sélecteur de bankroll de l’extension utilise le composant de sélection
 thématisé de l’application afin de conserver un fond sombre et un texte lisible.
+
+## Reprise d’une ancienne analyse de l’extension
+
+Le cache IndexedDB de l’extension et le rejeu serveur ne vérifiaient pas la
+version d’extraction. Un lot analysé avant la correction MyStake pouvait donc
+conserver son ancien type de pari ou sa date absente après une mise à jour.
+Les deux caches contrôlent désormais `SCAN_PROMPT_VERSION`. Le serveur vérifie
+également la version contenue dans la réponse sauvegardée.
+
+Une analyse à jour reste réutilisée sans appel OCR ni consommation de Scan.
+Une ancienne analyse passe par le parcours de scan existant : rejeu d’une réponse
+à jour si elle existe, sinon nouvelle lecture avec les règles et quotas actuels.
+Un échec de cette lecture conserve l’image et l’ancien cache pour une reprise.
+L’écran explique quand une mise à jour nécessite un nouveau Scan.
+
+Le test `extension-cache-upgrade.test.ts` parcourt le cache client, le rejeu
+serveur, le client HTTP et la préparation de la revue avec des réponses simulées.
+Il vérifie le passage au handicap asiatique, la date du 25 septembre de l’année
+en cours et l’absence d’un second appel lors de la reprise du résultat corrigé.
+Aucune capture utilisateur n’est envoyée à un fournisseur pendant ce test.
