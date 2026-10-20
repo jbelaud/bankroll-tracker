@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { requireAdmin } from "@/lib/admin";
+import { adminApiDenial } from "@/lib/admin-api";
 import { prisma } from "@/lib/prisma";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
@@ -11,7 +11,8 @@ const SIGNED_URL_SECONDS = 60;
 type ImageRouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: NextRequest, context: ImageRouteContext) {
-  await requireAdmin();
+  const denial = await adminApiDenial();
+  if (denial) return denial;
   const { id } = await context.params;
   const report = await prisma.scanQualityReport.findUnique({
     where: { id },
