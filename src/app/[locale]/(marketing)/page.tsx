@@ -11,7 +11,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "marketing.meta.home" });
-  return marketingMetadata({ locale, title: t("title"), description: t("description") });
+  return {
+    ...marketingMetadata({ locale, title: t("title"), description: t("description") }),
+    other: {
+      "rustine-verify": "495750774235c5e93546b688aa09ebe5",
+    },
+  };
 }
 
 export default async function Home({
