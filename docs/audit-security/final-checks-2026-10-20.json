@@ -1,0 +1,429 @@
+{
+  "checkedAt": "2026-10-20T21:06:00.234Z",
+  "productionWrites": false,
+  "auth": {
+    "status": 200,
+    "signupDisabled": false,
+    "emailAutoConfirmed": false,
+    "anonymousEnabled": false,
+    "emailEnabled": true,
+    "googleEnabled": true
+  },
+  "tables": [
+    {
+      "name": "_prisma_migrations",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bankroll_allocations",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bankroll_follows",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bankroll_movements",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bankroll_reference_periods",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bankrolls",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bet_corrections",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bet_selections",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "beta_invite_redemptions",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "beta_invites",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "beta_program",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bets",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "billing_contracts",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "billing_invoices",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bookmaker_scan_profile_versions",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "bookmaker_scan_profiles",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "feedbacks",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "growth_events",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "import_batches",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "insights",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "partner_referral_claim_events",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "partner_referral_claims",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "partner_reward_emails",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "personal_conversion_profiles",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "referral_rewards",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "referrals",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_credit_batches",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_credit_movements",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_credit_reservations",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_drafts",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_quality_reports",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "scan_usages",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "staking_profiles",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "tipster_cost_periods",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "tipster_follows",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "tipsters",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "transactional_emails",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "user_taxonomy_entries",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "users",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    },
+    {
+      "name": "withdrawal_requests",
+      "status": 401,
+      "visibleRows": null,
+      "code": "42501"
+    }
+  ],
+  "http": [
+    {
+      "path": "/fr/dashboard",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/en/dashboard",
+      "method": "GET",
+      "status": 307,
+      "location": "/en/login",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/fr/bankrolls",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/fr/history",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/fr/account",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/fr/admin",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": true,
+      "stackTrace": false
+    },
+    {
+      "path": "/en/admin",
+      "method": "GET",
+      "status": 307,
+      "location": "/en/login",
+      "privateNoStore": true,
+      "stackTrace": false
+    },
+    {
+      "path": "/fr/admin/partners",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/login",
+      "privateNoStore": true,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/admin/partner-referrals/count",
+      "method": "GET",
+      "status": 401,
+      "location": null,
+      "privateNoStore": true,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/admin/scan-quality/audit-nonexistent/image",
+      "method": "GET",
+      "status": 401,
+      "location": null,
+      "privateNoStore": true,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/cron/scan-quality-retention",
+      "method": "GET",
+      "status": 401,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/scan",
+      "method": "POST",
+      "origin": "https://kalivoa.com",
+      "status": 401,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/scan-quality",
+      "method": "POST",
+      "origin": "https://kalivoa.com",
+      "status": 401,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/scan",
+      "method": "POST",
+      "origin": "https://example.invalid",
+      "status": 403,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/scan-quality",
+      "method": "POST",
+      "origin": "https://example.invalid",
+      "status": 403,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/api/stripe/webhook",
+      "method": "POST",
+      "status": 400,
+      "location": null,
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/.env",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/.env",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/.env.local",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/.env.local",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/.git/config",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/.git/config",
+      "privateNoStore": false,
+      "stackTrace": false
+    },
+    {
+      "path": "/prisma/schema.prisma",
+      "method": "GET",
+      "status": 307,
+      "location": "/fr/prisma/schema.prisma",
+      "privateNoStore": false,
+      "stackTrace": false
+    }
+  ],
+  "storage": {
+    "status": 200,
+    "visibleObjects": 0
+  },
+  "publicAssets": {
+    "checked": 15,
+    "knownSecretValuesChecked": 6,
+    "exposedVariableNames": []
+  }
+}
