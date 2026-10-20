@@ -1,23 +1,25 @@
 import { getSiteUrlForPath } from "@/lib/site";
 
 export function GET() {
-  const site = getSiteUrlForPath();
+  const publicPages = [
+    ["/fr", "Accueil — français"],
+    ["/en", "Home — English"],
+    ["/fr/screenshot-import", "Import de captures — français"],
+    ["/en/screenshot-import", "Screenshot import — English"],
+    ["/fr/features", "Fonctionnalités — français"],
+    ["/en/features", "Features — English"],
+    ["/fr/bookmakers", "Bookmakers — français"],
+    ["/en/bookmakers", "Bookmakers — English"],
+    ["/fr/faq", "FAQ — français"],
+    ["/en/faq", "FAQ — English"],
+  ];
   const content = [
     "# Kalivoa",
     "",
     "> Kalivoa is an independent sports-betting bankroll tracking web application. It imports betting-slip screenshots for user review before saving them to a private history.",
     "",
     "## Canonical public pages",
-    "- " + site + "fr",
-    "- " + site + "en",
-    "- " + getSiteUrlForPath("/fr/screenshot-import"),
-    "- " + getSiteUrlForPath("/en/screenshot-import"),
-    "- " + getSiteUrlForPath("/fr/features"),
-    "- " + getSiteUrlForPath("/en/features"),
-    "- " + getSiteUrlForPath("/fr/bookmakers"),
-    "- " + getSiteUrlForPath("/en/bookmakers"),
-    "- " + getSiteUrlForPath("/fr/faq"),
-    "- " + getSiteUrlForPath("/en/faq"),
+    ...publicPages.map(([path, label]) => `- [${label}](${getSiteUrlForPath(path)})`),
     "",
     "## Important facts",
     "- Kalivoa does not place bets and does not provide betting advice or profit guarantees.",
