@@ -823,11 +823,12 @@
       "unitConversionWarning": "{count, plural, one {One stake exceeds 20 units. Check the reference amount, then tick to confirm import.} other {# stakes exceed 20 units. Check the reference amount, then tick to confirm import.}}",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "qualityOffer": {
-        "title": "Was there a problem with this scan?",
-        "consent": "Send this scan to Kalivoa so we can fix the issue.",
-        "details": "The screenshot and your report will be sent to the Kalivoa team's private Discord channel. It may contain a reference, balance or username; only share it if you agree.",
-        "issueTypeLabel": "What is the issue?",
+        "title": "Help improve scanning",
+        "consent": "Share this screenshot and the reviewed information with Kalivoa.",
+        "details": "Optional sharing, kept for 30 days in private storage accessible to authorized administrators. Screenshots may contain a reference, balance or username. Each example is reviewed before being used for improvements.",
+        "issueTypeLabel": "What is your feedback?",
         "issueTypes": {
+          "confirmed": "Everything is correct, I checked",
           "incorrect": "Incorrect information",
           "incomplete": "Missing information",
           "other": "Other issue"

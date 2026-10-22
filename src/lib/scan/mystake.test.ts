@@ -111,7 +111,7 @@ describe("MyStake screenshot import", () => {
     const prompt = buildExtractionPrompt();
     expect(prompt).toContain("HANDICAP ASIATIQUE EN TENNIS");
     expect(prompt).toContain("Choisir: 2 (4.5)");
-    expect(prompt).toContain("POLITIQUE DE DATE MYSTAKE");
+    expect(prompt).toContain("POLITIQUE DE DATE HORIZONTALE");
     expect(prompt).toContain("année automatiquement, au calendrier Europe/Paris");
   });
 });

@@ -215,11 +215,13 @@ export default async function AdminPage({
       orderBy: { _count: { bookmaker: "desc" } },
     }),
     tx.scanQualityReport.findMany({
-      where: { createdAt },
+      where: { createdAt, expiresAt: { gt: new Date() } },
       orderBy: [{ status: "asc" }, { correctionCount: "desc" }, { createdAt: "desc" }],
       take: 25,
       select: {
         id: true,
+        adminNotes: true,
+        issueDetails: true,
         bookmaker: true,
         status: true,
         correctionCount: true,
@@ -380,6 +382,8 @@ export default async function AdminPage({
 
     return {
       id: report.id,
+      adminNotes: report.adminNotes,
+      issueDetails: report.issueDetails,
       bookmaker: report.bookmaker,
       status: report.status,
       correctionCount: summary.count,

@@ -3,7 +3,7 @@ import type { ParsedBet } from "@/lib/scan/types";
 
 export const QUALITY_BUCKET = "scan-quality-reports";
 export const QUALITY_RETENTION_DAYS = 30;
-export const SCAN_PROMPT_VERSION = "2026-10-15-horizontal-placement-v18";
+export const SCAN_PROMPT_VERSION = "2026-10-22-common-learning-v19";
 export const MAX_QUALITY_REPORTS_PER_WEEK = 20;
 export const QUALITY_ALLOWED_MEDIA = ["image/png", "image/jpeg", "image/gif", "image/webp"] as const;
 export const QUALITY_ISSUE_TYPES = ["INCORRECT", "INCOMPLETE", "OTHER"] as const;
@@ -17,6 +17,7 @@ export function parseQualityIssueType(value: FormDataEntryValue | null): Quality
 
 const DIFF_FIELDS: (keyof ParsedBet)[] = [
   "sport", "betType", "description", "eventResult", "date", "stake", "odds", "result",
+  "ticketRef", "format", "boosted", "originalOdds", "freebet", "live", "cashOutAmount", "selections",
 ];
 
 function rawBetsFromExtraction(raw: unknown): Record<string, unknown>[] {
@@ -36,6 +37,12 @@ function rawBetsFromExtraction(raw: unknown): Record<string, unknown>[] {
 }
 
 function comparableValue(field: keyof ParsedBet, value: unknown): string {
+  if (field === "selections") return JSON.stringify(Array.isArray(value) ? value.map((item) => ({
+    sport: item.sport, competition: item.competition ?? null, betType: item.betType ?? null,
+    label: item.label, odds: item.odds ?? null,
+    result: labelToBetResult(String(item.result ?? "")) ?? item.result ?? null,
+  })) : []);
+  if (["boosted", "freebet", "live"].includes(field)) return String(value ?? false);
   if (field !== "result") return String(value ?? "");
 
   const result = String(value ?? "");

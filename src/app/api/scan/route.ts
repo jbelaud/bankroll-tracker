@@ -19,6 +19,7 @@ import {
 } from "@/lib/scan/ai-provider";
 import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
+import { COMMON_SCAN_PROFILE } from "@/lib/scan/learning";
 import { bookmakerKind, normalizeBookmaker } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
 import { tipsterFromVisibleEvidence } from "@/lib/scan/tipster-evidence";
@@ -154,10 +155,14 @@ export async function POST(request: NextRequest) {
   if (await isBankrollLockedForUser(user.id, bankrollId)) {
     return NextResponse.json({ error: t("bankrollLocked") }, { status: 403 });
   }
-  const profile = normalizedBookmaker ? await prisma.bookmakerScanProfile.findUnique({
+  const [profile, commonProfile] = await Promise.all([normalizedBookmaker ? prisma.bookmakerScanProfile.findUnique({
     where: { bookmaker: normalizedBookmaker },
     select: { supportStatus: true, rules: true },
-  }) : null;
+  }) : null, prisma.bookmakerScanProfile.findUnique({
+    where: { bookmaker: COMMON_SCAN_PROFILE }, select: { supportStatus: true, rules: true, version: true },
+  })]);
+  const promptVersion = commonProfile?.supportStatus === "TESTED" && commonProfile.rules
+    ? `${SCAN_PROMPT_VERSION}:common-${createHash("sha256").update(commonProfile.rules).digest("hex").slice(0, 12)}` : SCAN_PROMPT_VERSION;
   const supportStatus = profile?.supportStatus ?? (normalizedBookmaker && bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
   const scopedSourceHash = bankrollScanSourceHash(sourceHash, bankrollId);
@@ -191,11 +196,11 @@ export async function POST(request: NextRequest) {
   if (duplicateScan) {
     // Authentication and bankroll ownership were checked above. Replaying a
     // completed extraction never reserves quota or starts another paid call.
-    const replay = extensionScanReplay(extensionCapture, bankrollId, duplicateScan);
+    const replay = extensionScanReplay(extensionCapture, bankrollId, duplicateScan, promptVersion);
     if (replay) return NextResponse.json(replay);
     const promptWasUpgraded = canRescanAfterPromptUpgrade(
       duplicateScan.promptVersion,
-      SCAN_PROMPT_VERSION
+      promptVersion
     );
     if (duplicateScan.betsImported > 0 && !promptWasUpgraded) {
       return NextResponse.json(
@@ -279,6 +284,7 @@ export async function POST(request: NextRequest) {
       taxonomy,
       bookmaker: normalizedBookmaker,
       bookmakerRules: rulesForTestedProfile(profile),
+      commonRules: rulesForTestedProfile(commonProfile),
     });
     scanModel = response.model;
     scanInputTokens = response.inputTokens;
@@ -306,7 +312,7 @@ export async function POST(request: NextRequest) {
           : calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
         outcome: "TECHNICAL_FAILURE",
         selectedBookmaker: normalizedBookmaker,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         durationMs: Date.now() - scanStartedAt,
       },
     }).catch((telemetryError) => console.error("[scan] échec télémétrie technique", telemetryError));
@@ -320,7 +326,7 @@ export async function POST(request: NextRequest) {
 
   if (rawBets.length === 0) {
     const emptyUsageId = randomUUID();
-    const emptyReceipt = { bets: [], scan: { usageId: emptyUsageId, rawExtraction: [], model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "EMPTY" } };
+    const emptyReceipt = { bets: [], scan: { usageId: emptyUsageId, rawExtraction: [], model: scanModel, promptVersion: promptVersion, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "EMPTY" } };
     // Conserve la télémétrie de l'analyse (comme avant le parrainage), mais
     // marque explicitement ce scan vide comme non éligible à toute récompense.
     let emptyScanUsage: { id: string };
@@ -341,7 +347,7 @@ export async function POST(request: NextRequest) {
           selectedBookmaker: normalizedBookmaker,
           detectedBookmaker,
           detectionConfidence,
-          promptVersion: SCAN_PROMPT_VERSION,
+          promptVersion: promptVersion,
           durationMs: Date.now() - scanStartedAt,
           betsDetected: 0,
         },
@@ -368,7 +374,7 @@ export async function POST(request: NextRequest) {
         usageId: emptyScanUsage.id,
         rawExtraction,
         model: scanModel,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         supportStatus,
         detectedBookmaker,
         detectionConfidence,
@@ -567,7 +573,7 @@ export async function POST(request: NextRequest) {
   });
   let scanUsage;
   const usageId = randomUUID();
-  const extensionResponse = { bets, scan: { usageId, rawExtraction: bets, model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "READY" } };
+  const extensionResponse = { bets, scan: { usageId, rawExtraction: bets, model: scanModel, promptVersion: promptVersion, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "READY" } };
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
     // par le programme de parrainage. L'index userId/sourceHash bloque les
@@ -587,7 +593,7 @@ export async function POST(request: NextRequest) {
         selectedBookmaker: normalizedBookmaker,
         detectedBookmaker,
         detectionConfidence,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         durationMs: Date.now() - scanStartedAt,
         betsDetected: bets.length,
         proofEvidence,
@@ -618,7 +624,7 @@ export async function POST(request: NextRequest) {
       screenshots_count: 1,
       bets_detected: bets.length,
       scan_duration_ms: Date.now() - scanStartedAt,
-      parser_version: SCAN_PROMPT_VERSION,
+      parser_version: promptVersion,
     },
   });
   return NextResponse.json({
@@ -627,7 +633,7 @@ export async function POST(request: NextRequest) {
       usageId: scanUsage.id,
       rawExtraction,
       model: scanModel,
-      promptVersion: SCAN_PROMPT_VERSION,
+      promptVersion: promptVersion,
       supportStatus,
       detectedBookmaker,
       detectionConfidence,

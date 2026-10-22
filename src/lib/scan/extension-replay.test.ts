@@ -7,6 +7,14 @@ describe("server-side extension receipt replay", () => {
   it("returns the original response after a lost network response", () => {
     expect(extensionScanReplay(true, "owned", usage)).toBe(response);
   });
+  it("invalidates a learned revision when a different complement is activated", () => {
+    const revision = `${SCAN_PROMPT_VERSION}:common-first`;
+    const learnedResponse = { ...response, scan: { ...response.scan, promptVersion: revision } };
+    const learnedUsage = { ...usage, promptVersion: revision, extensionReceipt: { bankrollId: "owned", response: learnedResponse } };
+    expect(extensionScanReplay(true, "owned", learnedUsage, revision)).toBe(learnedResponse);
+    expect(extensionScanReplay(true, "owned", learnedUsage, `${SCAN_PROMPT_VERSION}:common-second`)).toBeNull();
+    expect(extensionScanReplay(true, "owned", learnedUsage, SCAN_PROMPT_VERSION)).toBeNull();
+  });
   it("never replays an imported or verified scan", () => {
     expect(extensionScanReplay(true, "owned", { ...usage, betsImported: 1 })).toBeNull();
     expect(extensionScanReplay(true, "owned", { ...usage, verificationCompletedAt: new Date() })).toBeNull();

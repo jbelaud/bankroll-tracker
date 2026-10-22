@@ -823,11 +823,12 @@
       "unitConversionWarning": "{count, plural, one {Une mise dépasse 20 u. Vérifie le montant de référence, puis coche pour confirmer l’import.} other {# mises dépassent 20 u. Vérifie le montant de référence, puis coche pour confirmer l’import.}}",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "qualityOffer": {
-        "title": "Un problème avec ce scan ?",
-        "consent": "Envoyer ce scan à Kalivoa pour nous aider à corriger le problème.",
-        "details": "La capture et votre signalement seront envoyés dans le canal Discord privé de l'équipe Kalivoa. Elle peut contenir une référence, un solde ou un pseudo ; ne partagez que si vous l'acceptez.",
-        "issueTypeLabel": "Quel est le problème ?",
+        "title": "Aider à améliorer le scan",
+        "consent": "Partager cette capture et les informations vérifiées avec Kalivoa.",
+        "details": "Partage facultatif, conservé 30 jours dans un espace privé accessible aux administrateurs autorisés. La capture peut contenir une référence, un solde ou un pseudo. Chaque exemple doit être vérifié avant de servir aux améliorations.",
+        "issueTypeLabel": "Quel est votre retour ?",
         "issueTypes": {
+          "confirmed": "Tout est correct, j’ai vérifié",
           "incorrect": "Informations incorrectes",
           "incomplete": "Informations manquantes",
           "other": "Autre problème"

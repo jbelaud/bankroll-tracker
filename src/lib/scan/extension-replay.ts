@@ -7,9 +7,9 @@ export function extensionScanReplay(enabled: boolean, bankrollId: string, usage:
   promptVersion?: string | null;
   verificationCompletedAt?: Date | null;
   extensionReceipt: unknown;
-}): unknown | null {
+}, promptVersion = SCAN_PROMPT_VERSION): unknown | null {
   if (!enabled || usage.betsImported > 0 || usage.verificationCompletedAt
-    || usage.promptVersion !== SCAN_PROMPT_VERSION) return null;
+    || usage.promptVersion !== promptVersion) return null;
   const saved = usage.extensionReceipt;
   if (!saved || typeof saved !== "object" || !("bankrollId" in saved) || !("response" in saved)) return null;
   if (saved.bankrollId !== bankrollId) return null;
@@ -17,6 +17,6 @@ export function extensionScanReplay(enabled: boolean, bankrollId: string, usage:
   if (!response || typeof response !== "object" || !("scan" in response)) return null;
   const scan = response.scan;
   if (!scan || typeof scan !== "object" || !("promptVersion" in scan)
-    || scan.promptVersion !== SCAN_PROMPT_VERSION) return null;
+    || scan.promptVersion !== promptVersion) return null;
   return response;
 }

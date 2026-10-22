@@ -106,18 +106,25 @@ export function hasConfiguredScanProvider(): boolean {
   return getConfiguredScanProvider() !== null;
 }
 
+export function configuredScanModel(): string | null {
+  const provider = getConfiguredScanProvider();
+  return provider === "gemini" ? getGeminiModel("scan") : provider === "anthropic" ? ANTHROPIC_SCAN_MODEL : null;
+}
+
 export async function analyzeTicketImage({
   base64,
   mediaType,
   taxonomy,
   bookmaker,
   bookmakerRules,
+  commonRules,
 }: {
   base64: string;
   mediaType: ScanMediaType;
   taxonomy: Taxonomy;
   bookmaker?: string;
   bookmakerRules?: string | null;
+  commonRules?: string | null;
 }): Promise<ScanAiResponse> {
   const provider = getConfiguredScanProvider();
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
@@ -128,7 +135,7 @@ export async function analyzeTicketImage({
       model,
       contents: [
         { inlineData: { mimeType: mediaType, data: base64 } },
-        { text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+        { text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules, commonRules }) },
       ],
       config: {
         systemInstruction: STRICT_SCAN_SYSTEM_PROMPT,
@@ -162,7 +169,7 @@ export async function analyzeTicketImage({
           role: "user",
           content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+            { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules, commonRules }) },
           ],
         },
       ],

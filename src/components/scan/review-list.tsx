@@ -361,7 +361,8 @@ export function ReviewList({
                 disabled={importing}
                 className="min-h-touch rounded-lg border border-input bg-background px-3 text-sm"
               >
-                <option value="INCORRECT">{t("qualityOffer.issueTypes.incorrect")}</option>
+                <option value="CONFIRMED">{t("qualityOffer.issueTypes.confirmed")}</option>
+                  <option value="INCORRECT">{t("qualityOffer.issueTypes.incorrect")}</option>
                 <option value="INCOMPLETE">{t("qualityOffer.issueTypes.incomplete")}</option>
                 <option value="OTHER">{t("qualityOffer.issueTypes.other")}</option>
               </select>

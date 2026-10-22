@@ -10,10 +10,7 @@ const ISSUE_LABELS: Record<QualityIssueType, string> = {
 
 export async function sendQualityReportToDiscord({
   reportId,
-  bookmaker,
   issueType,
-  issueDetails,
-  image,
 }: {
   reportId: string;
   bookmaker: string;
@@ -39,30 +36,28 @@ export async function sendQualityReportToDiscord({
 
   const payload = {
     username: "Kalivoa · Scan bêta",
+    allowed_mentions: { parse: [] },
     embeds: [{
       title: "Nouveau signalement de scan",
+      url: "https://kalivoa.com/fr/admin",
+      description: "Consulter le signalement dans l’espace administrateur authentifié de Kalivoa.",
       color: 0x5865F2,
       fields: [
         { name: "Type", value: ISSUE_LABELS[issueType], inline: true },
-        { name: "Bookmaker", value: bookmaker.slice(0, 100), inline: true },
         { name: "Rapport", value: reportId, inline: false },
-        ...(issueDetails ? [{ name: "Précision", value: issueDetails.slice(0, 1_000), inline: false }] : []),
       ],
     }],
   };
-  const form = new FormData();
-  form.append("payload_json", JSON.stringify(payload));
-  form.append("files[0]", image, `scan.${image.type.split("/")[1] ?? "png"}`);
-
   try {
-    const response = await fetch(url, { method: "POST", body: form, signal: AbortSignal.timeout(10_000) });
+    // Captures and free-text comments stay in Kalivoa's private report storage.
+    const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: AbortSignal.timeout(10_000) });
     if (!response.ok) {
       console.error("[scan-quality] Discord webhook failed", response.status);
       return { sent: false, reason: "failed" as const };
     }
     return { sent: true as const };
-  } catch (error) {
-    console.error("[scan-quality] Discord webhook failed", error);
+  } catch {
+    console.error("[scan-quality] Discord webhook failed");
     return { sent: false, reason: "failed" as const };
   }
 }

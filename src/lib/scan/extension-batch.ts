@@ -25,6 +25,9 @@ export async function extensionMessage<T>(link: ExtensionLink, message: object):
 export type CaptureInfo = { id: string; createdAt: number; hostname: string; size: number };
 export type BatchReceipt = { key: string; file: File; scan?: ScanTicketResult; skipped?: string[] };
 export function canReuseExtensionReceipt(row: BatchReceipt): boolean {
+  // Learned complements may change without a new frontend build: let the server
+  // verify the active revision instead of trusting this browser receipt.
+  if (row.scan?.promptVersion.includes(":common-")) return false;
   if (row.scan) return isCurrentScanDraft([row.scan]);
   return Boolean(row.skipped);
 }

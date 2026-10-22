@@ -209,6 +209,7 @@ export function ScanFlow({
             form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
             form.append("finalExtraction", JSON.stringify(finalExtraction));
             form.append("model", scan.model);
+            form.append("promptVersion", scan.promptVersion);
             if (scan.detectedBookmaker) form.append("detectedBookmaker", scan.detectedBookmaker);
             if (scan.detectionConfidence !== null) form.append("detectionConfidence", String(scan.detectionConfidence));
             const response = await fetch("/api/scan-quality", { method: "POST", body: form, signal: AbortSignal.timeout(30_000) });
@@ -279,6 +280,7 @@ export function ScanFlow({
         form.append("rawExtraction", JSON.stringify(scan.rawExtraction));
         form.append("finalExtraction", "[]");
         form.append("model", scan.model);
+        form.append("promptVersion", scan.promptVersion);
         if (scan.detectedBookmaker) form.append("detectedBookmaker", scan.detectedBookmaker);
         if (scan.detectionConfidence !== null) form.append("detectionConfidence", String(scan.detectionConfidence));
         return fetch("/api/scan-quality", { method: "POST", body: form });
