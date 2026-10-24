@@ -24,6 +24,8 @@ model User {
   email     String   @unique
   name      String?
   createdAt DateTime @default(now())
+  emailMarketingPreference EmailMarketingPreference?
+  emailMarketingChoices EmailMarketingChoice[]
 
   // Identité publique commune à toutes les bankrolls partagées par ce membre.
   // Les champs restent facultatifs pour préserver les comptes existants.
@@ -114,6 +116,31 @@ enum Currency {
   EUR
   USD
   GBP
+}
+
+model EmailMarketingPreference {
+  userId String @id @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled Boolean @default(false)
+  consentedEmail String? @map("consented_email")
+  consentVersion String @map("consent_version")
+  chosenAt DateTime @default(now()) @map("chosen_at") @db.Timestamptz(6)
+  @@map("email_marketing_preferences")
+}
+
+model EmailMarketingChoice {
+  id BigInt @id @default(autoincrement())
+  userId String @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled Boolean
+  email String
+  consentVersion String @map("consent_version")
+  statement String
+  locale String
+  source String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  @@index([userId, createdAt], map: "email_marketing_choices_user_created_idx")
+  @@map("email_marketing_choices")
 }
 
 enum AccountingCurrency {

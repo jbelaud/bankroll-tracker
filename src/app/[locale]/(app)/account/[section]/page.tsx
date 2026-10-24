@@ -23,6 +23,9 @@ import { ScanQualityReports } from "@/components/account/scan-quality-reports";
 import { SignOutButton } from "@/components/account/sign-out-button";
 import { FeedbackButton } from "@/components/account/feedback-button";
 
+import { getEmailMarketingPreference } from "@/lib/email-marketing/preferences";
+import { EmailMarketingPreference } from "@/components/account/email-marketing-preference";
+
 const sectionKeys = ["profile", "subscription", "tracking", "public-profile", "data", "help"] as const;
 type Section = (typeof sectionKeys)[number];
 
@@ -39,6 +42,7 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
 
   switch (section) {
     case "profile": {
+      const emailPreference = await getEmailMarketingPreference(user.id, user.email ?? "");
       const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { currency: true } });
       content = <div className="space-y-6">
         <section className="border-b border-border pb-5">
@@ -46,6 +50,7 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
           <p className="mt-2 break-all text-sm text-muted-foreground">{user.email}</p>
         </section>
         <div className="space-y-3"><LanguageSwitcher /><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
+        <EmailMarketingPreference locale={locale} enabled={emailPreference?.enabled ?? false} />
       </div>;
       break;
     }
