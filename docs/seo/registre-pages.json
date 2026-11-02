@@ -5,7 +5,7 @@
     "fr",
     "en"
   ],
-  "scope": "25 chemins du sitemap, 50 URL localisées. Ce registre ne donne pas le total des pages indexées ni toutes les routes publiques hors sitemap.",
+  "scope": "26 chemins du sitemap, 52 URL localisées. Ce registre ne donne pas le total des pages indexées ni toutes les routes publiques hors sitemap.",
   "pages": [
     {
       "path": "",
@@ -306,6 +306,17 @@
       "route": "src/app/[locale]/responsible-gambling/page.tsx",
       "intent": "Trouver les ressources de jeu responsable",
       "kind": "support",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/offre-bienvenue",
+      "route": "src/app/[locale]/(marketing)/offre-bienvenue/page.tsx",
+      "intent": "Comprendre l'offre de bienvenue Kalivoa et ses conditions",
+      "kind": "product",
       "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
       "volume": "à vérifier",
       "difficulty": "à vérifier",
