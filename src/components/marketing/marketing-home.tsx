@@ -18,6 +18,8 @@ import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { HomeJsonLd } from "./home-json-ld";
 import { LandingViewTracker } from "@/components/growth/landing-view-tracker";
+import { PricingPlans } from "./pricing-plans";
+import { CertificationOverview } from "./certification-overview";
 
 type Icon = ComponentType<{ size?: number; weight?: "regular" | "bold" | "fill"; className?: string; "aria-hidden"?: boolean }>;
 
@@ -39,6 +41,7 @@ const stepItems: { key: "upload" | "review" | "analyze"; icon: Icon }[] = [
 const faqKeys = [
   "what",
   "import",
+  "certification",
   "completed",
   "bookmakers",
   "review",
@@ -81,6 +84,11 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
                 {t("hero.secondaryCta")}
               </a>
             </div>
+            <Link href="/certification" locale={locale} className="marketing-text-link mt-5 inline-flex min-h-10 items-center gap-2 text-sm">
+              <ShieldCheck size={19} weight="fill" aria-hidden />
+              {t("hero.certificationCta")}
+              <ArrowRight size={16} aria-hidden />
+            </Link>
             <ul className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
               <li className="flex items-start gap-2">
                 <ShieldCheck size={19} className="mt-0.5 shrink-0 text-profit" weight="fill" aria-hidden />
@@ -106,6 +114,8 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
           ))}
         </div>
       </section>
+
+      <CertificationOverview locale={locale} />
 
       <section id="features" className="marketing-section">
         <div className="kalivoa-content-frame">
@@ -205,18 +215,8 @@ export async function MarketingHome({ locale }: { locale: Locale }) {
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">{t("pricing.title")}</h2>
             <p className="mt-5 text-base leading-7 text-muted-foreground">{t("pricing.description")}</p>
           </div>
-          <div className="marketing-card mx-auto mt-9 max-w-3xl p-6 sm:p-8">
-            <div className="grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
-              <div>
-                <h3 className="text-xl font-semibold">{t("pricing.cardTitle")}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("pricing.cardDescription")}</p>
-              </div>
-              <Link href="/pricing" locale={locale} className="marketing-secondary-cta justify-center">
-                {t("pricing.cta")}
-                <ArrowRight size={17} weight="bold" aria-hidden />
-              </Link>
-            </div>
-          </div>
+          <div className="mt-9"><PricingPlans locale={locale} /></div>
+          <Link href="/pricing" locale={locale} className="marketing-text-link mt-6">{t("pricing.cta")}<ArrowRight size={17} aria-hidden /></Link>
         </div>
       </section>
 

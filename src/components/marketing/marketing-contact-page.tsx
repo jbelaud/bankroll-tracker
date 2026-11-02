@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
+import { COMPANY } from "@/lib/company";
 
 const copy = {
   fr: {
@@ -29,7 +30,8 @@ const copy = {
     discordTitle: "Vous préférez échanger avec la communauté ?",
     discordDescription: "Le serveur Discord Kalivoa est ouvert aux retours sur la bêta. N’y publiez aucune donnée personnelle ni capture contenant des informations sensibles.",
     discordCta: "Rejoindre le Discord",
-    note: "Kalivoa ne dispose pas encore d’une adresse e-mail publique de support. Elle devra être publiée avec l’identité légale de l’éditeur avant toute commercialisation.",
+    note: "Vous pouvez aussi écrire directement au support Kalivoa, même sans compte :",
+    phone: "Téléphone de contact :",
     home: "Accueil",
   },
   en: {
@@ -50,7 +52,8 @@ const copy = {
     discordTitle: "Would you rather talk with the community?",
     discordDescription: "The Kalivoa Discord welcomes beta feedback. Do not post personal data or screenshots containing sensitive information.",
     discordCta: "Join Discord",
-    note: "Kalivoa does not yet have a public support email address. It must be published with the publisher's legal identity before commercial availability.",
+    note: "You can also email Kalivoa support directly, even without an account:",
+    phone: "Contact telephone:",
     home: "Home",
   },
 } as const;
@@ -104,7 +107,10 @@ export function MarketingContactPage({ locale }: { locale: Locale }) {
           </div>
         </section>
 
-        <p className="mt-6 rounded-xl border border-warning/25 bg-warning/5 px-4 py-3 text-xs leading-5 text-muted-foreground">{page.note}</p>
+        <div className="mt-6 space-y-2 rounded-xl border border-border bg-card/45 px-4 py-3 text-sm leading-6 text-muted-foreground">
+          <p>{page.note}{" "}<a href={`mailto:${COMPANY.publicEmail}`} className="marketing-text-link break-all">{COMPANY.publicEmail}</a></p>
+          <p>{page.phone}{" "}<a href={COMPANY.publicPhoneHref} className="marketing-text-link whitespace-nowrap">{locale === "en" ? COMPANY.publicPhoneInternational : COMPANY.publicPhone}</a></p>
+        </div>
       </div>
     </article>
   );

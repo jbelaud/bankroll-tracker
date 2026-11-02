@@ -82,8 +82,8 @@ export default async function BookmakersPage({ params }: { params: Promise<{ loc
         <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-border bg-card/40 p-4 sm:mt-10 sm:p-5">
           <p className="text-sm leading-6 text-muted-foreground">
             {locale === "fr"
-              ? "Kalivoa est indépendant et n’est affilié à aucun bookmaker. Les statuts indiquent la validation de la compatibilité avec Kalivoa Scan. Vous vérifiez toujours les informations extraites avant l’import."
-              : "Kalivoa is independent and is not affiliated with any bookmaker. Statuses indicate compatibility validation with Kalivoa Scan. You always review the extracted information before importing."}
+              ? "Kalivoa est indépendant des bookmakers. Les éventuels liens de parrainage ou partenaires sont signalés séparément. Les statuts indiquent la validation de la compatibilité avec Kalivoa Scan. Vous vérifiez toujours les informations extraites avant l’import."
+              : "Kalivoa is independent of bookmakers. Any referral or partner links are identified separately. Statuses indicate compatibility validation with Kalivoa Scan. You always review the extracted information before importing."}
           </p>
           <Link href="/screenshot-import" locale={locale} className="marketing-text-link mt-3 text-sm">
             {locale === "fr" ? "Comprendre l’import par capture" : "Learn how screenshot import works"}

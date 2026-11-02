@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 const faqKeys = [
   "what",
   "import",
+  "certification",
   "completed",
   "bookmakers",
   "review",
@@ -50,6 +51,7 @@ export async function FaqPage({ locale }: { locale: Locale }) {
             <p className="mt-4 text-base leading-7 text-muted-foreground sm:mt-6 sm:text-lg sm:leading-8">{t("faq.description")}</p>
             <div className="mt-7 flex flex-wrap gap-2 text-sm">
               <Link href="/screenshot-import" locale={locale} className="rounded-full border border-border px-3 py-2 font-medium hover:bg-muted">{locale === "fr" ? "Import par capture" : "Screenshot import"}</Link>
+              <Link href="/certification" locale={locale} className="rounded-full border border-border px-3 py-2 font-medium hover:bg-muted">Certification</Link>
               <Link href="/bookmakers" locale={locale} className="rounded-full border border-border px-3 py-2 font-medium hover:bg-muted">{locale === "fr" ? "Bookmakers compatibles" : "Compatible bookmakers"}</Link>
               <Link href="/pricing" locale={locale} className="rounded-full border border-border px-3 py-2 font-medium hover:bg-muted">{locale === "fr" ? "Tarifs" : "Pricing"}</Link>
             </div>

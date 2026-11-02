@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { getSiteUrlForPath } from "@/lib/site";
+import { PricingPlans } from "./pricing-plans";
 
 type MarketingPageKey =
   | "features"
@@ -99,6 +100,8 @@ export async function MarketingInfoPage({
               </div>
             ) : null}
           </header>
+
+          {isPricingJourney && <div className="mt-10 sm:mt-14"><PricingPlans locale={locale} /></div>}
 
           <section className={`${isProductJourney ? "mt-10 sm:mt-14" : "mt-14"} max-w-3xl`}>
             <h2 className="text-2xl font-semibold tracking-[-0.025em]">{text(pageKey + "sectionTitle")}</h2>

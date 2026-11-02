@@ -1,0 +1,170 @@
+{
+  "2026-10-19.1": {
+    "fr": {
+      "title": "Confidentialité et données personnelles",
+      "intro": "Mise à jour du 19 octobre 2026. Cette politique décrit les traitements, destinataires, durées et droits applicables à Kalivoa. La bêta reste active ; les fonctions de paiement décrites s’appliqueront à l’ouverture des abonnements.",
+      "sections": [
+        {
+          "title": "1. Responsable du traitement",
+          "paragraphs": [
+            "Le responsable du traitement est ETS BELAUD, société par actions simplifiée unipersonnelle (SASU) au capital de 500 €, dont le siège social est situé 61 rue de Lyon, 75012 Paris, France, immatriculée sous le numéro 994 223 212 RCS Paris (SIREN 994 223 212, SIRET du siège 994 223 212 00014). Contact pour les données personnelles : contact.kalivoa@gmail.com ; tu peux aussi écrire au siège social."
+          ]
+        },
+        {
+          "title": "2. Données et caractère obligatoire",
+          "paragraphs": [
+            "Le compte utilise un identifiant, une adresse email et les informations de profil transmises lors de la connexion. L’authentification est nécessaire pour utiliser ton espace personnel. Les bankrolls, paris, mises, résultats, préférences, brouillons d’import et analyses sont enregistrés selon ton utilisation du service.",
+            "Le paiement utilise les références client, abonnement et facture Stripe, le statut de paiement et l’adresse de facturation. Sans les informations nécessaires au paiement, l’abonnement ne peut pas être souscrit. Kalivoa ne stocke pas le numéro complet de ta carte ni son cryptogramme.",
+            "Le profil public, les liens partagés, le parrainage, les offres partenaires, les retours de support et les signalements de scans sont facultatifs. Ne joins pas de pièce d’identité, de mot de passe ou de coordonnées bancaires à une capture ou à un message de support."
+          ]
+        },
+        {
+          "title": "3. Finalités et bases légales",
+          "paragraphs": [
+            "L’exécution du contrat permet de gérer ton compte, tes données de suivi, les extractions demandées, les quotas, l’abonnement et le support nécessaire au service. Les obligations légales justifient la facturation et la conservation des pièces comptables.",
+            "L’intérêt légitime à sécuriser et exploiter le service justifie les contrôles d’accès, la prévention des abus et le traitement des incidents, dans la limite de ce qui est nécessaire. Tu peux t’opposer à un traitement fondé sur cet intérêt pour des raisons liées à ta situation.",
+            "Les signalements volontaires avec capture reposent sur ton consentement spécifique. Une prospection commerciale ou un suivi de navigation non indispensable exige une base légale et, lorsque requis, un consentement distinct ; accepter les CGV ne vaut pas accepter ces usages."
+          ]
+        },
+        {
+          "title": "4. Scans ordinaires et signalements volontaires",
+          "paragraphs": [
+            "Les scans ordinaires sont transmis à Google Gemini pour extraire les informations visibles. Les brouillons conservent les résultats structurés, sans créer une archive permanente du fichier image dans le stockage applicatif.",
+            "Le projet Gemini Kalivoa Production utilise un niveau payant ; la journalisation facultative est désactivée. Les conditions payantes excluent l’utilisation des entrées et sorties pour améliorer les produits Google. Google conserve néanmoins des données pour la surveillance des abus pendant 55 jours ; un examen humain autorisé peut intervenir à cette fin. Kalivoa ne promet pas une absence totale de conservation chez ce fournisseur.",
+            "Un signalement accepté séparément conserve la capture, les extractions, corrections et détails dans un espace privé pendant 30 jours, avec suppression quotidienne des rapports expirés. Tu peux aussi supprimer ton signalement dans Compte > Mes données. Les nouvelles notifications Discord contiennent seulement un type de problème et une référence technique, sans image ni commentaire ; consulter le dossier demande un accès administrateur Kalivoa. Contacte-nous pour le retrait séparé d’une ancienne copie déjà envoyée à Discord."
+          ]
+        },
+        {
+          "title": "5. Destinataires et prestataires",
+          "paragraphs": [
+            "Les personnes autorisées d’ETS BELAUD et les fournisseurs nécessaires accèdent aux données pour leurs missions : Vercel pour l’hébergement, Supabase pour la base, la connexion et les fichiers privés, Google Gemini pour l’extraction et les analyses, Stripe pour le paiement et Resend pour les notifications.",
+            "La base Supabase est en Irlande, les bases Neon sont réservées aux prévisualisations et Resend utilise la région Irlande pour les notifications Kalivoa. Le support par email passe par Gmail. Discord reçoit des notifications techniques. Les sauvegardes externalisées sont chiffrées avant leur dépôt dans le Google Drive privé de l’éditeur, avec les clés conservées séparément.",
+            "Si tu rends une bankroll ou un profil public, les informations choisies deviennent accessibles aux visiteurs du lien ou de la page. Désactiver leur publication n’efface pas les copies déjà réalisées par des tiers. Les destinataires des récompenses de parrainage ou partenaires ne reçoivent que les informations nécessaires à leur traitement."
+          ]
+        },
+        {
+          "title": "6. Transferts hors Espace économique européen",
+          "paragraphs": [
+            "Les opérations des fournisseurs peuvent avoir lieu hors de l’EEE. La base Supabase est en Irlande ; l’exécution serveur Vercel se situe actuellement aux États-Unis. La région d’une base ou d’un expéditeur ne signifie pas que tous les traitements restent en Europe.",
+            "Les accords de traitement de Google, Supabase, Stripe et Resend prévoient notamment des clauses contractuelles types selon les transferts concernés. Vercel publie un accord pour ses offres Pro et Enterprise ; la régularisation du forfait d’hébergement reste un préalable à l’ouverture commerciale.",
+            "Documents publics : https://business.safety.google/processorterms/, https://supabase.com/legal/customer-resources/data-processing-addendum, https://stripe.com/fr/legal/dpa, https://resend.com/legal/dpa et https://vercel.com/legal/dpa. Pour des informations ou une copie des garanties, contacte contact.kalivoa@gmail.com."
+          ]
+        },
+        {
+          "title": "7. Durées de conservation",
+          "paragraphs": [
+            "Ton historique est conservé tant que le compte reste actif. Après deux ans sans activité, un compte sans abonnement payant peut faire l’objet d’une clôture : un avertissement doit être effectivement livré, puis tu disposes d’au moins 30 jours pour te reconnecter ou exporter tes données. Une reconnexion interrompt cette procédure. La suppression automatique des comptes reste désactivée.",
+            "Les brouillons sont supprimés après 30 jours sans modification et les signalements expirent après 30 jours, par un traitement quotidien. Le support courant est conservé 12 mois après clôture, et les mesures de parcours 6 mois. Le tri des emails de support dans Gmail suit la même durée de 12 mois après clôture. Une demande encore ouverte, un litige ou une obligation légale peut justifier une conservation distincte, limitée au nécessaire.",
+            "Les factures et pièces comptables sont conservées au moins dix ans, dans une archive à accès restreint. Les preuves contractuelles et litiges sont séparés des données courantes. La suppression du compte ne supprime pas les pièces légalement requises. La conservation annoncée des crédits permanents après résiliation concerne un compte conservé ; elle ne dispense pas de l’avertissement avant une clôture pour inactivité.",
+            "Les sauvegardes chiffrées servent à restaurer le service après incident, avec accès réservé à l’administration. Les archives courantes sont conservées 30 jours puis placées dans la corbeille Drive, qui peut ajouter 30 jours de récupération. Une restauration doit réappliquer les demandes d’effacement déjà exécutées, sans réactiver un compte supprimé."
+          ]
+        },
+        {
+          "title": "8. Cookies et stockage du navigateur",
+          "paragraphs": [
+            "Les cookies de session permettent la connexion et les préférences nécessaires au fonctionnement. Les identifiants de parcours et informations d’acquisition utilisés pour les mesures facultatives ne sont activés qu’après ton accord.",
+            "Tu peux accepter ou refuser ces mesures avec la même facilité, puis modifier ton choix avec le bouton « Choix confidentialité ». Le refus n’empêche pas d’utiliser le service. Le choix est mémorisé six mois ; son retrait supprime les identifiants de parcours du navigateur et bloque les nouveaux événements facultatifs. Un identifiant pseudonyme n’est pas une donnée anonyme."
+          ]
+        },
+        {
+          "title": "9. Tes droits",
+          "paragraphs": [
+            "Tu peux demander l’accès, la rectification, l’effacement, la limitation et, lorsque les conditions sont réunies, la portabilité ou l’opposition. Tu peux retirer un consentement sans remettre en cause les traitements licites antérieurs. Adresse ta demande à contact.kalivoa@gmail.com ou au siège social en précisant l’email du compte. Une vérification proportionnée d’identité peut être nécessaire.",
+            "L’export est disponible dans Compte > Mes données. La résiliation de l’abonnement et la suppression du compte sont des demandes différentes : une résiliation conserve le compte gratuit et les crédits permanents restants, dont l’usage requiert un abonnement payant.",
+            "Une réponse est apportée en principe dans le mois suivant la demande ; une prolongation de deux mois est possible en cas de complexité ou de nombreuses demandes, avec information dans le premier mois. Tu peux introduire une réclamation auprès de la CNIL sur cnil.fr."
+          ]
+        },
+        {
+          "title": "10. Sécurité et analyses automatisées",
+          "paragraphs": [
+            "Les accès à l’espace personnel sont authentifiés et les signalements sont stockés dans un espace privé. Les contrôles techniques réduisent les risques sans permettre de promettre une sécurité absolue.",
+            "Les indicateurs et extractions automatiques servent à ton suivi ; ils peuvent comporter des erreurs et doivent être vérifiés. Ils ne constituent pas une décision produisant à elle seule un effet juridique sur toi. Les données personnelles ne sont pas vendues."
+          ]
+        }
+      ]
+    },
+    "en": {
+      "title": "Privacy and personal data",
+      "intro": "Updated October 19, 2026. This policy describes Kalivoa processing, recipients, retention and your rights. Beta remains active; the payment features described will apply when subscriptions open.",
+      "sections": [
+        {
+          "title": "1. Data controller",
+          "paragraphs": [
+            "The data controller is ETS BELAUD, a French single-member simplified joint-stock company (SASU) with share capital of €500, registered office at 61 rue de Lyon, 75012 Paris, France, registered under 994 223 212 RCS Paris (SIREN 994 223 212, registered-office SIRET 994 223 212 00014). For personal-data requests, contact contact.kalivoa@gmail.com or write to the registered office."
+          ]
+        },
+        {
+          "title": "2. Data and required information",
+          "paragraphs": [
+            "Your account uses an identifier, email and profile information provided at sign-in. Authentication is required for your private space. Bankrolls, bets, stakes, results, preferences, import drafts and analyses are recorded as you use the service.",
+            "Billing uses Stripe customer, subscription and invoice references, payment status and billing address. Without required payment details, you cannot subscribe. Kalivoa does not store full card numbers or security codes.",
+            "Public profiles, shared links, referrals, partner offers, support messages and scan reports are optional. Do not include identity documents, passwords or banking details in screenshots or support messages."
+          ]
+        },
+        {
+          "title": "3. Purposes and legal bases",
+          "paragraphs": [
+            "Contract performance covers your account, tracking data, requested extraction, quotas, subscription and necessary support. Legal obligations cover invoicing and accounting records.",
+            "Our legitimate interest in secure operation covers access controls, abuse prevention and incidents, limited to what is necessary. You may object to processing on this basis for reasons relating to your situation.",
+            "Voluntary reports with screenshots use specific consent. Marketing or non-essential navigation tracking requires an appropriate legal basis and separate consent where required. Accepting sales terms does not consent to these purposes."
+          ]
+        },
+        {
+          "title": "4. Ordinary scans and voluntary reports",
+          "paragraphs": [
+            "Ordinary scans are sent to Google Gemini to extract visible information. Drafts retain structured results without creating a permanent image archive in application storage.",
+            "Kalivoa Production uses a paid Gemini tier with optional logging disabled. Paid-service terms exclude using input and output to improve Google products. Google nevertheless retains data for abuse monitoring for 55 days; authorised human review may occur for that purpose. Kalivoa does not promise zero provider retention.",
+            "A separately authorised report stores its screenshot, extractions, corrections and details privately for 30 days, with daily removal of expired reports. You may also delete your report in Account > My data. New Discord notifications contain only an issue type and technical reference, without images or comments; viewing a report requires Kalivoa administrator access. Contact us about separately removing an older copy previously sent to Discord."
+          ]
+        },
+        {
+          "title": "5. Recipients and providers",
+          "paragraphs": [
+            "Authorised ETS BELAUD staff and necessary providers process data: Vercel for hosting, Supabase for the database, authentication and private files, Google Gemini for extraction and analysis, Stripe for payments, and Resend for notifications.",
+            "The Supabase database is in Ireland, Neon is reserved for previews, and Resend uses Ireland for Kalivoa notifications. Support email uses Gmail. Discord receives technical notifications. External backups are encrypted before upload to the publisher’s private Google Drive, with keys kept separately.",
+            "If you publish a bankroll or profile, selected information becomes accessible to page or link visitors. Unpublishing cannot erase copies already made by others. Referral and partner rewards use only the information needed to process them."
+          ]
+        },
+        {
+          "title": "6. Transfers outside the EEA",
+          "paragraphs": [
+            "Providers may process data outside the EEA. The Supabase database is in Ireland; Vercel server execution currently takes place in the United States. A database or sender region does not mean all processing stays in Europe.",
+            "Google, Supabase, Stripe and Resend processing agreements provide safeguards including standard contractual clauses for applicable transfers. Vercel publishes an agreement for Pro and Enterprise plans; regularising the hosting plan remains a prerequisite for commercial launch.",
+            "Public documents: https://business.safety.google/processorterms/, https://supabase.com/legal/customer-resources/data-processing-addendum, https://stripe.com/fr/legal/dpa, https://resend.com/legal/dpa and https://vercel.com/legal/dpa. Request information or copies of safeguards at contact.kalivoa@gmail.com."
+          ]
+        },
+        {
+          "title": "7. Retention",
+          "paragraphs": [
+            "History is retained while your account is active. After two years of inactivity, an account without a paid subscription may be closed only after a warning is actually delivered and at least 30 days to sign in again or export data. Signing in stops this procedure. Automatic account deletion remains disabled.",
+            "Drafts unchanged for 30 days and reports reaching 30 days are removed by daily cleanup. Ordinary closed support is retained for 12 months and journey measurements for 6 months. Gmail support messages follow the same 12-month rule after closure. Open requests, disputes or legal obligations may require separate necessary retention.",
+            "Invoices and accounting records are archived for at least ten years with restricted access. Contract and dispute evidence is separated from ordinary data. Account deletion does not remove legally required records. Permanent credits retained after cancellation relate to an account that is kept; this does not remove the warning required before closure for inactivity.",
+            "Encrypted backups support incident recovery with administrator-only access. Current archives are retained for 30 days then moved to Drive Trash, which may add 30 days of recovery. Restoration must reapply completed erasure requests without reactivating deleted accounts."
+          ]
+        },
+        {
+          "title": "8. Cookies and browser storage",
+          "paragraphs": [
+            "Session cookies support sign-in and necessary preferences. Optional journey identifiers and acquisition measurements only activate after you agree.",
+            "Acceptance and refusal are equally accessible. You can change your choice with the privacy-choice button. Refusal does not prevent service use. The choice is remembered for six months; withdrawal removes browser journey identifiers and blocks new optional events. Pseudonymous identifiers are not anonymous data."
+          ]
+        },
+        {
+          "title": "9. Your rights",
+          "paragraphs": [
+            "You may request access, correction, erasure, restriction and, when applicable, portability or objection. Consent can be withdrawn without affecting prior lawful processing. Contact contact.kalivoa@gmail.com or the registered office and identify your account email. Proportionate identity verification may be necessary.",
+            "Export is available from Account > My data. Subscription cancellation and account deletion are different requests: cancellation retains a free account and unused permanent credits, which require an active paid subscription to use.",
+            "We normally respond within one month. A two-month extension is possible for complexity or numerous requests, with notice during the first month. You may complain to the French supervisory authority, CNIL, at cnil.fr."
+          ]
+        },
+        {
+          "title": "10. Security and automated analyses",
+          "paragraphs": [
+            "Private access is authenticated and quality reports use private storage. Technical safeguards reduce risk but do not guarantee absolute security.",
+            "Automated indicators and extractions assist tracking and may be inaccurate; review them. They do not on their own constitute a decision with legal effects on you. Personal data is not sold."
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -68,34 +68,133 @@
     }
   },
   "partners": {
-    "publicAccess": { "eyebrow": "For Kalivoa members", "title": "Your benefits are in your member area", "description": "This page introduces our partners and planned benefits. Offer links, codes and terms are available in your Kalivoa account, under Partners.", "open": "Access my offers", "signup": "Create my Kalivoa account", "card": "View offer in my member area" },
-    "member": { "eyebrow": "Your partner area", "title": "Partners", "description": "Bookmaker offers and tools to support your tracking.", "permanent": "Permanent scans", "once": "Once per offer and account", "myScans": "My scans", "available": "bookmaker offers available", "perOffer": "scans per validated offer", "noExpiryValue": "No expiry", "noExpiryLabel": "after scans are awarded", "howTitle": "How do you receive your scans?", "steps": { "choose": { "title": "Review the terms", "description": "Choose an offer and check your eligibility before registering." }, "refer": { "title": "Use your Kalivoa access", "description": "Register through the link or code on this page, then declare your referral." }, "validate": { "title": "Receive scans after validation", "description": "Once the referral is confirmed, 30 scans are added to your account with no expiry." } }, "validationPending": "After registering through the Kalivoa link or code, declare your referral on this page. We check it with the bookmaker before awarding scans. Clicking a link or copying a code is not enough.", "reassuranceTitle": "Benefits with transparency", "reassurance": "Kalivoa scans are separate from bookmaker bonuses. Betting is for adults and carries a risk of loss: keep your limits and do not play more to receive a benefit.", "signIn": "Sign in again", "rewardSummary": "30 permanent scans per validated offer", "offerCount": "{count, plural, =0 {No active offers} one {# active offer} other {# active offers}}", "validationNotice": "Declare your referral after registering. Scans are awarded after verification." },
-    "meta": { "title": "Kalivoa partners", "description": "Explore Kalivoa’s referral links and collaborations under discussion: analysis tools, bankroll tracking and offer terms." },
-    "nav": "Partners", "home": "Home", "breadcrumb": "Breadcrumb",
+    "publicAccess": {
+      "eyebrow": "For Kalivoa members",
+      "title": "Your benefits are in your member area",
+      "description": "This page introduces our partners and planned benefits. Offer links, codes and terms are available in your Kalivoa account, under Partners.",
+      "open": "Access my offers",
+      "signup": "Create my Kalivoa account",
+      "card": "View offer in my member area"
+    },
+    "member": {
+      "eyebrow": "Your partner area",
+      "title": "Partners",
+      "description": "Bookmaker offers and tools to support your tracking.",
+      "permanent": "Permanent scans",
+      "once": "Once per offer and account",
+      "myScans": "My scans",
+      "available": "bookmaker offers available",
+      "perOffer": "scans per validated offer",
+      "noExpiryValue": "No expiry",
+      "noExpiryLabel": "after scans are awarded",
+      "howTitle": "How do you receive your scans?",
+      "steps": {
+        "choose": {
+          "title": "Review the terms",
+          "description": "Choose an offer and check your eligibility before registering."
+        },
+        "refer": {
+          "title": "Use your Kalivoa access",
+          "description": "Register through the link or code on this page, then declare your referral."
+        },
+        "validate": {
+          "title": "Receive scans after validation",
+          "description": "Once the referral is confirmed, 30 scans are added to your account with no expiry."
+        }
+      },
+      "validationPending": "After registering through the Kalivoa link or code, declare your referral on this page. We check it with the bookmaker before awarding scans. Clicking a link or copying a code is not enough.",
+      "reassuranceTitle": "Benefits with transparency",
+      "reassurance": "Kalivoa scans are separate from bookmaker bonuses. Betting is for adults and carries a risk of loss: keep your limits and do not play more to receive a benefit.",
+      "signIn": "Sign in again",
+      "rewardSummary": "30 permanent scans per validated offer",
+      "offerCount": "{count, plural, =0 {No active offers} one {# active offer} other {# active offers}}",
+      "validationNotice": "Declare your referral after registering. Scans are awarded after verification."
+    },
+    "meta": {
+      "title": "Kalivoa partners",
+      "description": "Explore Kalivoa’s referral links and collaborations under discussion: analysis tools, bankroll tracking and offer terms."
+    },
+    "nav": "Partners",
+    "home": "Home",
+    "breadcrumb": "Breadcrumb",
     "eyebrow": "Offers and tools · with transparency",
     "title": "Kalivoa partners",
     "description": "Discover selected offers and tools to help you track, analyse and manage your bankroll.",
     "positioning": "Kalivoa helps you keep a clear view of your bets and limits. These resources support your tracking and analysis.",
-    "principles": { "tracking": "Bankroll tracking", "analysis": "Analysis", "discipline": "Discipline and transparency" },
+    "principles": {
+      "tracking": "Bankroll tracking",
+      "analysis": "Analysis",
+      "discipline": "Discipline and transparency"
+    },
     "tabsLabel": "Partner types",
-    "bookmakers": { "tab": "Bookmaker offers", "title": "Bookmaker offers", "description": "Review the available referral offers and their terms before deciding to register.", "emptyTitle": "No offers available at the moment", "emptyDescription": "Confirmed offers and their terms will be shown here." },
-    "tools": { "tab": "Tools and services", "title": "Tools to help you understand and track", "description": "Discover useful tools and services to improve your analysis and tracking. Collaborations under discussion are clearly identified.", "emptyTitle": "New collaborations in preparation", "emptyDescription": "Tools and benefits will be presented once collaborations are confirmed." },
+    "bookmakers": {
+      "tab": "Bookmaker offers",
+      "title": "Bookmaker offers",
+      "description": "Review the available referral offers and their terms before deciding to register.",
+      "emptyTitle": "No offers available at the moment",
+      "emptyDescription": "Confirmed offers and their terms will be shown here."
+    },
+    "tools": {
+      "tab": "Tools and services",
+      "title": "Tools to help you understand and track",
+      "description": "Discover useful tools and services to improve your analysis and tracking. Collaborations under discussion are clearly identified.",
+      "emptyTitle": "New collaborations in preparation",
+      "emptyDescription": "Tools and benefits will be presented once collaborations are confirmed."
+    },
     "categoriesLabel": "Tool and service categories",
-    "categories": { "bookmaker": "Bookmaker", "odds": "Odds alerts and analysis", "data": "Statistics and data", "community": "Communities", "training": "Training", "other": "Additional tools" },
-    "statuses": { "ACTIVE": "Available", "COMING_SOON": "Coming soon", "PREPARATION": "Partner in preparation", "UNAVAILABLE": "Temporarily unavailable", "ARCHIVED": "Archived" },
+    "categories": {
+      "bookmaker": "Bookmaker",
+      "odds": "Odds alerts and analysis",
+      "data": "Statistics and data",
+      "community": "Communities",
+      "training": "Training",
+      "other": "Additional tools"
+    },
+    "statuses": {
+      "ACTIVE": "Available",
+      "COMING_SOON": "Coming soon",
+      "PREPARATION": "Partner in preparation",
+      "UNAVAILABLE": "Temporarily unavailable",
+      "ARCHIVED": "Archived"
+    },
     "scansNotice": "Bookmaker bonuses are separate from Kalivoa scans. No scan benefit is currently advertised for these offers. Any future benefit will include its quantity and award conditions.",
     "scansNoticeWithRewards": "Bookmaker bonuses are separate from Kalivoa scans. Scan benefits shown on the cards are awarded after the specified action has been validated, subject to their own terms.",
-    "referralBadge": "Referral", "featured": "Featured", "freeScans": "{count} free scans",
-    "permanentScans": "Permanent scans with no expiry.", "scanExpiry": "Scans valid for {days} days after they are awarded.",
-    "offerExpires": "Offer valid until {date}.", "offerExpired": "Offer period ended on {date}.",
-    "seeConditions": "View terms", "fullConditions": "Full terms from the partner", "newWindow": "(new tab)",
-    "referralCode": "Referral code", "copy": "Copy", "copied": "Copied", "copyAria": "Copy the {name} referral code",
+    "referralBadge": "Referral",
+    "featured": "Featured",
+    "freeScans": "{count} free scans",
+    "permanentScans": "Permanent scans with no expiry.",
+    "scanExpiry": "Scans valid for {days} days after they are awarded.",
+    "offerExpires": "Offer valid until {date}.",
+    "offerExpired": "Offer period ended on {date}.",
+    "seeConditions": "View terms",
+    "fullConditions": "Full terms from the partner",
+    "newWindow": "(new tab)",
+    "referralCode": "Referral code",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyAria": "Copy the {name} referral code",
     "copyFailed": "Automatic copying failed. You can select and copy the displayed code.",
-    "viewReferral": "View referral", "viewTool": "Explore the service", "referralLink": "Referral link", "partnerLink": "Partner link",
-    "preparationNotice": "Benefits will be detailed if the collaboration is confirmed.", "unavailableNotice": "This offer is not currently active.",
-    "transparency": { "title": "Identified links, accessible terms", "description": "Some links on this page may be partner or referral links. They may allow Kalivoa to receive compensation, at no additional cost to you.", "terms": "Benefits depend on each offer’s terms. Select ‘View terms’ on each card and review the partner’s full conditions. Bookmaker offers are restricted to eligible adults.", "link": "Kalivoa terms of use" },
-    "responsible": { "title": "Keep your limits in focus", "description": "Betting carries a risk of loss and is prohibited for minors. Set a budget you can afford to lose, keep control of your gambling and take a break if needed. An offer should not lead you to increase your stakes or gamble more.", "link": "Read our responsible gambling resources" },
-    "loading": "Loading partners…", "errorTitle": "Partners are temporarily unavailable", "errorDescription": "Please try again in a few moments.", "retry": "Try again"
+    "viewReferral": "View referral",
+    "viewTool": "Explore the service",
+    "referralLink": "Referral link",
+    "partnerLink": "Partner link",
+    "preparationNotice": "Benefits will be detailed if the collaboration is confirmed.",
+    "unavailableNotice": "This offer is not currently active.",
+    "transparency": {
+      "title": "Identified links, accessible terms",
+      "description": "Offers available in your account may include partner or referral links. These links may allow Kalivoa to receive compensation, at no additional cost to you.",
+      "terms": "Benefits depend on each offer’s terms. Sign in to your Kalivoa account and open Partners to review links, codes and conditions before taking any action. Also check the partner’s complete terms. Bookmaker offers are restricted to eligible adults.",
+      "link": "Kalivoa terms of use"
+    },
+    "responsible": {
+      "title": "Keep your limits in focus",
+      "description": "Betting carries a risk of loss and is prohibited for minors. Set a budget you can afford to lose, keep control of your gambling and take a break if needed. An offer should not lead you to increase your stakes or gamble more.",
+      "link": "Read our responsible gambling resources"
+    },
+    "loading": "Loading partners…",
+    "errorTitle": "Partners are temporarily unavailable",
+    "errorDescription": "Please try again in a few moments.",
+    "retry": "Try again"
   },
   "scanCredits": {
     "total": "{count} scans available",
@@ -107,8 +206,20 @@
     "expiringTitle": "Scans with a limited validity period",
     "permanentTitle": "Permanent scans: {count}",
     "alert": "{count} of your scans expire soon. Use them before {date}.",
-    "types": { "MONTHLY": "Monthly scans", "INITIAL": "Initial scans", "REFERRAL": "Referral scans", "PARTNER": "Partner scans", "PROMOTIONAL": "Promotional scans" },
-    "origins": { "historyImport": "History import bonus", "legacyReferral": "Referral: historical balance", "betaReferral": "Beta referral" }
+    "types": {
+      "MONTHLY": "Monthly scans",
+      "INITIAL": "Initial scans",
+      "REFERRAL": "Referral scans",
+      "PARTNER": "Partner scans",
+      "PROMOTIONAL": "Promotional scans"
+    },
+    "origins": {
+      "historyImport": "History import bonus",
+      "legacyReferral": "Referral: historical balance",
+      "betaReferral": "Beta referral"
+    },
+    "lockedInitial": "Your {count} permanent bonus scans are retained. Reactivate a paid subscription to use them.",
+    "paidBonusCondition": "The initial bonus requires an active paid subscription. It is retained after cancellation and is not granted again when resubscribing."
   },
   "common": {
     "cancel": "Cancel",
@@ -139,7 +250,6 @@
       "lossAriaLabel": "Progress toward loss limit"
     }
   },
-
   "nav": {
     "ariaLabel": "Main navigation",
     "home": "Home",
@@ -156,7 +266,6 @@
     "statsMobile": "Stats",
     "aiInsights": "AI analysis",
     "tipsters": "Tipsters",
-    "tipsterSpace": "Tipster space",
     "myTipsters": "My tipsters",
     "referrals": "Referrals",
     "admin": "Administration",
@@ -170,84 +279,6 @@
       "manage": "My space"
     }
   },
-
-  "tipsterSpace": {
-    "eyebrow": "Kalivoa certification",
-    "title": "My tipster space",
-    "intro": "Set up your public identity, manage your bankrolls and track every step required to earn a certification level.",
-    "progress": "{done}/{total} steps completed",
-    "viewProfile": "View my public profile",
-    "configureProfile": "Set up my profile",
-    "manageBankrolls": "Manage my bankrolls",
-    "status": {
-      "profileIncomplete": "Public profile to complete",
-      "suspended": "Profile suspended",
-      "inactive": "Certification to activate",
-      "certified": "{count, plural, one {# certified bankroll} other {# certified bankrolls}}",
-      "unverified": "Insufficient proof level",
-      "observation": "Under observation"
-    },
-    "pathTitle": "Your path to certification",
-    "pathIntro": "Certification is calculated separately for each public bankroll. Your profile then brings their levels together without mixing their performance.",
-    "done": "Completed",
-    "todo": "To do",
-    "step": "Step {number}",
-    "steps": {
-      "profile": {
-        "title": "Create your public identity",
-        "description": "Choose your name, @handle, bio and visuals. This information is shared across all your public bankrolls."
-      },
-      "bankroll": {
-        "title": "Prepare a bankroll",
-        "description": "Set its private reference amount and complete any historical units required before publication."
-      },
-      "publish": {
-        "title": "Activate certification",
-        "description": "Publish the bankroll. Tracking starts on that date and never certifies earlier bets retroactively."
-      },
-      "certify": {
-        "title": "Build your proof history",
-        "description": "Scan tickets before the event, then scan their results. Reach 10 settled bets and at least 40/100."
-      }
-    },
-    "bankrollsTitle": "My bankrolls and their certification",
-    "bankrollsIntro": "Each public bankroll keeps its own score, volume, followers and proof history.",
-    "createBankroll": "Create a bankroll",
-    "emptyTitle": "No public bankroll",
-    "emptyDescription": "Publish a bankroll to show its certification progress here.",
-    "trackingSince": "Tracking started on {date}",
-    "notStarted": "Certification inactive",
-    "public": "Public",
-    "hidden": "Page hidden",
-    "private": "Private",
-    "score": "Score",
-    "level": "Level",
-    "completeVolume": "Complete volume",
-    "settledProgress": "Settled bets",
-    "volumeProgress": "Tracked volume",
-    "observationHelp": "The level remains under observation before 10 settled bets. Volume and financial results do not determine certification.",
-    "certificationResult": "Current level: {level}.",
-    "corrections": "{count, plural, one {# recorded correction} other {# recorded corrections}}",
-    "missingReference": "Set the private reference amount for this bankroll before publishing it.",
-    "missingUnits": "{count, plural, one {Complete the unit for the remaining historical bet before publication.} other {Complete the units for the # remaining historical bets before publication.}}",
-    "readyToPublish": "This bankroll is ready: open it to add its public presentation and activate certification.",
-    "manage": "Manage",
-    "viewPublicPage": "View public page",
-    "rulesTitle": "When does a bankroll become certified?",
-    "rulesIntro": "It leaves observation after 10 settled bets. Proof quality then determines its level, regardless of profit or loss.",
-    "rules": {
-      "bets": "settled bets minimum",
-      "bronze": "minimum score for Bronze"
-    },
-    "levels": {
-      "gold": "Gold",
-      "silver": "Silver",
-      "bronze": "Bronze",
-      "unverified": "Not certified",
-      "observation": "Under observation"
-    }
-  },
-
   "aiInsights": {
     "eyebrow": "Dedicated page · Premium",
     "title": "AI analysis",
@@ -265,7 +296,6 @@
     "bankrollsLink": "View bankrolls →",
     "limits": "Closing odds are entered manually. CLV measures the quality of the price obtained; AI analysis remains an interpretation to check against the bets and metrics."
   },
-
   "subscriptionStatus": {
     "ariaLabel": "View my subscription",
     "label": "Subscription",
@@ -275,17 +305,15 @@
     "betaDetail": "End date set by Kalivoa",
     "betaPremium": "Beta Premium",
     "premium": "Premium",
-    "periodEnd": "Billing date: {date}",
+    "periodEnd": "Access until {date}",
     "active": "Active access"
   },
-
   "footer": {
     "label": "Responsible gambling:",
     "privacy": "Privacy",
     "terms": "Terms",
     "responsible": "Help"
   },
-
   "auth": {
     "login": {
       "title": "Sign in",
@@ -364,12 +392,12 @@
         "preview": {
           "bets": "Bets",
           "roi": "ROI",
-          "profit": "Profit"
+          "profit": "Profit",
+          "caption": "Interface illustration — fictional data, with no promise of gains."
         }
       }
     }
   },
-
   "dashboard": {
     "title": "Overview",
     "workspaceSubtitle": "A quick view of all your bankrolls and recent bets.",
@@ -396,9 +424,18 @@
         "description": "Share your screenshots and feedback with the beta community."
       },
       "steps": {
-        "bankroll": { "title": "Create your bankroll", "description": "Choose your bookmaker and starting capital." },
-        "scan": { "title": "Import your bets", "description": "Upload a screenshot or add your first bets." },
-        "stats": { "title": "Track your progress", "description": "Find your capital, ROI and performance." }
+        "bankroll": {
+          "title": "Create your bankroll",
+          "description": "Choose your bookmaker and starting capital."
+        },
+        "scan": {
+          "title": "Import your bets",
+          "description": "Upload a screenshot or add your first bets."
+        },
+        "stats": {
+          "title": "Track your progress",
+          "description": "Find your capital, ROI and performance."
+        }
       }
     },
     "community": {
@@ -416,11 +453,11 @@
       "upgradeCta": "Unlock more scans"
     },
     "personalConversion": {
-      "title": "My personal conversion",
+      "title": "Personal reference amount",
       "privateBadge": "Private",
-      "reference": "Personal capital: {amount}",
+      "reference": "{amount} reference",
       "oneUnit": "1u = {amount} for you",
-      "missing": "Set your personal capital to see the equivalent of tipsters' units.",
+      "missing": "Set your global reference to convert tipsters' units.",
       "edit": "Edit",
       "configure": "Configure"
     },
@@ -451,7 +488,13 @@
       "missingUnitCurve": "{count, plural, one {One settled bet has no recorded units. The unit chart cannot be calculated.} other {# settled bets have no recorded units. The unit chart cannot be calculated.}}",
       "filtersAriaLabel": "Open advanced filters",
       "notEnoughData": "No data for this period.",
-      "periods": { "7d": "7d", "30d": "30d", "90d": "3m", "1y": "1y", "all": "All" },
+      "periods": {
+        "7d": "7d",
+        "30d": "30d",
+        "90d": "3m",
+        "1y": "1y",
+        "all": "All"
+      },
       "statsCta": "Statistics",
       "historyCta": "History"
     },
@@ -482,7 +525,6 @@
       "scanResult": "Scan the result"
     }
   },
-
   "bankrolls": {
     "title": "Bankrolls",
     "subtitle": "{count, plural, =0 {Create your first bankroll to get started.} one {# bankroll to track.} other {# bankrolls to track.}}",
@@ -526,8 +568,14 @@
       "bookmakerManualPlaceholder": "Bookmaker name",
       "modeLabel": "Capital organization",
       "modes": {
-        "SINGLE": { "title": "Single balance", "description": "One capital amount, regardless of the bookmaker." },
-        "DISTRIBUTED": { "title": "Split by bookmaker", "description": "One total capital split across several bookmakers." }
+        "SINGLE": {
+          "title": "Single balance",
+          "description": "One capital amount, regardless of the bookmaker."
+        },
+        "DISTRIBUTED": {
+          "title": "Split by bookmaker",
+          "description": "One total capital split across several bookmakers."
+        }
       },
       "allocationsTitle": "Capital split",
       "allocationsDescription": "The bookmaker amounts must add up to the starting capital.",
@@ -540,16 +588,15 @@
       "namePlaceholder": "E.g. Main bankroll",
       "initialLabel": "Starting capital ({currency})",
       "initialHint": "Changing the starting capital automatically recalculates this bankroll's current balance.",
-      "referenceLabel": "Capital corresponding to 100 units for this bankroll (optional, {currency})",
+      "referenceLabel": "Reference amount (optional, {currency})",
       "referencePlaceholder": "E.g. 5,000",
-      "referenceHint": "Enter the value of 100 units, not 1 unit: €5,000 for 100 units means 1 unit = €50. This value converts tickets in this bankroll. It does not recalculate existing bets or change viewers' personal settings.",
+      "referenceHint": "1 unit = 1% of the reference amount. With a €5,000 reference, 1 unit = €50 and a scanned €125 stake is 2.5 units. This setting does not change previously recorded units or subscribers' private conversion.",
       "singleHistoryHint": "Past bookmaker details remain in the history. New bets will use the single balance.",
       "submitCreate": "Create bankroll",
       "submitEdit": "Save changes",
       "submitting": "Saving…"
     }
   },
-
   "bankrollDetail": {
     "ariaLabel": "Bankroll detail",
     "realBalance": "Real balance",
@@ -625,14 +672,16 @@
     "movementNotePlaceholder": "E.g. transfer to my bank account",
     "movementSubmit": "Save movement",
     "movementSubmitting": "Saving…",
-    "movementTypes": { "DEPOSIT": "Deposit", "WITHDRAWAL": "Withdrawal" },
+    "movementTypes": {
+      "DEPOSIT": "Deposit",
+      "WITHDRAWAL": "Withdrawal"
+    },
     "deleteMovement": "Delete",
     "deleteMovementConfirm": "Delete this movement?",
     "deleteConfirmTitle": "Delete this bankroll?",
     "deleteConfirmWithBets": "This will also permanently delete {count, plural, one {# bet} other {# bets}} associated with this bankroll. This action is irreversible.",
     "deleteConfirmNoBets": "This action is irreversible."
   },
-
   "tipsters": {
     "title": "My tipsters",
     "description": "Keep your betting sources together and compare their actual performance.",
@@ -699,8 +748,19 @@
       "monthlyEmpty": "No monthly data for this period.",
       "month": "Month",
       "betsTitle": "Associated bets",
-      "period": { "from": "From", "to": "To", "apply": "Apply", "all": "All time" },
-      "frequencies": { "ONE_TIME": "One-time", "WEEKLY": "Weekly", "MONTHLY": "Monthly", "QUARTERLY": "Quarterly", "YEARLY": "Yearly" }
+      "period": {
+        "from": "From",
+        "to": "To",
+        "apply": "Apply",
+        "all": "All time"
+      },
+      "frequencies": {
+        "ONE_TIME": "One-time",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "QUARTERLY": "Quarterly",
+        "YEARLY": "Yearly"
+      }
     },
     "costEditor": {
       "state": "Cost type",
@@ -718,8 +778,21 @@
       "stopTitle": "End or pause",
       "stopDescription": "The cost will no longer be counted after this date. The tipster remains active.",
       "stop": "End this period",
-      "frequencies": { "ONE_TIME": "One-time", "WEEKLY": "Weekly", "MONTHLY": "Monthly", "QUARTERLY": "Quarterly", "YEARLY": "Yearly" },
-      "errors": { "TIPSTER_NOT_FOUND": "Tipster not found.", "INVALID_DATE": "Check the dates.", "INVALID_AMOUNT": "Enter a valid amount.", "INVALID_FREQUENCY": "Choose a valid frequency.", "START_BEFORE_CURRENT": "The new period must start after the latest saved period.", "NO_COST_PERIOD": "There is no cost period to end." }
+      "frequencies": {
+        "ONE_TIME": "One-time",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "QUARTERLY": "Quarterly",
+        "YEARLY": "Yearly"
+      },
+      "errors": {
+        "TIPSTER_NOT_FOUND": "Tipster not found.",
+        "INVALID_DATE": "Check the dates.",
+        "INVALID_AMOUNT": "Enter a valid amount.",
+        "INVALID_FREQUENCY": "Choose a valid frequency.",
+        "START_BEFORE_CURRENT": "The new period must start after the latest saved period.",
+        "NO_COST_PERIOD": "There is no cost period to end."
+      }
     },
     "form": {
       "createTitle": "Add a tipster",
@@ -755,7 +828,6 @@
       "archived": "Archived"
     }
   },
-
   "scan": {
     "installExtension": "Install the Chrome extension",
     "title": "OCR Scan",
@@ -797,22 +869,15 @@
     },
     "review": {
       "title": "Bets detected ({count})",
-      "resultProofTitle": "Bet result detected",
-      "resultProofBatchTitle": "Results detected ({count})",
       "restart": "Start over",
-      "targetedResultTitle": "The existing bet will be updated",
-      "targetedResultDescription": "Kalivoa compares this screenshot with the selected bet, then adds its result and Scan proof. No new bet will be created.",
-      "targetedResultBatchTitle": "The existing bets will be updated",
-      "targetedResultBatchDescription": "Kalivoa compares each screenshot with pending certified bets. The batch is rejected if a match is ambiguous and no new bet will be created.",
       "existingResultUpdateTitle": "{count, plural, one {This result will update the existing bet} other {These # results will update the existing bets}}",
       "existingResultUpdateDescription": "After confirmation, Kalivoa will settle the previously recorded bet and add its Scan proof. No new bet will be created.",
       "pendingTicketWarning": "This ticket appears to be recorded as pending already. Check the status at the top of the screenshot: if the result is visible, select it here before importing. Kalivoa will update the existing bet.",
-      "duplicateWarning": "Bets outlined in orange: no reference on the ticket, but date/stake/odds/description match a bet you already have — check it isn't a duplicate before confirming.",
+      "duplicateWarning": "Bets outlined in orange have a known ticket reference or details similar to an existing bet. Check for duplicates before confirming.",
       "duplicateScanSkipped": "Already analyzed screenshot skipped: {files}. The other screenshots in this batch were analyzed.",
       "suggestedWarning": "Some bets don't have a matching existing type — look for the “[Suggested type…]” prefix in their description.",
       "taxonomyMismatchWarning": "Some sports and bet types are not in the current list. Check them before importing: detected labels are preserved so statistics remain accurate.",
       "bankrollLabel": "Import into this bankroll",
-      "resultProofBankrollLabel": "Selected bankroll",
       "unitConversion": "Reference: {reference} · 1 u = {value} (1%)",
       "unitConversionMissing": "No reference amount is set for this bankroll: unit conversion is unavailable.",
       "unitConversionHelp": "The ticket stake is read in currency and converted using this bankroll's reference amount. Check the units shown on each bet before importing. After changing the reference in Bankrolls, refresh the conversion here.",
@@ -823,11 +888,12 @@
       "unitConversionWarning": "{count, plural, one {One stake exceeds 20 units. Check the reference amount, then tick to confirm import.} other {# stakes exceed 20 units. Check the reference amount, then tick to confirm import.}}",
       "bookmakerMismatch": "The scan detects {detected}, but the selected bankroll uses {selected}. Check the bankroll before importing.",
       "qualityOffer": {
-        "title": "Was there a problem with this scan?",
-        "consent": "Send this scan to Kalivoa so we can fix the issue.",
-        "details": "The screenshot and your report will be sent to the Kalivoa team's private Discord channel. It may contain a reference, balance or username; only share it if you agree.",
-        "issueTypeLabel": "What is the issue?",
+        "title": "Help improve scanning",
+        "consent": "Share this screenshot and the reviewed information with Kalivoa.",
+        "details": "Optional sharing, kept for 30 days in private storage accessible to authorized administrators. Screenshots may contain a reference, balance or username. Each example is reviewed before being used for improvements.",
+        "issueTypeLabel": "What is your feedback?",
         "issueTypes": {
+          "confirmed": "Everything is correct, I checked",
           "incorrect": "Incorrect information",
           "incomplete": "Missing information",
           "other": "Other issue"
@@ -837,14 +903,13 @@
       },
       "import": "{count, plural, one {Import # bet} other {Import # bets}}",
       "importing": "Importing…",
-      "updatingResult": "Updating result…",
-      "updateResult": "Update the result",
-      "updateResults": "{count, plural, one {Update the result} other {Update the # results}}",
       "noneToImport": "No bets to import",
       "card": {
         "excludeAriaLabel": "Exclude bet {index}",
         "reintegrate": "Restore",
         "duplicateBadge": "Possible duplicate — check before importing",
+        "duplicateReferenceBadge": "Known ticket reference — check before importing",
+        "ticketReference": "Ticket reference: {reference}",
         "existingResultUpdateBadge": "Same bet recognized — result will be updated",
         "pendingTicketBadge": "Ticket already pending — check the result",
         "suggestedBadge": "Bet type not recognized — suggestion in the description",
@@ -876,7 +941,10 @@
       "discordDescription": "Join the beta Discord to share feedback and bookmaker screenshots, after hiding any personal data.",
       "joinDiscord": "Join Discord",
       "scanAgainCta": "Scan more screenshots",
-      "dashboardCta": "Go to my dashboard"
+      "dashboardCta": "Go to my dashboard",
+      "reuseBankrollTitle": "Add these bets to another bankroll",
+      "reuseBankrollDescription": "Choose another bankroll, then review stakes, currency and conversion before saving. Reusing this scan does not use another Scan credit.",
+      "reuseBankrollCta": "Review for this bankroll"
     },
     "empty": {
       "title": "No bets found",
@@ -907,7 +975,6 @@
       "submitting": "Adding…"
     }
   },
-
   "fileImport": {
     "dateOrder": {
       "label": "Date format",
@@ -949,15 +1016,6 @@
       "warnings": "Rows to review",
       "betAnalytixDetected": "Bet-Analytix export recognized",
       "betAnalytixDetails": "Statuses, bet types and odds are converted automatically. {count, plural, =0 {No separate selection row.} one {# selection row was grouped into its accumulator.} other {# selection rows were grouped into their accumulators.}}",
-      "baCurrencyLabel": "Currency of the original Bet-Analytix bankroll",
-      "baCurrencyPlaceholder": "Choose the currency used in BA",
-      "baCurrencyUnit": "U — Unit",
-      "baCurrencyEur": "€ — Euro",
-      "baCurrencyUsd": "$ — US dollar",
-      "baCurrencyGbp": "£ — British pound",
-      "baCurrencyHelp": "The BA file does not state its currency. Check it in BA: the stake will be imported as is, without conversion.",
-      "baCurrencyRequired": "Choose the currency used in the original Bet-Analytix bankroll.",
-      "baCurrencyMismatch": "Choose a Kalivoa bankroll with the same currency as the original BA bankroll.",
       "baUnitValueLabel": "Private currency value of 1 BA unit",
       "baUnitValueHelp": "The Stake column is already in units: 1.25 stays 1.25u. This value only controls private currency amounts and the balance. The default is 1u = 1 in your currency.",
       "baUnitValueError": "Enter the currency value of 1 Bet-Analytix unit for this bankroll.",
@@ -989,7 +1047,7 @@
       "resultsTitle": "Recognized statuses",
       "resultsValues": "P = pending · W = won · L = lost · R or C = refunded/cancelled · CASH = cash out. HW and HL are accepted with a warning because Kalivoa does not yet calculate half-wins and half-losses natively.",
       "betAnalytixTitle": "Bet-Analytix compatibility",
-      "betAnalytixDescription": "The Export_Formatted_Bet-Analytix.csv format is recognized natively. Because the file does not state its currency, choose the currency of the original BA bankroll. Stakes are imported without conversion into a Kalivoa bankroll with the same currency. Accumulator selections, tipster, closing odds and estimated probability are preserved in dedicated fields. American or fractional odds are converted to decimal.",
+      "betAnalytixDescription": "The Export_Formatted_Bet-Analytix.csv format is recognized natively. Stakes are imported as units. Accumulator selections, tipster, closing odds and estimated probability are preserved in dedicated fields. American or fractional odds are converted to decimal.",
       "notImportedTitle": "Bet-Analytix columns without a Kalivoa equivalent",
       "notImportedDescription": "Commission, Bonus and Eachway are not stored yet because Kalivoa does not currently have matching fields. They never prevent an import."
     },
@@ -1001,7 +1059,6 @@
       "history": "View my history"
     }
   },
-
   "scanApi": {
     "noBetsFound": "No betting ticket was detected in this image. Your quota was not used.",
     "unsupportedImage": "Unsupported image format. Send a PNG, JPEG, GIF, or WebP image.",
@@ -1014,12 +1071,11 @@
     "tooManyScans": "Too many scans. Try again in about {minutes} min.",
     "monthlyQuotaExceeded": "Monthly scan quota reached. Please come back next month.",
     "duplicateScan": "This screenshot has already been analyzed. It cannot count twice.",
-    "duplicateScanImported": "This screenshot has already been imported ({count} bet(s)). It cannot count twice.",
+    "duplicateScanImported": "This screenshot has already been imported into this bankroll. It cannot count twice here.",
     "duplicateScanPending": "This screenshot was analyzed but has not been imported yet. Resume it in “Pending imports”.",
     "bankrollLocked": "This bankroll is locked on the Freemium plan. Upgrade to Premium to access it.",
     "forbiddenOrigin": "Origin not allowed."
   },
-
   "stats": {
     "title": "Stats",
     "workspace": {
@@ -1242,7 +1298,6 @@
       "summary": "{count, plural, one {# bet} other {# bets}} · win rate {rate}"
     }
   },
-
   "history": {
     "title": "History",
     "filters": {
@@ -1347,7 +1402,6 @@
       "saving": "Saving…"
     }
   },
-
   "referral": {
     "title": "Refer friends, earn OCR scans",
     "description": "Invite friends to test Kalivoa during the beta. Your friend gets 10 OCR scans after their first valid scan, and you can earn up to 20 lifetime OCR scans for every active referral.",
@@ -1390,7 +1444,6 @@
     "privacy": "Referral email addresses are masked to protect their privacy.",
     "referredRewardMessage": "Your first valid scan unlocked {count} lifetime OCR scans."
   },
-
   "account": {
     "title": "Account",
     "intro": "Find all your settings in one place.",
@@ -1469,23 +1522,34 @@
     "plan": {
       "title": "Subscription",
       "betaTestingTitle": "Feature in preparation",
-      "betaTestingDescription": "The beta is free. Subscription details will be available later.",
+      "betaTestingDescription": "The beta is free. Premium is planned at €4.99/month or €49.99/year, tax included, with a welcome offer for eligible accounts.",
       "betaEndedTitle": "The beta phase has ended",
       "betaEndedDescription": "Thank you for your feedback. You can now choose the Freemium plan.",
       "switchToFreemium": "Switch to Freemium",
       "freeDescription": "Freemium: up to 2 active bankrolls and 10 AI scans/month.",
-      "premiumActive": "Premium active — renews on {date}.",
+      "premiumActive": "Premium active — access until {date}.",
       "premiumActiveNoDate": "Premium active.",
-      "betaPremiumActive": "Beta Premium active — renews on {date}.",
+      "betaPremiumActive": "Premium with welcome offer — access until {date}.",
       "betaPremiumActiveNoDate": "Beta Premium active.",
-      "upgradeStandard": "Upgrade to Premium (€19.99/year)",
-      "upgradeBeta": "Upgrade to Premium — €9.99",
-      "betaOfferDetails": "Beta offer: €9.99 for the first year, then €19.99/year.",
+      "upgradeStandard": "Continue to checkout",
+      "upgradeBeta": "Use my welcome offer",
+      "betaOfferDetails": "One welcome offer per account: €2.99/month for 12 months then €4.99/month, or €24.99 for the first year then €49.99/year, tax included. Activate before 31 December 2026, 11:59 pm (Paris).",
+      "viewWelcomeOffer": "Explore my welcome offer",
       "initialCredits": "Import credit: {count} scans remaining until {date}.",
       "manage": "Manage subscription",
       "stripeNotConfigured": "Payments aren't set up yet. Try again later.",
       "checkoutFailed": "Unable to open checkout right now. Please try again in a moment.",
-      "noSubscription": "No active subscription to manage."
+      "noSubscription": "No active subscription to manage.",
+      "viewPricing": "View pricing and terms",
+      "billingPeriod": "Choose your billing frequency",
+      "monthly": "{price} / month, tax included",
+      "yearly": "{price} / year, tax included",
+      "monthlyRenewal": "Automatic monthly renewal at the same price.",
+      "yearlyRenewal": "Billed in one payment, annual renewal at the same price.",
+      "monthlyWelcomeRenewal": "For 12 months, then {price}/month, tax included.",
+      "yearlyWelcomeRenewal": "For the first year, then {price}/year, tax included.",
+      "premiumCredits": "200 scans per 30-day period, used first. One 300-scan permanent bonus, usable only with an active paid subscription. Cancel before renewal.",
+      "permanentInitialCredits": "Permanent bonus: {count} scans remaining, usable with an active paid subscription."
     },
     "security": {
       "title": "Security and account"
@@ -1509,7 +1573,6 @@
       "GBP": "British Pound"
     }
   },
-
   "sports": {
     "Football": "Football",
     "Cyclisme": "Cycling",
@@ -1539,7 +1602,6 @@
     "Courses hippiques": "Horse Racing",
     "Autre sport": "Other sport"
   },
-
   "betTypes": {
     "Résultat du match": "Match Result",
     "Victoire finale du tournoi": "Outright Winner",
@@ -1592,7 +1654,6 @@
     "Trio": "Tricast",
     "Autre": "Other"
   },
-
   "admin": {
     "title": "Administration",
     "description": "A clear view of Kalivoa’s growth, product activation, revenue, and operations.",
@@ -1647,7 +1708,10 @@
         "REFERRER_FIFTH_VALID_SCAN": "Referrer · fifth scan",
         "REFERRER_SUBSCRIPTION_PAYMENT": "Referrer · payment"
       },
-      "rewardStatus": { "GRANTED": "granted", "CANCELLED": "cancelled" }
+      "rewardStatus": {
+        "GRANTED": "granted",
+        "CANCELLED": "cancelled"
+      }
     },
     "periodFilter": "Selected period",
     "periods": {
@@ -1758,7 +1822,6 @@
       "OTHER": "Other"
     }
   },
-
   "feedback": {
     "title": "Your feedback matters",
     "description": "Describe the issue or idea. The page you are on is added automatically.",
@@ -1779,7 +1842,6 @@
       "other": "Other feedback"
     }
   },
-
   "errors": {
     "bankrollNotFound": "Bankroll not found.",
     "bankrollLimitReached": "Limit of {limit} bankrolls reached. Upgrade to Premium for unlimited bankrolls.",
@@ -1813,7 +1875,6 @@
     "tipsterNotFound": "Tipster not found.",
     "tipsterDuplicate": "A tipster with this name already exists."
   },
-
   "results": {
     "EN_ATTENTE": "Pending",
     "GAGNE": "Won",
@@ -1821,7 +1882,6 @@
     "REMBOURSE": "Void",
     "CASHE": "Cashed Out"
   },
-
   "marketing": {
     "header": {
       "homeAriaLabel": "Kalivoa home",
@@ -1835,10 +1895,11 @@
       "pricing": "Pricing",
       "faq": "FAQ",
       "login": "Log in",
-      "cta": "Try Kalivoa"
+      "cta": "Try Kalivoa",
+      "certification": "Certification"
     },
     "footer": {
-      "description": "An independent tool to import, organize and analyze your sports-betting history.",
+      "description": "Import slips, track your bankroll and share a history with readable evidence.",
       "languageAriaLabel": "Switch language to French",
       "product": "Product",
       "learn": "Resources",
@@ -1859,17 +1920,19 @@
       "legal": "Legal notice",
       "sales": "Terms of sale",
       "copyright": "© {year} Kalivoa. All rights reserved.",
-      "responsibleNotice": "Adults only. Kalivoa helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service."
+      "responsibleNotice": "Adults only. Kalivoa helps you track bets; it does not place bets and never promises gains. If gambling becomes a problem, seek support from an appropriate local service.",
+      "certification": "Bankroll certification"
     },
     "hero": {
-      "eyebrow": "Kalivoa Scan · screenshot import",
+      "eyebrow": "OCR scan · Bankroll tracking · Certification",
       "title": "Your bets. Your stats. Zero manual entry.",
-      "description": "Add one or more screenshots: Kalivoa Scan reads and structures the visible information. You always review the proposed bets before they are imported into your history.",
+      "description": "Import screenshots, review your bets and track your bankroll. When you share results, Kalivoa also shows the evidence level behind each published bet.",
       "ocrNote": "* OCR means optical character recognition: Kalivoa reads the visible elements in your screenshots to prepare bets for review.",
       "primaryCta": "Start my OCR Scan",
       "secondaryCta": "See the demo",
       "reassuranceOne": "Multiple screenshots and visible slips in one workflow.",
-      "reassuranceTwo": "A mandatory review before every import."
+      "reassuranceTwo": "A mandatory review before every import.",
+      "certificationCta": "Explore bankroll certification"
     },
     "trust": {
       "trustOne": "No bookmaker-account access required",
@@ -1917,7 +1980,7 @@
         },
         "analyze": {
           "title": "Track performance",
-        "description": "Find validated bets in history, bankrolls and statistics."
+          "description": "Find validated bets in history, bankrolls and statistics."
         }
       }
     },
@@ -1958,15 +2021,15 @@
       "title": "Tickets read with the visible context of each bookmaker.",
       "description": "Kalivoa Scan compatibility depends on the ticket, its readability and its bookmaker. Specific rules are applied only when a bookmaker is clearly identified; you always review the result before import.",
       "more": "See compatibility details",
-      "independence": "Kalivoa is independent and is not affiliated with any bookmaker displayed."
+      "independence": "Kalivoa is independent of the bookmakers shown. Referral or partner links are identified separately."
     },
     "pricing": {
       "eyebrow": "Transparent pricing",
-      "title": "Public plans will be shown before any billing takes place.",
-      "description": "The launch configuration is still being validated. This page does not publish unconfirmed prices or benefits.",
-      "cardTitle": "A clear offer before payment",
-      "cardDescription": "Paid features, import limits, renewal terms and applicable prices will be shown in the relevant flow before any payment.",
-      "cta": "Understand pricing"
+      "title": "Start free and choose Premium when you are ready.",
+      "description": "€4.99 per month or €49.99 per year, tax included. The same benefits, with a welcome offer for eligible accounts.",
+      "cardTitle": "200 monthly scans and a permanent bonus",
+      "cardDescription": "Monthly allowance scans are used first and do not roll over. Each 30-day period starts when the allowance is first used. The 300-scan bonus does not expire: the balance is retained after cancellation, but an active paid subscription is required to use it. Resubscribing does not grant another bonus.",
+      "cta": "All prices and terms"
     },
     "faq": {
       "eyebrow": "Frequently asked questions",
@@ -2008,7 +2071,11 @@
         },
         "pricing": {
           "question": "How does the subscription work?",
-          "answer": "Public pricing is still being validated. When a paid plan is offered, its price, limits and renewal terms are shown before payment."
+          "answer": "The beta is free. At launch, Premium will cost €4.99/month or €49.99/year, tax included, with 200 scans per 30-day period and a one-time 300-scan permanent bonus. Eligible accounts receive €2.99/month for 12 months then €4.99/month, or €24.99 for the first year then €49.99/year. Monthly scans are used first and do not roll over; permanent bonus scans require an active paid subscription, including after cancellation. Each allowance starts on first use. You can cancel before automatic renewal."
+        },
+        "certification": {
+          "question": "What does Kalivoa certify on a public bankroll?",
+          "answer": "Kalivoa displays the evidence level behind each published bet: qualified initial slip, scanned or manual result, and recorded corrections. The score measures evidence quality, weighted by stakes in units. It is separate from profitability and is neither a bookmaker-account audit nor a promise of profit."
         }
       }
     },
@@ -2050,7 +2117,7 @@
     "meta": {
       "home": {
         "title": "Kalivoa — OCR betting-slip scan and bankroll tracking",
-        "description": "Use OCR to scan one or more betting-slip screenshots, review structured bets and track your bankroll without manual entry."
+        "description": "Import betting slips with OCR, track your bankroll and explore Kalivoa certification: evidence levels and corrections for a more transparent history."
       },
       "features": {
         "title": "Screenshot import and bankroll tracking features",
@@ -2065,8 +2132,8 @@
         "description": "Organize betting history and view bankroll, profit and ROI indicators with Kalivoa."
       },
       "pricing": {
-        "title": "Kalivoa pricing and subscription",
-        "description": "Kalivoa prices, limits and terms are shown transparently before payment."
+        "title": "Kalivoa pricing: free and Premium from €4.99/month",
+        "description": "Explore Premium at €4.99/month or €49.99/year, tax included: 200 monthly scans, 300 permanent bonus scans and a welcome offer for eligible accounts."
       },
       "bookmakers": {
         "title": "Bookmaker profiles validated for Kalivoa import",
@@ -2102,11 +2169,23 @@
         "sectionTitle": "A simple path from ticket to analysis",
         "intro": "Kalivoa connects every step without taking away control: extracted information remains visible and editable before saving.",
         "points": {
-          "one": { "title": "Add your tickets", "description": "Import one or several screenshots, or enter a bet manually whenever you prefer." },
-          "two": { "title": "Review before saving", "description": "Check the bankroll, stake, odds, status and every detected field before confirming." },
-          "three": { "title": "Understand your history", "description": "Review balance, profit, ROI and breakdowns without mixing bets and capital movements." }
+          "one": {
+            "title": "Add your tickets",
+            "description": "Import one or several screenshots, or enter a bet manually whenever you prefer."
+          },
+          "two": {
+            "title": "Review before saving",
+            "description": "Check the bankroll, stake, odds, status and every detected field before confirming."
+          },
+          "three": {
+            "title": "Understand your history",
+            "description": "Review balance, profit, ROI and breakdowns without mixing bets and capital movements."
+          }
         },
-        "notice": { "title": "You stay in control at every step", "description": "Kalivoa organizes and measures past activity. It does not recommend bets, place stakes or guarantee results." }
+        "notice": {
+          "title": "You stay in control at every step",
+          "description": "Kalivoa organizes and measures past activity. It does not recommend bets, place stakes or guarantee results."
+        }
       },
       "import": {
         "eyebrow": "Betting-slip screenshot reading",
@@ -2115,11 +2194,23 @@
         "sectionTitle": "Ticket-aware reading, with essential review.",
         "intro": "Extraction proposes what is genuinely visible: date, sport, bet type, selection, stake, odds and, when readable, event result and bet status. Everything stays editable.",
         "points": {
-          "one": { "title": "One or several screenshots", "description": "Select multiple images and group visible slips into the same review." },
-          "two": { "title": "Visible slips and statuses", "description": "When a settled ticket shows its status and a bookmaker profile is validated, Kalivoa can propose it for review." },
-          "three": { "title": "Correction before saving", "description": "Adjust bankroll, fields, event result or status before updating history." }
+          "one": {
+            "title": "One or several screenshots",
+            "description": "Select multiple images and group visible slips into the same review."
+          },
+          "two": {
+            "title": "Visible slips and statuses",
+            "description": "When a settled ticket shows its status and a bookmaker profile is validated, Kalivoa can propose it for review."
+          },
+          "three": {
+            "title": "Correction before saving",
+            "description": "Adjust bankroll, fields, event result or status before updating history."
+          }
         },
-        "notice": { "title": "A screenshot is not recognized?", "description": "You can still complete or enter a bet manually. Ordinary images are not retained after analysis." }
+        "notice": {
+          "title": "A screenshot is not recognized?",
+          "description": "You can still complete or enter a bet manually. Ordinary images are not retained after analysis."
+        }
       },
       "bankroll": {
         "eyebrow": "Bankroll tracking",
@@ -2128,24 +2219,48 @@
         "sectionTitle": "Build tracking that stays reliable over time",
         "intro": "Every figure has its place: real capital, deposits and withdrawals, then settled-bet results.",
         "points": {
-          "one": { "title": "Create a bankroll", "description": "Set its bookmaker, reference capital and, when useful, your staking allocations." },
-          "two": { "title": "Separate movements", "description": "Record deposits and withdrawals separately so they are never confused with betting performance." },
-          "three": { "title": "Analyze results", "description": "Filter profit, ROI and history by period, sport, bet type or bookmaker." }
+          "one": {
+            "title": "Create a bankroll",
+            "description": "Set its bookmaker, reference capital and, when useful, your staking allocations."
+          },
+          "two": {
+            "title": "Separate movements",
+            "description": "Record deposits and withdrawals separately so they are never confused with betting performance."
+          },
+          "three": {
+            "title": "Analyze results",
+            "description": "Filter profit, ROI and history by period, sport, bet type or bookmaker."
+          }
         },
-        "notice": { "title": "Figures to understand, not predict", "description": "Indicators only reflect saved data. They do not predict gains or constitute a staking recommendation." }
+        "notice": {
+          "title": "Figures to understand, not predict",
+          "description": "Indicators only reflect saved data. They do not predict gains or constitute a staking recommendation."
+        }
       },
       "pricing": {
         "eyebrow": "Pricing and access",
         "title": "Start for free, without a credit card.",
-        "description": "Creating an account does not activate a paid subscription. Paid plans and their prices will appear here once they are available.",
+        "description": "Compare Freemium, Premium, scan allowances and the welcome offer. The beta remains free while payments are prepared.",
         "sectionTitle": "Always clear before you pay",
-        "intro": "If you later choose a paid plan, you will see its price, limits and renewal terms before reaching payment.",
+        "intro": "Monthly and annual billing provide the same Premium benefits. Prices include applicable taxes; the annual plan is billed in one payment.",
         "points": {
-          "one": { "title": "Free account", "description": "Explore Kalivoa without entering a credit card or triggering a payment." },
-          "two": { "title": "Visible prices and limits", "description": "Every plan will clearly show its features, import limits and price." },
-          "three": { "title": "Controlled renewal", "description": "The billing frequency and renewal terms will be visible before you subscribe." }
+          "one": {
+            "title": "Free account",
+            "description": "Explore Kalivoa without entering a credit card or triggering a payment."
+          },
+          "two": {
+            "title": "Visible prices and limits",
+            "description": "Premium includes 200 scans per 30-day period and a one-time 300-scan permanent bonus. Usage conditions are described above."
+          },
+          "three": {
+            "title": "Controlled renewal",
+            "description": "The welcome offer returns to the standard price after 12 months or the first year. Cancel from your account before automatic renewal."
+          }
         },
-        "notice": { "title": "Paid plans are being prepared", "description": "Public pricing is not open yet. You can create your account for free: signing up never constitutes subscribing to a paid plan." }
+        "notice": {
+          "title": "Paid plans are being prepared",
+          "description": "The beta is currently free. These plans are prepared for the subscription launch; creating an account does not activate a payment."
+        }
       },
       "bookmakers": {
         "eyebrow": "Bookmaker compatibility",
@@ -2154,11 +2269,23 @@
         "sectionTitle": "Why every bookmaker is checked separately",
         "intro": "Ticket layouts, labels and statuses differ. Rules from a validated profile are applied only when its bookmaker is visually identified.",
         "points": {
-          "one": { "title": "Validated profiles", "description": "Winamax, Betclic, Unibet and Bet365 are the currently tested reading profiles." },
-          "two": { "title": "Always review", "description": "Even with a validated profile, extracted data is presented for review before it is saved." },
-          "three": { "title": "Independent service", "description": "Kalivoa is not affiliated with any bookmaker and does not place a stake." }
+          "one": {
+            "title": "Validated profiles",
+            "description": "Winamax, Betclic, Unibet and Bet365 are the currently tested reading profiles."
+          },
+          "two": {
+            "title": "Always review",
+            "description": "Even with a validated profile, extracted data is presented for review before it is saved."
+          },
+          "three": {
+            "title": "Independent service",
+            "description": "Kalivoa is independent of bookmakers and does not place stakes. Any referral links are presented separately."
+          }
         },
-        "notice": { "title": "Controlled evolution", "description": "Other bookmakers can be added to a bankroll. Their screenshot reading is not advertised as validated before dedicated checks." }
+        "notice": {
+          "title": "Controlled evolution",
+          "description": "Other bookmakers can be added to a bankroll. Their screenshot reading is not advertised as validated before dedicated checks."
+        }
       },
       "contact": {
         "eyebrow": "Contact and feedback",
@@ -2167,11 +2294,23 @@
         "sectionTitle": "How to send feedback",
         "intro": "After logging in, use the app feedback form. The current page context is added to make the request easier to handle.",
         "points": {
-          "one": { "title": "Bugs", "description": "Report issues encountered while using the app." },
-          "two": { "title": "Ideas", "description": "Share improvements that would make tracking easier." },
-          "three": { "title": "Data", "description": "Data-related requests can be made through this channel." }
+          "one": {
+            "title": "Bugs",
+            "description": "Report issues encountered while using the app."
+          },
+          "two": {
+            "title": "Ideas",
+            "description": "Share improvements that would make tracking easier."
+          },
+          "three": {
+            "title": "Data",
+            "description": "Data-related requests can be made through this channel."
+          }
         },
-        "notice": { "title": "Public address to add", "description": "No public contact address is configured in the repository. One must be added before open commercial availability." }
+        "notice": {
+          "title": "Public address to add",
+          "description": "No public contact address is configured in the repository. One must be added before open commercial availability."
+        }
       },
       "legal": {
         "eyebrow": "Legal notice",
@@ -2180,11 +2319,23 @@
         "sectionTitle": "Information still required",
         "intro": "This page makes the absence of that information explicit; it does not replace complete legal notice content.",
         "points": {
-          "one": { "title": "Publisher", "description": "Name or legal entity to provide." },
-          "two": { "title": "Contact details", "description": "Address, contact email and other required details to provide." },
-          "three": { "title": "Hosting", "description": "Hosting information to validate and publish." }
+          "one": {
+            "title": "Publisher",
+            "description": "Name or legal entity to provide."
+          },
+          "two": {
+            "title": "Contact details",
+            "description": "Address, contact email and other required details to provide."
+          },
+          "three": {
+            "title": "Hosting",
+            "description": "Hosting information to validate and publish."
+          }
         },
-        "notice": { "title": "Publication to complete", "description": "These details must be approved by the legal owner before commercial opening. Kalivoa does not invent missing legal content." }
+        "notice": {
+          "title": "Publication to complete",
+          "description": "These details must be approved by the legal owner before commercial opening. Kalivoa does not invent missing legal content."
+        }
       },
       "sales": {
         "eyebrow": "Terms of sale",
@@ -2193,12 +2344,82 @@
         "sectionTitle": "Items to validate before a paid offer",
         "intro": "Subscription needs to specify pricing, renewal, cancellation, applicable law and refunds according to the chosen legal framework.",
         "points": {
-          "one": { "title": "Offer and price", "description": "Approved pricing and corresponding limits must be supplied." },
-          "two": { "title": "Renewal", "description": "Renewal and cancellation terms must be validated." },
-          "three": { "title": "Legal information", "description": "Publisher and required contacts must be published alongside the terms." }
+          "one": {
+            "title": "Offer and price",
+            "description": "Approved pricing and corresponding limits must be supplied."
+          },
+          "two": {
+            "title": "Renewal",
+            "description": "Renewal and cancellation terms must be validated."
+          },
+          "three": {
+            "title": "Legal information",
+            "description": "Publisher and required contacts must be published alongside the terms."
+          }
         },
-        "notice": { "title": "No public sale claimed", "description": "This page is not terms of sale. It flags the items that need to be supplied before commercial availability." }
+        "notice": {
+          "title": "No public sale claimed",
+          "description": "This page is not terms of sale. It flags the items that need to be supplied before commercial availability."
+        }
       }
     }
+  },
+  "pricingPlans": {
+    "availability": "Beta is currently free: beta-tester accounts have 4 active bankrolls and 50 scans per 30-day period. The plans below are planned for after beta; paid subscriptions are not yet open. Any Premium invitations follow their own conditions.",
+    "freeTitle": "Free after beta",
+    "freeDescription": "Track your bets and try AI scanning.",
+    "freeBankrolls": "2 active bankrolls",
+    "freeScans": "10 AI scans per 30-day period",
+    "freeCard": "No credit card required",
+    "freeCta": "Create my free account",
+    "premiumTitle": "Premium at launch",
+    "perMonth": " / month, tax included",
+    "annualPrice": "Or {yearlyPrice} per year, tax included, billed in one payment.",
+    "premiumScans": "200 AI scans per 30-day period",
+    "premiumBonus": "300 permanent bonus scans, granted once on your first paid activation",
+    "premiumBankrolls": "Unlimited active bankrolls",
+    "cancellation": "Cancel from your account and retain access until the end of the paid period.",
+    "welcomeTitle": "Welcome offer",
+    "welcomeMonthly": "{welcomeMonthlyPrice}/month for the first 12 months, then {monthlyPrice}/month, tax included.",
+    "welcomeYearly": "{welcomeYearlyPrice} for the first year, then {yearlyPrice}/year, tax included.",
+    "welcomeEligibility": "For beta testers and the first 15 new post-beta members. Activate before 31 December 2026, 11:59 pm (Paris), once per account.",
+    "welcomeLink": "Explore the welcome offer",
+    "premiumCta": "View my subscription",
+    "creditConditions": "Batches expiring soonest are used before permanent credits; the permanent initial 300-scan bonus is used last. The monthly allowance does not roll over, and its 30-day period starts when first used. The initial 300-scan bonus does not expire: its balance is retained after cancellation, but an active paid subscription is required to use it. Resubscribing does not grant another bonus. Referral scans and partner/bookmaker rewards follow their own conditions, shown with each relevant offer.",
+    "renewalConditions": "Automatic renewal at the selected frequency: {monthlyPrice}/month or {yearlyPrice}/year, tax included, after the welcome offer, unless cancelled before renewal. Extra scans are never billed automatically."
+  },
+  "welcomeOffer": {
+    "metaTitle": "Welcome offer for beta testers",
+    "metaDescription": "Kalivoa’s welcome price for beta testers and the first 15 post-beta signups, available until 31 December 2026.",
+    "badge": "Thank you for being here early",
+    "title": "Your first Premium year at a welcome price",
+    "intro": "Helped test Kalivoa? This offer is our way of saying thank you. It also applies to the first 15 new members after the beta.",
+    "deadline": "Activate before 31 December 2026 at 11:59 pm, Paris time.",
+    "betaActive": "The free beta is still running. Paid subscriptions are not open yet. You can activate this offer after the beta ends and before the deadline.",
+    "available": "Subscriptions are open. Sign in with your Kalivoa account to see your eligibility and applicable price before payment.",
+    "expired": "This offer ended on 31 December 2026. Existing subscriptions retain their discount for the promised duration. New subscriptions use standard prices.",
+    "monthly": "Monthly Premium",
+    "yearly": "Annual Premium",
+    "monthlyUnit": " / month, tax included",
+    "yearlyUnit": " for the first year, tax included",
+    "monthlyRenewal": "For the first 12 months, then {price}/month, tax included. Billed monthly.",
+    "yearlyRenewal": "One payment for 12 months, then {price}/year at renewal, tax included.",
+    "scans": "200 scans per 30-day period, with no rollover.",
+    "bonus": "300 permanent scans on your first paid activation.",
+    "cancel": "Cancel online; access continues until your paid period ends.",
+    "betaCta": "Open my account",
+    "offerCta": "Check my offer",
+    "standardCta": "See current prices",
+    "eligibilityTitle": "Who can use this offer?",
+    "betaTitle": "Kalivoa beta testers",
+    "betaEligibility": "Your beta participation is linked to your account. You remain eligible after moving to the free plan without taking one of the 15 new-member places.",
+    "earlyTitle": "The first {count} new members",
+    "earlyEligibility": "After the beta ends, the first {count} new non-beta accounts also qualify. Places are assigned at signup, not at first payment. Administrative accounts are excluded.",
+    "accountCheck": "No promotion code required. Eligible accounts receive the discount automatically. Sharing this link does not grant someone a discount.",
+    "conditionsTitle": "Simple conditions",
+    "conditions": "One welcome offer per account, not combinable with another subscription discount. Subscribe after the beta ends and before the deadline. At the end of the promotional period, subscriptions renew automatically at the standard price unless canceled. The offer deadline does not shorten an existing 12-month discount.",
+    "creditConditions": "The 200 scans are used before the permanent initial bonus. Unused permanent scans remain after cancellation but require an active paid subscription to use. Resubscribing does not grant another bonus. Referral and partner/bookmaker rewards follow their own conditions.",
+    "terms": "Terms of sale",
+    "contact": "Questions? Contact us"
   }
 }

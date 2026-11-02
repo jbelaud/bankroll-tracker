@@ -1,15 +1,16 @@
-import { List } from "@phosphor-icons/react/dist/ssr";
+import { List, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { Brand } from "./brand";
 import { LanguageLink } from "./language-link";
 
-type HeaderLink = { href: string; key: "features" | "import" | "bookmakers" | "partners" | "pricing" | "faq" };
+type HeaderLink = { href: string; key: "features" | "import" | "certification" | "bookmakers" | "partners" | "pricing" | "faq" };
 
 const links: HeaderLink[] = [
   { href: "/features", key: "features" },
   { href: "/screenshot-import", key: "import" },
+  { href: "/certification", key: "certification" },
   { href: "/bookmakers", key: "bookmakers" },
   { href: "/partenaires", key: "partners" },
   { href: "/pricing", key: "pricing" },
@@ -32,8 +33,9 @@ export async function MarketingHeader({ locale }: { locale: Locale }) {
               key={link.href}
               href={link.href}
               locale={locale}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${link.key === "certification" ? "text-primary" : "text-muted-foreground"}`}
             >
+              {link.key === "certification" && <ShieldCheck size={16} weight="fill" aria-hidden />}
               {t(link.key)}
             </Link>
           ))}
@@ -71,8 +73,9 @@ export async function MarketingHeader({ locale }: { locale: Locale }) {
                   key={link.href}
                   href={link.href}
                   locale={locale}
-                  className="min-h-11 rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className={`flex min-h-11 items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${link.key === "certification" ? "text-primary" : "text-foreground"}`}
                 >
+                  {link.key === "certification" && <ShieldCheck size={18} weight="fill" aria-hidden />}
                   {t(link.key)}
                 </Link>
               ))}

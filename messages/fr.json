@@ -68,34 +68,133 @@
     }
   },
   "partners": {
-    "publicAccess": { "eyebrow": "Réservé aux membres Kalivoa", "title": "Vos avantages vous attendent dans votre espace", "description": "Cette page présente nos partenaires et les avantages prévus. Les liens, codes et conditions des offres sont accessibles depuis votre compte Kalivoa, dans la rubrique Partenaires.", "open": "Accéder à mes offres", "signup": "Créer mon compte Kalivoa", "card": "Voir l’offre dans mon espace" },
-    "member": { "eyebrow": "Votre espace partenaires", "title": "Partenaires", "description": "Vos offres bookmakers et outils pour accompagner votre suivi.", "permanent": "Scans permanents", "once": "Une fois par offre et par compte", "myScans": "Mes scans", "available": "offres bookmakers disponibles", "perOffer": "scans par offre validée", "noExpiryValue": "Sans limite", "noExpiryLabel": "de durée après attribution", "howTitle": "Comment obtenir vos scans ?", "steps": { "choose": { "title": "Consultez les conditions", "description": "Choisissez une offre et vérifiez votre éligibilité avant toute inscription." }, "refer": { "title": "Utilisez votre accès Kalivoa", "description": "Inscrivez-vous via le lien ou le code de cette page, puis déclarez votre parrainage." }, "validate": { "title": "Recevez vos scans après validation", "description": "Une fois le parrainage confirmé, les 30 scans rejoignent votre compte sans expiration." } }, "validationPending": "Après votre inscription via le lien ou le code Kalivoa, déclarez votre parrainage sur cette page. Nous le vérifions auprès du bookmaker avant d’attribuer les scans. Un clic ou une copie du code ne suffit pas.", "reassuranceTitle": "Des avantages, en toute transparence", "reassurance": "Les scans Kalivoa sont distincts des bonus bookmakers. Les paris sont réservés aux adultes et comportent un risque de perte : gardez vos limites et ne jouez pas davantage pour obtenir un avantage.", "signIn": "Se reconnecter", "rewardSummary": "30 scans permanents par offre validée", "offerCount": "{count, plural, =0 {Aucune offre active} one {# offre active} other {# offres actives}}", "validationNotice": "Déclarez votre parrainage après inscription. Les scans sont offerts après vérification." },
-    "meta": { "title": "Les partenaires Kalivoa", "description": "Découvrez les liens de parrainage et les collaborations en préparation de Kalivoa : outils d’analyse, suivi de bankroll et conditions des offres." },
-    "nav": "Partenaires", "home": "Accueil", "breadcrumb": "Fil d’Ariane",
+    "publicAccess": {
+      "eyebrow": "Réservé aux membres Kalivoa",
+      "title": "Vos avantages vous attendent dans votre espace",
+      "description": "Cette page présente nos partenaires et les avantages prévus. Les liens, codes et conditions des offres sont accessibles depuis votre compte Kalivoa, dans la rubrique Partenaires.",
+      "open": "Accéder à mes offres",
+      "signup": "Créer mon compte Kalivoa",
+      "card": "Voir l’offre dans mon espace"
+    },
+    "member": {
+      "eyebrow": "Votre espace partenaires",
+      "title": "Partenaires",
+      "description": "Vos offres bookmakers et outils pour accompagner votre suivi.",
+      "permanent": "Scans permanents",
+      "once": "Une fois par offre et par compte",
+      "myScans": "Mes scans",
+      "available": "offres bookmakers disponibles",
+      "perOffer": "scans par offre validée",
+      "noExpiryValue": "Sans limite",
+      "noExpiryLabel": "de durée après attribution",
+      "howTitle": "Comment obtenir vos scans ?",
+      "steps": {
+        "choose": {
+          "title": "Consultez les conditions",
+          "description": "Choisissez une offre et vérifiez votre éligibilité avant toute inscription."
+        },
+        "refer": {
+          "title": "Utilisez votre accès Kalivoa",
+          "description": "Inscrivez-vous via le lien ou le code de cette page, puis déclarez votre parrainage."
+        },
+        "validate": {
+          "title": "Recevez vos scans après validation",
+          "description": "Une fois le parrainage confirmé, les 30 scans rejoignent votre compte sans expiration."
+        }
+      },
+      "validationPending": "Après votre inscription via le lien ou le code Kalivoa, déclarez votre parrainage sur cette page. Nous le vérifions auprès du bookmaker avant d’attribuer les scans. Un clic ou une copie du code ne suffit pas.",
+      "reassuranceTitle": "Des avantages, en toute transparence",
+      "reassurance": "Les scans Kalivoa sont distincts des bonus bookmakers. Les paris sont réservés aux adultes et comportent un risque de perte : gardez vos limites et ne jouez pas davantage pour obtenir un avantage.",
+      "signIn": "Se reconnecter",
+      "rewardSummary": "30 scans permanents par offre validée",
+      "offerCount": "{count, plural, =0 {Aucune offre active} one {# offre active} other {# offres actives}}",
+      "validationNotice": "Déclarez votre parrainage après inscription. Les scans sont offerts après vérification."
+    },
+    "meta": {
+      "title": "Les partenaires Kalivoa",
+      "description": "Découvrez les liens de parrainage et les collaborations en préparation de Kalivoa : outils d’analyse, suivi de bankroll et conditions des offres."
+    },
+    "nav": "Partenaires",
+    "home": "Accueil",
+    "breadcrumb": "Fil d’Ariane",
     "eyebrow": "Offres et outils · en toute transparence",
     "title": "Les partenaires Kalivoa",
     "description": "Découvrez des offres et des outils sélectionnés pour mieux suivre, analyser et gérer votre bankroll.",
     "positioning": "Kalivoa vous aide à garder une vision claire de vos paris et de vos limites. Ces ressources accompagnent votre suivi et votre analyse.",
-    "principles": { "tracking": "Suivi de bankroll", "analysis": "Analyse", "discipline": "Discipline et transparence" },
+    "principles": {
+      "tracking": "Suivi de bankroll",
+      "analysis": "Analyse",
+      "discipline": "Discipline et transparence"
+    },
     "tabsLabel": "Types de partenaires",
-    "bookmakers": { "tab": "Offres bookmakers", "title": "Offres bookmakers", "description": "Consultez les offres de parrainage proposées et leurs conditions avant de décider de vous inscrire.", "emptyTitle": "Aucune offre disponible pour le moment", "emptyDescription": "Les offres confirmées et leurs conditions seront présentées ici." },
-    "tools": { "tab": "Outils et services", "title": "Des outils pour mieux comprendre et suivre", "description": "Découvrez des outils et services utiles pour améliorer votre analyse et votre suivi. Les collaborations en discussion sont identifiées clairement.", "emptyTitle": "De nouvelles collaborations en préparation", "emptyDescription": "Les outils et avantages seront présentés après confirmation des collaborations." },
+    "bookmakers": {
+      "tab": "Offres bookmakers",
+      "title": "Offres bookmakers",
+      "description": "Consultez les offres de parrainage proposées et leurs conditions avant de décider de vous inscrire.",
+      "emptyTitle": "Aucune offre disponible pour le moment",
+      "emptyDescription": "Les offres confirmées et leurs conditions seront présentées ici."
+    },
+    "tools": {
+      "tab": "Outils et services",
+      "title": "Des outils pour mieux comprendre et suivre",
+      "description": "Découvrez des outils et services utiles pour améliorer votre analyse et votre suivi. Les collaborations en discussion sont identifiées clairement.",
+      "emptyTitle": "De nouvelles collaborations en préparation",
+      "emptyDescription": "Les outils et avantages seront présentés après confirmation des collaborations."
+    },
     "categoriesLabel": "Catégories d’outils et services",
-    "categories": { "bookmaker": "Bookmaker", "odds": "Alertes et analyse de cotes", "data": "Statistiques et données", "community": "Communautés", "training": "Formations", "other": "Outils complémentaires" },
-    "statuses": { "ACTIVE": "Disponible", "COMING_SOON": "Bientôt disponible", "PREPARATION": "Partenaire en préparation", "UNAVAILABLE": "Temporairement indisponible", "ARCHIVED": "Archivé" },
+    "categories": {
+      "bookmaker": "Bookmaker",
+      "odds": "Alertes et analyse de cotes",
+      "data": "Statistiques et données",
+      "community": "Communautés",
+      "training": "Formations",
+      "other": "Outils complémentaires"
+    },
+    "statuses": {
+      "ACTIVE": "Disponible",
+      "COMING_SOON": "Bientôt disponible",
+      "PREPARATION": "Partenaire en préparation",
+      "UNAVAILABLE": "Temporairement indisponible",
+      "ARCHIVED": "Archivé"
+    },
     "scansNotice": "Les bonus des bookmakers sont distincts des scans Kalivoa. Aucun avantage en scans n’est annoncé pour ces offres actuellement. Un futur avantage sera affiché avec sa quantité et ses conditions d’attribution.",
     "scansNoticeWithRewards": "Les bonus des bookmakers sont distincts des scans Kalivoa. Les avantages en scans indiqués sur les cartes sont attribués après validation de l’action prévue, selon leurs propres conditions.",
-    "referralBadge": "Parrainage", "featured": "À découvrir", "freeScans": "{count} scans gratuits",
-    "permanentScans": "Scans permanents, sans expiration.", "scanExpiry": "Scans valables {days} jours après leur attribution.",
-    "offerExpires": "Offre valable jusqu’au {date}.", "offerExpired": "Période de l’offre terminée le {date}.",
-    "seeConditions": "Voir les conditions", "fullConditions": "Conditions complètes chez le partenaire", "newWindow": "(nouvel onglet)",
-    "referralCode": "Code de parrainage", "copy": "Copier", "copied": "Copié", "copyAria": "Copier le code de parrainage {name}",
+    "referralBadge": "Parrainage",
+    "featured": "À découvrir",
+    "freeScans": "{count} scans gratuits",
+    "permanentScans": "Scans permanents, sans expiration.",
+    "scanExpiry": "Scans valables {days} jours après leur attribution.",
+    "offerExpires": "Offre valable jusqu’au {date}.",
+    "offerExpired": "Période de l’offre terminée le {date}.",
+    "seeConditions": "Voir les conditions",
+    "fullConditions": "Conditions complètes chez le partenaire",
+    "newWindow": "(nouvel onglet)",
+    "referralCode": "Code de parrainage",
+    "copy": "Copier",
+    "copied": "Copié",
+    "copyAria": "Copier le code de parrainage {name}",
     "copyFailed": "La copie automatique a échoué. Vous pouvez sélectionner et copier le code affiché.",
-    "viewReferral": "Voir le parrainage", "viewTool": "Découvrir le service", "referralLink": "Lien de parrainage", "partnerLink": "Lien partenaire",
-    "preparationNotice": "Les avantages seront précisés si la collaboration est confirmée.", "unavailableNotice": "Cette offre n’est pas activée actuellement.",
-    "transparency": { "title": "Des liens identifiés, des conditions accessibles", "description": "Certains liens présents sur cette page peuvent être des liens partenaires ou des liens de parrainage. Ils peuvent permettre à Kalivoa de recevoir une rémunération, sans coût supplémentaire pour l’utilisateur.", "terms": "Les avantages dépendent des conditions propres à chaque offre. Consultez « Voir les conditions » sur chaque carte et les modalités complètes du partenaire. Les offres bookmakers sont réservées aux personnes majeures éligibles.", "link": "Conditions d’utilisation de Kalivoa" },
-    "responsible": { "title": "Gardez vos limites au premier plan", "description": "Les paris comportent un risque de perte et sont interdits aux mineurs. Fixez un budget que vous pouvez vous permettre de perdre, gardez le contrôle de votre pratique et faites une pause si nécessaire. Une offre ne doit pas vous conduire à augmenter vos mises ou à jouer davantage.", "link": "Consulter nos ressources de jeu responsable" },
-    "loading": "Chargement des partenaires…", "errorTitle": "Les partenaires sont momentanément indisponibles", "errorDescription": "Veuillez réessayer dans quelques instants.", "retry": "Réessayer"
+    "viewReferral": "Voir le parrainage",
+    "viewTool": "Découvrir le service",
+    "referralLink": "Lien de parrainage",
+    "partnerLink": "Lien partenaire",
+    "preparationNotice": "Les avantages seront précisés si la collaboration est confirmée.",
+    "unavailableNotice": "Cette offre n’est pas activée actuellement.",
+    "transparency": {
+      "title": "Des liens identifiés, des conditions accessibles",
+      "description": "Les offres consultables depuis votre espace peuvent comporter des liens partenaires ou de parrainage. Ces liens peuvent permettre à Kalivoa de recevoir une rémunération, sans coût supplémentaire pour l’utilisateur.",
+      "terms": "Les avantages dépendent des conditions propres à chaque offre. Connectez-vous à votre espace Kalivoa, rubrique Partenaires, pour consulter les liens, codes et conditions avant toute action. Vérifiez aussi les modalités complètes du partenaire. Les offres bookmakers sont réservées aux personnes majeures éligibles.",
+      "link": "Conditions d’utilisation de Kalivoa"
+    },
+    "responsible": {
+      "title": "Gardez vos limites au premier plan",
+      "description": "Les paris comportent un risque de perte et sont interdits aux mineurs. Fixez un budget que vous pouvez vous permettre de perdre, gardez le contrôle de votre pratique et faites une pause si nécessaire. Une offre ne doit pas vous conduire à augmenter vos mises ou à jouer davantage.",
+      "link": "Consulter nos ressources de jeu responsable"
+    },
+    "loading": "Chargement des partenaires…",
+    "errorTitle": "Les partenaires sont momentanément indisponibles",
+    "errorDescription": "Veuillez réessayer dans quelques instants.",
+    "retry": "Réessayer"
   },
   "scanCredits": {
     "total": "{count} scans disponibles",
@@ -107,8 +206,20 @@
     "expiringTitle": "Scans valables pour une période définie",
     "permanentTitle": "Scans permanents : {count}",
     "alert": "{count} de vos scans expirent bientôt. Utilisez-les avant le {date}.",
-    "types": { "MONTHLY": "Scans mensuels", "INITIAL": "Scans initiaux", "REFERRAL": "Scans de parrainage", "PARTNER": "Scans partenaires", "PROMOTIONAL": "Scans promotionnels" },
-    "origins": { "historyImport": "Bonus d'import d'historique", "legacyReferral": "Parrainage : solde historique", "betaReferral": "Parrainage bêta" }
+    "types": {
+      "MONTHLY": "Scans mensuels",
+      "INITIAL": "Scans initiaux",
+      "REFERRAL": "Scans de parrainage",
+      "PARTNER": "Scans partenaires",
+      "PROMOTIONAL": "Scans promotionnels"
+    },
+    "origins": {
+      "historyImport": "Bonus d'import d'historique",
+      "legacyReferral": "Parrainage : solde historique",
+      "betaReferral": "Parrainage bêta"
+    },
+    "lockedInitial": "{count} scans du bonus permanent sont conservés. Réactivez un abonnement payant pour les utiliser.",
+    "paidBonusCondition": "Le bonus initial nécessite un abonnement payant actif. Il est conservé après résiliation, sans nouvelle attribution lors d’un réabonnement."
   },
   "common": {
     "cancel": "Annuler",
@@ -139,7 +250,6 @@
       "lossAriaLabel": "Progression vers la limite de perte"
     }
   },
-
   "nav": {
     "ariaLabel": "Navigation principale",
     "home": "Synthèse",
@@ -156,7 +266,6 @@
     "statsMobile": "Stats",
     "aiInsights": "Analyses IA",
     "tipsters": "Tipsters",
-    "tipsterSpace": "Espace tipster",
     "myTipsters": "Mes tipsters",
     "referrals": "Parrainage",
     "admin": "Administration",
@@ -170,84 +279,6 @@
       "manage": "Mon espace"
     }
   },
-
-  "tipsterSpace": {
-    "eyebrow": "Certification Kalivoa",
-    "title": "Mon espace tipster",
-    "intro": "Configure ton identité publique, pilote tes bankrolls et suis tout ce qu’il te reste à accomplir pour obtenir un niveau de certification.",
-    "progress": "{done}/{total} étapes terminées",
-    "viewProfile": "Voir mon profil public",
-    "configureProfile": "Configurer mon profil",
-    "manageBankrolls": "Gérer mes bankrolls",
-    "status": {
-      "profileIncomplete": "Profil public à compléter",
-      "suspended": "Profil suspendu",
-      "inactive": "Certification à activer",
-      "certified": "{count, plural, one {# bankroll certifiée} other {# bankrolls certifiées}}",
-      "unverified": "Niveau de preuve insuffisant",
-      "observation": "En observation"
-    },
-    "pathTitle": "Le parcours vers la certification",
-    "pathIntro": "La certification s’applique séparément à chaque bankroll publique. Ton profil regroupe ensuite leurs niveaux sans mélanger leurs performances.",
-    "done": "Terminé",
-    "todo": "À faire",
-    "step": "Étape {number}",
-    "steps": {
-      "profile": {
-        "title": "Créer ton identité publique",
-        "description": "Choisis ton nom, ton @identifiant, ta bio et tes visuels. Ces informations sont communes à toutes tes bankrolls publiques."
-      },
-      "bankroll": {
-        "title": "Préparer une bankroll",
-        "description": "Définis son montant de référence privé et complète les unités historiques nécessaires à la publication."
-      },
-      "publish": {
-        "title": "Activer la certification",
-        "description": "Publie la bankroll. Le suivi démarre à cette date et ne certifie jamais rétroactivement les anciens paris."
-      },
-      "certify": {
-        "title": "Construire tes preuves",
-        "description": "Scanne les tickets avant l’événement puis leurs résultats. Atteins 10 paris clôturés et au moins 40/100."
-      }
-    },
-    "bankrollsTitle": "Mes bankrolls et leur certification",
-    "bankrollsIntro": "Chaque bankroll publique conserve son propre score, son volume, ses followers et son historique de preuves.",
-    "createBankroll": "Créer une bankroll",
-    "emptyTitle": "Aucune bankroll publique",
-    "emptyDescription": "Publie une bankroll pour afficher ici sa progression de certification.",
-    "trackingSince": "Suivi démarré le {date}",
-    "notStarted": "Certification inactive",
-    "public": "Publique",
-    "hidden": "Page masquée",
-    "private": "Privée",
-    "score": "Score",
-    "level": "Niveau",
-    "completeVolume": "Volume complet",
-    "settledProgress": "Paris clôturés",
-    "volumeProgress": "Volume suivi",
-    "observationHelp": "Le niveau reste en observation avant 10 paris clôturés. Le volume et les résultats financiers ne conditionnent pas la certification.",
-    "certificationResult": "Niveau actuel : {level}.",
-    "corrections": "{count, plural, one {# correction tracée} other {# corrections tracées}}",
-    "missingReference": "Définis le montant de référence privé de cette bankroll avant de la publier.",
-    "missingUnits": "{count, plural, one {Complète l’unité du pari historique restant avant la publication.} other {Complète les unités des # paris historiques restants avant la publication.}}",
-    "readyToPublish": "Cette bankroll est prête : ouvre-la pour renseigner sa présentation publique et activer la certification.",
-    "manage": "Gérer",
-    "viewPublicPage": "Voir la page publique",
-    "rulesTitle": "Quand une bankroll devient-elle certifiée ?",
-    "rulesIntro": "Elle quitte l’observation après 10 paris clôturés. La qualité des preuves détermine ensuite son niveau, indépendamment des gains ou des pertes.",
-    "rules": {
-      "bets": "paris clôturés minimum",
-      "bronze": "minimum pour obtenir Bronze"
-    },
-    "levels": {
-      "gold": "Gold",
-      "silver": "Silver",
-      "bronze": "Bronze",
-      "unverified": "Non certifiée",
-      "observation": "En observation"
-    }
-  },
-
   "aiInsights": {
     "eyebrow": "Une page dédiée · Premium",
     "title": "Analyses IA",
@@ -265,7 +296,6 @@
     "bankrollsLink": "Voir les bankrolls →",
     "limits": "Les cotes de clôture sont saisies manuellement. Le CLV indique la qualité du prix obtenu ; le rapport IA reste une interprétation à contrôler avec les paris et les indicateurs."
   },
-
   "subscriptionStatus": {
     "ariaLabel": "Voir mon abonnement",
     "label": "Abonnement",
@@ -275,17 +305,15 @@
     "betaDetail": "Fin définie par Kalivoa",
     "betaPremium": "Premium bêta",
     "premium": "Premium",
-    "periodEnd": "Échéance : {date}",
+    "periodEnd": "Accès jusqu’au {date}",
     "active": "Accès actif"
   },
-
   "footer": {
     "label": "Jeu responsable :",
     "privacy": "Confidentialité",
     "terms": "Conditions",
     "responsible": "Aide"
   },
-
   "auth": {
     "login": {
       "title": "Connexion",
@@ -364,12 +392,12 @@
         "preview": {
           "bets": "Paris",
           "roi": "ROI",
-          "profit": "Bénéfice"
+          "profit": "Bénéfice",
+          "caption": "Illustration de l’interface — données fictives, sans promesse de gain."
         }
       }
     }
   },
-
   "dashboard": {
     "title": "Synthèse",
     "workspaceSubtitle": "Une vue rapide de toutes tes bankrolls et de tes derniers paris.",
@@ -396,9 +424,18 @@
         "description": "Partage tes captures et tes retours avec la communauté bêta."
       },
       "steps": {
-        "bankroll": { "title": "Crée ta bankroll", "description": "Choisis ton bookmaker et ton capital de départ." },
-        "scan": { "title": "Importe tes paris", "description": "Envoie une capture ou ajoute tes premiers paris." },
-        "stats": { "title": "Suis tes progrès", "description": "Retrouve ton capital, ton ROI et tes performances." }
+        "bankroll": {
+          "title": "Crée ta bankroll",
+          "description": "Choisis ton bookmaker et ton capital de départ."
+        },
+        "scan": {
+          "title": "Importe tes paris",
+          "description": "Envoie une capture ou ajoute tes premiers paris."
+        },
+        "stats": {
+          "title": "Suis tes progrès",
+          "description": "Retrouve ton capital, ton ROI et tes performances."
+        }
       }
     },
     "community": {
@@ -416,11 +453,11 @@
       "upgradeCta": "Débloquer plus de scans"
     },
     "personalConversion": {
-      "title": "Ma conversion personnelle",
+      "title": "Montant de référence personnel",
       "privateBadge": "Privé",
-      "reference": "Capital personnel : {amount}",
+      "reference": "{amount} de référence",
       "oneUnit": "1u = {amount} pour toi",
-      "missing": "Configure ton capital personnel pour voir l'équivalent des unités des tipsters.",
+      "missing": "Configure ta référence globale pour convertir les unités des tipsters.",
       "edit": "Éditer",
       "configure": "Configurer"
     },
@@ -451,7 +488,13 @@
       "missingUnitCurve": "{count, plural, one {Un pari réglé n’a pas d’unité enregistrée. La courbe en unités ne peut pas être calculée.} other {# paris réglés n’ont pas d’unité enregistrée. La courbe en unités ne peut pas être calculée.}}",
       "filtersAriaLabel": "Ouvrir les filtres avancés",
       "notEnoughData": "Aucune donnée pour cette période.",
-      "periods": { "7d": "7j", "30d": "30j", "90d": "3m", "1y": "1a", "all": "Tout" },
+      "periods": {
+        "7d": "7j",
+        "30d": "30j",
+        "90d": "3m",
+        "1y": "1a",
+        "all": "Tout"
+      },
       "statsCta": "Statistiques",
       "historyCta": "Historique"
     },
@@ -482,7 +525,6 @@
       "scanResult": "Scanner le résultat"
     }
   },
-
   "bankrolls": {
     "title": "Bankrolls",
     "subtitle": "{count, plural, =0 {Crée ta première bankroll pour commencer.} one {# bankroll à suivre.} other {# bankrolls à suivre.}}",
@@ -526,8 +568,14 @@
       "bookmakerManualPlaceholder": "Nom du bookmaker",
       "modeLabel": "Organisation du capital",
       "modes": {
-        "SINGLE": { "title": "Solde unique", "description": "Un seul capital, quel que soit le bookmaker." },
-        "DISTRIBUTED": { "title": "Réparti par bookmaker", "description": "Un capital total ventilé entre plusieurs bookmakers." }
+        "SINGLE": {
+          "title": "Solde unique",
+          "description": "Un seul capital, quel que soit le bookmaker."
+        },
+        "DISTRIBUTED": {
+          "title": "Réparti par bookmaker",
+          "description": "Un capital total ventilé entre plusieurs bookmakers."
+        }
       },
       "allocationsTitle": "Répartition du capital",
       "allocationsDescription": "Le total des poches doit être égal au capital de départ.",
@@ -540,16 +588,15 @@
       "namePlaceholder": "Ex : Bankroll principale",
       "initialLabel": "Capital de départ ({currency})",
       "initialHint": "Modifier le capital de départ recalcule automatiquement le solde actuel de cette bankroll.",
-      "referenceLabel": "Capital correspondant à 100 U pour cette bankroll (optionnel, {currency})",
+      "referenceLabel": "Montant de référence (optionnel, {currency})",
       "referencePlaceholder": "Ex : 5 000",
-      "referenceHint": "Saisis la valeur de 100 U, pas celle de 1 U : 5 000 € pour 100 U donnent 1 U = 50 €. Cette valeur convertit les tickets de cette bankroll. Elle ne recalcule pas les anciens paris et ne change pas le réglage personnel des visiteurs.",
+      "referenceHint": "1 u = 1 % du montant de référence. Avec 5 000 € de référence, 1 u = 50 € et une mise scannée de 125 € vaut 2,5 u. Ce réglage ne modifie pas les unités des paris déjà enregistrés ni la conversion privée des abonnés.",
       "singleHistoryHint": "Les anciennes informations par bookmaker restent conservées dans l'historique. Les nouveaux paris utiliseront le solde unique.",
       "submitCreate": "Créer la bankroll",
       "submitEdit": "Enregistrer les modifications",
       "submitting": "Enregistrement…"
     }
   },
-
   "bankrollDetail": {
     "ariaLabel": "Détail de la bankroll",
     "realBalance": "Solde réel",
@@ -625,14 +672,16 @@
     "movementNotePlaceholder": "Ex. virement vers mon compte",
     "movementSubmit": "Enregistrer le mouvement",
     "movementSubmitting": "Enregistrement…",
-    "movementTypes": { "DEPOSIT": "Dépôt", "WITHDRAWAL": "Retrait" },
+    "movementTypes": {
+      "DEPOSIT": "Dépôt",
+      "WITHDRAWAL": "Retrait"
+    },
     "deleteMovement": "Supprimer",
     "deleteMovementConfirm": "Supprimer ce mouvement ?",
     "deleteConfirmTitle": "Supprimer cette bankroll ?",
     "deleteConfirmWithBets": "Cela supprimera aussi définitivement {count, plural, one {# pari associé} other {# paris associés}} à cette bankroll. Cette action est irréversible.",
     "deleteConfirmNoBets": "Cette action est irréversible."
   },
-
   "tipsters": {
     "title": "Mes tipsters",
     "description": "Centralise les sources de tes paris et compare leurs performances réelles.",
@@ -699,8 +748,19 @@
       "monthlyEmpty": "Aucune donnée mensuelle sur cette période.",
       "month": "Mois",
       "betsTitle": "Paris associés",
-      "period": { "from": "Du", "to": "Au", "apply": "Appliquer", "all": "Toute la période" },
-      "frequencies": { "ONE_TIME": "Ponctuel", "WEEKLY": "Hebdomadaire", "MONTHLY": "Mensuel", "QUARTERLY": "Trimestriel", "YEARLY": "Annuel" }
+      "period": {
+        "from": "Du",
+        "to": "Au",
+        "apply": "Appliquer",
+        "all": "Toute la période"
+      },
+      "frequencies": {
+        "ONE_TIME": "Ponctuel",
+        "WEEKLY": "Hebdomadaire",
+        "MONTHLY": "Mensuel",
+        "QUARTERLY": "Trimestriel",
+        "YEARLY": "Annuel"
+      }
     },
     "costEditor": {
       "state": "Type de coût",
@@ -718,8 +778,21 @@
       "stopTitle": "Terminer ou mettre en pause",
       "stopDescription": "Le coût ne sera plus compté après cette date. Le tipster reste actif.",
       "stop": "Terminer cette période",
-      "frequencies": { "ONE_TIME": "Ponctuel", "WEEKLY": "Hebdomadaire", "MONTHLY": "Mensuel", "QUARTERLY": "Trimestriel", "YEARLY": "Annuel" },
-      "errors": { "TIPSTER_NOT_FOUND": "Tipster introuvable.", "INVALID_DATE": "Vérifie les dates.", "INVALID_AMOUNT": "Saisis un montant valide.", "INVALID_FREQUENCY": "Choisis une fréquence valide.", "START_BEFORE_CURRENT": "La nouvelle période doit commencer après la dernière période enregistrée.", "NO_COST_PERIOD": "Aucune période de coût à terminer." }
+      "frequencies": {
+        "ONE_TIME": "Ponctuel",
+        "WEEKLY": "Hebdomadaire",
+        "MONTHLY": "Mensuel",
+        "QUARTERLY": "Trimestriel",
+        "YEARLY": "Annuel"
+      },
+      "errors": {
+        "TIPSTER_NOT_FOUND": "Tipster introuvable.",
+        "INVALID_DATE": "Vérifie les dates.",
+        "INVALID_AMOUNT": "Saisis un montant valide.",
+        "INVALID_FREQUENCY": "Choisis une fréquence valide.",
+        "START_BEFORE_CURRENT": "La nouvelle période doit commencer après la dernière période enregistrée.",
+        "NO_COST_PERIOD": "Aucune période de coût à terminer."
+      }
     },
     "form": {
       "createTitle": "Ajouter un tipster",
@@ -755,7 +828,6 @@
       "archived": "Archivé"
     }
   },
-
   "scan": {
     "installExtension": "Installer l’extension Chrome",
     "title": "Scan OCR",
@@ -797,22 +869,15 @@
     },
     "review": {
       "title": "Paris détectés ({count})",
-      "resultProofTitle": "Résultat du pari détecté",
-      "resultProofBatchTitle": "Résultats détectés ({count})",
       "restart": "Recommencer",
-      "targetedResultTitle": "Le pari existant sera mis à jour",
-      "targetedResultDescription": "Kalivoa compare cette capture au pari sélectionné puis ajoute le résultat et sa preuve Scan. Aucun nouveau pari ne sera créé.",
-      "targetedResultBatchTitle": "Les paris existants seront mis à jour",
-      "targetedResultBatchDescription": "Kalivoa compare chaque capture aux paris certifiés en attente. Le lot est refusé si une correspondance est ambiguë et aucun nouveau pari ne sera créé.",
       "existingResultUpdateTitle": "{count, plural, one {Ce résultat mettra à jour le pari existant} other {Ces # résultats mettront à jour les paris existants}}",
       "existingResultUpdateDescription": "Après validation, Kalivoa clôturera le pari déjà enregistré et ajoutera sa preuve Scan. Aucun nouveau pari ne sera créé.",
       "pendingTicketWarning": "Ce ticket semble déjà enregistré en cours. Vérifie le statut en haut de la capture : si le résultat est visible, choisis-le ici avant l’import. Kalivoa mettra alors à jour le pari existant.",
-      "duplicateWarning": "Paris entourés en orange : pas de référence sur le ticket, mais date/mise/cote/description identiques à un pari déjà connu — vérifie qu'il ne s'agit pas d'un doublon avant de confirmer.",
+      "duplicateWarning": "Paris entourés en orange : référence de ticket déjà connue ou informations similaires à un pari existant. Vérifie les doublons avant de confirmer.",
       "duplicateScanSkipped": "Capture déjà analysée et ignorée : {files}. Les autres captures du lot ont bien été analysées.",
       "suggestedWarning": "Certains paris n'ont pas de type existant qui correspond bien — repère le préfixe « [Type suggéré…] » dans leur description.",
       "taxonomyMismatchWarning": "Certains sports et types de pari ne concordent pas avec la liste actuelle. Vérifie-les avant l'import : les libellés détectés sont conservés pour ne pas fausser les statistiques.",
       "bankrollLabel": "Importer dans cette bankroll",
-      "resultProofBankrollLabel": "Bankroll concernée",
       "unitConversion": "Référence : {reference} · 1 u = {value} (1 %)",
       "unitConversionMissing": "Aucun montant de référence défini pour cette bankroll : conversion en u indisponible.",
       "unitConversionHelp": "La mise du ticket est lue en devise et convertie avec le montant de référence de cette bankroll. Vérifie les unités affichées sur chaque pari avant l’import. Après une modification dans Bankrolls, actualise la conversion ici.",
@@ -823,11 +888,12 @@
       "unitConversionWarning": "{count, plural, one {Une mise dépasse 20 u. Vérifie le montant de référence, puis coche pour confirmer l’import.} other {# mises dépassent 20 u. Vérifie le montant de référence, puis coche pour confirmer l’import.}}",
       "bookmakerMismatch": "Le scan détecte {detected}, mais la bankroll choisie utilise {selected}. Vérifie la bankroll avant l'import.",
       "qualityOffer": {
-        "title": "Un problème avec ce scan ?",
-        "consent": "Envoyer ce scan à Kalivoa pour nous aider à corriger le problème.",
-        "details": "La capture et votre signalement seront envoyés dans le canal Discord privé de l'équipe Kalivoa. Elle peut contenir une référence, un solde ou un pseudo ; ne partagez que si vous l'acceptez.",
-        "issueTypeLabel": "Quel est le problème ?",
+        "title": "Aider à améliorer le scan",
+        "consent": "Partager cette capture et les informations vérifiées avec Kalivoa.",
+        "details": "Partage facultatif, conservé 30 jours dans un espace privé accessible aux administrateurs autorisés. La capture peut contenir une référence, un solde ou un pseudo. Chaque exemple doit être vérifié avant de servir aux améliorations.",
+        "issueTypeLabel": "Quel est votre retour ?",
         "issueTypes": {
+          "confirmed": "Tout est correct, j’ai vérifié",
           "incorrect": "Informations incorrectes",
           "incomplete": "Informations manquantes",
           "other": "Autre problème"
@@ -837,14 +903,13 @@
       },
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
       "importing": "Import en cours…",
-      "updatingResult": "Mise à jour du résultat…",
-      "updateResult": "Mettre à jour le résultat",
-      "updateResults": "{count, plural, one {Mettre à jour le résultat} other {Mettre à jour les # résultats}}",
       "noneToImport": "Aucun pari à importer",
       "card": {
         "excludeAriaLabel": "Exclure le pari {index}",
         "reintegrate": "Réintégrer",
         "duplicateBadge": "Doublon potentiel — vérifie avant d'importer",
+        "duplicateReferenceBadge": "Référence de ticket déjà connue — vérifie avant d’importer",
+        "ticketReference": "Référence du ticket : {reference}",
         "existingResultUpdateBadge": "Même pari reconnu — résultat à mettre à jour",
         "pendingTicketBadge": "Ticket déjà en cours — vérifie le résultat",
         "suggestedBadge": "Type de pari non reconnu — suggestion dans la description",
@@ -876,7 +941,10 @@
       "discordDescription": "Rejoins le Discord bêta pour partager tes retours et tes captures de bookmakers, après avoir masqué toute donnée personnelle.",
       "joinDiscord": "Rejoindre le Discord",
       "scanAgainCta": "Scanner d’autres captures",
-      "dashboardCta": "Accéder à mon tableau de bord"
+      "dashboardCta": "Accéder à mon tableau de bord",
+      "reuseBankrollTitle": "Ajouter ces mêmes paris à une autre bankroll",
+      "reuseBankrollDescription": "Choisis une autre bankroll puis vérifie à nouveau les mises, la devise et la conversion avant l’enregistrement. Cette réutilisation ne consomme pas de Scan.",
+      "reuseBankrollCta": "Vérifier pour cette bankroll"
     },
     "empty": {
       "title": "Aucun pari trouvé",
@@ -907,7 +975,6 @@
       "submitting": "Ajout en cours…"
     }
   },
-
   "fileImport": {
     "dateOrder": {
       "label": "Format des dates",
@@ -949,15 +1016,6 @@
       "warnings": "Lignes à vérifier",
       "betAnalytixDetected": "Export Bet-Analytix reconnu",
       "betAnalytixDetails": "Les états, les types et les cotes sont convertis automatiquement. {count, plural, =0 {Aucune ligne de sélection séparée.} one {# ligne de sélection a été regroupée dans son combiné.} other {# lignes de sélection ont été regroupées dans leurs combinés.}}",
-      "baCurrencyLabel": "Devise de la bankroll d’origine dans Bet-Analytix",
-      "baCurrencyPlaceholder": "Choisir la devise utilisée dans BA",
-      "baCurrencyUnit": "U — Unité",
-      "baCurrencyEur": "€ — Euro",
-      "baCurrencyUsd": "$ — Dollar",
-      "baCurrencyGbp": "£ — Livre",
-      "baCurrencyHelp": "Le fichier BA ne précise pas la devise. Vérifie-la dans BA : la mise sera importée telle quelle, sans conversion.",
-      "baCurrencyRequired": "Choisis la devise utilisée dans la bankroll Bet-Analytix d’origine.",
-      "baCurrencyMismatch": "Choisis une bankroll Kalivoa dans la même devise que la bankroll BA d’origine.",
       "baUnitValueLabel": "Valeur privée de 1u BA en devise",
       "baUnitValueHelp": "La colonne Stake est déjà en unités : 1,25 devient 1,25u. Cette valeur sert uniquement aux montants privés et au solde. Par défaut, 1u = 1 en devise.",
       "baUnitValueError": "Indique combien vaut 1u Bet-Analytix en devise dans ta bankroll.",
@@ -989,7 +1047,7 @@
       "resultsTitle": "États reconnus",
       "resultsValues": "P = en attente · W = gagné · L = perdu · R ou C = remboursé/annulé · CASH = cash out. HW et HL sont acceptés avec un avertissement, car Kalivoa ne calcule pas encore nativement les demi-gains et demi-pertes.",
       "betAnalytixTitle": "Compatibilité Bet-Analytix",
-      "betAnalytixDescription": "Le format Export_Formatted_Bet-Analytix.csv est reconnu nativement. Comme le fichier ne précise pas la devise, choisis celle de la bankroll BA d’origine. Les mises sont reprises sans conversion dans une bankroll Kalivoa de même devise. Les sélections des combinés, le tipster, la cote de clôture et la probabilité estimée sont conservés dans des champs dédiés. Les cotes américaines ou fractionnaires sont converties en décimal.",
+      "betAnalytixDescription": "Le format Export_Formatted_Bet-Analytix.csv est reconnu nativement. Les mises sont importées en unités. Les sélections des combinés, le tipster, la cote de clôture et la probabilité estimée sont conservés dans des champs dédiés. Les cotes américaines ou fractionnaires sont converties en décimal.",
       "notImportedTitle": "Colonnes Bet-Analytix sans équivalent Kalivoa",
       "notImportedDescription": "Commission, Bonus et Eachway ne sont pas enregistrées pour le moment, car Kalivoa ne possède pas encore de champs correspondants. Elles n’empêchent jamais l’import."
     },
@@ -1001,7 +1059,6 @@
       "history": "Voir mon historique"
     }
   },
-
   "scanApi": {
     "noBetsFound": "Aucun ticket de pari n'a été détecté dans cette image. Ton quota n'a pas été consommé.",
     "unsupportedImage": "Format d'image non pris en charge. Envoie une image PNG, JPEG, GIF ou WebP.",
@@ -1014,12 +1071,11 @@
     "tooManyScans": "Trop de scans effectués. Réessaie dans environ {minutes} min.",
     "monthlyQuotaExceeded": "Quota mensuel de scans atteint. Reviens le mois prochain.",
     "duplicateScan": "Cette capture a déjà été analysée. Elle ne compte pas deux fois.",
-    "duplicateScanImported": "Cette capture a déjà été importée ({count} pari(s)). Elle ne compte pas deux fois.",
+    "duplicateScanImported": "Cette capture a déjà été importée dans cette bankroll. Elle ne compte pas deux fois ici.",
     "duplicateScanPending": "Cette capture a été analysée, mais pas encore importée. Reprends-la dans « Imports en attente ».",
     "bankrollLocked": "Cette bankroll est verrouillée avec le forfait Freemium. Passe à Premium pour y accéder.",
     "forbiddenOrigin": "Origine non autorisée."
   },
-
   "stats": {
     "title": "Stats",
     "workspace": {
@@ -1242,7 +1298,6 @@
       "summary": "{count, plural, one {# pari} other {# paris}} · réussite {rate}"
     }
   },
-
   "history": {
     "title": "Historique",
     "filters": {
@@ -1347,7 +1402,6 @@
       "saving": "Enregistrement…"
     }
   },
-
   "referral": {
     "title": "Parraine tes amis, gagne des scans OCR",
     "description": "Invite tes amis à tester Kalivoa pendant la bêta. Ton ami reçoit 10 scans OCR après son premier scan valide, et tu peux gagner jusqu’à 20 scans OCR à vie pour chaque filleul actif.",
@@ -1390,7 +1444,6 @@
     "privacy": "Les adresses e-mail des filleuls sont masquées pour protéger leur vie privée.",
     "referredRewardMessage": "Ton premier scan valide a débloqué {count} scans OCR offerts à vie."
   },
-
   "account": {
     "title": "Compte",
     "intro": "Retrouve tes réglages au même endroit.",
@@ -1469,23 +1522,34 @@
     "plan": {
       "title": "Abonnement",
       "betaTestingTitle": "Fonctionnalité en préparation",
-      "betaTestingDescription": "La bêta est gratuite. Les informations d’abonnement seront disponibles plus tard.",
+      "betaTestingDescription": "La bêta est gratuite. Premium est prévu à 4,99 € TTC/mois ou 49,99 € TTC/an, avec une offre de bienvenue pour les comptes éligibles.",
       "betaEndedTitle": "La phase bêta est terminée",
       "betaEndedDescription": "Merci pour vos retours. Vous pouvez maintenant choisir le forfait Freemium.",
       "switchToFreemium": "Passer au forfait Freemium",
       "freeDescription": "Freemium : 2 bankrolls actives maximum et 10 scans IA/mois.",
-      "premiumActive": "Premium actif — renouvellement le {date}.",
+      "premiumActive": "Premium actif — accès jusqu’au {date}.",
       "premiumActiveNoDate": "Premium actif.",
-      "betaPremiumActive": "Premium bêta actif — renouvellement le {date}.",
+      "betaPremiumActive": "Premium avec offre de bienvenue — accès jusqu’au {date}.",
       "betaPremiumActiveNoDate": "Premium bêta actif.",
-      "upgradeStandard": "Passer à Premium (19,99 €/an)",
-      "upgradeBeta": "Passer à Premium — 9,99 €",
-      "betaOfferDetails": "Offre bêta : 9,99 € la première année, puis 19,99 €/an.",
+      "upgradeStandard": "Continuer vers le paiement",
+      "upgradeBeta": "Profiter de mon offre de bienvenue",
+      "betaOfferDetails": "Offre de bienvenue, une seule fois : 2,99 € TTC/mois pendant 12 mois puis 4,99 € TTC/mois, ou 24,99 € TTC la première année puis 49,99 € TTC/an. À activer avant le 31 décembre 2026, 23 h 59 (Paris).",
+      "viewWelcomeOffer": "Découvrir mon offre de bienvenue",
       "initialCredits": "Crédit d'import : {count} scans restants jusqu'au {date}.",
       "manage": "Gérer mon abonnement",
       "stripeNotConfigured": "Le paiement n'est pas encore configuré. Réessaie plus tard.",
       "checkoutFailed": "Impossible d'ouvrir le paiement pour le moment. Réessaie dans quelques instants.",
-      "noSubscription": "Aucun abonnement actif à gérer."
+      "noSubscription": "Aucun abonnement actif à gérer.",
+      "viewPricing": "Voir les tarifs et les conditions",
+      "billingPeriod": "Choisir la fréquence de facturation",
+      "monthly": "{price} TTC / mois",
+      "yearly": "{price} TTC / an",
+      "monthlyRenewal": "Renouvellement automatique au même prix chaque mois.",
+      "yearlyRenewal": "Facturé en une fois, renouvellement annuel au même prix.",
+      "monthlyWelcomeRenewal": "Pendant 12 mois, puis {price} TTC/mois.",
+      "yearlyWelcomeRenewal": "La première année, puis {price} TTC/an.",
+      "premiumCredits": "200 scans par période de 30 jours, utilisés en priorité. Bonus unique de 300 scans permanents, utilisables uniquement avec un abonnement payant actif. Résiliation possible avant renouvellement.",
+      "permanentInitialCredits": "Bonus permanent : {count} scans restants, utilisables avec un abonnement payant actif."
     },
     "security": {
       "title": "Sécurité et compte"
@@ -1509,7 +1573,6 @@
       "GBP": "Livre sterling"
     }
   },
-
   "sports": {
     "Football": "Football",
     "Cyclisme": "Cyclisme",
@@ -1539,7 +1602,6 @@
     "Courses hippiques": "Courses hippiques",
     "Autre sport": "Autre sport"
   },
-
   "betTypes": {
     "Résultat du match": "Résultat du match",
     "Victoire finale du tournoi": "Victoire finale du tournoi",
@@ -1592,7 +1654,6 @@
     "Trio": "Trio",
     "Autre": "Autre"
   },
-
   "admin": {
     "title": "Administration",
     "description": "Une vue claire de la croissance, de l’activation produit, des revenus et des opérations de Kalivoa.",
@@ -1647,7 +1708,10 @@
         "REFERRER_FIFTH_VALID_SCAN": "Parrain · cinquième scan",
         "REFERRER_SUBSCRIPTION_PAYMENT": "Parrain · paiement"
       },
-      "rewardStatus": { "GRANTED": "accordée", "CANCELLED": "annulée" }
+      "rewardStatus": {
+        "GRANTED": "accordée",
+        "CANCELLED": "annulée"
+      }
     },
     "periodFilter": "Période analysée",
     "periods": {
@@ -1758,7 +1822,6 @@
       "OTHER": "Autre"
     }
   },
-
   "feedback": {
     "title": "Ton retour compte",
     "description": "Décris le problème ou l’idée. La page depuis laquelle tu écris est ajoutée automatiquement.",
@@ -1779,7 +1842,6 @@
       "other": "Autre retour"
     }
   },
-
   "errors": {
     "bankrollNotFound": "Bankroll introuvable.",
     "bankrollLimitReached": "Limite de {limit} bankrolls atteinte. Passe à Premium pour des bankrolls illimitées.",
@@ -1813,7 +1875,6 @@
     "tipsterNotFound": "Tipster introuvable.",
     "tipsterDuplicate": "Un tipster portant ce nom existe déjà."
   },
-
   "results": {
     "EN_ATTENTE": "En attente",
     "GAGNE": "Gagné",
@@ -1821,7 +1882,6 @@
     "REMBOURSE": "Remboursé",
     "CASHE": "Cashé"
   },
-
   "marketing": {
     "header": {
       "homeAriaLabel": "Accueil Kalivoa",
@@ -1835,10 +1895,11 @@
       "pricing": "Tarifs",
       "faq": "FAQ",
       "login": "Se connecter",
-      "cta": "Essayer Kalivoa"
+      "cta": "Essayer Kalivoa",
+      "certification": "Certification"
     },
     "footer": {
-      "description": "Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs.",
+      "description": "Importe tes tickets, suis ta bankroll et partage un historique dont les preuves sont lisibles.",
       "languageAriaLabel": "Passer la langue en anglais",
       "product": "Produit",
       "learn": "Ressources",
@@ -1859,17 +1920,19 @@
       "legal": "Mentions légales",
       "sales": "Conditions de vente",
       "copyright": "© {year} Kalivoa. Tous droits réservés.",
-      "responsibleNotice": "Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+      "responsibleNotice": "Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr.",
+      "certification": "Certification des bankrolls"
     },
     "hero": {
-      "eyebrow": "Kalivoa Scan · import par capture",
+      "eyebrow": "Scan OCR · Suivi de bankroll · Certification",
       "title": "Tes paris. Tes stats. Zéro saisie.",
-      "description": "Ajoute une ou plusieurs captures : Kalivoa Scan lit et structure les informations visibles. Tu vérifies toujours les paris proposés avant leur import dans ton historique.",
+      "description": "Importe tes captures, vérifie tes paris et suis ta bankroll. Pour partager tes résultats, Kalivoa rend aussi visible le niveau de preuve de chaque pari publié.",
       "ocrNote": "* OCR signifie reconnaissance optique de caractères : Kalivoa lit les éléments visibles sur vos captures pour préparer les paris à vérifier.",
       "primaryCta": "Lancer mon Scan OCR",
       "secondaryCta": "Voir la démonstration",
       "reassuranceOne": "Plusieurs captures et tickets visibles dans un même parcours.",
-      "reassuranceTwo": "Une vérification obligatoire avant chaque import."
+      "reassuranceTwo": "Une vérification obligatoire avant chaque import.",
+      "certificationCta": "Découvrir la certification des bankrolls"
     },
     "trust": {
       "trustOne": "Aucun accès à votre compte bookmaker",
@@ -1958,15 +2021,15 @@
       "title": "Des tickets lus avec le contexte visible de chaque bookmaker.",
       "description": "La compatibilité de Kalivoa Scan dépend du ticket, de sa lisibilité et de son bookmaker. Les règles spécifiques ne sont appliquées que lorsqu’un bookmaker est clairement identifié ; tu vérifies toujours le résultat avant l’import.",
       "more": "Voir le détail de la compatibilité",
-      "independence": "Kalivoa est indépendant et n’est affilié à aucun des bookmakers affichés."
+      "independence": "Kalivoa est indépendant des bookmakers cités. Les liens de parrainage ou partenaires sont signalés séparément."
     },
     "pricing": {
       "eyebrow": "Tarification transparente",
-      "title": "Les offres publiques seront affichées avant toute facturation.",
-      "description": "La configuration de lancement est encore en validation. Aucun prix ou avantage non confirmé n’est publié sur cette page.",
-      "cardTitle": "Une offre claire avant paiement",
-      "cardDescription": "Les fonctionnalités payantes, limites d’import, conditions de renouvellement et prix applicables seront affichés dans le parcours concerné avant tout paiement.",
-      "cta": "Comprendre les tarifs"
+      "title": "Commencez gratuitement, passez à Premium à votre rythme.",
+      "description": "4,99 € TTC par mois ou 49,99 € TTC par an. Les mêmes avantages, avec une offre de bienvenue pour les comptes éligibles.",
+      "cardTitle": "200 scans mensuels et un bonus permanent",
+      "cardDescription": "Les scans du quota mensuel sont utilisés en priorité et ne se cumulent pas. Chaque période de 30 jours démarre à la première utilisation du quota. Le bonus de 300 scans n’expire pas : son solde est conservé après résiliation, mais un abonnement payant actif est nécessaire pour l’utiliser. Se réabonner ne donne pas un nouveau bonus.",
+      "cta": "Tous les tarifs et conditions"
     },
     "faq": {
       "eyebrow": "Questions fréquentes",
@@ -2008,7 +2071,11 @@
         },
         "pricing": {
           "question": "Comment fonctionne l’abonnement ?",
-          "answer": "La tarification publique est encore en cours de validation. Lorsqu’une offre payante est proposée, le prix, les limites et les conditions de renouvellement sont affichés avant paiement."
+          "answer": "La bêta est gratuite. À l’ouverture, Premium coûtera 4,99 € TTC/mois ou 49,99 € TTC/an, avec 200 scans par période de 30 jours et un bonus unique de 300 scans permanents. Les comptes éligibles bénéficieront de 2,99 € TTC/mois pendant 12 mois, puis 4,99 € TTC/mois, ou de 24,99 € TTC la première année, puis 49,99 € TTC/an. Le quota mensuel est utilisé en priorité et ne se cumule pas ; le bonus permanent nécessite un abonnement payant actif, même après résiliation. Chaque quota commence à sa première utilisation. Vous pouvez résilier avant le renouvellement automatique."
+        },
+        "certification": {
+          "question": "Que certifie Kalivoa sur une bankroll publique ?",
+          "answer": "Kalivoa affiche le niveau de preuve derrière chaque pari publié : ticket initial qualifié, résultat scanné ou manuel et corrections enregistrées. Le score mesure la qualité des preuves, pondérée par les mises en unités. Il reste distinct de la rentabilité et ne constitue ni un audit du compte bookmaker ni une promesse de gain."
         }
       }
     },
@@ -2049,7 +2116,7 @@
     "meta": {
       "home": {
         "title": "Kalivoa — Scan OCR de tickets et suivi de bankroll",
-        "description": "Scannez une ou plusieurs captures de tickets avec l’OCR, vérifiez les paris structurés et suivez votre bankroll sans ressaisie manuelle."
+        "description": "Importe tes tickets par OCR, suis ta bankroll et découvre la certification Kalivoa : niveaux de preuve et corrections pour un historique plus transparent."
       },
       "features": {
         "title": "Fonctionnalités de suivi de bankroll",
@@ -2064,8 +2131,8 @@
         "description": "Organisez votre historique de paris et consultez vos indicateurs de bankroll, profit et ROI avec Kalivoa."
       },
       "pricing": {
-        "title": "Tarifs et abonnement Kalivoa",
-        "description": "Les conditions, limites et prix de Kalivoa sont affichés de façon transparente avant tout paiement."
+        "title": "Tarifs Kalivoa : gratuit et Premium dès 4,99 €/mois",
+        "description": "Découvrez Premium à 4,99 € TTC/mois ou 49,99 € TTC/an : 200 scans mensuels, 300 scans bonus permanents et une offre de bienvenue pour les comptes éligibles."
       },
       "bookmakers": {
         "title": "Profils bookmaker validés pour l’import Kalivoa",
@@ -2101,11 +2168,23 @@
         "sectionTitle": "Un parcours simple, du ticket à l’analyse",
         "intro": "Kalivoa relie les étapes sans vous faire perdre le contrôle : chaque information extraite reste visible et modifiable avant l’enregistrement.",
         "points": {
-          "one": { "title": "Ajoutez vos tickets", "description": "Importez une ou plusieurs captures, ou saisissez un pari manuellement quand vous le préférez." },
-          "two": { "title": "Vérifiez avant d’enregistrer", "description": "Contrôlez la bankroll, la mise, la cote, le statut et chaque donnée détectée avant validation." },
-          "three": { "title": "Comprenez votre historique", "description": "Consultez solde, profit, ROI et répartitions sans mélanger paris et mouvements de capital." }
+          "one": {
+            "title": "Ajoutez vos tickets",
+            "description": "Importez une ou plusieurs captures, ou saisissez un pari manuellement quand vous le préférez."
+          },
+          "two": {
+            "title": "Vérifiez avant d’enregistrer",
+            "description": "Contrôlez la bankroll, la mise, la cote, le statut et chaque donnée détectée avant validation."
+          },
+          "three": {
+            "title": "Comprenez votre historique",
+            "description": "Consultez solde, profit, ROI et répartitions sans mélanger paris et mouvements de capital."
+          }
         },
-        "notice": { "title": "Vous gardez la main à chaque étape", "description": "Kalivoa organise et mesure votre activité passée. Il ne conseille pas de pari, ne place aucune mise et ne garantit aucun résultat." }
+        "notice": {
+          "title": "Vous gardez la main à chaque étape",
+          "description": "Kalivoa organise et mesure votre activité passée. Il ne conseille pas de pari, ne place aucune mise et ne garantit aucun résultat."
+        }
       },
       "import": {
         "eyebrow": "Lecture de tickets par capture",
@@ -2114,11 +2193,23 @@
         "sectionTitle": "Une lecture adaptée aux tickets, avec une validation indispensable.",
         "intro": "L’extraction propose les informations réellement visibles — date, sport, type, intitulé, mise, cote et, lorsqu’ils sont lisibles, résultat de l’événement et statut du pari. Tout reste modifiable.",
         "points": {
-          "one": { "title": "Une ou plusieurs captures", "description": "Sélectionnez plusieurs images et regroupez les tickets visibles dans une même revue." },
-          "two": { "title": "Tickets et statuts affichés", "description": "Lorsqu’un ticket terminé affiche son statut et qu’un profil bookmaker est validé, Kalivoa peut le proposer à la revue." },
-          "three": { "title": "Correction avant sauvegarde", "description": "Ajustez la bankroll, les champs, le résultat ou le statut avant de mettre l’historique à jour." }
+          "one": {
+            "title": "Une ou plusieurs captures",
+            "description": "Sélectionnez plusieurs images et regroupez les tickets visibles dans une même revue."
+          },
+          "two": {
+            "title": "Tickets et statuts affichés",
+            "description": "Lorsqu’un ticket terminé affiche son statut et qu’un profil bookmaker est validé, Kalivoa peut le proposer à la revue."
+          },
+          "three": {
+            "title": "Correction avant sauvegarde",
+            "description": "Ajustez la bankroll, les champs, le résultat ou le statut avant de mettre l’historique à jour."
+          }
         },
-        "notice": { "title": "Une capture non reconnue ?", "description": "Vous gardez la possibilité de compléter ou de saisir un pari manuellement. Les images ordinaires ne sont pas conservées après l’analyse." }
+        "notice": {
+          "title": "Une capture non reconnue ?",
+          "description": "Vous gardez la possibilité de compléter ou de saisir un pari manuellement. Les images ordinaires ne sont pas conservées après l’analyse."
+        }
       },
       "bankroll": {
         "eyebrow": "Suivi de bankroll",
@@ -2127,24 +2218,48 @@
         "sectionTitle": "Construisez un suivi qui reste fiable dans le temps",
         "intro": "Chaque donnée a sa place : le capital réel, les dépôts et retraits, puis les résultats des paris réglés.",
         "points": {
-          "one": { "title": "Créez une bankroll", "description": "Définissez son bookmaker, son capital de référence et, si besoin, vos allocations de mise." },
-          "two": { "title": "Distinguez les mouvements", "description": "Enregistrez dépôts et retraits séparément pour ne pas les confondre avec la performance des paris." },
-          "three": { "title": "Analysez les résultats", "description": "Filtrez profit, ROI et historique par période, sport, type de pari ou bookmaker." }
+          "one": {
+            "title": "Créez une bankroll",
+            "description": "Définissez son bookmaker, son capital de référence et, si besoin, vos allocations de mise."
+          },
+          "two": {
+            "title": "Distinguez les mouvements",
+            "description": "Enregistrez dépôts et retraits séparément pour ne pas les confondre avec la performance des paris."
+          },
+          "three": {
+            "title": "Analysez les résultats",
+            "description": "Filtrez profit, ROI et historique par période, sport, type de pari ou bookmaker."
+          }
         },
-        "notice": { "title": "Des chiffres pour comprendre, pas pour prédire", "description": "Les indicateurs reflètent uniquement les données enregistrées. Ils ne prédisent aucun gain et ne constituent pas une recommandation de mise." }
+        "notice": {
+          "title": "Des chiffres pour comprendre, pas pour prédire",
+          "description": "Les indicateurs reflètent uniquement les données enregistrées. Ils ne prédisent aucun gain et ne constituent pas une recommandation de mise."
+        }
       },
       "pricing": {
         "eyebrow": "Tarifs et accès",
         "title": "Commencez gratuitement, sans carte bancaire.",
-        "description": "Créer un compte n’active aucun abonnement payant. Les offres payantes et leur prix seront présentés ici dès qu’ils seront disponibles.",
+        "description": "Découvrez Freemium et Premium, leurs quotas et l’offre de bienvenue. La bêta reste gratuite pendant la préparation des paiements.",
         "sectionTitle": "Toujours clair avant de payer",
-        "intro": "Si vous choisissez plus tard une offre payante, vous connaîtrez son prix, ses limites et son renouvellement avant d’accéder au paiement.",
+        "intro": "Le choix mensuel ou annuel change la facturation, pas les avantages Premium. Les prix incluent les taxes applicables ; la formule annuelle est facturée en une fois.",
         "points": {
-          "one": { "title": "Compte gratuit", "description": "Découvrez Kalivoa sans renseigner de carte bancaire et sans déclencher de paiement." },
-          "two": { "title": "Prix et limites visibles", "description": "Chaque offre indiquera clairement ses fonctionnalités, ses limites d’import et son prix." },
-          "three": { "title": "Renouvellement maîtrisé", "description": "La fréquence et les conditions de renouvellement seront visibles avant toute souscription." }
+          "one": {
+            "title": "Compte gratuit",
+            "description": "Découvrez Kalivoa sans renseigner de carte bancaire et sans déclencher de paiement."
+          },
+          "two": {
+            "title": "Prix et limites visibles",
+            "description": "Premium inclut 200 scans par période de 30 jours et un bonus unique de 300 scans permanents. Les conditions d’utilisation sont détaillées ci-dessus."
+          },
+          "three": {
+            "title": "Renouvellement maîtrisé",
+            "description": "L’offre de bienvenue passe au tarif standard après 12 mois ou la première année. Résiliez depuis votre compte avant le renouvellement automatique."
+          }
         },
-        "notice": { "title": "Offres payantes en préparation", "description": "La tarification publique n’est pas encore ouverte. Vous pouvez créer votre compte gratuitement : cette inscription ne vaut jamais souscription à une offre payante." }
+        "notice": {
+          "title": "Offres payantes en préparation",
+          "description": "La bêta est actuellement gratuite. Voici les offres prévues pour l’ouverture des abonnements ; aucun paiement n’est activé par une simple inscription."
+        }
       },
       "bookmakers": {
         "eyebrow": "Compatibilité bookmaker",
@@ -2153,11 +2268,23 @@
         "sectionTitle": "Pourquoi chaque bookmaker est vérifié séparément",
         "intro": "La mise en page, les libellés et les statuts diffèrent selon les tickets. Les règles d’un profil validé ne sont appliquées que lorsque le bookmaker est identifié visuellement.",
         "points": {
-          "one": { "title": "Profils validés", "description": "Winamax, Betclic, Unibet et Bet365 sont les profils de lecture actuellement testés." },
-          "two": { "title": "Révision systématique", "description": "Même avec un profil validé, les données extraites sont présentées pour contrôle avant l’enregistrement." },
-          "three": { "title": "Service indépendant", "description": "Kalivoa n’est affilié à aucun bookmaker et ne place aucune mise." }
+          "one": {
+            "title": "Profils validés",
+            "description": "Winamax, Betclic, Unibet et Bet365 sont les profils de lecture actuellement testés."
+          },
+          "two": {
+            "title": "Révision systématique",
+            "description": "Même avec un profil validé, les données extraites sont présentées pour contrôle avant l’enregistrement."
+          },
+          "three": {
+            "title": "Service indépendant",
+            "description": "Kalivoa est indépendant des bookmakers et ne place aucune mise. Les éventuels liens de parrainage sont présentés séparément."
+          }
         },
-        "notice": { "title": "Évolution contrôlée", "description": "D’autres bookmakers peuvent être ajoutés à une bankroll. Leur lecture par capture n’est pas annoncée comme validée avant des vérifications dédiées." }
+        "notice": {
+          "title": "Évolution contrôlée",
+          "description": "D’autres bookmakers peuvent être ajoutés à une bankroll. Leur lecture par capture n’est pas annoncée comme validée avant des vérifications dédiées."
+        }
       },
       "contact": {
         "eyebrow": "Contact et retours",
@@ -2166,11 +2293,23 @@
         "sectionTitle": "Comment transmettre un retour",
         "intro": "Après connexion, utilisez le formulaire de retour de l’application. Le contexte de la page est ajouté afin d’aider au traitement de votre demande.",
         "points": {
-          "one": { "title": "Bugs", "description": "Signalez les problèmes rencontrés pendant l’utilisation." },
-          "two": { "title": "Idées", "description": "Partagez les améliorations qui faciliteraient votre suivi." },
-          "three": { "title": "Données", "description": "Les demandes relatives aux données peuvent être faites depuis ce canal." }
+          "one": {
+            "title": "Bugs",
+            "description": "Signalez les problèmes rencontrés pendant l’utilisation."
+          },
+          "two": {
+            "title": "Idées",
+            "description": "Partagez les améliorations qui faciliteraient votre suivi."
+          },
+          "three": {
+            "title": "Données",
+            "description": "Les demandes relatives aux données peuvent être faites depuis ce canal."
+          }
         },
-        "notice": { "title": "Adresse publique à compléter", "description": "Aucune adresse de contact publique n’est configurée dans le dépôt. Elle devra être ajoutée avant une commercialisation ouverte." }
+        "notice": {
+          "title": "Adresse publique à compléter",
+          "description": "Aucune adresse de contact publique n’est configurée dans le dépôt. Elle devra être ajoutée avant une commercialisation ouverte."
+        }
       },
       "legal": {
         "eyebrow": "Mentions légales",
@@ -2179,11 +2318,23 @@
         "sectionTitle": "Informations manquantes à fournir",
         "intro": "Cette page rend l’absence de ces informations explicite ; elle ne remplace pas des mentions légales complètes.",
         "points": {
-          "one": { "title": "Éditeur", "description": "Nom ou dénomination sociale à renseigner." },
-          "two": { "title": "Coordonnées", "description": "Adresse, e-mail de contact et autres informations obligatoires à renseigner." },
-          "three": { "title": "Hébergement", "description": "Informations d’hébergement à valider et publier." }
+          "one": {
+            "title": "Éditeur",
+            "description": "Nom ou dénomination sociale à renseigner."
+          },
+          "two": {
+            "title": "Coordonnées",
+            "description": "Adresse, e-mail de contact et autres informations obligatoires à renseigner."
+          },
+          "three": {
+            "title": "Hébergement",
+            "description": "Informations d’hébergement à valider et publier."
+          }
         },
-        "notice": { "title": "Publication à finaliser", "description": "Ces éléments doivent être validés par le responsable légal avant l’ouverture commerciale. Aucun contenu juridique absent n’est inventé par Kalivoa." }
+        "notice": {
+          "title": "Publication à finaliser",
+          "description": "Ces éléments doivent être validés par le responsable légal avant l’ouverture commerciale. Aucun contenu juridique absent n’est inventé par Kalivoa."
+        }
       },
       "sales": {
         "eyebrow": "Conditions de vente",
@@ -2192,12 +2343,82 @@
         "sectionTitle": "Éléments à valider avant une offre payante",
         "intro": "La souscription doit préciser la tarification, le renouvellement, la résiliation, le droit applicable et les modalités de remboursement selon le cadre choisi.",
         "points": {
-          "one": { "title": "Offre et prix", "description": "Les tarifs approuvés et les limites correspondantes doivent être fournis." },
-          "two": { "title": "Renouvellement", "description": "Les conditions de renouvellement et de résiliation doivent être validées." },
-          "three": { "title": "Informations légales", "description": "L’éditeur et les contacts requis doivent être publiés avec les conditions." }
+          "one": {
+            "title": "Offre et prix",
+            "description": "Les tarifs approuvés et les limites correspondantes doivent être fournis."
+          },
+          "two": {
+            "title": "Renouvellement",
+            "description": "Les conditions de renouvellement et de résiliation doivent être validées."
+          },
+          "three": {
+            "title": "Informations légales",
+            "description": "L’éditeur et les contacts requis doivent être publiés avec les conditions."
+          }
         },
-        "notice": { "title": "Pas de vente publique annoncée", "description": "Cette page ne constitue pas des conditions de vente. Elle signale les éléments qui doivent être fournis avant toute commercialisation." }
+        "notice": {
+          "title": "Pas de vente publique annoncée",
+          "description": "Cette page ne constitue pas des conditions de vente. Elle signale les éléments qui doivent être fournis avant toute commercialisation."
+        }
       }
     }
+  },
+  "pricingPlans": {
+    "availability": "La bêta est actuellement gratuite : un compte bêta-testeur dispose de 4 bankrolls actives et de 50 scans par période de 30 jours. Les offres ci-dessous sont prévues après la bêta ; les abonnements payants ne sont pas encore ouverts. Les invitations Premium éventuelles suivent leurs propres conditions.",
+    "freeTitle": "Gratuit après la bêta",
+    "freeDescription": "Pour suivre vos paris et découvrir le scan IA.",
+    "freeBankrolls": "2 bankrolls actives",
+    "freeScans": "10 scans IA par période de 30 jours",
+    "freeCard": "Sans carte bancaire",
+    "freeCta": "Créer mon compte gratuitement",
+    "premiumTitle": "Premium à l’ouverture",
+    "perMonth": " / mois TTC",
+    "annualPrice": "Ou {yearlyPrice} TTC par an, facturés en une fois.",
+    "premiumScans": "200 scans IA par période de 30 jours",
+    "premiumBonus": "300 scans permanents offerts une seule fois à la première activation payante",
+    "premiumBankrolls": "Bankrolls actives illimitées",
+    "cancellation": "Résiliation depuis votre compte, avec accès jusqu’à la fin de la période payée.",
+    "welcomeTitle": "Offre de bienvenue",
+    "welcomeMonthly": "{welcomeMonthlyPrice} TTC/mois pendant les 12 premiers mois, puis {monthlyPrice} TTC/mois.",
+    "welcomeYearly": "{welcomeYearlyPrice} TTC la première année, puis {yearlyPrice} TTC/an.",
+    "welcomeEligibility": "Pour les bêta-testeurs et les 15 premiers nouveaux inscrits après la bêta. À activer avant le 31 décembre 2026, 23 h 59 (Paris), une seule fois par compte.",
+    "welcomeLink": "Découvrir l’offre de bienvenue",
+    "premiumCta": "Voir mon abonnement",
+    "creditConditions": "Les lots qui expirent le plus tôt sont consommés en premier, avant les crédits permanents ; le bonus initial permanent de 300 scans est utilisé en dernier. Le quota mensuel ne se cumule pas et sa période de 30 jours démarre à la première utilisation. Le bonus initial de 300 scans n’expire pas : son solde est conservé après résiliation, mais un abonnement payant actif est nécessaire pour l’utiliser. Se réabonner ne donne pas un nouveau bonus. Les scans de parrainage et les récompenses partenaires/bookmakers suivent leurs propres conditions, affichées dans les offres concernées.",
+    "renewalConditions": "Renouvellement automatique selon la fréquence choisie : {monthlyPrice} TTC/mois ou {yearlyPrice} TTC/an après l’offre de bienvenue, sauf résiliation avant le renouvellement. Aucun scan supplémentaire n’est facturé automatiquement."
+  },
+  "welcomeOffer": {
+    "metaTitle": "Offre de bienvenue pour les bêta-testeurs",
+    "metaDescription": "Découvrez le tarif de bienvenue Kalivoa réservé aux bêta-testeurs et aux 15 premiers inscrits après la bêta, jusqu’au 31 décembre 2026.",
+    "badge": "Merci de faire partie des premiers",
+    "title": "Votre première année Premium à tarif préférentiel",
+    "intro": "Vous avez contribué à la bêta de Kalivoa ? Cette offre est notre façon de vous remercier. Elle est aussi réservée aux 15 premiers nouveaux inscrits après la bêta.",
+    "deadline": "Offre à activer avant le 31 décembre 2026 à 23 h 59, heure de Paris.",
+    "betaActive": "La bêta gratuite est toujours en cours. Les abonnements payants ne sont pas encore ouverts : vous pourrez activer cette offre après la clôture de la bêta, avant la date limite.",
+    "available": "Les abonnements sont ouverts. Connectez-vous avec votre compte Kalivoa : votre éligibilité et le tarif applicable seront affichés avant le paiement.",
+    "expired": "Cette offre a pris fin le 31 décembre 2026. Les abonnements déjà souscrits conservent leur réduction pendant la durée prévue. Les nouvelles souscriptions suivent les tarifs habituels.",
+    "monthly": "Premium mensuel",
+    "yearly": "Premium annuel",
+    "monthlyUnit": " TTC / mois",
+    "yearlyUnit": " TTC la première année",
+    "monthlyRenewal": "Pendant les 12 premiers mois, puis {price} TTC/mois. Paiement mensuel.",
+    "yearlyRenewal": "Un seul paiement pour 12 mois, puis {price} TTC/an au renouvellement.",
+    "scans": "200 scans par période de 30 jours, sans report des scans inutilisés.",
+    "bonus": "300 scans permanents offerts à la première activation payante.",
+    "cancel": "Résiliation en ligne : l’accès continue jusqu’à la fin de la période payée.",
+    "betaCta": "Retrouver mon compte",
+    "offerCta": "Vérifier mon offre",
+    "standardCta": "Voir les tarifs actuels",
+    "eligibilityTitle": "À qui s’adresse cette offre ?",
+    "betaTitle": "Aux bêta-testeurs Kalivoa",
+    "betaEligibility": "Votre participation à la bêta est liée à votre compte. Vous gardez votre éligibilité après le passage au forfait gratuit, sans occuper l’une des 15 places des nouveaux inscrits.",
+    "earlyTitle": "Aux {count} premiers nouveaux inscrits",
+    "earlyEligibility": "Après la clôture de la bêta, les {count} premières créations de compte hors bêta bénéficient aussi de cette offre. Une place est attribuée à l’inscription, et non au premier paiement. Les comptes administratifs ne comptent pas.",
+    "accountCheck": "Aucun code promo à saisir. La remise est appliquée automatiquement aux comptes éligibles. Transmettre ce lien à quelqu’un ne lui attribue pas la réduction.",
+    "conditionsTitle": "Les conditions, simplement",
+    "conditions": "Une seule offre par compte, non cumulable avec une autre réduction d’abonnement. L’abonnement doit être souscrit après la bêta et avant la date limite. À la fin de la période promotionnelle, le renouvellement se fait automatiquement au tarif habituel sauf résiliation. La date limite de l’offre ne raccourcit pas les 12 mois de réduction déjà obtenus.",
+    "creditConditions": "Les 200 scans sont consommés avant le bonus initial permanent. Les 300 scans restants sont conservés sans expiration après résiliation, mais utilisables uniquement avec un abonnement payant actif. Un réabonnement n’attribue pas de nouveau bonus. Parrainage et offres partenaires/bookmakers suivent leurs propres conditions.",
+    "terms": "Conditions de vente",
+    "contact": "Une question ? Contactez-nous"
   }
 }

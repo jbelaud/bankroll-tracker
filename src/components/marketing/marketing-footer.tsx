@@ -20,6 +20,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
           <FooterColumn title={t("product")} locale={locale} links={[
             ["/features", t("features")],
             ["/screenshot-import", t("import")],
+            ["/certification", t("certification")],
             ["/extension", locale === "fr" ? "Extension Chrome" : "Chrome extension"],
             ["/bookmakers", t("bookmakers")],
             ["/pricing", t("pricing")],
@@ -41,6 +42,7 @@ export async function MarketingFooter({ locale }: { locale: Locale }) {
           <p>{t("copyright", { year: new Date().getFullYear() })}</p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             <Link href="/privacy" locale={locale} className="hover:text-foreground">{t("privacy")}</Link>
+            <Link href="/retractation" locale={locale} className="hover:text-foreground">{locale === "en" ? "Withdraw from my contract" : "Renoncer à mon contrat"}</Link>
             <Link href="/terms" locale={locale} className="hover:text-foreground">{t("terms")}</Link>
             <Link href="/legal-notice" locale={locale} className="hover:text-foreground">{t("legal")}</Link>
             <Link href="/sales-terms" locale={locale} className="hover:text-foreground">{t("sales")}</Link>

@@ -7,6 +7,7 @@ import "../globals.css";
 import { cn } from "@/lib/utils";
 import { routing } from "@/i18n/routing";
 import { siteMetadataBase } from "@/lib/marketing-seo";
+import { AnalyticsChoice } from "@/components/privacy/analytics-choice";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -61,8 +62,16 @@ export default async function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
+        {process.env.BILLING_RECIPE_ENABLED === "true" && (
+          <div role="status" className="border-b border-warning/50 bg-warning/10 px-4 py-3 text-center text-sm">
+            {locale === "en"
+              ? "Test version: payments are simulated and emails go to a delivery simulator."
+              : "Version de test : les paiements sont simulés et les emails passent par un simulateur de livraison."}
+          </div>
+        )}
         <NextIntlClientProvider>
           {children}
+          <AnalyticsChoice />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -5,6 +5,7 @@ import { getSiteUrlForPath } from "@/lib/site";
 const faqKeys = [
   "what",
   "import",
+  "certification",
   "completed",
   "bookmakers",
   "review",

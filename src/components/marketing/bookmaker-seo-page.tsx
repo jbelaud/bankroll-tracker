@@ -54,7 +54,7 @@ function copyFor(locale: Locale, bookmaker: string): Copy {
       cta: "Try Kalivoa Scan",
       dataTitle: "Transparency during beta",
       data: "Kalivoa will publish screenshots tested and correction-free import data only once there is enough representative beta data. No success rate is displayed before then.",
-      independent: `Kalivoa is independent and is not affiliated with ${bookmaker}.`,
+      independent: `Kalivoa is independent and is neither operated nor endorsed by ${bookmaker}.`,
     };
   }
 
@@ -85,7 +85,7 @@ function copyFor(locale: Locale, bookmaker: string): Copy {
     cta: "Essayer Kalivoa Scan",
     dataTitle: "Transparence pendant la bêta",
     data: "Kalivoa affichera le nombre de captures testées et les données d’import sans correction uniquement lorsqu’il y aura assez de données bêta représentatives. Aucun taux de réussite n’est affiché avant cela.",
-    independent: `Kalivoa est indépendant et n’est pas affilié à ${bookmaker}.`,
+    independent: `Kalivoa est indépendant ; il n’est ni exploité ni approuvé par ${bookmaker}.`,
   };
 }
 

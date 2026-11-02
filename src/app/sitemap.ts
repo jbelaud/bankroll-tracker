@@ -4,6 +4,7 @@ import { getSiteUrlForPath, isProductionDeployment } from "@/lib/site";
 const publicPaths = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
   { path: "/features", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/certification", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/extension", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/screenshot-import", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/bankroll-tracking", priority: 0.7, changeFrequency: "monthly" as const },
@@ -16,6 +17,7 @@ const publicPaths = [
   { path: "/bookmakers/betclic", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/bookmakers/winamax", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/pricing", priority: 0.6, changeFrequency: "monthly" as const },
+  { path: "/offre-bienvenue", priority: 0.5, changeFrequency: "monthly" as const },
   { path: "/faq", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
