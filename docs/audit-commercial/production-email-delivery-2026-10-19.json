@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-19",
+  "recipient": "delivered@resend.dev",
+  "customerRecipient": false,
+  "customerCharged": false,
+  "providerDeliveryVerified": true,
+  "status": "DELIVERED",
+  "providerId": "01a155dc-b3d9-7c2a-8ab9-37acfb69f05c",
+  "rowId": "8e124f4f-f97f-4351-b96d-fd6dda6e4875"
+}

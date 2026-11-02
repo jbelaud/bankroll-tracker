@@ -1,0 +1,85 @@
+{
+  "runId": "4273de0d-71ec-412a-8b23-9e7469195859",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "isolatedDatabase": true,
+  "browserPurchaseVerified": false,
+  "startedAt": "2026-10-09T16:50:45.509Z",
+  "checks": [
+    "Real paid invoice activates PREMIUM through signed Stripe delivery",
+    "One permanent 300-scan bonus requiring a paid plan",
+    "Cancellation at period end retains paid access and does not grant another bonus",
+    "Actual cancellation returns the profile to FREE and retains the paid-only bonus"
+  ],
+  "customerId": "cus_VPW2rcFmvohJeA",
+  "subscriptionId": "sub_1UOh0NDNFQcoJN1NfDQqsOpG",
+  "invoice": {
+    "id": "in_1UOh0NDNFQcoJN1NtNgtgw77",
+    "status": "paid",
+    "amountPaid": 499
+  },
+  "activatedUser": {
+    "id": "cff8a400-3475-4e16-8d0f-0e68c16a4b66",
+    "plan": "PREMIUM",
+    "stripeCustomerId": "cus_VPW2rcFmvohJeA",
+    "stripeSubscriptionId": "sub_1UOh0NDNFQcoJN1NfDQqsOpG",
+    "subscriptionStatus": "active"
+  },
+  "initialBonus": {
+    "quantityGranted": 300,
+    "quantityUsed": 0,
+    "expiresAt": null,
+    "requiresPaidPlan": true,
+    "status": "ACTIVE"
+  },
+  "canceledUser": {
+    "id": "cff8a400-3475-4e16-8d0f-0e68c16a4b66",
+    "plan": "FREE",
+    "stripeCustomerId": "cus_VPW2rcFmvohJeA",
+    "stripeSubscriptionId": "sub_1UOh0NDNFQcoJN1NfDQqsOpG",
+    "subscriptionStatus": "canceled"
+  },
+  "retainedBonus": {
+    "quantityGranted": 300,
+    "quantityUsed": 0,
+    "expiresAt": null,
+    "requiresPaidPlan": true,
+    "status": "ACTIVE"
+  },
+  "passed": true,
+  "finishedAt": "2026-10-09T16:50:57.860Z",
+  "deliveries": [
+    {
+      "at": "2026-10-09T16:50:49.808Z",
+      "message": "2026-10-09 18:50:49   --> invoice.paid [evt_1UOh0QDNFQcoJN1NuVYUPZLf]"
+    },
+    {
+      "at": "2026-10-09T16:50:49.965Z",
+      "message": "2026-10-09 18:50:49   --> customer.subscription.created [evt_1UOh0QDNFQcoJN1NeqfcILsC]"
+    },
+    {
+      "at": "2026-10-09T16:50:50.924Z",
+      "message": "2026-10-09 18:50:50  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOh0QDNFQcoJN1NuVYUPZLf]"
+    },
+    {
+      "at": "2026-10-09T16:50:51.185Z",
+      "message": "2026-10-09 18:50:51  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOh0QDNFQcoJN1NeqfcILsC]"
+    },
+    {
+      "at": "2026-10-09T16:50:52.371Z",
+      "message": "2026-10-09 18:50:52   --> customer.subscription.updated [evt_1UOh0SDNFQcoJN1NFNAL9yyw]"
+    },
+    {
+      "at": "2026-10-09T16:50:52.845Z",
+      "message": "2026-10-09 18:50:52  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOh0SDNFQcoJN1NFNAL9yyw]"
+    },
+    {
+      "at": "2026-10-09T16:50:56.876Z",
+      "message": "2026-10-09 18:50:56   --> customer.subscription.deleted [evt_1UOh0XDNFQcoJN1NYUIumhH9]"
+    },
+    {
+      "at": "2026-10-09T16:50:57.378Z",
+      "message": "2026-10-09 18:50:57  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOh0XDNFQcoJN1NYUIumhH9]"
+    }
+  ]
+}

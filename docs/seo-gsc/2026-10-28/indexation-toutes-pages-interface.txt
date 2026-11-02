@@ -1,0 +1,119 @@
+Browser tab: 1, Title: "Indexation des pages", URL: "https://search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com".
+1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					8 button Recherche
+						9 image
+					10 button Aide
+					11 button Paramètres utilisateur
+					12 container
+						13 button Messages non lus : 7
+						14 text 7
+					15 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					16 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			17 container
+				18 container Fils d'Ariane
+					19 heading Indexation des pages, Value: 1
+						20 text Indexation des pages
+				21 pop up button (collapsed) Description: EXPORTER, Secondary Actions: Expand
+				22 list
+					23 (selected) Toutes les pages connues
+					24 Toutes les pages envoyées
+					25 Pages non envoyées uniquement
+					26 https://kalivoa.com/sitemap.xml
+				27 container
+					28 text Dernière mise à jour :  23/10/2026
+				29 container
+					30 container
+						31 button Non indexées 18 5 motifs
+							32 text Non indexées
+							33 text 18
+							34 text 5 motifs
+						35 container
+							36 button (collapsed) Description: null, Secondary Actions: Expand
+						37 button Dans l'index 54
+							38 text Dans l'index
+							39 text 54
+						40 container
+							41 button (collapsed) Description: null, Secondary Actions: Expand
+						42 checkbox Description: Impressions, Value: 0, ID: i18
+						43 text Impressions
+					44 link Description: Afficher les données concernant les pages indexées, Value: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&pages=ALL_URLS
+					45 text Pourquoi des pages ne sont pas indexées
+					46 text Les pages non indexées ne peuvent pas être diffusées sur Google
+					47 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+					48 table
+						49 row
+							50 cell
+								51 text Raison
+							52 cell
+								53 text Source
+								54 container
+									55 button (collapsed) Description: null, Secondary Actions: Expand
+							56 cell
+								57 text Validation
+							58 cell
+								59 text Tendance
+							60 cell
+								61 text Pages
+						62 row
+							63 cell
+								64 text Page avec redirection
+							65 cell
+								66 text Site Web
+							67 cell
+								68 text Échec
+							69 cell
+								70 text 7
+						71 row
+							72 cell
+								73 text Exclue par la balise "noindex"
+							74 cell
+								75 text Site Web
+							76 cell
+								77 text Non commencé
+							78 cell
+								79 text 8
+						80 row
+							81 cell
+								82 text Page en double sans URL canonique sélectionnée par l'utilisateur
+							83 cell
+								84 text Site Web
+							85 cell
+								86 text Non commencé
+							87 cell
+								88 text 1
+						89 row
+							90 cell
+								91 text Détectée, actuellement non indexée
+							92 cell
+								93 text Systèmes Google
+							94 cell
+								95 text Non commencé
+							96 cell
+								97 text 1
+						98 row
+							99 cell
+								100 text Explorée, actuellement non indexée
+							101 cell
+								102 text Systèmes Google
+							103 cell
+								104 text Non commencé
+							105 cell
+								106 text 1
+					107 text Lignes par page :
+					108 list Nombre de lignes par page
+						109 5
+						110 (selected) 10
+						111 25
+						112 50
+						113 100
+						114 250
+						115 500
+					116 text 1-5 sur 5
+
+The focused UI element is 1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com

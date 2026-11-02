@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-20",
+  "checkedAt": "2026-10-20T05:42:17.705Z",
+  "origin": "https://bankroll-tracker-p9re6h8id-ets-belaud.vercel.app",
+  "deploymentId": "dpl_4fBeHKfb9XcM9Y3MBCWPCFH1QAuP",
+  "checks": [
+    {
+      "path": "/fr",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/certification",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/faq",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/pricing",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/certification",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/faq",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/pricing",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "certificationRulesChanged": false,
+  "paymentsEnabled": false
+}

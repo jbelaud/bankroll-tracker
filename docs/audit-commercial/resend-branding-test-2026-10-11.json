@@ -1,0 +1,20 @@
+{
+  "preparedAt": "2026-10-11T09:46:04.684Z",
+  "idempotencyId": "88357f4b-fa47-402d-8301-4f90c8945223",
+  "message": {
+    "from": "Kalivoa <notifications@kalivoa.com>",
+    "to": [
+      "contact.kalivoa@gmail.com"
+    ],
+    "reply_to": "contact.kalivoa@gmail.com",
+    "subject": "Kalivoa — test de l’expéditeur",
+    "text": "Bonjour,\n\nCeci est un unique email de test Kalivoa pour vérifier le nom de l’expéditeur et la livraison des notifications. Aucun abonnement ni paiement n’a été créé par cet email.\n\nKalivoa\ncontact.kalivoa@gmail.com"
+  },
+  "status": "delivered",
+  "attemptAt": "2026-10-11T10:13:53.389Z",
+  "httpStatus": 200,
+  "providerId": "01a12a74-63f6-7271-a152-3202acff5508",
+  "deliveryVerifiedAt": "2026-10-11T10:18:49.463Z",
+  "providerDelivery": "Delivered, Oct 11 12:13 PM, Resend Dashboard",
+  "recipientConfirmed": true
+}

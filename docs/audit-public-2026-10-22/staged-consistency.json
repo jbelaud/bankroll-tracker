@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-22T06:26:39.136Z",
+  "checks": [
+    {
+      "locale": "fr",
+      "sales": true,
+      "betaPricing": true,
+      "welcome": true,
+      "privacy": true,
+      "withdrawal": true,
+      "certification": true
+    },
+    {
+      "locale": "en",
+      "sales": true,
+      "betaPricing": true,
+      "welcome": true,
+      "privacy": true,
+      "withdrawal": true,
+      "certification": true
+    }
+  ],
+  "stalePublicCopy": [],
+  "passed": true
+}

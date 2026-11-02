@@ -1,0 +1,94 @@
+Browser tab: 1, Title: "Indexation des pages", URL: "https://search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com&pages=SITEMAP&sitemap=https%3A%2F%2Fkalivoa.com%2Fsitemap.xml".
+1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com&pages=SITEMAP&sitemap=https%3A%2F%2Fkalivoa.com%2Fsitemap.xml
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					122 link Description: Google Search Console, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com, ID: sdgBod
+					8 button Recherche
+						9 image
+					10 button Aide
+					11 button Paramètres utilisateur
+					12 container
+						13 button Messages non lus : 7
+						123 text 7
+					15 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					16 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			124 container
+				125 container Fils d'Ariane
+					126 heading Indexation des pages, Value: 1
+						127 text Indexation des pages
+				128 pop up button (collapsed) Description: EXPORTER, Secondary Actions: Expand
+				129 list
+					130 Toutes les pages connues
+					131 Toutes les pages envoyées
+					132 Pages non envoyées uniquement
+					133 (selected) https://kalivoa.com/sitemap.xml
+				134 container
+					135 text Dernière mise à jour :  23/10/2026
+				136 container
+					137 container
+						138 button Non indexées 2 2 motifs
+							139 text Non indexées
+							140 text 2
+							141 text 2 motifs
+						142 container
+							143 button (collapsed) Description: null, Secondary Actions: Expand
+						144 button Dans l'index 42
+							145 text Dans l'index
+							146 text 42
+						147 container
+							148 button (collapsed) Description: null, Secondary Actions: Expand
+						149 checkbox Description: Impressions, Value: 0, ID: c4
+						150 text Impressions
+					151 link Description: Afficher les données concernant les pages indexées, Value: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&pages=SITEMAP&sitemap=https%3A%2F%2Fkalivoa.com%2Fsitemap.xml
+					152 text Pourquoi des pages ne sont pas indexées
+					153 text Les pages non indexées ne peuvent pas être diffusées sur Google
+					154 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+					155 table
+						156 row
+							157 cell
+								158 text Raison
+							159 cell
+								160 text Source
+								161 container
+									162 button (collapsed) Description: null, Secondary Actions: Expand
+							163 cell
+								164 text Validation
+							165 cell
+								166 text Tendance
+							167 cell
+								168 text Pages
+						169 row
+							170 cell
+								171 text Page en double sans URL canonique sélectionnée par l'utilisateur
+							172 cell
+								173 text Site Web
+							174 cell
+								175 text Non commencé
+							176 cell
+								177 text 1
+						178 row
+							179 cell
+								180 text Détectée, actuellement non indexée
+							181 cell
+								182 text Systèmes Google
+							183 cell
+								184 text Non commencé
+							185 cell
+								186 text 1
+					187 text Lignes par page :
+					188 list Nombre de lignes par page
+						189 5
+						190 (selected) 10
+						191 25
+						192 50
+						193 100
+						194 250
+						195 500
+					196 text 1-2 sur 2
+		197 text Indexation des pages
+
+The focused UI element is 1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com&pages=SITEMAP&sitemap=https%3A%2F%2Fkalivoa.com%2Fsitemap.xml

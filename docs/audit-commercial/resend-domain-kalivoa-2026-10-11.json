@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-11T09:32:26.753Z",
+  "domain": "kalivoa.com",
+  "region": "eu-west-1",
+  "dnsProvider": "OVH",
+  "sendingEnabled": true,
+  "receivingEnabled": false,
+  "verified": true,
+  "source": "Resend dashboard, domain added by authorized setup",
+  "records": [
+    {
+      "type": "TXT",
+      "name": "resend._domainkey",
+      "content": "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/lDOakZu82WfkTN0gMKx6CnyMuFLcYqvmH618SNgXBz+EGMAeuUyxnTmslNsyAIJiN0ylbxyb3lDV+DMR/VVUiDOfoIuxu24q2IRZN07CydyiJjKyDOyBp5/mD6lq0AogVWR7bJ68vPhWsiEeIpkUOekCFqYIOyLh7IxWIVjifQIDAQAB",
+      "ttl": "auto"
+    },
+    {
+      "type": "CNAME",
+      "name": "rsend",
+      "content": "rsend-euw1.forge.rmta.net",
+      "ttl": "auto"
+    },
+    {
+      "type": "CNAME",
+      "name": "send",
+      "content": "send.forge.rmta.net",
+      "ttl": "auto"
+    }
+  ],
+  "optionalDmarc": {
+    "type": "TXT",
+    "name": "_dmarc",
+    "content": "v=DMARC1; p=none;",
+    "action": "Inspect existing policy before any change. Do not replace a stricter policy."
+  },
+  "sender": "Kalivoa <notifications@kalivoa.com>",
+  "replyTo": "contact.kalivoa@gmail.com",
+  "domainId": "cf036e1e-1797-40b8-bfb2-c8d19ef09252",
+  "verifiedAt": "2026-10-11T09:50:21.937Z",
+  "dnsRecordsAppliedAt": "2026-10-11T09:42:00Z",
+  "trackingConfigured": false,
+  "tls": "opportunistic"
+}

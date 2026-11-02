@@ -1,0 +1,74 @@
+Browser tab: 16, Title: "Boîte de réception (112) - contact.kalivoa@gmail.com - Gmail", URL: "https://mail.google.com/mail/u/0/#inbox".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 295-297, 852-857, 865-866, 1023-1025, 1029-1035, 1050-1079, 1105-1118
+~0 AXWebArea Boîte de réception (112) - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#inbox
++				1105 text Message envoyé
++				1106 link Afficher le message
++				1107 button Fermer
++							1108 container
++								1109 link Description: Messages envoyés, Value: mail.google.com/mail/u/0/#sent
++							1110 container
++								1111 link Description: Brouillons, Value: mail.google.com/mail/u/0/#drafts
++							1112 text Plus
+~							1080 cell :1g
+~								1081 checkbox Value: 0, ID: :1h, Description: non lue, Google , Alerte de sécurité , 21:10 , Vous avez autorisé OpenAI à accéder à certaines données de votre compte Google contact.kalivoa@gmail.com Si vous n'avez pas autorisé OpenAI à accéder à certaines données de votre compte Google,.
++							1113 cell
++								1114 button Description: Non suivi, ID: :1i
++								1115 text Google
+~							1083 cell :1k
++								1116 link Alerte de sécurité  -  Vous avez autorisé OpenAI à accéder à certaines données de votre compte Google contact.kalivoa@gmail.com Si vous n'avez pas autorisé OpenAI à accéder à certaines données de votre compte Google,
++									1117 text Alerte de sécurité
++									1118 container :1n
++										1119 text  -  Vous avez autorisé OpenAI à accéder à certaines données de votre compte Google contact.kalivoa@gmail.com Si vous n'avez pas autorisé OpenAI à accéder à certaines données de votre compte Google,
++								1120 container Description: jeu. 22 oct. 2026 21:10, ID: :1p
++									1121 text 21:10
+~							1085 cell :1t
+~								1086 checkbox Value: 0, ID: :1u, Description: Rustine , Ta note : 87/100 , 18:26 , Ta première semaine · kalivoa.com 87/100, et 1 problème encore ouvert. Corrigés : 1 Encore ouvert : 1 à corriger tout de suite, 0 quand tu peux Le plus important : « next 16.3.8 : 1 faille connue » sur.
++							1122 cell
++								1123 button Description: Non suivi, ID: :1v
++								1124 text Rustine
+~							1088 cell :1x
++								1125 link Ta note : 87/100  -  Ta première semaine · kalivoa.com 87/100, et 1 problème encore ouvert. Corrigés : 1 Encore ouvert : 1 à corriger tout de suite, 0 quand tu peux Le plus important : « next 16.3.8 : 1 faille connue » sur
++									1126 text Ta note : 87/100
++									1127 container :20
++										1128 text  -  Ta première semaine · kalivoa.com 87/100, et 1 problème encore ouvert. Corrigés : 1 Encore ouvert : 1 à corriger tout de suite, 0 quand tu peux Le plus important : « next 16.3.8 : 1 faille connue » sur
++								1129 container Description: jeu. 22 oct. 2026 18:26, ID: :22
++									1130 text 18:26
+~							1090 cell :26
+~								1091 checkbox Value: 0, ID: :27, Description: Pixbid , Confirmez votre inscription Pixbid , 17:49 , Bonjour, Vous venez de demander a recevoir une part des visites des campagnes Pixbid sur votre lien. Derniere etape : confirmez votre adresse en cliquant ici. https://pixbid.net/boost?t=.
++							1131 cell
++								1132 button Description: Non suivi, ID: :28
++								1133 text Pixbid
+~							1093 cell :2a
++								1134 link Confirmez votre inscription Pixbid  -  Bonjour, Vous venez de demander a recevoir une part des visites des campagnes Pixbid sur votre lien. Derniere etape : confirmez votre adresse en cliquant ici. https://pixbid.net/boost?t=
++									1135 text Confirmez votre inscription Pixbid
++									1136 container :2d
++										1137 text  -  Bonjour, Vous venez de demander a recevoir une part des visites des campagnes Pixbid sur votre lien. Derniere etape : confirmez votre adresse en cliquant ici. https://pixbid.net/boost?t=
++								1138 container Description: jeu. 22 oct. 2026 17:49, ID: :2f
++									1139 text 17:49
+~							1095 cell :2j
+~								1096 checkbox Value: 0, ID: :2k, Description: non lue, Sorare , Alerte de sécurité : autoriser ton nouvel appareil , 09:50 , Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : France Système d'exploitation : Windows 10 Browser.
++							1140 cell
++								1141 button Description: Non suivi, ID: :2l
++								1142 text Sorare
+~							1098 cell :2n
++								1143 link Alerte de sécurité : autoriser ton nouvel appareil  -  Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : France Système d'exploitation : Windows 10 Browser
++									1144 text Alerte de sécurité : autoriser ton nouvel appareil
++									1145 container :2q
++										1146 text  -  Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : France Système d'exploitation : Windows 10 Browser
++								1147 container Description: jeu. 22 oct. 2026 09:50, ID: :2s
++									1148 text 09:50
+~							1100 cell :2w
+~								1101 checkbox Value: 0, ID: :2x, Description: non lue, Sorare 2 , Alerte de sécurité : autoriser ton nouvel appareil , 21 oct. , Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : Angers, France Système d'exploitation : Windows 10.
++							1149 cell
++								1150 button Description: Non suivi, ID: :2y
++								1151 container :2z
++									1152 text Sorare 2
+~							1103 cell :30
++								1153 link Alerte de sécurité : autoriser ton nouvel appareil  -  Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : Angers, France Système d'exploitation : Windows 10
++									1154 text Alerte de sécurité : autoriser ton nouvel appareil
++									1155 container :33
++										1156 text  -  Autorisation d'un nouvel appareil Tu as récemment tenté de te connecter à ton compte Sorare à partir d'un nouvel appareil : Localisation : Angers, France Système d'exploitation : Windows 10
++								1157 container Description: mer. 21 oct. 2026 09:34, ID: :35
++									1158 text 21 oct.
+The focused UI element is 0 AXWebArea Boîte de réception (112) - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#inbox

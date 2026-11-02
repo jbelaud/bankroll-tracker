@@ -1,0 +1,639 @@
+{
+  "checkedAt": "2026-10-09T04:36:48.341Z",
+  "sitemapCount": 44,
+  "reports": [
+    {
+      "url": "https://kalivoa.com/fr",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr",
+      "title": "Kalivoa — Scan OCR de tickets et suivi de bankroll | Kalivoa",
+      "canonical": "https://kalivoa.com/fr",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/extension",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/extension",
+      "title": "Kalivoa Chrome extension — Batch captures | Kalivoa",
+      "canonical": "https://kalivoa.com/en/extension",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/extension\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/extension\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/extension\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en",
+      "title": "Kalivoa — OCR betting-slip scan and bankroll tracking | Kalivoa",
+      "canonical": "https://kalivoa.com/en",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/features",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/features",
+      "title": "Fonctionnalités de suivi de bankroll | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/features",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/features\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/features\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/features\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/extension",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/extension",
+      "title": "Extension Chrome Kalivoa — Capture en série | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/extension",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/extension\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/extension\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/extension\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/features",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/features",
+      "title": "Screenshot import and bankroll tracking features | Kalivoa",
+      "canonical": "https://kalivoa.com/en/features",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/features\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/features\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/features\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/screenshot-import",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/screenshot-import",
+      "title": "Turn betting-slip screenshots into history | Kalivoa",
+      "canonical": "https://kalivoa.com/en/screenshot-import",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/screenshot-import\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/screenshot-import\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/screenshot-import\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie",
+      "title": "Académie Kalivoa | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/screenshot-import",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/screenshot-import",
+      "title": "Importer des tickets de pari par capture | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/screenshot-import",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/screenshot-import\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/screenshot-import\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/screenshot-import\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie",
+      "title": "Kalivoa Academy | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/bankroll-tracking",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bankroll-tracking",
+      "title": "Suivi de bankroll pour les paris sportifs | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/bankroll-tracking",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bankroll-tracking\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bankroll-tracking\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bankroll-tracking\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/bankroll-tracking",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bankroll-tracking",
+      "title": "Sports-betting bankroll tracking | Kalivoa",
+      "canonical": "https://kalivoa.com/en/bankroll-tracking",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bankroll-tracking\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bankroll-tracking\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bankroll-tracking\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "title": "How can you verify a tipster&#x27;s published bets? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/verifier-paris-tipster\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/verifier-paris-tipster\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/verifier-paris-tipster\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "title": "Comment vérifier les paris publiés par un tipster ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/verifier-paris-tipster\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/verifier-paris-tipster\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/verifier-paris-tipster\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "title": "How do you track an accumulator without counting its stake twice? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/suivre-pari-combine\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/suivre-pari-combine\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/suivre-pari-combine\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "title": "What should you check after scanning a betting slip? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/verifier-ticket-pari-scan\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/verifier-ticket-pari-scan\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/verifier-ticket-pari-scan\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "title": "Comment suivre un pari combiné sans compter deux fois la mise ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/suivre-pari-combine\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/suivre-pari-combine\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/suivre-pari-combine\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "title": "Quels champs vérifier après le scan d&#x27;un ticket de pari ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/verifier-ticket-pari-scan\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/verifier-ticket-pari-scan\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/verifier-ticket-pari-scan\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "title": "How do you read a bankroll’s drawdown in units? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/comprendre-drawdown-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "title": "Pourquoi une bankroll publique affiche-t-elle les mises en unités ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/comprendre-unites-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/comprendre-unites-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/comprendre-unites-bankroll\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "title": "Comment lire le drawdown de sa bankroll en unités ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/comprendre-drawdown-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "title": "Comment calculer le ROI de ses paris et le distinguer du taux de réussite ? | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/calculer-roi-paris\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/calculer-roi-paris\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/calculer-roi-paris\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "title": "How do you calculate betting ROI and distinguish it from win rate? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/calculer-roi-paris\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/calculer-roi-paris\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/calculer-roi-paris\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "title": "Why does a public bankroll display stakes in units? | Kalivoa",
+      "canonical": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/academie/comprendre-unites-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/academie/comprendre-unites-bankroll\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/academie/comprendre-unites-bankroll\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/unibet",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/unibet",
+      "title": "Suivre ses paris Unibet depuis une capture | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/bookmakers/unibet",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/unibet\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/unibet\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/unibet\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/unibet",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/unibet",
+      "title": "Track Unibet bets from a screenshot | Kalivoa",
+      "canonical": "https://kalivoa.com/en/bookmakers/unibet",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/unibet\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/unibet\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/unibet\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers",
+      "title": "Bookmaker profiles validated for Kalivoa import | Kalivoa",
+      "canonical": "https://kalivoa.com/en/bookmakers",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/partenaires",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/partenaires",
+      "title": "Kalivoa partners | Kalivoa",
+      "canonical": "https://kalivoa.com/en/partenaires",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/partenaires\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/partenaires\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/partenaires\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers",
+      "title": "Profils bookmaker validés pour l’import Kalivoa | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/bookmakers",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/partenaires",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/partenaires",
+      "title": "Les partenaires Kalivoa | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/partenaires",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/partenaires\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/partenaires\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/partenaires\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1,
+      "text": "Les partenaires Kalivoa | Kalivoa Kali voa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Chargement des partenaires… Kali voa Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs. EN Produit Fonctionnalités Import par capture Extension Chrome Bookmakers pris en charge Tarifs Ressources Académie Suivi de bankroll Partenaires Kalivoa Questions fréquentes Jeu responsable Compte Connexion Créer un compte Contact © 2026 Kalivoa. Tous droits réservés. Confidentialité Conditions d’utilisation Mentions légales Conditions de vente Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr. Accueil / Partenaires Offres et outils · en toute transparence Les partenaires Kalivoa Découvrez des offres et des outils sélectionnés pour mieux suivre, analyser et gérer votre bankroll. Kalivoa vous aide à garder une vision claire de vos paris et de vos limites. Ces ressources accompagnent votre suivi et votre analyse. Suivi de bankroll Analyse Discipline et transparence Réservé aux membres Kalivoa Vos avantages vous attendent dans votre espace Cette page présente nos partenaires et les avantages prévus. Les liens, codes et conditions des offres sont accessibles depuis votre compte Kalivoa, dans la rubrique Partenaires. Accéder à mes offres Créer mon compte Kalivoa Offres bookmakers Outils et services Offres bookmakers Consultez les offres de parrainage proposées et leurs conditions avant de décider de vous inscrire. Les bonus des bookmakers sont distincts des scans Kalivoa. Les avantages en scans indiqués sur les cartes sont attribués après validation de l’action prévue, selon leurs propres conditions. WI Bookmaker Winamax Un lien de parrainage pour découvrir l’offre Winamax. Disponible 30 scans gratuits Scans permanents, sans expiration. Voir l’offre dans mon espace BE Bookmaker Betclic Un parrainage avec un bonus en paris gratuits pour les nouveaux clients éligibles. Disponible 30 scans gratuits Scans permanents, sans expiration. Voir l’offre dans mon espace PM Bookmaker PMU Le lien de parrainage PMU transmis à Kalivoa. Conditions à confirmer Cette offre n’est pas activée actuellement. UN Bookmaker Unibet Un lien de parrainage Unibet, avec les modalités publiées par le bookmaker. Disponible 30 scans gratuits Scans permanents, sans expiration. Voir l’offre dans mon espace Des outils pour mieux comprendre et suivre Découvrez des outils et services utiles pour améliorer votre analyse et votre suivi. Les collaborations en discussion sont identifiées clairement. Alertes et analyse de cotes Statistiques et données Communautés Formations Outils complémentaires BE Alertes et analyse de cotes BetCroissant Analyse des cotes et alertes pour aider à repérer des opportunités intéressantes. Collaboration à l’étude Les avantages seront précisés si la collaboration est confirmée. Des liens identifiés, des conditions accessibles Certains liens présents sur cette page peuvent être des liens partenaires ou des liens de parrainage. Ils peuvent permettre à Kalivoa de recevoir une rémunération, sans coût supplémentaire pour l’utilisateur. Les avantages dépendent des conditions propres à chaque offre. Consultez « Voir les conditions » sur chaque carte et les modalités complètes du partenaire. Les offres bookmakers sont réservées aux personnes majeures éligibles. Conditions d’utilisation de Kalivoa Gardez vos limites au premier plan Les paris comportent un risque de perte et sont interdits aux mineurs. Fixez un budget que vous pouvez vous permettre de perdre, gardez le contrôle de votre pratique et faites une pause si nécessaire. Une offre ne doit pas vous conduire à augmenter vos mises ou à jouer davantage. Consulter nos ressources de jeu responsable"
+    },
+    {
+      "url": "https://kalivoa.com/en/pricing",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/pricing",
+      "title": "Kalivoa pricing and subscription | Kalivoa",
+      "canonical": "https://kalivoa.com/en/pricing",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/pricing\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/pricing\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/pricing\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/winamax",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/winamax",
+      "title": "Suivre ses paris Winamax depuis une capture | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/bookmakers/winamax",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/winamax\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/winamax\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/winamax\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/betclic",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/betclic",
+      "title": "Track Betclic bets from a screenshot | Kalivoa",
+      "canonical": "https://kalivoa.com/en/bookmakers/betclic",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/betclic\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/betclic\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/betclic\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/winamax",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/winamax",
+      "title": "Track Winamax bets from a screenshot | Kalivoa",
+      "canonical": "https://kalivoa.com/en/bookmakers/winamax",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/winamax\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/winamax\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/winamax\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/betclic",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/betclic",
+      "title": "Suivre ses paris Betclic depuis une capture | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/bookmakers/betclic",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/bookmakers/betclic\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/bookmakers/betclic\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/bookmakers/betclic\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/pricing",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/pricing",
+      "title": "Tarifs et abonnement Kalivoa | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/pricing",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/pricing\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/pricing\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/pricing\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/terms",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/terms",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/fr/terms",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/terms\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/terms\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/terms\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/privacy",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/privacy",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/en/privacy",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/privacy\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/privacy\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/privacy\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/terms",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/terms",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/en/terms",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/terms\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/terms\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/terms\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/en/faq",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/faq",
+      "title": "Kalivoa FAQ | Kalivoa",
+      "canonical": "https://kalivoa.com/en/faq",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/faq\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/faq\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/faq\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/faq",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/faq",
+      "title": "FAQ Kalivoa | Kalivoa",
+      "canonical": "https://kalivoa.com/fr/faq",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/faq\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/faq\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/faq\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/privacy",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/privacy",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/fr/privacy",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/privacy\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/privacy\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/privacy\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1,
+      "text": "Kalivoa Kali voa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Confidentialité Cette page explique simplement quelles données Kalivoa utilise pour fournir le suivi de bankroll. Données utilisées Nous traitons les données de compte, tes bankrolls, tes paris, tes préférences et les retours que tu nous envoies. Les captures de tickets sont transmises au fournisseur IA choisi pour extraire les paris. Kalivoa ne les conserve pas après l’analyse. Pourquoi Ces données servent à authentifier ton compte, afficher tes statistiques, analyser tes captures, appliquer tes limites de scans et assurer le support. Les paiements sont traités par Stripe. Kalivoa ne reçoit ni ne stocke ton numéro de carte bancaire. Tes choix Tu peux exporter tes données depuis Compte &gt; Mes données. Pour demander la suppression de ton compte ou exercer un droit d’accès, utilise le formulaire de retour bêta dans l’application. Sécurité Les accès sont protégés par une session authentifiée. Les données ne sont pas vendues. Cette politique pourra évoluer à mesure que le service quitte sa phase bêta. Retour à l’accueil Kali voa Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs. EN Produit Fonctionnalités Import par capture Extension Chrome Bookmakers pris en charge Tarifs Ressources Académie Suivi de bankroll Partenaires Kalivoa Questions fréquentes Jeu responsable Compte Connexion Créer un compte Contact © 2026 Kalivoa. Tous droits réservés. Confidentialité Conditions d’utilisation Mentions légales Conditions de vente Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+    },
+    {
+      "url": "https://kalivoa.com/en/responsible-gambling",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/responsible-gambling",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/en/responsible-gambling",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/responsible-gambling\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/responsible-gambling\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/responsible-gambling\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/responsible-gambling",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/responsible-gambling",
+      "title": "Kalivoa",
+      "canonical": "https://kalivoa.com/fr/responsible-gambling",
+      "alternates": [
+        "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://kalivoa.com/fr/responsible-gambling\"/>",
+        "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://kalivoa.com/en/responsible-gambling\"/>",
+        "<link rel=\"alternate\" hrefLang=\"x-default\" href=\"https://kalivoa.com/fr/responsible-gambling\"/>"
+      ],
+      "robots": "",
+      "h1Count": 1
+    },
+    {
+      "url": "https://kalivoa.com/fr/legal-notice",
+      "status": 200,
+      "text": "Mentions légales Kalivoa | Kalivoa Kali voa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Accueil / Informations légales Informations légales Mentions légales de Kalivoa Cette page identifie les informations publiées à propos du site kalivoa.com et signale clairement celles qui restent à compléter. Mise à jour : 23 septembre 2026 À finaliser avant commercialisation : identité de l’éditeur, adresse, immatriculation, directeur de la publication et e-mail public. Sommaire 1. Éditeur du site 2. Hébergement 3. Objet du service 4. Propriété intellectuelle 5. Responsabilité et liens externes 6. Données personnelles 1. Éditeur du site Service édité : Kalivoa — https://kalivoa.com. L’identité ou la dénomination sociale de l’éditeur, son adresse, ses numéros d’immatriculation le cas échéant, son numéro de téléphone, son adresse électronique publique et le nom du directeur de la publication ne sont pas présents dans le dépôt. Ces informations obligatoires doivent être renseignées par le responsable légal avant l’ouverture commerciale. 2. Hébergement Le site est hébergé par Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis. Site : vercel.com. 3. Objet du service Kalivoa est un outil indépendant d’import, d’organisation et d’analyse d’un historique de paris sportifs. Il ne prend aucun pari, ne fournit aucun conseil de pari et ne garantit aucun résultat. 4. Propriété intellectuelle Sauf mention contraire, la structure, les textes, les éléments graphiques, la marque et les fonctionnalités de Kalivoa sont protégés. Toute reproduction ou exploitation non autorisée peut porter atteinte aux droits de leur titulaire. 5. Responsabilité et liens externes Les informations et indicateurs sont fournis à titre de suivi. L’utilisateur reste responsable de la vérification des données importées et de ses décisions. Les liens vers des services tiers sont proposés pour information. Kalivoa n’est pas affilié aux bookmakers et ne contrôle pas leurs contenus ni leur disponibilité. 6. Données personnelles Le traitement des données, les finalités et les droits des utilisateurs sont décrits dans la politique de confidentialité. Les demandes peuvent être envoyées depuis Mon compte &gt; Aide et support tant qu’une adresse publique n’est pas publiée. Sources officielles consultées Service Public — mentions légales obligatoires Lire la confidentialité Contacter Kalivoa Kali voa Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs. EN Produit Fonctionnalités Import par capture Extension Chrome Bookmakers pris en charge Tarifs Ressources Académie Suivi de bankroll Partenaires Kalivoa Questions fréquentes Jeu responsable Compte Connexion Créer un compte Contact © 2026 Kalivoa. Tous droits réservés. Confidentialité Conditions d’utilisation Mentions légales Conditions de vente Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+    },
+    {
+      "url": "https://kalivoa.com/fr/contact",
+      "status": 200,
+      "text": "Contacter Kalivoa | Kalivoa Kali voa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Accueil / Contact Contact et support Comment peut-on vous aider ? Un seul point d’entrée pour signaler un bug, proposer une idée ou poser une question sur vos données. Ouvrir l’aide dans Mon compte Consulter la FAQ Choisissez le bon motif Votre demande arrive avec le contexte utile pour éviter les allers-retours. Un problème technique Indiquez la page concernée, ce que vous faisiez et le résultat obtenu. Une idée d’amélioration Expliquez votre besoin : le problème à résoudre compte plus que la solution imaginée. Vos données ou votre compte Demandez un export, une suppression ou de l’aide sur vos informations personnelles. Envoyer une demande en moins d’une minute 1 Connectez-vous à Kalivoa. 2 Ouvrez Mon compte, puis Aide et support. 3 Choisissez un motif et décrivez votre demande. Vous préférez échanger avec la communauté ? Le serveur Discord Kalivoa est ouvert aux retours sur la bêta. N’y publiez aucune donnée personnelle ni capture contenant des informations sensibles. Rejoindre le Discord Kalivoa ne dispose pas encore d’une adresse e-mail publique de support. Elle devra être publiée avec l’identité légale de l’éditeur avant toute commercialisation. Kali voa Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs. EN Produit Fonctionnalités Import par capture Extension Chrome Bookmakers pris en charge Tarifs Ressources Académie Suivi de bankroll Partenaires Kalivoa Questions fréquentes Jeu responsable Compte Connexion Créer un compte Contact © 2026 Kalivoa. Tous droits réservés. Confidentialité Conditions d’utilisation Mentions légales Conditions de vente Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+    },
+    {
+      "url": "https://kalivoa.com/fr/sales-terms",
+      "status": 200,
+      "text": "Conditions de vente Kalivoa | Kalivoa Kali voa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Fonctionnalités Import par capture Bookmakers Partenaires Tarifs FAQ EN Se connecter Essayer Kalivoa Accueil / Cadre commercial Cadre commercial Conditions générales de vente Ce projet de CGV prépare l’ouverture de futures offres payantes Kalivoa. Aucune offre payante n’est actuellement proposée en ligne. Version préparatoire du 23 septembre 2026 Projet précontractuel : ces conditions ne deviennent applicables qu’à l’ouverture d’une offre payante, après ajout des informations légales et commerciales manquantes. Sommaire 1. Objet et champ d’application 2. Service proposé 3. Offre, prix et commande 4. Paiement et facturation 5. Durée, renouvellement et résiliation 6. Droit de rétractation 7. Disponibilité et support 8. Responsabilité 9. Réclamations, médiation et droit applicable 1. Objet et champ d’application Ces conditions ont vocation à encadrer la souscription en ligne par un consommateur à une offre payante donnant accès à des fonctionnalités Kalivoa. Le service reste destiné aux personnes majeures. L’identité complète du vendeur devra être reprise des mentions légales avant toute mise en vente. 2. Service proposé Kalivoa permet d’organiser des bankrolls, d’enregistrer ou d’importer des paris et de consulter des indicateurs calculés à partir de l’historique. Les extractions automatisées doivent être vérifiées par l’utilisateur. Kalivoa n’est ni un bookmaker ni un conseiller en paris et ne promet aucun gain. 3. Offre, prix et commande Chaque offre devra afficher avant paiement ses fonctionnalités, limites, prix TTC, périodicité, durée et éventuel renouvellement. Créer un compte gratuit ne vaut pas commande. Avant validation, le client devra pouvoir vérifier et corriger sa commande, accepter les présentes CGV et confirmer expressément son obligation de paiement. 4. Paiement et facturation Le paiement en ligne a vocation à être traité par Stripe. Les moyens acceptés, la date de prélèvement et les conditions de facturation seront indiqués au moment de la commande. Kalivoa ne reçoit pas le numéro complet de carte bancaire. 5. Durée, renouvellement et résiliation La durée de l’offre, sa date d’effet, son éventuel renouvellement automatique et ses modalités de résiliation devront être présentés avant la souscription. Toute offre renouvelable souscrite en ligne devra pouvoir être résiliée en ligne. La date de fin d’accès et les effets de la résiliation seront confirmés sur un support durable. 6. Droit de rétractation Pour une prestation de service conclue à distance, le consommateur dispose en principe de quatorze jours à compter de la conclusion du contrat pour se rétracter. Si le client demande expressément que le service commence avant la fin de ce délai, le parcours de commande devra recueillir cette demande et fournir les informations et le formulaire requis. Aucune renonciation anticipée ne sera présumée. 7. Disponibilité et support Kalivoa vise une disponibilité continue sans garantir l’absence d’interruption, notamment lors de maintenances ou d’incidents de prestataires. Les demandes de support passent actuellement par Mon compte &gt; Aide et support. 8. Responsabilité L’utilisateur demeure responsable de l’exactitude des données validées, de la confidentialité de son compte et de ses décisions de jeu. Les limitations éventuellement prévues ne peuvent exclure les garanties ou responsabilités impératives dues au consommateur. 9. Réclamations, médiation et droit applicable Une réclamation devra d’abord être adressée à l’éditeur. Les coordonnées publiques et le médiateur de la consommation compétent devront être désignés avant toute vente. Le droit français a vocation à s’appliquer, sans priver le consommateur des protections impératives dont il bénéficie. À défaut d’accord amiable ou de médiation, le litige relève des juridictions compétentes. Sources officielles consultées DGCCRF — règles du commerce en ligne Service Public — conclusion d’un achat à distance Voir les tarifs Poser une question Kali voa Un outil indépendant pour importer, organiser et analyser son historique de paris sportifs. EN Produit Fonctionnalités Import par capture Extension Chrome Bookmakers pris en charge Tarifs Ressources Académie Suivi de bankroll Partenaires Kalivoa Questions fréquentes Jeu responsable Compte Connexion Créer un compte Contact © 2026 Kalivoa. Tous droits réservés. Confidentialité Conditions d’utilisation Mentions légales Conditions de vente Réservé aux adultes. Kalivoa aide à suivre des paris ; il ne place pas de pari et ne promet aucun gain. Si le jeu devient un problème, consultez joueurs-info-service.fr."
+    }
+  ]
+}

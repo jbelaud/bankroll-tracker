@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-10",
+  "source": "https://www.pappers.fr/entreprise/ets-belaud-994223212",
+  "company": "ETS BELAUD",
+  "legalForm": "SASU",
+  "registeredOffice": "61 rue de Lyon, 75012 Paris, France",
+  "shareCapitalEUR": 500,
+  "siren": "994223212",
+  "registeredOfficeSiret": "99422321200014",
+  "commercialRegister": "994 223 212 RCS Paris",
+  "president": "Jérémy BELAUD",
+  "publicationDirector": "Jérémy BELAUD",
+  "publicationDirectorBasis": "Legal representative under Article 93-2 of Law 82-652; president reported in the provided company listing",
+  "reportedVatNumber": "FR61994223212",
+  "vatNumberConfirmedByOwner": false,
+  "vatRegimeConfirmed": false,
+  "ownerVatRegimeResponse": "À reconfirmer (2026-10-10)",
+  "automaticTaxEnabledByAgent": false,
+  "registeredDocumentsChecked": false,
+  "governmentRegistryExtract": "Public INPI extract and government company page could not be retrieved; corporate details are sourced from the owner-provided Pappers listing",
+  "publicEmail": "contact.kalivoa@gmail.com",
+  "publicTelephone": null,
+  "ownerPublicTelephonePreference": "No telephone to publish at present (2026-10-10)",
+  "telephoneRequirementResolved": false,
+  "updatedWebsitePages": [
+    "legal-notice",
+    "sales-terms",
+    "privacy"
+  ],
+  "languages": [
+    "fr",
+    "en"
+  ],
+  "websitePublished": false,
+  "hosting": {
+    "name": "Vercel Inc.",
+    "addressSource": "https://vercel.com/legal/terms",
+    "telephoneConfirmed": false
+  },
+  "remaining": [
+    "Resolve required public professional telephone; owner currently chooses none",
+    "Confirm VAT identification and tax regime",
+    "Verify hosting telephone from authoritative contractual details",
+    "Finalise consumer mediation, withdrawal and contractual consent separately"
+  ]
+}

@@ -1,0 +1,124 @@
+Browser tab: 1, Title: "Performances dans les fonctionnalités d'IA générative sur la Recherche", URL: "https://search.google.com/search-console/performance/search-analytics/ai?resource_id=sc-domain%3Akalivoa.com&start_date=20261026&end_date=20261101&compare_start_date=20261019&compare_end_date=20261025".
+1 AXWebArea Performances dans les fonctionnalités d'IA générative sur la Recherche, URL: search.google.com/search-console/performance/search-analytics/ai?resource_id=sc-domain%3Akalivoa.com&start_date=20261026&end_date=20261101&compare_start_date=20261019&compare_end_date=20261025
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					8 button Recherche
+						9 image
+					10 button Aide
+					11 button Paramètres utilisateur
+					117 container
+						118 button Messages non lus : 7
+						119 text 7
+					13 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					14 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			15 container
+				16 container Fils d'Ariane
+					17 container Performances
+						18 link Description: Performances, Value: search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+					19 heading Fonctionnalités d'IA générative, Value: 1
+						20 text Fonctionnalités d'IA générative
+					21 text Bêta
+				22 pop up button (collapsed) Description: EXPORTER, Secondary Actions: Expand
+				23 container
+					24 Select time range
+						25 radio button 24 heures, Value: 0
+						26 radio button 7 jours, Value: 0
+						27 radio button 28 jours, Value: 0
+						28 radio button 3 mois, Value: 0
+					29 button More time ranges
+					30 content list
+						31 button Type de recherche: Web
+						34 pop up button (collapsed) Ajouter un filtre, Secondary Actions: Expand
+						35 button Réinitialiser les filtres
+							36 text Réinitialiser les filtres
+				37 text Dernière mise à jour : il y a 4,5 heures
+				38 container
+					39 container
+						40 button Nombre total d'impressions 4 26/10/2026 - 01/11/2026 1 19/10/2026 - 25/10/2026
+							41 text Nombre total d'impressions
+							42 text 4
+							43 image
+							44 text 26/10/2026 - 01/11/2026
+							45 text 1
+							46 image
+							47 text 19/10/2026 - 25/10/2026
+						48 container
+							49 button (collapsed) Description: null, Secondary Actions: Expand
+						50 pop up button (collapsed) Description: Niveau de détail temporel sélectionné : Tous les jours, Secondary Actions: Expand
+							51 image
+						52 container chart
+							120 text Graphique qui contient le nombre de 26/10/2026 - 01/11/2026 Impressions et 19/10/2026 - 25/10/2026 Impressions entre le Invalid Date et le 1 janvier 1970
+					53 container dimension-tables
+						54 tab group
+							55 tab (selected, settable, boolean) PAGES, Value: 1
+PAGES
+							56 tab (selectable, settable, boolean) PAYS, Value: 0
+PAYS
+							57 tab (selectable, settable, boolean) APPAREILS, Value: 0
+APPAREILS
+							58 tab (selectable, settable, boolean) JOURS, Value: 0
+JOURS
+						59 container
+							60 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+							61 table
+								62 row
+									63 cell
+										64 text Pages les plus populaires
+										65 button Trier Pages les plus populaires
+									66 cell
+										67 button Trier Impressions 26/10/2026 - 01/11/2026 
+										68 text Impressions
+										69 text 26/10/2026 - 01/11/2026
+									70 cell
+										71 button Trier Impressions 19/10/2026 - 25/10/2026 
+										72 text Impressions
+										73 text 19/10/2026 - 25/10/2026
+									74 cell
+										75 button Trier Impressions Différence
+										76 text Impressions
+										77 text Différence
+								78 row
+									79 cell
+										80 text https://kalivoa.com/fr
+									81 cell
+										82 text 3
+									83 cell
+										84 text 0
+									85 cell
+										86 text 3
+								87 row
+									88 cell
+										89 text https://kalivoa.com/contact
+									90 cell
+										91 text 1
+									92 cell
+										93 text 0
+									94 cell
+										95 text 1
+								96 row
+									97 cell
+										98 text http://kalivoa.com/fr
+									99 cell
+										100 text 0
+									101 cell
+										102 text 1
+									103 cell
+										104 text -1
+							105 text Lignes par page :
+							106 list Nombre de lignes par page
+								107 5
+								108 (selected) 10
+								109 25
+								110 50
+								111 100
+								112 250
+								113 500
+							114 text 1-3 sur 3
+							115 button (disabled) Page précédente
+							116 button (disabled) Page suivante
+
+The focused UI element is 1 AXWebArea Performances dans les fonctionnalités d'IA générative sur la Recherche, URL: search.google.com/search-console/performance/search-analytics/ai?resource_id=sc-domain%3Akalivoa.com&start_date=20261026&end_date=20261101&compare_start_date=20261019&compare_end_date=20261025

@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-09",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "configuration": {
+    "upcomingRenewalEmailsEnabled": true,
+    "upcomingRenewalDays": 45,
+    "subscriptionManagementLinkEnabled": true,
+    "subscriptionManagementDestination": "Stripe Customer Portal",
+    "paymentMethodUpdateDestination": "Stripe hosted page"
+  },
+  "verification": {
+    "method": "Stripe Dashboard, saved settings reloaded",
+    "settingsPersisted": true,
+    "actualEmailDeliveryVerified": false,
+    "liveConfigurationVerified": false
+  },
+  "scope": "Upcoming automatically collected subscription renewals. No separate end-of-access reminder for an already canceled subscription was implemented.",
+  "documentation": "https://docs.stripe.com/billing/revenue-recovery/customer-emails",
+  "screenshot": "stripe-rappels-annuels-2026-10-09.png",
+  "remaining": [
+    "Configure and verify these reminders in the live account before launch",
+    "Verify actual delivery using an authorized sandbox team-member or verified-domain email address",
+    "Review email content, renewal amount, cancellation deadline and cancellation link for French annual renewal requirements"
+  ]
+}

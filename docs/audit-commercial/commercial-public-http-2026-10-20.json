@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-20",
+  "origin": "https://kalivoa.com",
+  "publicDomain": true,
+  "checks": [
+    {
+      "name": "pricing",
+      "path": "/fr/pricing",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "welcome-beta",
+      "path": "/fr/offre-bienvenue",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "privacy",
+      "path": "/fr/privacy",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "terms",
+      "path": "/fr/sales-terms",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "private-subscription",
+      "path": "/fr/account/subscription",
+      "status": 307,
+      "passed": true
+    },
+    {
+      "name": "cron-protected",
+      "path": "/api/cron/commercial",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "name": "stripe-invalid-signature",
+      "path": "/api/stripe/webhook",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "stripe-signed-noop",
+      "path": "/api/stripe/webhook",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "name": "resend-invalid-signature",
+      "path": "/api/resend/webhook",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "name": "resend-signed-noop",
+      "path": "/api/resend/webhook",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "productionPaymentsCreated": false,
+  "customerEmailsSent": false,
+  "signedProbesAreLocallyGenerated": true,
+  "providerDeliveryVerified": false
+}

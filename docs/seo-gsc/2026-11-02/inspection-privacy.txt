@@ -1,0 +1,79 @@
+Browser tab: 1, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=wCA6MxRhjP3SSPDrQqIJEA".
+1 AXWebArea Inspection de l'URL, URL: search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=wCA6MxRhjP3SSPDrQqIJEA
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					8 link Description: Google Search Console, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com, ID: sdgBod
+					9 button Recherche
+						10 image
+					11 button Aide
+					12 button Paramètres utilisateur
+					13 container
+						14 button Messages non lus : 7
+						15 text 7
+					16 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					17 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			18 container
+				19 text https://kalivoa.com/fr/privacy
+				20 container
+					21 container Fils d'Ariane
+						22 heading Inspection de l'URL, Value: 1
+							23 text Inspection de l'URL
+					24 button TESTER L'URL ACTIVE
+						25 text TESTER L'URL ACTIVE
+					26 container
+						27 text Cette URL est sur Google
+						28 container
+							29 text Elle peut figurer dans les résultats de la recherche Google (du moment qu'elle ne fait pas l'objet d'une action manuelle ou d'une demande de suppression) avec toutes les optimisations appropriées. 
+							30 link Description: En savoir plus, Value: support.google.com/webmasters/answer/9012289#url_on_google
+						31 button Afficher la page explorée
+							32 text AFFICHER LA PAGE EXPLORÉE
+						33 text Page modifiée ?
+						34 button Demander une indexationRedemander
+							35 text DEMANDER UNE INDEXATION
+					36 button (collapsed) Indexation des pages La page est indexée, Secondary Actions: Expand
+						37 text Indexation des pages
+						38 text La page est indexée
+					39 text Améliorations et expérience
+					40 link Description: HTTPS La page est diffusée via HTTPS, Value: search.google.com/search-console/inspect/https?resource_id=sc-domain%3Akalivoa.com&id=wCA6MxRhjP3SSPDrQqIJEA
+		41 text Recherche
+		42 text Inspection de l'URL
+
+The focused UI element is 1 AXWebArea Inspection de l'URL, URL: search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=wCA6MxRhjP3SSPDrQqIJEA
+
+Browser tab: 1, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=wCA6MxRhjP3SSPDrQqIJEA".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 36-38, 41
++					43 container
++						44 button (expanded) Indexation des pages La page est indexée, Secondary Actions: Collapse
++							45 text Indexation des pages
++							46 text La page est indexée
++						47 text Découverte
++						48 text Sitemaps
++						49 text https://kalivoa.com/sitemap.xml
++						50 text Page d'origine
++						51 text https://kalivoa.com/privacy
++						52 text https://kalivoa.com/sitemap.xml
++						53 text Exploration
++						54 text Dernière exploration
++						55 text 28 oct. 2026, 21:08:00
++						56 text Explorée avec
++						57 text Googlebot pour smartphone
++						58 text Exploration autorisée ?
++						59 text Oui
++						60 text Récupération de page
++						61 text Réussie
++						62 text Indexation autorisée ?
++						63 text Oui
++						64 text Indexation
++						65 text URL canonique déclarée par l'utilisateur
++						66 text https://kalivoa.com/fr/privacy
++						67 text URL canonique sélectionnée par Google
++						68 button (collapsed) Description: null, Secondary Actions: Expand
++						69 text URL inspectée
++						70 link Description: Consulter une documentation plus détaillée, Value: support.google.com/webmasters/answer/7440203#submitted_and_indexed
++						71 link Description: OUVRIR LE RAPPORT, Value: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAMYASAB
+The focused UI element is 44 button (expanded) Indexation des pages La page est indexée, Secondary Actions: Collapse

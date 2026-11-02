@@ -1,0 +1,57 @@
+Browser tab: 7, Title: "Résultats de recherche - contact.kalivoa@gmail.com - Gmail", URL: "https://mail.google.com/mail/u/0/#search/in%3Asent+to%3Acontact%40thiagopronos.com+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 68-144, 207-209
+~0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+to%3Acontact%40thiagopronos.com+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24
+~							16 container in:sent to:contact@thiagopronos.com after:2026/10/21 before:2026/10/24 
+~								17 text field (settable) Description: Rechercher dans les messages, Value: in:sent to:contact@thiagopronos.com after:2026/10/21 before:2026/10/24 
++				215 text Message envoyé
++				216 link Description: Afficher le message, ID: link_vsm
++					217 text Afficher le message
++				218 button Fermer
++			219 container
++				220 toolbar affinement des recherches
++					221 container
++						222 checkbox (collapsed) De, Value: 0, Secondary Actions: Expand
++							223 container
++								224 text De
++								225 image
++						226 checkbox Contient une pièce jointe, Value: 0
++							227 text Contient une pièce jointe
++						228 pop up button Recherche avancée
++							229 text Recherche avancée
++				230 pop up button (collapsed) Description: Sélectionner, ID: :mp, Secondary Actions: Expand
++					231 checkbox 0
++				232 button Actualiser
++				233 button (collapsed) Description: Plus d'options, ID: :mo, Secondary Actions: Expand
++				234 container
++					235 button (collapsed) Description: Afficher plus de messages, ID: :m7, Secondary Actions: Expand
++						236 text 1
++						237 text –
++						238 text 1
++						239 text  sur 
++						240 text 1
++					241 button (disabled) Description: Préc., ID: :m5
++					242 button (disabled) Description: Suiv., ID: :m4
++				243 heading Conversations, Value: 2
++					244 text Conversations
++				245 container
++					246 image
++					247 text contact@thiagopronos.com
++				248 text contact@thiagopronos.com
++				249 table :mn
++					250 row ID: :mm, moi , Thiago × Kalivoa — un essai de bankroll publique ? , 21:33 , Bonjour Thiago, Je développe Kalivoa, un outil de suivi de bankroll en français. J'ai consulté ton site et tes analyses ; je te propose un essai pour voir si le suivi et le partage public de tes.
++						251 cell :mk
++							252 checkbox Value: 0, ID: :mj, Description: moi , Thiago × Kalivoa — un essai de bankroll publique ? , 21:33 , Bonjour Thiago, Je développe Kalivoa, un outil de suivi de bankroll en français. J'ai consulté ton site et tes analyses ; je te propose un essai pour voir si le suivi et le partage public de tes.
++						253 cell
++							254 button Description: Non suivi, ID: :mi
++						255 cell
++							256 text moi
++						257 cell :mg
++							258 link Thiago × Kalivoa — un essai de bankroll publique ?  -  Bonjour Thiago, Je développe Kalivoa, un outil de suivi de bankroll en français. J'ai consulté ton site et tes analyses ; je te propose un essai pour voir si le suivi et le partage public de tes
++								259 text Thiago × Kalivoa — un essai de bankroll publique ?
++								260 container :md
++									261 text  -  Bonjour Thiago, Je développe Kalivoa, un outil de suivi de bankroll en français. J'ai consulté ton site et tes analyses ; je te propose un essai pour voir si le suivi et le partage public de tes
++						262 cell
++							263 container Description: jeu. 22 oct. 2026 21:33, ID: :mb
++								264 text 21:33
+The focused UI element is 0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+to%3Acontact%40thiagopronos.com+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24

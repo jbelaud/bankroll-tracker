@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-09",
+  "livemode": false,
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "accountName": "Environnement de test Kalivoa",
+  "legalEntity": "SASU ETS BELAUD",
+  "productId": "prod_VPLWyVsno2M2CM",
+  "productName": "Kalivoa Premium",
+  "currency": "eur",
+  "monthly": {
+    "priceId": "price_1UOWpQDNFQcoJN1NuaUzuhfJ",
+    "lookupKey": "kalivoa_premium_monthly",
+    "unitAmount": 499,
+    "interval": "month",
+    "welcomeCouponId": "kalivoa_welcome_monthly_v2",
+    "welcomeAmountOff": 200,
+    "welcomeDuration": "repeating",
+    "welcomeDurationInMonths": 12,
+    "welcomeNetAmount": 299,
+    "previousCouponId": "kalivoa_welcome_monthly_v1"
+  },
+  "yearly": {
+    "priceId": "price_1UOWpQDNFQcoJN1NUbukzz28",
+    "lookupKey": "kalivoa_premium_yearly",
+    "unitAmount": 4999,
+    "interval": "year",
+    "welcomeCouponId": "kalivoa_welcome_yearly_v2",
+    "welcomeAmountOff": 2500,
+    "welcomeDuration": "once",
+    "welcomeNetAmount": 2499,
+    "previousCouponId": "kalivoa_welcome_yearly_v1"
+  },
+  "couponProductRestriction": "prod_VPLWyVsno2M2CM",
+  "publicPromotionCodesCreated": false,
+  "portal": {
+    "configurationId": "bpc_1UOWvoDNFQcoJN1NlRcrI7Pf",
+    "defaultReturnUrl": "https://kalivoa.com/fr/account",
+    "headline": "Gérez votre abonnement Kalivoa et vos factures.",
+    "invoiceHistory": true,
+    "paymentMethodUpdate": true,
+    "subscriptionCancellation": "at_period_end",
+    "subscriptionPlanChange": false,
+    "subscriptionQuantityChange": false
+  },
+  "intendedCredits": {
+    "monthlyScans": 200,
+    "initialScans": 300,
+    "initialBonusExpires": false,
+    "initialBonusRequiresPaidPlan": true,
+    "initialBonusOnlyOnce": true,
+    "applicationImplementationUpdated": true
+  },
+  "verification": {
+    "method": "Stripe API and Dashboard",
+    "pricesAndCouponDurationsVerified": true,
+    "checkoutOrInvoiceLifecycleTested": true,
+    "applicationConnected": false,
+    "taxBehaviorVerified": true,
+    "automaticTaxActivatedByAgent": false,
+    "productionActivatedByAgent": false,
+    "applicationLocalConfigurationReady": true,
+    "publicWebhookDestinationConfigured": false,
+    "publicWebhookDeliveryVerified": false,
+    "localTestsPassed": 64,
+    "productionBuildPassed": true,
+    "localRealStripeListenerConfigured": true,
+    "fullAuthenticatedBrowserPurchaseVerified": true,
+    "localRealStripeWebhookDeliveryVerified": true,
+    "localPlanActivationAndCancellationVerified": true,
+    "localCustomerPortalVerified": true,
+    "localApplicationConnected": true
+  },
+  "remaining": [
+    "Configure a webhook destination for the deployed environment and its corresponding signing secret",
+    "Confirm ETS BELAUD public telephone, VAT regime and VAT identification before configuring tax collection; complete hosting telephone details",
+    "Complete legal terms and contractual consent flows",
+    "Publish the reviewed website content",
+    "Create and verify a separate live catalogue and credentials before commercial launch",
+    "Apply the welcome-offer enrollment migration before publishing the updated application"
+  ],
+  "publicSupportEmail": "contact.kalivoa@gmail.com",
+  "renewalEmails": {
+    "sandboxEnabled": true,
+    "daysBeforeRenewal": 45,
+    "subscriptionManagementLinkEnabled": true,
+    "savedDashboardSettingsVerified": true,
+    "actualEmailDeliveryVerified": false,
+    "liveConfigurationVerified": false,
+    "report": "stripe-email-reminders-2026-10-09.json"
+  },
+  "welcomeOffer": {
+    "page": "/fr/offre-bienvenue",
+    "earlyMemberLimit": 15,
+    "earlyMemberCohort": "First new non-beta app profiles after beta closes; administrative accounts excluded",
+    "betaTestersExcludedFromEarlyMemberLimit": true,
+    "deadlineParis": "2026-12-31 23:59:59 Europe/Paris",
+    "exclusiveDeadlineUtc": "2026-12-31T23:00:00.000Z",
+    "eligibilityPersistedAtSignup": true,
+    "betaEligibilityRetainedAfterFreeTransition": true,
+    "liveMigrationApplied": false,
+    "websitePublished": false
+  },
+  "companyIdentification": {
+    "updatedAt": "2026-10-10",
+    "source": "https://www.pappers.fr/entreprise/ets-belaud-994223212",
+    "corporateIdentityPreparedInWebsite": true,
+    "publicationDirectorPrepared": true,
+    "publicTelephoneConfirmed": false,
+    "vatRegimeConfirmed": false,
+    "hostingTelephoneConfirmed": false,
+    "websitePublished": false
+  }
+}

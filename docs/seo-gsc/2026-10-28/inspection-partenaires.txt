@@ -1,0 +1,32 @@
+Browser tab: 2, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=aNhqFIy6g4tY5mrJJidWxQ".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 78-80
++					84 container
++						85 button (expanded) Indexation des pages La page est indexée, Secondary Actions: Collapse
++							86 text Indexation des pages
++							87 text La page est indexée
++						88 text Découverte
++						89 text Sitemaps
++						90 text Erreur de traitement temporaire
++						91 text Page d'origine
++						92 text https://kalivoa.com/partenaires
++						93 text Exploration
++						94 text Dernière exploration
++						95 text 25 oct. 2026, 05:03:11
++						96 text Explorée avec
++						97 text Googlebot pour smartphone
++						98 text Exploration autorisée ?
++						99 text Oui
++						100 text Récupération de page
++						101 text Réussie
++						102 text Indexation autorisée ?
++						103 text Oui
++						104 text Indexation
++						105 text URL canonique déclarée par l'utilisateur
++						106 text https://kalivoa.com/fr/partenaires
++						107 text URL canonique sélectionnée par Google
++						108 button (collapsed) Description: null, Secondary Actions: Expand
++						109 text URL inspectée
++						110 link Description: Consulter une documentation plus détaillée, Value: support.google.com/webmasters/answer/7440203#submitted_and_indexed
++						111 link Description: OUVRIR LE RAPPORT, Value: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAMYASAB
+The focused UI element is 85 button (expanded) Indexation des pages La page est indexée, Secondary Actions: Collapse

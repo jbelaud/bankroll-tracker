@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-22T06:22:49.633Z",
+  "projectId": "prj_wkVqicBmeir1HTkYlXcSt4Nj1QKi",
+  "source": "Vercel metadata; only non-sensitive plain flags inspected",
+  "flags": {
+    "BILLING_LEGAL_READY": false,
+    "COMMERCIAL_RECORDS_ENABLED": false,
+    "BILLING_RECIPE_ENABLED": false,
+    "ACCOUNT_RETENTION_DELETION_ENABLED": false
+  },
+  "environmentFileDownloaded": false
+}

@@ -1,0 +1,78 @@
+Browser tab: 17, Title: "Hello HomeController!", URL: "https://www.sportytrader.com/contact-sent/".
+1 AXWebArea Hello HomeController!, URL: sportytrader.com/contact-sent/
+	2 container
+		3 container
+			4 link Description: Sportytrader, Value: sportytrader.com/
+			5 button Format de cotes
+			6 link Description: Je m'inscris , Value: sportytrader.com/inscription
+			7 container
+				8 image france_1
+				9 image
+		10 container Description: bookmaker carousel, ID: header-top3-slider
+			11 container header-top3-slider-track
+				12 container Description: 1 of 3, ID: header-top3-slider-slide01
+					13 link Description: Unibet Unibet Bonus :  110€, Value: sportytrader.com/book/unibet/header
+				14 container Description: 2 of 3, ID: header-top3-slider-slide02
+					15 link Description: Betclic Betclic Bonus :  100€, Value: sportytrader.com/book/betclic/header
+		16 text 18+ | Annonce publicitaire | Jouer comporte des risques
+		17 link Description: 100€ en feebets : code STY Inscrivez vous sur BETCLIC, Value: sportytrader.com/book/betclic/header
+		18 text Nous vous remercions pour votre message. L'équipe Sportytrader vous répondra dans les meilleurs délais
+		19 link Description: Retour sur la page d'accueil, Value: sportytrader.com/
+		20 container
+			21 link Description: youtube sportytrader link, Value: youtube.com/@sportytraderofficial
+			22 link Description: facebook sportytrader link, Value: facebook.com/Sportytrader/
+			23 link Description: Twitter sportytrader link, Value: x.com/sportytrader
+			24 link Description: Instagram sportytrader link, Value: instagram.com/sportytrader/
+			25 link Description: button google source, Value: google.com/preferences/source?q=sportytrader.com
+			26 link Description: Apple store sportytrader link, Value: apps.apple.com/fr/app/sportytrader-pronostic-foot/id6497877613
+			27 link Description: play store sportytrader link, Value: play.google.com/store/apps/details?id=com.prediction.sportytrader&gl=FR
+			28 link Description: BOOKMAKER, Value: sportytrader.com/bookmakers/
+			29 link Description: Pari Foot, Value: sportytrader.com/paris-sportifs/football/
+			30 link Description: Pari Turf, Value: sportytrader.com/paris-sportifs/turf/
+			31 link Description: Livescore, Value: sportytrader.com/resultat-direct/
+			32 link Description: Resultat Foot en Direct, Value: sportytrader.com/resultat-direct/football/
+			33 link Description: Bonus Poker, Value: sportytrader.com/bookmakers/bonus/poker/
+			34 link Description: Bonus paris sportif Belgique, Value: sportytrader.com/fr-be/bookmakers/bonus/
+			35 link Description: PRONOSTIC, Value: sportytrader.com/pronostics/
+			36 link Description: Pronostic Foot, Value: sportytrader.com/pronostics/football/
+			37 link Description: Pronostic Basket, Value: sportytrader.com/pronostics/basket/
+			38 link Description: Pronostic Tennis, Value: sportytrader.com/pronostics/tennis/
+			39 link Description: Pronostic Rugby, Value: sportytrader.com/pronostics/rugby/
+			40 link Description: Pronostic Ligue 1, Value: sportytrader.com/pronostics/football/france/ligue-1-123/
+			41 link Description: Pronostic Ligue des Champions, Value: sportytrader.com/pronostics/football/europe/ligue-des-champions-8/
+			42 link Description: BONUS BOOKMAKER, Value: sportytrader.com/bookmakers/bonus/
+			43 link Description: Bonus Unibet, Value: sportytrader.com/bookmakers/unibet/bonus/
+			44 link Description: Bonus Betclic, Value: sportytrader.com/bookmakers/betclic/bonus/
+			45 link Description: Bonus Winamax, Value: sportytrader.com/bookmakers/winamax/bonus/
+			46 link Description: Bonus Bet365, Value: sportytrader.com/bookmakers/bet365/bonus/
+			47 link Description: Bonus OlyBet, Value: sportytrader.com/bookmakers/olybet/bonus/
+			48 link Description: Bonus DAZN Bet, Value: sportytrader.com/bookmakers/daznbet/bonus/
+			49 text SPORTYTRADER Italien : 
+			50 link Description: Scommesse, Value: sportytrader.it/
+			51 text Espagnol : 
+			52 link Description: Apuestas, Value: sportytrader.es/
+			53 text Portugais : 
+			54 link Description: sportytrader.pt, Value: sportytrader.pt/
+			55 text Anglais : 
+			56 link Description: Betting Tips, Value: sportytrader.com/en/
+			57 text Anglais (US) : 
+			58 link Description: Picks, Value: sportytrader.com/us/
+			59 text Allemand : 
+			60 link Description: Sportwetten, Value: sportytrader.de/
+			61 text Néerlandais : 
+			62 link Description: Sportweddenschappen, Value: sportytrader.nl/
+			63 text Brésilien : 
+			64 link Description: Palpites, Value: sportytrader.com/pt-br/
+			65 text Espagnol (Latam) : 
+			66 link Description: Apuestas Deportivas, Value: sportytrader.com/es/
+			67 link Description: Sportytrader logo, Value: sportytrader.com/
+		68 container
+			69 text Qui sommes-nous ?  -  Conditions générales  -  Charte publicitaire
+			70 text Politique de confidentialité  -  Politique Editoriale  -  Recrutement
+			71 text Dépendance au jeu  -  Application SportyTrader  -  Nous contacter  - 
+			72 link Description: Plan du site, Value: sportytrader.com/sitemap/
+		73 text Copyright © 2026 SportyTrader.com - Tous droits réservés
+		74 text LES JEUX D'ARGENT ET DE HASARD PEUVENT ÊTRE DANGEREUX : PERTES D'ARGENT, CONFLITS FAMILIAUX, ADDICTION. RETROUVEZ NOS CONSEILS SUR (09-74-75-13-13, APPEL NON SURTAXÉ).
+		75 link Description: logo footer, Value: joueurs-info-service.fr/
+
+The focused UI element is 1 AXWebArea Hello HomeController!, URL: sportytrader.com/contact-sent/

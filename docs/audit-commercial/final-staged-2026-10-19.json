@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-19T21:19:17.277Z",
+  "origin": "https://bankroll-tracker-rn5ge4h6g-ets-belaud.vercel.app",
+  "deploymentId": "dpl_E22fk2eksSAD7reL5Hqv5NeGsRXu",
+  "checks": [
+    {
+      "path": "/fr/legal-notice",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/privacy",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/sales-terms",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/offre-bienvenue",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/legal-notice",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/privacy",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/sales-terms",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/offre-bienvenue",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "paidSalesEnabled": false,
+  "customerEmailsSent": false
+}

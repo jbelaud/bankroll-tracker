@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-09",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "checkoutId": "cs_test_a1MclXR6OS4NjGTkmqEO8d0f41MTWEMXNKwhikJZJ9v8NOGtLKtRAXxXPJ",
+  "amountTotal": 2499,
+  "currency": "eur",
+  "billingInterval": "yearly",
+  "welcomeApplied": "true",
+  "statusAfterCleanup": "expired",
+  "paymentSubmitted": false,
+  "profile": {
+    "betaWelcomeEligible": false,
+    "earlyWelcomePosition": 1,
+    "betaOfferUsedAt": null,
+    "plan": "FREE"
+  },
+  "betaActiveOnlyInRecipeAfterReview": true
+}

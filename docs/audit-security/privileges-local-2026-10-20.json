@@ -1,0 +1,9 @@
+{
+  "isolatedLoopbackDatabase": true,
+  "deniedChecks": 14,
+  "existingTablesPreserved": 4,
+  "rowSecurityPreserved": true,
+  "futureTablesFunctionsSequencesDenied": true,
+  "passed": true,
+  "productionWrites": false
+}

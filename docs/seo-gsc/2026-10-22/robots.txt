@@ -1,0 +1,42 @@
+User-Agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /fr/dashboard
+Disallow: /en/dashboard
+Disallow: /fr/bankrolls
+Disallow: /en/bankrolls
+Disallow: /fr/scan
+Disallow: /en/scan
+Disallow: /fr/stats
+Disallow: /en/stats
+Disallow: /fr/account
+Disallow: /en/account
+Disallow: /fr/history
+Disallow: /en/history
+Disallow: /fr/admin
+Disallow: /en/admin
+
+User-Agent: GPTBot
+Disallow: /
+
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /fr/dashboard
+Disallow: /en/dashboard
+Disallow: /fr/bankrolls
+Disallow: /en/bankrolls
+Disallow: /fr/scan
+Disallow: /en/scan
+Disallow: /fr/stats
+Disallow: /en/stats
+Disallow: /fr/account
+Disallow: /en/account
+Disallow: /fr/history
+Disallow: /en/history
+Disallow: /fr/admin
+Disallow: /en/admin
+
+Sitemap: https://kalivoa.com/sitemap.xml

@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-22",
+  "verifiedAt": "2026-10-22T06:37:18.639Z",
+  "id": "dpl_3ugdeC9zD3h7r7Xagz4XeW9Nhkpt",
+  "url": "https://bankroll-tracker-mdbn2g8z9-ets-belaud.vercel.app",
+  "publicOrigin": "https://kalivoa.com",
+  "target": "production",
+  "domainsAssigned": true,
+  "baseCommit": "3493cafd9497c912bf16dcc699b58229715aa070",
+  "previousReviewedDeployment": "dpl_7YCnu7QknyasVMEz2n5KS2LAuxTA",
+  "originalDeploymentBeforeReview": "dpl_7zF6HfS4TuWmr23gtRURgQcq6Wbc",
+  "termsVersion": "2026-10-22.1",
+  "pagesAndResourcesVerified": 73,
+  "paidSalesEnabled": false,
+  "report": "docs/CGV-ET-PAGES-PUBLIQUES-2026-10-22.md"
+}

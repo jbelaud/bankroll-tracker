@@ -1,0 +1,73 @@
+Browser tab: 1, Title: "Sitemaps", URL: "https://search.google.com/search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com".
+1 AXWebArea Sitemaps, URL: search.google.com/search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+	2 container yDmH0d
+		3 container gb
+			4 container
+				5 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+					6 image
+				7 button Recherche
+					8 image
+				9 button Aide
+				10 button Paramètres utilisateur
+				69 container
+					70 button Messages non lus : 7
+					71 text 7
+				12 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+				13 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+		14 container Fils d'Ariane
+			15 heading Sitemaps, Value: 1
+				16 text Sitemaps
+		17 container
+			18 text Ajouter un sitemap
+			19 container
+				20 text field (settable) Saisir l'URL du sitemap
+			21 button (disabled) ENVOYER
+				22 text ENVOYER
+			23 heading Sitemaps envoyés, Value: 1
+				24 text Sitemaps envoyés
+			25 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+			26 table
+				27 row
+					28 cell
+						29 text Sitemap
+					30 cell
+						31 text Type
+					32 cell
+						33 text URL envoyées
+					34 cell
+						35 text Dernière lecture
+					36 cell
+						37 text État
+					38 cell
+						39 text Pages découvertes
+					40 cell
+						41 text Vidéos découvertes
+				42 row
+					43 cell
+						44 text https://kalivoa.com/sitemap.xml
+					45 cell
+						46 text Sitemap
+					47 cell
+						48 text 12 oct. 2026
+					49 cell
+						50 text 29 oct. 2026
+					51 cell
+						52 text Opération effectuée
+					53 cell
+						54 text 44
+					55 cell
+						56 text 0
+					57 cell
+						58 pop up button (collapsed) Secondary Actions: Expand
+			59 text Lignes par page :
+			60 list Nombre de lignes par page
+				61 5
+				62 (selected) 10
+				63 25
+				64 50
+				65 100
+				66 250
+				67 500
+			68 text 1-1 sur 1
+
+The focused UI element is 20 text field (settable) Saisir l'URL du sitemap

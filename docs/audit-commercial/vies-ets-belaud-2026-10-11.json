@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "source": "European Commission VIES SOAP",
+  "vatNumber": "FR61994223212",
+  "httpStatus": 200,
+  "valid": true,
+  "name": "SAS ETS BELAUD",
+  "address": "61 RUE DE LYON\n75012 PARIS",
+  "requestDate": "2026-10-11+02:00",
+  "fault": null
+}

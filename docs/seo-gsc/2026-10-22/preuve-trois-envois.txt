@@ -1,0 +1,156 @@
+Browser tab: 7, Title: "Résultats de recherche - contact.kalivoa@gmail.com - Gmail", URL: "https://mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D".
+0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D
+	1 container
+		1098 text Aucun élément sélectionné 
+		3 container
+			4 container
+				5 link Description: Aller au contenu, Value: mail.google.com/mail/u/0/, ID: :o
+				6 link (collapsed) Description: Utiliser Gmail avec un lecteur d'écran, Value: mail.google.com/mail/u/0/, ID: :p, Secondary Actions: Expand
+			7 heading 1
+				8 container gb
+					9 container
+						10 button (expanded) Description: Menu principal, Secondary Actions: Collapse
+							11 image
+						12 link Description: Gmail, Value: mail.google.com/mail/u/0/#inbox
+						326 container aso_search_form_anchor
+							327 heading Recherche, Value: 2
+								328 text Recherche
+							329 container in:sent after:2026/10/21 before:2026/10/24 {to:bureaudestipsters@gmail.com to:contact@wikibet.fr to:doradobetbasket@gmail.com} 
+								330 text field (settable) Description: Rechercher dans les messages, Value: in:sent after:2026/10/21 before:2026/10/24 {to:bureaudestipsters@gmail.com to:contact@wikibet.fr to:doradobetbasket@gmail.com} 
+							331 button Options de recherche avancée
+								332 image
+							1099 button Effacer la recherche
+								1100 image
+							333 button (disabled) Rechercher dans les messages
+								334 image
+						18 pop up button (collapsed) Description: Assistance, ID: lZwQje, Secondary Actions: Expand
+							335 image
+						336 pop up button (collapsed) Description: Paramètres, Secondary Actions: Expand
+							337 image
+						338 button Essayer Gemini
+						339 link Mettre à niveau
+							340 text Mettre à niveau
+						22 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+						23 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			341 container
+				1101 text Activez les notifications sur le bureau pour Gmail.
+				1102 link Description: OK, ID: link_enable_notifications
+					1103 text OK
+				1104 link Description: Non, merci, ID: link_enable_notifications_hide
+					1105 text Non, merci
+				1106 button Fermer
+			24 container
+				25 button Nouveau message
+				26 container
+					348 container Libellés
+						349 heading Libellés, Value: 2, ID: :kh
+							350 text Libellés
+						351 container :k5
+							352 container
+								353 link Description: Boîte de réception 112 messages non lus, Value: mail.google.com/mail/u/0/#inbox
+								354 text 112
+							355 container
+								356 link Description: Messages suivis, Value: mail.google.com/mail/u/0/#starred
+							357 container
+								358 link Description: En attente, Value: mail.google.com/mail/u/0/#snoozed
+							1093 container
+								1094 link Description: Messages envoyés, Value: mail.google.com/mail/u/0/#sent
+							1095 container
+								1096 link Description: Brouillons, Value: mail.google.com/mail/u/0/#drafts
+							363 container
+								364 link Description: Achats contient un menu, Value: mail.google.com/mail/u/0/#category/purchases
+						365 button Description: Plus de libellés, ID: :kd
+							1097 text Plus
+					42 heading Libellés, Value: 2
+						367 text Libellés
+					43 button Nouveau libellé
+					368 container Libellés
+						369 heading Libellés, Value: 2, ID: :ki
+							370 text Libellés
+			1107 container
+				1108 toolbar affinement des recherches
+					1109 container
+						1110 checkbox (collapsed) De, Value: 0, Secondary Actions: Expand
+							1111 container
+								1112 text De
+								1113 image
+						1114 checkbox Contient une pièce jointe, Value: 0
+							1115 text Contient une pièce jointe
+						1116 pop up button Recherche avancée
+							1117 text Recherche avancée
+				1118 pop up button (collapsed) Description: Sélectionner, ID: :ln, Secondary Actions: Expand
+					1119 checkbox 0
+				1120 button Actualiser
+				1121 button (collapsed) Description: Plus d'options, ID: :lo, Secondary Actions: Expand
+				1122 container
+					1123 button (collapsed) Description: Afficher plus de messages, ID: :mv, Secondary Actions: Expand
+						1124 text 1
+						1125 text –
+						1126 text 3
+						1127 text  sur 
+						1128 text 3
+					1129 button (disabled) Description: Préc., ID: :mx
+					1130 button (disabled) Description: Suiv., ID: :my
+				1131 heading Conversations, Value: 2
+					1132 text Conversations
+				1133 container
+					1134 image
+					1135 text bureaudestipsters@gmail.com
+					1136 button (collapsed) Description: Actions, ID: :ud, Secondary Actions: Expand
+				1137 text bureaudestipsters@gmail.com
+				1138 table :so
+					1139 row ID: :sl, moi , Kalivoa — proposition de test du scan et de la relecture , 21:18 , Bonjour Dorado, J'ai vu dans ta rubrique Conseils tes présentations d'outils de suivi, notamment ScanBet. Je développe Kalivoa et te propose un essai centré sur le parcours réel d'un ticket.
+						1140 cell :sk
+							1141 checkbox Value: 0, ID: :uf, Description: moi , Kalivoa — proposition de test du scan et de la relecture , 21:18 , Bonjour Dorado, J'ai vu dans ta rubrique Conseils tes présentations d'outils de suivi, notamment ScanBet. Je développe Kalivoa et te propose un essai centré sur le parcours réel d'un ticket.
+						1142 cell
+							1143 button Description: Non suivi, ID: :uk
+						1144 cell
+							1145 text moi
+						1146 cell :lw
+							1147 link Kalivoa — proposition de test du scan et de la relecture  -  Bonjour Dorado, J'ai vu dans ta rubrique Conseils tes présentations d'outils de suivi, notamment ScanBet. Je développe Kalivoa et te propose un essai centré sur le parcours réel d'un ticket
+								1148 text Kalivoa — proposition de test du scan et de la relecture
+								1149 container :lz
+									1150 text  -  Bonjour Dorado, J'ai vu dans ta rubrique Conseils tes présentations d'outils de suivi, notamment ScanBet. Je développe Kalivoa et te propose un essai centré sur le parcours réel d'un ticket
+						1151 cell
+							1152 container Description: jeu. 22 oct. 2026 21:18, ID: :m1
+								1153 text 21:18
+					1154 row ID: :m3, moi , Un test d'outil de suivi de bankroll pour Wikibet ? , 21:18 , Bonjour, Votre avis sur Bet-Analytix explique la différence entre suivi statistique et pronostics. Kalivoa sert à tenir un historique : l'utilisateur importe une capture compatible, relit les.
+						1155 cell :m5
+							1156 checkbox Value: 0, ID: :m6, Description: moi , Un test d'outil de suivi de bankroll pour Wikibet ? , 21:18 , Bonjour, Votre avis sur Bet-Analytix explique la différence entre suivi statistique et pronostics. Kalivoa sert à tenir un historique : l'utilisateur importe une capture compatible, relit les.
+						1157 cell
+							1158 button Description: Non suivi, ID: :m7
+						1159 cell
+							1160 text moi
+						1161 cell :m9
+							1162 link Un test d'outil de suivi de bankroll pour Wikibet ?  -  Bonjour, Votre avis sur Bet-Analytix explique la différence entre suivi statistique et pronostics. Kalivoa sert à tenir un historique : l'utilisateur importe une capture compatible, relit les
+								1163 text Un test d'outil de suivi de bankroll pour Wikibet ?
+								1164 container :mc
+									1165 text  -  Bonjour, Votre avis sur Bet-Analytix explique la différence entre suivi statistique et pronostics. Kalivoa sert à tenir un historique : l'utilisateur importe une capture compatible, relit les
+						1166 cell
+							1167 container Description: jeu. 22 oct. 2026 21:18, ID: :me
+								1168 text 21:18
+					1169 row ID: :mg, moi , Proposition de test Kalivoa — du ticket à un historique vérifiable , 21:14 , Bonjour, J'ai consulté votre article sur Bet-Analytix et le suivi de bankroll. Je développe Kalivoa, une application web de suivi de paris sportifs en français. Je vous propose un test concret :.
+						1170 cell :mi
+							1171 checkbox Value: 0, ID: :mj, Description: moi , Proposition de test Kalivoa — du ticket à un historique vérifiable , 21:14 , Bonjour, J'ai consulté votre article sur Bet-Analytix et le suivi de bankroll. Je développe Kalivoa, une application web de suivi de paris sportifs en français. Je vous propose un test concret :.
+						1172 cell
+							1173 button Description: Non suivi, ID: :mk
+						1174 cell
+							1175 text moi
+						1176 cell :mm
+							1177 link Proposition de test Kalivoa — du ticket à un historique vérifiable  -  Bonjour, J'ai consulté votre article sur Bet-Analytix et le suivi de bankroll. Je développe Kalivoa, une application web de suivi de paris sportifs en français. Je vous propose un test concret :
+								1178 text Proposition de test Kalivoa — du ticket à un historique vérifiable
+								1179 container :mp
+									1180 text  -  Bonjour, J'ai consulté votre article sur Bet-Analytix et le suivi de bankroll. Je développe Kalivoa, une application web de suivi de paris sportifs en français. Je vous propose un test concret :
+						1181 cell
+							1182 container Description: jeu. 22 oct. 2026 21:14, ID: :mr
+								1183 text 21:14
+			876 container Panneau latéral
+				877 tab group
+					878 tab (selectable, settable, boolean) Description: Agenda, Value: 0, ID: gsc-gab-6
+					879 tab (selectable, settable, boolean) Description: Keep, Value: 0, ID: gsc-gab-2
+					880 tab (selectable, settable, boolean) Description: Tasks, Value: 0, ID: gsc-gab-4
+					881 tab (selectable, settable, boolean) Description: Contacts, Value: 0, ID: gsc-gab-9
+					882 tab (selectable, settable, boolean) Description: Télécharger des modules complémentaires, Value: 0, ID: qJTzr
+			883 button Masquer le panneau latéral
+
+The focused UI element is 0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D

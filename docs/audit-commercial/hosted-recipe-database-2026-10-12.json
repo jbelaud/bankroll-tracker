@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-12",
+  "ready": true,
+  "databaseName": "kalivoa_commercial_recipe_20261012_fee6a6f04f",
+  "role": "kalivoa_recipe_20261012_fee6a6f04f",
+  "host": "ep-sparkling-heart-b2vcwf0v-pooler.c-6.eu-central-1.aws.neon.tech",
+  "usesExistingPreviewCompute": true,
+  "newComputeCreated": false,
+  "sourceDatabaseRowsModified": false,
+  "productionSupabaseTouched": false,
+  "customerRowsCopied": false,
+  "limitedRole": true,
+  "accessToExistingPreviewUsersBlocked": true,
+  "prismaConnectionVerified": true,
+  "betaEndedOnlyInRecipe": true
+}

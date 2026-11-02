@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-12",
+  "runId": "ec304f12-edfd-40ca-a3e0-ceb6a7dd3388",
+  "origin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+  "sandbox": true,
+  "recipeDatabase": "kalivoa_commercial_recipe_20261012_fee6a6f04f",
+  "productionModified": false,
+  "browserCheckoutVerified": false,
+  "resendProviderCallbackVerified": false,
+  "scenarios": [
+    {
+      "interval": "monthly",
+      "welcome": false,
+      "expectedAmount": 499,
+      "expectedVat": 83,
+      "checks": [
+        "paid invoice and inclusive VAT",
+        "official signed activation",
+        "one paid-only permanent 300-scan batch",
+        "immutable accepted terms",
+        "invoice PDF archived",
+        "confirmation sent through Resend simulator",
+        "cancellation at period end retains access",
+        "full refund including VAT",
+        "signed cancellation restores free plan and retains bonus",
+        "no duplicate contract confirmation"
+      ],
+      "passed": true,
+      "subscriptionId": "sub_1UPdX3DNFQcoJN1NrZYK90So",
+      "confirmationProviderId": "01a12efc-0a09-7188-b4b7-e9163f314952",
+      "refund": {
+        "id": "re_3UPdX3DNFQcoJN1N2DZdpGvA",
+        "amount": 499,
+        "status": "succeeded"
+      }
+    },
+    {
+      "interval": "yearly",
+      "welcome": false,
+      "expectedAmount": 4999,
+      "expectedVat": 833,
+      "checks": [
+        "paid invoice and inclusive VAT",
+        "official signed activation",
+        "one paid-only permanent 300-scan batch",
+        "immutable accepted terms",
+        "invoice PDF archived",
+        "confirmation sent through Resend simulator",
+        "annual reminder is not sent prematurely at initial purchase",
+        "cancellation at period end retains access",
+        "full refund including VAT",
+        "signed cancellation restores free plan and retains bonus",
+        "no duplicate contract confirmation"
+      ],
+      "passed": true,
+      "subscriptionId": "sub_1UPdXGDNFQcoJN1NwaRFrfdW",
+      "confirmationProviderId": "01a12efc-3bad-7ba6-99b0-b919f74388af",
+      "refund": {
+        "id": "re_3UPdXHDNFQcoJN1N18vTG2H8",
+        "amount": 4999,
+        "status": "succeeded"
+      }
+    },
+    {
+      "interval": "monthly",
+      "welcome": true,
+      "expectedAmount": 299,
+      "expectedVat": 50,
+      "checks": [
+        "paid invoice and inclusive VAT",
+        "official signed activation",
+        "one paid-only permanent 300-scan batch",
+        "immutable accepted terms",
+        "invoice PDF archived",
+        "confirmation sent through Resend simulator",
+        "cancellation at period end retains access",
+        "full refund including VAT",
+        "signed cancellation restores free plan and retains bonus",
+        "no duplicate contract confirmation"
+      ],
+      "passed": true,
+      "subscriptionId": "sub_1UPdXTDNFQcoJN1NHJmY2UZM",
+      "confirmationProviderId": "01a12efc-6f6e-7cd2-a92f-5bda5e396672",
+      "refund": {
+        "id": "re_3UPdXUDNFQcoJN1N1NTWuZbt",
+        "amount": 299,
+        "status": "succeeded"
+      }
+    },
+    {
+      "interval": "yearly",
+      "welcome": true,
+      "expectedAmount": 2499,
+      "expectedVat": 417,
+      "checks": [
+        "paid invoice and inclusive VAT",
+        "official signed activation",
+        "one paid-only permanent 300-scan batch",
+        "immutable accepted terms",
+        "invoice PDF archived",
+        "confirmation sent through Resend simulator",
+        "annual reminder is not sent prematurely at initial purchase",
+        "cancellation at period end retains access",
+        "full refund including VAT",
+        "signed cancellation restores free plan and retains bonus",
+        "no duplicate contract confirmation"
+      ],
+      "passed": true,
+      "subscriptionId": "sub_1UPdXiDNFQcoJN1N8GSllBbK",
+      "confirmationProviderId": "01a12efc-a5a2-7c18-a396-10c606cb7043",
+      "refund": {
+        "id": "re_3UPdXiDNFQcoJN1N1oxT46vI",
+        "amount": 2499,
+        "status": "succeeded"
+      }
+    }
+  ],
+  "passed": true,
+  "finishedAt": "2026-10-12T07:21:18.822Z",
+  "refundsConfirmed": true,
+  "resendSimulatorUiVerified": {
+    "scenario": "yearly-welcome",
+    "recipient": "delivered@resend.dev",
+    "status": "Delivered",
+    "sender": "Kalivoa <notifications@kalivoa.com>",
+    "replyTo": "contact.kalivoa@gmail.com",
+    "acceptedTermsAttached": true,
+    "providerId": "01a12efc-a5a2-7c18-a396-10c606cb7043",
+    "providerWebhookNotConnected": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "route": "https://kalivoa-commercial-recette-ets-belaud.vercel.app/api/stripe/webhook",
+  "officialSandboxListener": true,
+  "authenticatedTemporaryAccess": true,
+  "publicProtectionDisabled": false,
+  "deliveries": [
+    {
+      "at": "2026-10-12T17:32:57.424Z",
+      "eventId": "evt_1UPn5jDNFQcoJN1NxwXjfvKI",
+      "type": "checkout.session.completed",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T17:32:57.863Z",
+      "eventId": "evt_1UPn5jDNFQcoJN1NWZJuH5pu",
+      "type": "customer.subscription.created",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T17:32:57.884Z",
+      "eventId": "evt_1UPn5iDNFQcoJN1NaU5l5gUW",
+      "type": "invoice.paid",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T17:40:21.688Z",
+      "eventId": "evt_1UPnCwDNFQcoJN1NhDtYsQHN",
+      "type": "customer.subscription.updated",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T17:40:22.197Z",
+      "eventId": "evt_1UPnCxDNFQcoJN1N87icOILd",
+      "type": "customer.subscription.updated",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T17:46:15.732Z",
+      "eventId": "evt_1UPnIdDNFQcoJN1NLURjAOzW",
+      "type": "customer.subscription.deleted",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:04:58.445Z",
+      "eventId": "evt_1UPnaiDNFQcoJN1N4EFpAneG",
+      "type": "customer.subscription.created",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:04:58.586Z",
+      "eventId": "evt_1UPnaiDNFQcoJN1NLpwxTEuq",
+      "type": "checkout.session.completed",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:04:59.604Z",
+      "eventId": "evt_1UPnaiDNFQcoJN1NjtEvn15O",
+      "type": "invoice.paid",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:08:21.320Z",
+      "eventId": "evt_1UPne2DNFQcoJN1NhkwqhUuP",
+      "type": "customer.subscription.deleted",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:27:15.895Z",
+      "eventId": "evt_1UPnwIDNFQcoJN1NnRPND8Qe",
+      "type": "customer.subscription.updated",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:28:39.475Z",
+      "eventId": "evt_1UPnxgDNFQcoJN1NtpoBf8tG",
+      "type": "customer.subscription.updated",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:30:01.417Z",
+      "eventId": "evt_1UPnz0DNFQcoJN1NuBdcdF80",
+      "type": "customer.subscription.deleted",
+      "status": 200
+    }
+  ],
+  "stoppedAt": "2026-10-12T18:31:45.461Z"
+}

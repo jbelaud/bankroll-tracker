@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-22T18:36:18.017Z",
+  "localDate": "2026-10-22",
+  "timeZone": "Europe/Paris",
+  "folderId": "1rS6DobPq5i_s5mJyohLkfWgXg8KcPb8G",
+  "folderUrl": "https://drive.google.com/drive/folders/1rS6DobPq5i_s5mJyohLkfWgXg8KcPb8G",
+  "privatePermissionsVerified": true,
+  "parentsVerified": true,
+  "archives": [
+    {
+      "id": "185AcVxUm7gKpoQe73zN2RKHIbgz6gCP2",
+      "name": "kalivoa-20261022T183618Z-public.dump.aes256gcm",
+      "bytes": 810033,
+      "sha256": "94d1691a9077a1a9763905082556c8dd714fcb7fcf39809e9416139c9e94e951"
+    },
+    {
+      "id": "1wScnsmPp0lP8bnPO78CwZncFGgYSgB9i",
+      "name": "kalivoa-20261022T183618Z-auth-storage.aes256gcm",
+      "bytes": 16971,
+      "sha256": "80bb190ec43f1aca76c44b71f2561cdedb65c56407729a92f8719efbe0a5317f"
+    }
+  ],
+  "manifestId": "1GL7PRWvjwVldqf8rJpwi3hapONWs_65-",
+  "manifestName": "kalivoa-20261022T183618Z-manifest.json",
+  "manifestBytes": 2034,
+  "manifestSha256": "583127398feeb1cce828ccb3755d50801c1fb0155af97fd66deb25d1ba7c9bc7",
+  "cloudReadbackHashesVerified": true,
+  "applicationRestoredLocally": true,
+  "tablesVerified": 40,
+  "rowsVerified": 13565,
+  "authDataRestoredLocally": true,
+  "authRowsVerified": 92,
+  "storageObjects": 0,
+  "storageContentVerified": true,
+  "keyUploaded": false,
+  "productionWrites": false,
+  "customerEmailsSent": false,
+  "automationId": "sauvegarde-quotidienne-kalivoa",
+  "computerRequired": true,
+  "retention": {
+    "folderFilesListed": 9,
+    "eligibleOlderThan30Days": 0,
+    "filesTrashed": 0,
+    "permanentDeletionUsed": false
+  },
+  "previousSuccessfulBackup": "2026-10-21T22:54:02.843Z",
+  "lastAttempt": {
+    "checkedAt": "2026-10-22T18:37:33.607Z",
+    "status": "success",
+    "freshEncryptedArchiveCreated": true,
+    "uploaded": true,
+    "localReport": ".vercel/production-backups/2026-10-22-5ldha6/report.json"
+  }
+}

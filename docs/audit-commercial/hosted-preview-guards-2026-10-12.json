@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-12",
+  "origin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+  "sandbox": true,
+  "checks": [
+    {
+      "path": "/api/stripe/webhook",
+      "expected": 400,
+      "actual": 400
+    },
+    {
+      "path": "/api/stripe/webhook",
+      "expected": 400,
+      "actual": 400
+    },
+    {
+      "path": "/api/resend/webhook",
+      "expected": 400,
+      "actual": 400
+    },
+    {
+      "path": "/api/cron/commercial",
+      "expected": 401,
+      "actual": 401
+    },
+    {
+      "path": "/fr/offre-bienvenue",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/fr/pricing",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/fr/privacy",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/fr/retractation",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/fr/account/subscription",
+      "expected": 307,
+      "actual": 307
+    }
+  ],
+  "publicProtectionActive": true,
+  "failedPayment": {
+    "subscriptionId": "sub_1UPdeYDNFQcoJN1NHkOaDfKG",
+    "status": "incomplete",
+    "synchronized": true,
+    "plan": "FREE",
+    "bonusGranted": false,
+    "contractCreated": false,
+    "confirmationSent": false
+  },
+  "passed": true
+}

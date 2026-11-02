@@ -1,0 +1,201 @@
+{
+  "fr": {
+    "canonical": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+    "h1": [
+      "Comment comparer ses résultats de paris par sport sans tirer de conclusion trop vite ?"
+    ],
+    "languages": [
+      {
+        "href": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+        "lang": "fr"
+      },
+      {
+        "href": "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+        "lang": "en"
+      },
+      {
+        "href": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+        "lang": "x-default"
+      }
+    ],
+    "schemas": [
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "author": {
+          "@type": "Organization",
+          "name": "Kalivoa",
+          "url": "https://kalivoa.com/fr"
+        },
+        "dateModified": "2026-11-02",
+        "datePublished": "2026-11-02",
+        "description": "Comparez les mises, le nombre de paris et les pertes par sport à partir de deux tickets réels. Comprenez les limites d’un classement fondé sur quelques résultats.",
+        "headline": "Comment comparer ses résultats de paris par sport sans tirer de conclusion trop vite ?",
+        "inLanguage": "fr",
+        "mainEntityOfPage": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Kalivoa",
+          "url": "https://kalivoa.com/fr"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/fr",
+            "name": "Kalivoa",
+            "position": 1
+          },
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/fr/academie",
+            "name": "Académie Kalivoa",
+            "position": 2
+          },
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+            "name": "Comment comparer ses résultats de paris par sport sans tirer de conclusion trop vite ?",
+            "position": 3
+          }
+        ]
+      }
+    ],
+    "url": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport"
+  },
+  "en": {
+    "canonical": "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+    "date": "2026-11-02",
+    "h1": [
+      "How can you compare betting results by sport without drawing conclusions too quickly?"
+    ],
+    "languages": [
+      {
+        "href": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+        "lang": "fr"
+      },
+      {
+        "href": "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+        "lang": "en"
+      },
+      {
+        "href": "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+        "lang": "x-default"
+      }
+    ],
+    "schemas": [
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "author": {
+          "@type": "Organization",
+          "name": "Kalivoa",
+          "url": "https://kalivoa.com/en"
+        },
+        "dateModified": "2026-11-02",
+        "datePublished": "2026-11-02",
+        "description": "Use two real settled slips to compare stakes, bet counts and losses by sport. Understand why a smaller cash loss does not establish better performance.",
+        "headline": "How can you compare betting results by sport without drawing conclusions too quickly?",
+        "inLanguage": "en",
+        "mainEntityOfPage": "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Kalivoa",
+          "url": "https://kalivoa.com/en"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/en",
+            "name": "Kalivoa",
+            "position": 1
+          },
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/en/academie",
+            "name": "Kalivoa Academy",
+            "position": 2
+          },
+          {
+            "@type": "ListItem",
+            "item": "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+            "name": "How can you compare betting results by sport without drawing conclusions too quickly?",
+            "position": 3
+          }
+        ]
+      }
+    ],
+    "url": "https://kalivoa.com/en/academie/analyser-resultats-par-sport"
+  },
+  "hubFr": "/fr/academie/analyser-resultats-par-sport",
+  "sitemap": {
+    "urls": [
+      "https://kalivoa.com/fr",
+      "https://kalivoa.com/en",
+      "https://kalivoa.com/fr/features",
+      "https://kalivoa.com/en/features",
+      "https://kalivoa.com/fr/certification",
+      "https://kalivoa.com/en/certification",
+      "https://kalivoa.com/fr/extension",
+      "https://kalivoa.com/en/extension",
+      "https://kalivoa.com/fr/screenshot-import",
+      "https://kalivoa.com/en/screenshot-import",
+      "https://kalivoa.com/fr/bankroll-tracking",
+      "https://kalivoa.com/en/bankroll-tracking",
+      "https://kalivoa.com/fr/academie",
+      "https://kalivoa.com/en/academie",
+      "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "https://kalivoa.com/fr/academie/analyser-resultats-par-sport",
+      "https://kalivoa.com/en/academie/analyser-resultats-par-sport",
+      "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "https://kalivoa.com/fr/bookmakers",
+      "https://kalivoa.com/en/bookmakers",
+      "https://kalivoa.com/fr/partenaires",
+      "https://kalivoa.com/en/partenaires",
+      "https://kalivoa.com/fr/bookmakers/unibet",
+      "https://kalivoa.com/en/bookmakers/unibet",
+      "https://kalivoa.com/fr/bookmakers/betclic",
+      "https://kalivoa.com/en/bookmakers/betclic",
+      "https://kalivoa.com/fr/bookmakers/winamax",
+      "https://kalivoa.com/en/bookmakers/winamax",
+      "https://kalivoa.com/fr/pricing",
+      "https://kalivoa.com/en/pricing",
+      "https://kalivoa.com/fr/faq",
+      "https://kalivoa.com/en/faq",
+      "https://kalivoa.com/fr/privacy",
+      "https://kalivoa.com/en/privacy",
+      "https://kalivoa.com/fr/terms",
+      "https://kalivoa.com/en/terms",
+      "https://kalivoa.com/fr/responsible-gambling",
+      "https://kalivoa.com/en/responsible-gambling"
+    ]
+  },
+  "hubEn": "/en/academie/analyser-resultats-par-sport",
+  "oldArticleDate": {
+    "article": "2026-10-08",
+    "date": "2026-10-08"
+  },
+  "proofImage": {
+    "complete": true,
+    "height": 492,
+    "src": "https://kalivoa.com/_next/image?url=%2Fimages%2Facademie%2Frelecture-ticket-pari-kalivoa.png&w=1080&q=75",
+    "width": 768
+  }
+}

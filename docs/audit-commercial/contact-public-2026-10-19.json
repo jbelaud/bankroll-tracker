@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-19",
+  "origin": "https://kalivoa.com",
+  "deploymentId": "dpl_EQrqVmFTCdB1JAcUpKrHtUYKUtka",
+  "checkedAt": "2026-10-19T20:54:56.004Z",
+  "checks": [
+    {
+      "path": "/fr/contact",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": true,
+      "draftPreserved": false
+    },
+    {
+      "path": "/fr/legal-notice",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": false,
+      "draftPreserved": false
+    },
+    {
+      "path": "/fr/sales-terms",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": false,
+      "draftPreserved": true
+    },
+    {
+      "path": "/en/contact",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": true,
+      "draftPreserved": false
+    },
+    {
+      "path": "/en/legal-notice",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": false,
+      "draftPreserved": false
+    },
+    {
+      "path": "/en/sales-terms",
+      "status": 200,
+      "phonePresent": true,
+      "callLink": false,
+      "draftPreserved": true
+    }
+  ],
+  "passed": true,
+  "previousTermsPreserved": true,
+  "termsRemainDraft": true,
+  "paidSalesEnabled": false
+}

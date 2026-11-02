@@ -1,0 +1,29 @@
+{
+  "observedDate": "2026-10-08",
+  "source": "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL?view=all",
+  "visibleSettledBets": 25,
+  "displayedProfitUnits": 9.41,
+  "displayedMaximumDrawdownUnits": 4.15,
+  "excerptReference": "Immediately after September 12 bet; rebased to zero",
+  "excerpt": [
+    {
+      "date": "2026-09-13",
+      "lossUnits": 1.25
+    },
+    {
+      "date": "2026-09-15",
+      "lossUnits": 1
+    },
+    {
+      "date": "2026-09-16",
+      "lossUnits": 1.25
+    }
+  ],
+  "calculatedExcerptDrawdownUnits": 3.5,
+  "limitations": [
+    "Excerpt is not complete history",
+    "No private currency conversion",
+    "Full drawdown is reported from the UI, not recalculated from rounded entries",
+    "Same-day bet order matters for complete history"
+  ]
+}

@@ -1,0 +1,13 @@
+Browser tab: 7, Title: "Résultats de recherche - contact.kalivoa@gmail.com - Gmail", URL: "https://mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 34-39, 54-55, 153-155, 159-165, 180-205, 207-224
+~0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D
++				207 text Message envoyé
++				208 link Afficher le message
++				209 button Fermer
++							210 container
++								211 link Description: Messages envoyés, Value: mail.google.com/mail/u/0/#sent
++							212 container
++								213 link Description: Brouillons, Value: mail.google.com/mail/u/0/#drafts
++							214 text Plus
+The focused UI element is 0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24+%7Bto%3Abureaudestipsters%40gmail.com+to%3Acontact%40wikibet.fr+to%3Adoradobetbasket%40gmail.com%7D

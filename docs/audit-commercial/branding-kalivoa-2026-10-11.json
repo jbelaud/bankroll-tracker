@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-10-11T09:31:51.069Z",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "legalEntity": "ETS BELAUD",
+  "proposal": {
+    "business_profile": {
+      "name": "Kalivoa",
+      "url": "https://kalivoa.com",
+      "support_url": "https://kalivoa.com/fr/contact",
+      "support_email": "contact.kalivoa@gmail.com"
+    },
+    "settings": {
+      "payments": {
+        "statement_descriptor": "KALIVOA"
+      },
+      "card_payments": {
+        "statement_descriptor_prefix": "KALIVOA"
+      }
+    }
+  },
+  "applied": true,
+  "accountUpdate": "dashboard_required",
+  "accountError": {
+    "type": "StripeInvalidRequestError",
+    "code": null
+  },
+  "sellerVatId": "txi_1UPJ6hDNFQcoJN1NsYI0kpUF",
+  "invoiceVatDefault": "dashboard_required",
+  "invoiceVatError": {
+    "type": "StripeInvalidRequestError",
+    "code": null
+  },
+  "observed": {
+    "publicName": null,
+    "supportEmail": null,
+    "website": null,
+    "statementDescriptor": null,
+    "cardPrefix": null,
+    "defaultSellerTaxIds": []
+  },
+  "checkout": {
+    "displayName": "Kalivoa",
+    "verifiedBy": "Real Stripe API and browser",
+    "scope": "Heading override only; native terms use sandbox account name until public business profile activation"
+  },
+  "email": {
+    "sender": "Kalivoa <notifications@kalivoa.com>",
+    "replyTo": "contact.kalivoa@gmail.com",
+    "domainVerified": true,
+    "realDeliveryTest": "delivered and recipient-confirmed"
+  },
+  "productionPublicProfile": "Requires owner account activation. No live write attempted."
+}

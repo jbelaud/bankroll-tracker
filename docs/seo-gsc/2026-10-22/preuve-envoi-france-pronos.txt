@@ -1,0 +1,7 @@
+Browser tab: 12, Title: "Contacte l'équipe de France Pronos !", URL: "https://www.france-pronos.com/contact-confirmation".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 10-34
+~0 AXWebArea Contacte l'équipe de France Pronos !, URL: france-pronos.com/contact-confirmation
++			62 text Message envoyé.
++			63 text Ton message a bien été envoyé.
+The focused UI element is 0 AXWebArea Contacte l'équipe de France Pronos !, URL: france-pronos.com/contact-confirmation

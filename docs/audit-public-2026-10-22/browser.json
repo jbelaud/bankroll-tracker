@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "deploymentId": "dpl_3ugdeC9zD3h7r7Xagz4XeW9Nhkpt",
+  "desktopTerms": true,
+  "mobileTerms": true,
+  "mobilePricing": true,
+  "mobileContentWidth": 375,
+  "mobileViewportWidth": 375,
+  "partnerPageHydrated": true,
+  "partnerAccessCopyVerified": true,
+  "mobileMenuCertificationLink": true,
+  "viewportReset": true,
+  "customerActionsSubmitted": false,
+  "screenshots": [
+    "cgv-publiees-desktop.png",
+    "cgv-publiees-mobile.png",
+    "tarifs-beta-mobile.png"
+  ]
+}

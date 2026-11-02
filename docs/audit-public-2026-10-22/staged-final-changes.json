@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-10-22T06:35:29.609Z",
+  "origin": "https://bankroll-tracker-mdbn2g8z9-ets-belaud.vercel.app",
+  "deploymentId": "dpl_3ugdeC9zD3h7r7Xagz4XeW9Nhkpt",
+  "checks": [
+    {
+      "path": "/fr/bookmakers",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/en/bookmakers",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/sales-terms",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/fr/partenaires",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

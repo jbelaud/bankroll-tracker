@@ -1,0 +1,130 @@
+{
+  "at": "2026-10-09T17:41:31.325Z",
+  "passed": true,
+  "account": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "authenticatedBrowserPurchaseVerified": true,
+  "checkout": {
+    "id": "cs_test_a1wPPON8UAqz5KHqBo2VCclslL8Z1qi9eMth1gig4ZYYVIJ6YkxPqDo1jL",
+    "amount": 499,
+    "currency": "eur",
+    "status": "complete",
+    "paymentStatus": "paid",
+    "successUrl": "http://localhost:3013/fr/account/subscription?checkout=success"
+  },
+  "activation": {
+    "at": "2026-10-09T17:38:02.773Z",
+    "isolatedDatabase": true,
+    "user": {
+      "id": "a1e22b9c-e46a-4b28-bf7b-9f93411dd74d",
+      "plan": "PREMIUM",
+      "stripeCustomerId": "cus_VPWkFgyJCqIf1B",
+      "stripeSubscriptionId": "sub_1UOhirDNFQcoJN1N1gzpOrru",
+      "subscriptionStatus": "active"
+    },
+    "batches": [
+      {
+        "type": "INITIAL",
+        "quantityGranted": 300,
+        "quantityUsed": 0,
+        "expiresAt": null,
+        "requiresPaidPlan": true
+      },
+      {
+        "type": "MONTHLY",
+        "quantityGranted": 200,
+        "quantityUsed": 0,
+        "expiresAt": "2026-11-08T16:31:21.521Z",
+        "requiresPaidPlan": false
+      }
+    ]
+  },
+  "portal": {
+    "id": "sub_1UOhirDNFQcoJN1N1gzpOrru",
+    "status": "active",
+    "cancelAt": 1794245803,
+    "cancelAtPeriodEnd": false,
+    "invoice": {
+      "id": "in_1UOhiqDNFQcoJN1NZavPebEa",
+      "status": "paid",
+      "total": 499
+    },
+    "invoiceHistoryAccessibleAfterReturnToFree": true
+  },
+  "afterEffectiveCancellation": {
+    "user": {
+      "id": "a1e22b9c-e46a-4b28-bf7b-9f93411dd74d",
+      "plan": "FREE",
+      "stripeCustomerId": "cus_VPWkFgyJCqIf1B",
+      "stripeSubscriptionId": "sub_1UOhirDNFQcoJN1N1gzpOrru",
+      "subscriptionStatus": "canceled"
+    },
+    "batches": [
+      {
+        "type": "INITIAL",
+        "quantityGranted": 300,
+        "quantityUsed": 0,
+        "expiresAt": null,
+        "requiresPaidPlan": true
+      },
+      {
+        "type": "MONTHLY",
+        "quantityGranted": 200,
+        "quantityUsed": 0,
+        "expiresAt": "2026-11-08T16:31:21.521Z",
+        "requiresPaidPlan": false
+      }
+    ]
+  },
+  "webhookDeliveries": [
+    {
+      "at": "2026-10-09T17:36:46.473Z",
+      "message": "2026-10-09 19:36:46   --> invoice.paid [evt_1UOhisDNFQcoJN1NK7tEhE9O]"
+    },
+    {
+      "at": "2026-10-09T17:36:46.514Z",
+      "message": "2026-10-09 19:36:46   --> checkout.session.completed [evt_1UOhisDNFQcoJN1NwWEHbfID]"
+    },
+    {
+      "at": "2026-10-09T17:36:46.560Z",
+      "message": "2026-10-09 19:36:46   --> customer.subscription.created [evt_1UOhisDNFQcoJN1NTairPP7r]"
+    },
+    {
+      "at": "2026-10-09T17:36:47.435Z",
+      "message": "2026-10-09 19:36:47  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOhisDNFQcoJN1NwWEHbfID]"
+    },
+    {
+      "at": "2026-10-09T17:36:47.636Z",
+      "message": "2026-10-09 19:36:47  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOhisDNFQcoJN1NTairPP7r]"
+    },
+    {
+      "at": "2026-10-09T17:36:47.835Z",
+      "message": "2026-10-09 19:36:47  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOhisDNFQcoJN1NK7tEhE9O]"
+    },
+    {
+      "at": "2026-10-09T17:38:29.866Z",
+      "message": "2026-10-09 19:38:29   --> customer.subscription.updated [evt_1UOhkYDNFQcoJN1NTQLn4Y5x]"
+    },
+    {
+      "at": "2026-10-09T17:38:30.420Z",
+      "message": "2026-10-09 19:38:30  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOhkYDNFQcoJN1NTQLn4Y5x]"
+    },
+    {
+      "at": "2026-10-09T17:39:57.633Z",
+      "message": "2026-10-09 19:39:57   --> customer.subscription.deleted [evt_1UOhlxDNFQcoJN1NRPB7JCye]"
+    },
+    {
+      "at": "2026-10-09T17:39:58.182Z",
+      "message": "2026-10-09 19:39:58  <--  [200] POST http://127.0.0.1:3013/api/stripe/webhook [evt_1UOhlxDNFQcoJN1NRPB7JCye]"
+    }
+  ],
+  "screenshots": [
+    "kalivoa-premium-apres-checkout-2026-10-09.png",
+    "kalivoa-bonus-conserve-apres-resiliation-2026-10-09.png"
+  ],
+  "limitations": [
+    "Monthly standard offer purchased through browser; yearly and welcome renewals covered by separate API recipes.",
+    "Webhook relay targets localhost; public webhook destination and live launch remain pending."
+  ],
+  "testSubscriptionCanceled": true
+}

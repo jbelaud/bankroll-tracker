@@ -1,0 +1,4 @@
+Browser tab: 8, Title: "Formulaire Contact", URL: "https://www.pronosoft.com/fr/contact/contact.htm".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 110-144
+The focused UI element is 0 AXWebArea Formulaire Contact, URL: pronosoft.com/fr/contact/contact.htm

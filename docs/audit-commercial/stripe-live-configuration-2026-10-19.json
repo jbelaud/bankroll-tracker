@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-19",
+  "accountId": "acct_1T7ifpRZcB561pgV",
+  "livemode": true,
+  "productId": "prod_VTIXo0MxSL26Kl",
+  "taxCode": "txcd_10103000",
+  "monthly": {
+    "priceId": "price_1USLweRZcB561pgV1mhcXrPv",
+    "unitAmount": 499,
+    "interval": "month",
+    "welcomeCouponId": "kalivoa_welcome_monthly_v2",
+    "welcomeAmountOff": 200,
+    "welcomeDuration": "repeating",
+    "welcomeDurationMonths": 12
+  },
+  "yearly": {
+    "priceId": "price_1USLyaRZcB561pgVufzCVRl0",
+    "unitAmount": 4999,
+    "interval": "year",
+    "welcomeCouponId": "kalivoa_welcome_yearly_v2",
+    "welcomeAmountOff": 2500,
+    "welcomeDuration": "once"
+  },
+  "portal": {
+    "configurationId": "bpc_1USM8ARZcB561pgVx5POB3k8",
+    "returnUrl": "https://kalivoa.com/fr/account/subscription",
+    "cancellationMode": "at_period_end",
+    "invoiceHistory": true,
+    "paymentMethodUpdate": true,
+    "subscriptionUpdate": false,
+    "publicLoginLink": false
+  },
+  "tax": {
+    "status": "active",
+    "country": "FR",
+    "registrationId": "taxreg_1USLYGRZcB561pgVGmMuCD5Q",
+    "registrationType": "standard",
+    "placeOfSupplyScheme": "small_seller",
+    "annualPriceSimulation": {
+      "gross": 4999,
+      "vatIncluded": 833,
+      "net": 4166,
+      "rate": 20
+    },
+    "paymentCreated": false
+  },
+  "checkoutOpened": false,
+  "sellerTaxId": "txi_1USMMBRZcB561pgVapVvOE3v",
+  "sellerVatOnInvoices": true,
+  "invoiceFooterConfigured": true,
+  "supportEmail": "contact.kalivoa@gmail.com",
+  "webhook": {
+    "id": "we_1USMJARZcB561pgVbZgDdq1f",
+    "url": "https://kalivoa.com/api/stripe/webhook",
+    "status": "enabled",
+    "apiVersion": "2026-08-26.dahlia",
+    "eventsCount": 7,
+    "signedProductionDeliveryVerified": false,
+    "signedEndpointProbePassed": true
+  },
+  "productionSecretsStaged": true,
+  "previewSecretPreserved": true,
+  "validation": {
+    "readOnlyLiveReadinessPassed": true,
+    "testsPassed": 72,
+    "typeScriptPassed": true,
+    "productionEndToEndVerified": false,
+    "eslintPassed": true,
+    "publicHttpChecksPassed": 10,
+    "stagedHttpChecksPassed": 10,
+    "noRealPaymentPerformed": true
+  },
+  "productionDeploymentPerformed": true,
+  "customerCharged": false,
+  "vercelConfigPrepared": true,
+  "legalReady": false,
+  "commercialRecordsEnabled": false,
+  "productionDeployment": {
+    "id": "dpl_HrXxVcRcvqLDZaBL2WmByboWRP7k",
+    "url": "https://bankroll-tracker-knwfhp6s6-ets-belaud.vercel.app",
+    "publicDomain": "https://kalivoa.com",
+    "previousId": "dpl_GZ96BGszWHB5A69GqaYQnv3E8CB3"
+  },
+  "resend": {
+    "webhookId": "26a85a47-7b8b-4493-8ad3-f2a069621a1f",
+    "status": "enabled",
+    "providerDeliveryVerified": true,
+    "recipientSimulatorOnly": true
+  }
+}

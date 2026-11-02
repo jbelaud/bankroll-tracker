@@ -1,0 +1,61 @@
+{
+  "startedAt": "2026-10-12T18:17:37.669Z",
+  "expiresAt": "2026-10-12T19:02:37.670Z",
+  "temporary": true,
+  "simulatorRecipientsOnly": true,
+  "originalSignedPayloadForwarded": true,
+  "publicPreviewProtectionDisabled": false,
+  "deliveries": [
+    {
+      "at": "2026-10-12T18:21:39.586Z",
+      "eventId": "msg_3KbbcuZORnb8Rv5w0FhfDeWVld9",
+      "emailId": "01a13159-41bb-7737-aef7-dcd27a9024d0",
+      "type": "email.delivered",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:21:54.511Z",
+      "eventId": "msg_3KbberDkXluvzv13BYRiGDxQPHz",
+      "emailId": "01a13159-7df2-7566-b1f1-ec55b7bbdabd",
+      "type": "email.bounced",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:24:16.649Z",
+      "eventId": "msg_3KbbcuZORnb8Rv5w0FhfDeWVld9",
+      "emailId": "01a13159-41bb-7737-aef7-dcd27a9024d0",
+      "type": "email.delivered",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:27:18.296Z",
+      "eventId": "msg_3KbcJWwPPbQzSUlkqHUetq3gNAN",
+      "emailId": "01a1315e-6e7c-7b4e-8f98-2257bd872470",
+      "type": "email.delivered",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:30:04.222Z",
+      "eventId": "msg_3KbceNUerf4Q0SKkcSbto8hsNRP",
+      "emailId": "01a13160-f5d4-7bb7-80fa-10258f0fa136",
+      "type": "email.delivered",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:30:04.315Z",
+      "eventId": "msg_3KbcePdot7nA4tTkpbby5Jc1x3X",
+      "emailId": "01a13160-f4fb-736d-9e4c-4b6f2b01574a",
+      "type": "email.delivered",
+      "status": 200
+    },
+    {
+      "at": "2026-10-12T18:30:11.471Z",
+      "eventId": "msg_3KbcfJcvCr9QozyiVTvZewEddtf",
+      "emailId": "01a13161-08b1-74dc-8098-17b7351db6f8",
+      "type": "email.delivered",
+      "status": 200
+    }
+  ],
+  "stoppedAt": "2026-10-12T18:31:45.457Z",
+  "providerWebhookDisabled": true
+}

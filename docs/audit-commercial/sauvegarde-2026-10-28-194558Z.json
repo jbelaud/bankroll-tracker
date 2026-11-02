@@ -1,0 +1,28 @@
+{
+  "automationId": "sauvegarde-quotidienne-kalivoa",
+  "localDate": "2026-10-28",
+  "timeZone": "Europe/Paris",
+  "lastSuccessfulCloudBackup": "2026-10-24T13:56:04.976Z",
+  "unchangedFailureSincePriorAttempt": true,
+  "lastAttempt": {
+    "checkedAt": "2026-10-28T19:46:17.483Z",
+    "status": "failed",
+    "failureStage": "migration-rehearsal",
+    "failureType": "Error",
+    "reason": "Local restored-database check failed: beta welcome eligibility invariant",
+    "freshEncryptedArchiveCreated": true,
+    "applicationRestoredLocally": true,
+    "authDataRestoredLocally": true,
+    "storageContentVerified": true,
+    "tablesVerified": 42,
+    "rowsVerified": 14380,
+    "authRowsVerified": 94,
+    "localEncryptedArchivesRetained": true,
+    "uploaded": false,
+    "uploadPreparationSkipped": true,
+    "retentionCleanupSkipped": true,
+    "productionWrites": false,
+    "customerEmailsSent": false,
+    "localReport": ".vercel/production-backups/2026-10-28-uXIIHs/report.json"
+  }
+}

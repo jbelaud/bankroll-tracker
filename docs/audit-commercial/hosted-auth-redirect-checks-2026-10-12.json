@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-12T16:49:40.682Z",
+  "project": "umyxyahkifdezohaotel",
+  "ownerApproved": true,
+  "siteUrl": "https://kalivoa.com",
+  "addedRedirectUrls": [
+    "https://kalivoa-commercial-recette-ets-belaud.vercel.app/auth/callback",
+    "https://kalivoa-commercial-recette-ets-belaud.vercel.app/auth/callback?next=%2Ffr%2Fdashboard"
+  ],
+  "dashboardTotalUrls": 8,
+  "saveVerified": true,
+  "firstAttempt": {
+    "connectedPreview": false,
+    "errorCode": "bad_oauth_state",
+    "description": "OAuth state has expired",
+    "errorOrigin": "https://kalivoa.com"
+  },
+  "freshAttempt": {
+    "startedAt": "2026-10-12T16:46:11.832Z",
+    "serverVerifiedRedirectOrigin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+    "redirectPath": "/auth/callback",
+    "vercelEnvironment": "preview",
+    "completed": false,
+    "errorCode": "bad_oauth_state",
+    "reason": "Prepared flow was completed after the default five-minute expiry."
+  },
+  "configurationScreenshot": "hosted-auth-redirect-saved-2026-10-12.png",
+  "completedAt": "2026-10-12T17:26:50.349Z",
+  "completedOrigin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+  "completedPath": "/fr/dashboard",
+  "userInitiatedRetryRequired": true,
+  "defaultFlowExpirySeconds": 300,
+  "expirySource": "https://github.com/supabase/auth/blob/master/internal/conf/configuration.go",
+  "userInitiatedSuccessfulAttempt": {
+    "preparedProviderFlow": false,
+    "completedAt": "2026-10-12T17:26:50.349Z",
+    "origin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+    "path": "/fr/dashboard",
+    "connectedPreview": true
+  }
+}

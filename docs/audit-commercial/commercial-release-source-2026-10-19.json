@@ -1,0 +1,363 @@
+{
+  "date": "2026-10-19",
+  "publishedBaseCommit": "4d50b35577fcf5f2ee506b8697e9729a9ba70093",
+  "workspaceHead": "1afb05de576809dcf27b1a9352a724cba0a7372c",
+  "commercialFiles": [
+    {
+      "path": "messages/en.json",
+      "sha256": "734855738c8ffe3afebd0d90dcf50680885249f2e2b4422d9075e7edc78b7bd8"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "26af95f1d197c887b1e3199bc2f9b62e2097cffc6c1e8491c5facf44ffce3ca9"
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "60416d3dd3c9f1d0a6211f4435c47b8aaa7c726826ae5fdf273acbfa3ded47ed"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3300217e8aa7063a38578c4d9e3f977d09c4c7ff50ba5f2d156c4f3e4f8355c9"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "fe082fe8c84130d5af585c28ae84a3902a90b84e47f8d4579d20eb45b163c1b2"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "sha256": "ae0f845cbb2af78b7c4b58e4bdda5738b06d3965404fbc1b0b66533f912dd2fc"
+    },
+    {
+      "path": "prisma/migrations/20261009190000_welcome_offer_enrollment/migration.sql",
+      "sha256": "a967e1af39e1d73098c85c324a221116e4081193c1c626bafd7117b49a9555af"
+    },
+    {
+      "path": "prisma/migrations/20261011100000_commercial_records/migration.sql",
+      "sha256": "a091fc29f7ee54873f0623b94f5ba6835886184e0de0a4a67cdd2cb04f890b1f"
+    },
+    {
+      "path": "prisma/migrations/20261011200000_restrict_server_only_tables/migration.sql",
+      "sha256": "9ccc52438a57c263e599f6c01d9aeb2d53b62d8d98a2a21e11c91ead5f38c6b9"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b5b69f42a5701da5a28dbeb9c0ca2584cd91ae7268c681288232b84f07861595"
+    },
+    {
+      "path": "public/downloads/formulaire-retractation-kalivoa-en.txt",
+      "sha256": "d0392496788350bdde2e0cefecb46cf637e5938b35ce25bc2fd8f9aa7cafb8ee"
+    },
+    {
+      "path": "public/downloads/formulaire-retractation-kalivoa-fr.txt",
+      "sha256": "2b462214e98f85a4b5d862abce5c188a9bb1a12d7dd6e9c0c5d477dfd57f1173"
+    },
+    {
+      "path": "src/app/[locale]/(app)/account/[section]/page.tsx",
+      "sha256": "10c897ad692ff439ef622f81aab254ebe2dd2f389bf4c6d02828dd4883626ab5"
+    },
+    {
+      "path": "src/app/[locale]/(app)/admin/commercial/page.tsx",
+      "sha256": "1ce8613f3be8761337ad5f5f8f538aaa1c62181440387a0267df0eb772cbc6ce"
+    },
+    {
+      "path": "src/app/[locale]/(marketing)/offre-bienvenue/page.tsx",
+      "sha256": "baba5325c71b57188cecc2af3d00ea0e891b5edc44cd7d1b4be3651705c8c3c9"
+    },
+    {
+      "path": "src/app/[locale]/(marketing)/retractation/page.tsx",
+      "sha256": "c0ed053b5e0be51ce848197895ce4178d4da32c599c7732747ed88daccac0df1"
+    },
+    {
+      "path": "src/app/[locale]/layout.tsx",
+      "sha256": "a1ba2f40eb89407db7b1791d87f64b6a180b9e2f2b578e3e2306dd0891498b5a"
+    },
+    {
+      "path": "src/app/[locale]/privacy/page.tsx",
+      "sha256": "d82779787ca024074506ff753309491475a18309487d7df411ed801512da6b4f"
+    },
+    {
+      "path": "src/app/api/cron/commercial/route.ts",
+      "sha256": "4c5e74446061b36e46b2dd02bab45213bf7c5f789599a3ee0aeb3ae4a9fb8bb0"
+    },
+    {
+      "path": "src/app/api/growth-events/route.ts",
+      "sha256": "bd1b7e200c7ffdf40c00c286059f99f1780faca7f9c71216ce9026531ccfde7d"
+    },
+    {
+      "path": "src/app/api/resend/webhook/route.test.ts",
+      "sha256": "483374714e22f2f2b95e3fedc6bc7d223c29f2dffb74681fe287fe22ecbc9ba3"
+    },
+    {
+      "path": "src/app/api/resend/webhook/route.ts",
+      "sha256": "31a10b13f71cc2342cc9b5669c0344f92b0c17864e583d9756fc5cf06b85dd80"
+    },
+    {
+      "path": "src/app/api/stripe/webhook/route.test.ts",
+      "sha256": "9a979925cc1a109415f8f076bf6488bee234b8a79e17d39ace9fcd33845b79f6"
+    },
+    {
+      "path": "src/app/api/stripe/webhook/route.ts",
+      "sha256": "8a32cbf0cd5516af070ed41dcdbdcc3116b81fdd44950ca754d2d74f6773f8a4"
+    },
+    {
+      "path": "src/components/account/checkout-confirmation.tsx",
+      "sha256": "3b6bdd8be546976001c42ea26e2bf44ca48c7213c91b364aebddb9fd9853f94c"
+    },
+    {
+      "path": "src/components/account/plan-card.tsx",
+      "sha256": "39e742a33a86b5b7c89cbb3df18abdc72feed897618f6768e87a3a63952c46b9"
+    },
+    {
+      "path": "src/components/account/scan-credit-summary.tsx",
+      "sha256": "5a4c1dfa534ccac44a94b2c27f6f34e7eb4cf339bf49665de3e1f65d0a3589ec"
+    },
+    {
+      "path": "src/components/account/withdrawal-form.tsx",
+      "sha256": "69fd953f5d20e9291284425cee9cae160ebfbc02530d62754b08b57b661699b7"
+    },
+    {
+      "path": "src/components/legal-page.tsx",
+      "sha256": "430b89288fe3c9da1f7d7a911a3f5901989783a21305747e642e931b4ff36a58"
+    },
+    {
+      "path": "src/components/marketing/marketing-contact-page.tsx",
+      "sha256": "c6091f4698cac8cc34ff135d3c5dcf17a80c43e3e326e7de53875a8963f74bbd"
+    },
+    {
+      "path": "src/components/marketing/marketing-document-page.tsx",
+      "sha256": "e9b509b16b099e72845069d2c1dc133b501eba8a13c8a831b2147f58f460c6cc"
+    },
+    {
+      "path": "src/components/marketing/marketing-footer.tsx",
+      "sha256": "3f6c13b1bdcf8b9bb5e479284bc08063112105255be4515b6f8bd3108e47dcb2"
+    },
+    {
+      "path": "src/components/marketing/marketing-home.tsx",
+      "sha256": "e7fb2bfebd94f3892efd3d6ad28253321cdab6fc0fa52b62a31346a5cfa68525"
+    },
+    {
+      "path": "src/components/marketing/marketing-info-page.tsx",
+      "sha256": "2387fb1fbb5fdfdd2128f10fa226cf8433ebac235f61a131fcd7aa7f6b0cf47e"
+    },
+    {
+      "path": "src/components/marketing/pricing-plans.tsx",
+      "sha256": "e0fbeb31d67c9f68bc62bd4d78ed95d2402c881dabe63fd2d0cdee0bfdd80b3a"
+    },
+    {
+      "path": "src/components/privacy/analytics-choice.tsx",
+      "sha256": "320c3dda0a4af537f8f6a92aa76e44d54948307ab16235058bc0e0449c548457"
+    },
+    {
+      "path": "src/lib/actions/admin-users.ts",
+      "sha256": "760553db1f376a8e11e09ca4e3f6f6da9140decc5d3d83756a3ba4e69e7433a4"
+    },
+    {
+      "path": "src/lib/actions/beta-testers.ts",
+      "sha256": "a5b091c58f5980e1da2ae689a68aecfb6ce8624447b9e56705463caf7d3765aa"
+    },
+    {
+      "path": "src/lib/actions/billing.test.ts",
+      "sha256": "a934a777baf565dd80225bfd48de98baf1176f870fb0b708fca2c0afb4a967f8"
+    },
+    {
+      "path": "src/lib/actions/billing.ts",
+      "sha256": "466df101f288ad2c40a00e2b9fac3831845edcf0bf0462f02e6d1c7e3e437040"
+    },
+    {
+      "path": "src/lib/actions/commercial-admin.ts",
+      "sha256": "334af39c409be39b7457b09c429a9bf6cb37a6042a64dc0a125171d957523cc5"
+    },
+    {
+      "path": "src/lib/actions/withdrawal.ts",
+      "sha256": "35137644b39e530a098de52e78e3366f436a867170b870d6524ecc0133b0e961"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "sha256": "88d3df014034ecd45c2abac67717f53c5638d630532c468f8475e05e4a478604"
+    },
+    {
+      "path": "src/lib/beta/program.ts",
+      "sha256": "48b06344f092e5d9b65269e50bf73c78fcdd14d12febe25127068393b0f14d32"
+    },
+    {
+      "path": "src/lib/billing/beta-offer.test.ts",
+      "sha256": "d75d910cbaf993a3a629c3310db64ae58a5cc81770b6b36e2144e34c9fd1a38d"
+    },
+    {
+      "path": "src/lib/billing/beta-offer.ts",
+      "sha256": "5cce8948d0088cc30f286eeb8647b9ef44c8bfc5cffd6846fe5993bd9e16c597"
+    },
+    {
+      "path": "src/lib/billing/catalog.ts",
+      "sha256": "756675dd58c1d9da180f0eb77da6e3e537def23fa00334cc723cacbb31a86bc2"
+    },
+    {
+      "path": "src/lib/billing/checkout-confirmation.test.ts",
+      "sha256": "2900698e5e4aa8a19bf9733fcbddb29d492e6d1e875d58598458ec0782613773"
+    },
+    {
+      "path": "src/lib/billing/checkout-confirmation.ts",
+      "sha256": "6d3bcc60a84ea9f06984ca40af022a2588552760534859a81a30dbe346b00830"
+    },
+    {
+      "path": "src/lib/billing/commercial-config.ts",
+      "sha256": "daf947f44d3bbd1f61a0f411fa8112f5a2090fc467d69e55de807327b6b255c9"
+    },
+    {
+      "path": "src/lib/billing/commercial-recipe.test.ts",
+      "sha256": "36d26e9a826899def1feb886d86accd0f2cab73f7e1e4143df712f1725a71424"
+    },
+    {
+      "path": "src/lib/billing/commercial-recipe.ts",
+      "sha256": "6dcdb0f0ad157b16dc2cf3651da9eaf2bc665718257454fc8ccf4dcbd8ceb6ef"
+    },
+    {
+      "path": "src/lib/billing/commercial.integration.test.ts",
+      "sha256": "da3fea8fa83d57d38cbabbbab71a47b90cde94cf2cea272155bd896a1e3b5e25"
+    },
+    {
+      "path": "src/lib/billing/contract.ts",
+      "sha256": "bd9972dbd569f66003a8fcddd1493f481461b18e96d8fb50650d16e9b933c714"
+    },
+    {
+      "path": "src/lib/billing/credit-note-lines.ts",
+      "sha256": "75d4a886d2601f635b5743b920918d40cce6652c4f012893977be2fb5421b5e2"
+    },
+    {
+      "path": "src/lib/billing/invoice-pdf.test.ts",
+      "sha256": "33125b51aa49cbcd593f07e77d75128ab73cd4c74561016232a7828cba59d8d9"
+    },
+    {
+      "path": "src/lib/billing/invoice-pdf.ts",
+      "sha256": "94d02c2e54c464bfa072c92058d20f105b25fe5f6ad6f85e5ded6c4836c06c18"
+    },
+    {
+      "path": "src/lib/billing/launch-readiness.test.ts",
+      "sha256": "cdd885a7525850240376dedf22751f35ebdc2b0fcd64f8108b4767feae894228"
+    },
+    {
+      "path": "src/lib/billing/launch-readiness.ts",
+      "sha256": "603922a22d19d03c2ca0fa8afe917c27b4879f701410db7678fdb57de523c59c"
+    },
+    {
+      "path": "src/lib/billing/plans.test.ts",
+      "sha256": "c3a945b6a38da99ce3fa9cb03b2a59c05be7d7202923f802a88f087fe8fffcaa"
+    },
+    {
+      "path": "src/lib/billing/records.ts",
+      "sha256": "dfbfb8a2dd66b129e3ac3276b033e6b1ea38e87cc4a5ddb1ac3240462f1c0856"
+    },
+    {
+      "path": "src/lib/billing/stripe-catalog.ts",
+      "sha256": "b51e7476a0fd1d616b631affa6a80fb57442699d813159bff34fc7ca32508633"
+    },
+    {
+      "path": "src/lib/billing/subscription-sync.ts",
+      "sha256": "0e56c3d79017e326546461afd25dae9e39a70946415d8e52cedfceb1a0e0f2bb"
+    },
+    {
+      "path": "src/lib/billing/tax-readiness.test.ts",
+      "sha256": "9b9eea25def7c144601b322a46457ca022ebbe2696ebc82ad2b1f73a0abf32af"
+    },
+    {
+      "path": "src/lib/billing/tax-readiness.ts",
+      "sha256": "fad90d5986971c8c96629b2147bf7c933a1a61297680bf28aec671dc0397d094"
+    },
+    {
+      "path": "src/lib/billing/transactional-emails.ts",
+      "sha256": "7085a1cee3a2f3818f5e1b1b9c60741a81c3c1437c39ced3c226a6161a9961b1"
+    },
+    {
+      "path": "src/lib/billing/welcome-enrollment.ts",
+      "sha256": "3394bb45528bfacbae8d21d80b408ba77b3566f7d0bf7b4e65af49862e771903"
+    },
+    {
+      "path": "src/lib/billing/welcome-offer.test.ts",
+      "sha256": "4d2eb00ec0bc45da3c6a67d881c978434ac6ce1ba4d7f6180222c3995cf5aeec"
+    },
+    {
+      "path": "src/lib/billing/welcome-offer.ts",
+      "sha256": "f3f09a4bf4e8f1e648f5de7fb13099dbf3d0a4df788c4b6945739b28dcac0832"
+    },
+    {
+      "path": "src/lib/billing/withdrawal-deadline.test.ts",
+      "sha256": "83a7365d7f42922ea9baf1af661fd053adefc704ee245e735fbc59615800cfac"
+    },
+    {
+      "path": "src/lib/billing/withdrawal-deadline.ts",
+      "sha256": "602e0003a13a710e571e460de5ac04a7953a438e31356149d8aae686c468e239"
+    },
+    {
+      "path": "src/lib/billing/withdrawals.ts",
+      "sha256": "4d62862cd3e764bdafc3fa0defbd301c4d7e649ad9a4b8760c5dbb8f49c6044f"
+    },
+    {
+      "path": "src/lib/company.ts",
+      "sha256": "83452a0ffd6beebcc3e8dffb51e197d7bc8b24e2c16e35b1551a05a152f6d04e"
+    },
+    {
+      "path": "src/lib/growth/client.ts",
+      "sha256": "c8b4a1ecf68c8f0920f58782b938ab49e059ba865108fce2f01d7470ebcfd68d"
+    },
+    {
+      "path": "src/lib/growth/events.ts",
+      "sha256": "09c6485702d1290b6dcc1ab1fbeeaa488907717baf081cedc2e9b7cd927eb747"
+    },
+    {
+      "path": "src/lib/legal/digital-guarantee.ts",
+      "sha256": "6114a83b6e12c1d2b5bb16ae017eb990d00f3895049eb8588e17e416ed806ae5"
+    },
+    {
+      "path": "src/lib/legal/marketing-documents.ts",
+      "sha256": "80c4481361302346e25760e2b02b7906105758171ab7588dc71ebe15c3ccb2e4"
+    },
+    {
+      "path": "src/lib/legal/privacy-content.ts",
+      "sha256": "f06a62ff33076d9e558182b2042525a4974451fd0e44c2ef050099813a654e1e"
+    },
+    {
+      "path": "src/lib/legal/terms-archive.json",
+      "sha256": "9fd8970742d8d34eaed533dc5b3642e21ee8fd16c26d9de0299c0da3493e7f47"
+    },
+    {
+      "path": "src/lib/privacy/consent.test.ts",
+      "sha256": "13986a86b4e24bad2d1595bb919e3bf82e9860cfd89f57e09072bc51affd73c0"
+    },
+    {
+      "path": "src/lib/privacy/consent.ts",
+      "sha256": "7db5ac7713f345917b6d6a7b46402c048474da0ea82d57121d730f36e5cb8f5a"
+    },
+    {
+      "path": "src/lib/privacy/retention.ts",
+      "sha256": "70e66ea73f72ca941371a0f226a3d1769fd2323c5219e175f3df35f67589f051"
+    },
+    {
+      "path": "src/lib/scan/credit-wallet.ts",
+      "sha256": "9f130d2f11ab2206fcc2cc185cc57123bb7e9988777f257055a4f05940681418"
+    },
+    {
+      "path": "src/lib/scan/monthly-quota.ts",
+      "sha256": "f5c81ba17bb53040533e241abef151e17b3962bcd377f2920bafa4ba7e71697b"
+    },
+    {
+      "path": "src/lib/scan/quota-config.ts",
+      "sha256": "7f8db3909c2f61c528e1b3d810425f0b6929d58210322f31e7e91ff290359ba8"
+    },
+    {
+      "path": "src/lib/stripe.ts",
+      "sha256": "bf30da9685ba18d7a5a23bd40f7a841badf4136a9bf996758d1c19a3ded21614"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "b33be13ce5e8daaf38cb3742e4f337f7920895f2b8f6e8e6cea5341528be0a45"
+    },
+    {
+      "path": "vitest.config.mts",
+      "sha256": "4bf4db419d753e288a3c4b0f0dcd223c8bffce200e3ed1a6f0ab421c5f511484"
+    }
+  ],
+  "unrelatedPublicProfileChangesExcluded": true,
+  "unrelatedScanChangesExcluded": true,
+  "translationsFiltered": true,
+  "productionDeploymentPerformed": false
+}

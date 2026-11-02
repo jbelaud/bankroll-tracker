@@ -1,0 +1,157 @@
+- banner:
+  - button "Menu principal":
+  - link "Google Search Console":
+    - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+  - search:
+    - textbox [disabled]: Inspecter n'importe quelle URL de "kalivoa.com"
+    - combobox "Inspecter n'importe quelle URL de kalivoa.com"
+    - button "Recherche":
+  - button "Aide":
+    - generic: help_outline
+  - tooltip: Aide
+  - button "Paramètres utilisateur":
+    - generic: manage_accounts
+  - tooltip: Paramètres utilisateur
+  - 'button "Messages non lus : 5"':
+    - generic: notifications
+  - tooltip: Messages
+  - generic: "5"
+  - button "Applications Google":
+  - button "Compte Google Jérémy (contact.kalivoa@gmail.com)":
+- dialog "navigational drawer":
+  - navigation "Principal":
+    - button "Propriété de recherche":
+      - img "favicon"
+      - combobox "kalivoa.com"
+      - generic: 
+    - link "Vue d'ensemble":
+      - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+      - generic: home
+      - generic: Vue d'ensemble
+    - link "Insights":
+      - /url: ./search-console/performance/insights?resource_id=sc-domain%3Akalivoa.com
+      - generic: lightbulb_2
+      - generic: Insights
+    - link "Performances":
+      - /url: ./search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+      - generic: trending_up
+      - generic: Performances
+    - button "Section du rapport \"Performances\"":
+      - generic: keyboard_arrow_down
+    - button "Inspection de l'URL":
+      - generic: search
+      - generic: Inspection de l'URL
+    - generic: Indexation
+    - button "Section du rapport \"Indexation\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Pages":
+      - /url: ./search-console/index?resource_id=sc-domain%3Akalivoa.com
+      - generic: file_copy
+      - generic: Pages
+    - link "Sitemaps":
+      - /url: ./search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+      - generic: account_tree
+      - generic: Sitemaps
+    - link "Suppressions":
+      - /url: ./search-console/removals?resource_id=sc-domain%3Akalivoa.com
+      - generic: visibility_off
+      - generic: Suppressions
+    - generic: Expérience
+    - button "Section du rapport \"Expérience\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Core Web Vitals":
+      - /url: ./search-console/core-web-vitals?resource_id=sc-domain%3Akalivoa.com
+      - generic: speed
+      - generic: Core Web Vitals
+    - link "HTTPS":
+      - /url: ./search-console/https?resource_id=sc-domain%3Akalivoa.com
+      - generic: lock
+      - generic: HTTPS
+    - generic: Améliorations
+    - button "Section du rapport \"Améliorations\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Fils d'Ariane":
+      - /url: ./search-console/r/breadcrumbs?resource_id=sc-domain%3Akalivoa.com
+      - generic: layers
+      - generic: Fils d'Ariane
+    - generic: Sécurité et actions manuelles
+    - button "Section du rapport \"Sécurité et actions manuelles\"":
+      - generic: keyboard_arrow_down
+    - link "Rapport sur les liens":
+      - /url: ./search-console/links?resource_id=sc-domain%3Akalivoa.com
+      - generic: link_2
+      - generic: Liens
+    - link "Réussites":
+      - /url: ./search-console/achievements?resource_id=sc-domain%3Akalivoa.com
+      - generic: trophy
+      - generic: Réussites
+    - link "Paramètres":
+      - /url: ./search-console/settings?resource_id=sc-domain%3Akalivoa.com
+      - generic: settings
+      - generic: Paramètres
+    - button "Envoyer des commentaires":
+      - generic: feedback
+      - generic: Envoyer des commentaires
+    - button "À propos de la Search Console":
+      - generic: info
+      - generic: À propos de la Search Console
+    - link "Confidentialité":
+      - /url: https://myaccount.google.com/privacypolicy?hl=fr
+    - link "Conditions d'utilisation":
+      - /url: https://myaccount.google.com/termsofservice?hl=fr
+- generic: https://kalivoa.com/fr/privacy
+- navigation "Fils d'Ariane":
+  - heading "Inspection de l'URL" [level=1]
+- button "Tester l'URL active":
+  - generic: Tester l'URL active
+- main:
+  - generic: info
+  - generic: Cette URL n'a pas été indexée par Google
+  - text: Cette page n'est pas indexée. Les pages non indexées ne peuvent pas être diffusées sur Google. Pour savoir pourquoi elle n'a pas été indexée, consultez les informations ci-dessous.
+  - link "En savoir plus":
+    - /url: https://support.google.com/webmasters/answer/9012289#url_not_on_google
+  - button "Afficher la page explorée" [disabled]:
+    - generic: Afficher la page explorée
+  - generic: Page modifiée ?
+  - button "Demander une indexationRedemander":
+    - generic: Demander une indexation
+  - 'button "Indexation des pages La page n''est pas indexée : Page en double sans URL canonique sélectionnée par l''utilisateur" [expanded]':
+    - generic: info
+    - generic: Indexation des pages
+    - generic: "La page n'est pas indexée : Page en double sans URL canonique sélectionnée par l'utilisateur"
+    - generic: 
+  - generic: Découverte
+  - generic: Sitemaps
+  - generic: https://kalivoa.com/sitemap.xml
+  - generic: Page d'origine
+  - generic: https://kalivoa.com/privacy
+  - generic: https://kalivoa.com/sitemap.xml
+  - generic: Exploration
+  - generic: Dernière exploration
+  - generic: 11 sept. 2026, 20:30:40
+  - generic: Explorée avec
+  - generic: Googlebot pour smartphone
+  - generic: Exploration autorisée ?
+  - generic: Oui
+  - generic: Récupération de page
+  - generic: Réussie
+  - generic: Indexation autorisée ?
+  - generic: Oui
+  - generic: Indexation
+  - generic: URL canonique déclarée par l'utilisateur
+  - generic: Aucun
+  - generic: URL canonique sélectionnée par Google
+  - button "null":
+    - generic: 
+  - generic: info
+  - generic: https://kalivoa.com/privacy
+  - button "Inspecter":
+    - generic: Inspecter
+  - link "Consulter une documentation plus détaillée":
+    - /url: https://support.google.com/webmasters/answer/7440203#duplicate_page_without_canonical_tag
+    - generic: En savoir plus
+  - link "ouvrir le rapport":
+    - /url: ./search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAMYDyAC
+    - generic: ouvrir le rapport
+  - generic: Améliorations et expérience
+  - generic: Seules les URL indexées peuvent être optimisées

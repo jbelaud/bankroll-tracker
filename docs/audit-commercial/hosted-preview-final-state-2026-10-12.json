@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-12T18:30:52.069Z",
+  "passed": true,
+  "recipeUsers": 9,
+  "allPlansFree": true,
+  "activeTestSubscriptions": 0,
+  "bets": 0,
+  "contracts": 7,
+  "emailStates": [
+    {
+      "_count": 1,
+      "status": "NEEDS_REVIEW"
+    },
+    {
+      "_count": 5,
+      "status": "DELIVERED"
+    },
+    {
+      "_count": 21,
+      "status": "SENT"
+    }
+  ],
+  "permanentBonusGrantedOnce": true,
+  "permanentBonusPaidOnly": true,
+  "lastBrowserPurchase": {
+    "subscriptionId": "sub_1UPnulDNFQcoJN1N8Aa1zwLL",
+    "refundAmount": 499,
+    "refundStatus": "succeeded",
+    "vatReversed": 83,
+    "withdrawalReference": "4777ca63-da16-41c8-8fc4-db02c0fd1937",
+    "confirmationDelivered": true
+  },
+  "productionPayments": false,
+  "productionCommercialDeployment": false,
+  "productionBillingDataChanges": false,
+  "productionAuthRedirectsChangedWithApproval": true,
+  "providerWebhookDisabled": true,
+  "testRelaysStopped": true
+}

@@ -1,0 +1,71 @@
+Browser tab: 1, Title: "Indexation des pages", URL: "https://search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAESH2h0dHBzOi8va2FsaXZvYS5jb20vc2l0ZW1hcC54bWwYDyAC".
+1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAESH2h0dHBzOi8va2FsaXZvYS5jb20vc2l0ZW1hcC54bWwYDyAC
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					122 link Description: Google Search Console, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com, ID: sdgBod
+					8 button Recherche
+						9 image
+					10 button Aide
+					11 button Paramètres utilisateur
+					12 container
+						13 button Messages non lus : 7
+						123 text 7
+					15 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					16 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			124 container
+				125 container Fils d'Ariane
+					126 container Indexation des pages
+						127 link Description: Indexation des pages, Value: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com&pages=SITEMAP&sitemap=https%3A%2F%2Fkalivoa.com%2Fsitemap.xml
+					128 heading Page en double sans URL canonique sélectionnée par l'utilisateur, Value: 1
+						129 text Page en double sans URL canonique sélectionnée par l'utilisateur
+				130 pop up button (collapsed) Description: EXPORTER, Secondary Actions: Expand
+				131 button Obtenir un lien de partage.
+				132 container
+					133 list
+						134 Toutes les pages connues
+						135 Toutes les pages envoyées
+						136 Pages non envoyées uniquement
+						137 (selected) https://kalivoa.com/sitemap.xml
+					138 container
+						139 text Dernière mise à jour :  23/10/2026
+					140 container
+						141 text Page en double sans URL canonique sélectionnée par l'utilisateur Ces pages ne sont pas indexées ni diffusées sur Google
+						142 link Description: Consulter une documentation plus détaillée, Value: support.google.com/webmasters/answer/7440203#duplicate_page_without_canonical_tag
+						143 container
+							144 text Première détection : 05/09/2026 Problème résolu ?
+							145 button VALIDER LA CORRECTION
+								146 text VALIDER LA CORRECTION
+					147 container
+						148 text Pages concernées 1
+					149 container
+						150 text Exemples
+						151 button (collapsed) Description: null, Secondary Actions: Expand
+						152 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+						153 table
+							154 row
+								155 cell
+									156 text URL
+								157 cell
+									158 text Dernière exploration
+							159 row
+								160 cell
+									161 text https://kalivoa.com/fr/privacy
+								162 cell
+									163 text 11 sept. 2026
+						164 text Lignes par page :
+						165 list Nombre de lignes par page
+							166 5
+							167 (selected) 10
+							168 25
+							169 50
+							170 100
+							171 250
+							172 500
+						173 text 1-1 sur 1
+		174 text Indexation des pages
+
+The focused UI element is 1 AXWebArea Indexation des pages, URL: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAESH2h0dHBzOi8va2FsaXZvYS5jb20vc2l0ZW1hcC54bWwYDyAC

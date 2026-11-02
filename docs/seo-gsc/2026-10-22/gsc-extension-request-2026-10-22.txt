@@ -1,0 +1,144 @@
+- banner:
+  - button:
+  - link:
+    - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+  - search:
+    - textbox [disabled]: Inspecter n'importe quelle URL de "kalivoa.com"
+    - combobox
+    - button:
+  - button:
+    - generic: help_outline
+  - tooltip: Aide
+  - button:
+    - generic: manage_accounts
+  - tooltip: Paramètres utilisateur
+  - button:
+    - generic: notifications
+  - tooltip: Messages
+  - generic: "6"
+  - button:
+  - button:
+- dialog:
+  - navigation:
+    - button:
+      - combobox: kalivoa.com
+      - generic: 
+    - link:
+      - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+      - generic: home
+      - generic: Vue d'ensemble
+    - link:
+      - /url: ./search-console/performance/insights?resource_id=sc-domain%3Akalivoa.com
+      - generic: lightbulb_2
+      - generic: Insights
+    - link:
+      - /url: ./search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+      - generic: trending_up
+      - generic: Performances
+    - button:
+      - generic: keyboard_arrow_down
+    - button:
+      - generic: search
+      - generic: Inspection de l'URL
+    - generic: Indexation
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/index?resource_id=sc-domain%3Akalivoa.com
+      - generic: file_copy
+      - generic: Pages
+    - link:
+      - /url: ./search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+      - generic: account_tree
+      - generic: Sitemaps
+    - link:
+      - /url: ./search-console/removals?resource_id=sc-domain%3Akalivoa.com
+      - generic: visibility_off
+      - generic: Suppressions
+    - generic: Expérience
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/core-web-vitals?resource_id=sc-domain%3Akalivoa.com
+      - generic: speed
+      - generic: Core Web Vitals
+    - link:
+      - /url: ./search-console/https?resource_id=sc-domain%3Akalivoa.com
+      - generic: lock
+      - generic: HTTPS
+    - generic: Améliorations
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/r/breadcrumbs?resource_id=sc-domain%3Akalivoa.com
+      - generic: layers
+      - generic: Fils d'Ariane
+    - generic: Sécurité et actions manuelles
+    - button:
+      - generic: keyboard_arrow_down
+    - link:
+      - /url: ./search-console/links?resource_id=sc-domain%3Akalivoa.com
+      - generic: link_2
+      - generic: Liens
+    - link:
+      - /url: ./search-console/achievements?resource_id=sc-domain%3Akalivoa.com
+      - generic: trophy
+      - generic: Réussites
+    - link:
+      - /url: ./search-console/settings?resource_id=sc-domain%3Akalivoa.com
+      - generic: settings
+      - generic: Paramètres
+    - button:
+      - generic: feedback
+      - generic: Envoyer des commentaires
+    - button:
+      - generic: info
+      - generic: À propos de la Search Console
+    - link:
+      - /url: https://myaccount.google.com/privacypolicy?hl=fr
+      - text: Confidentialité
+    - link:
+      - /url: https://myaccount.google.com/termsofservice?hl=fr
+      - text: Conditions d'utilisation
+- generic: https://kalivoa.com/fr/extension
+- navigation:
+  - heading [level=1]: Inspection de l'URL
+- link:
+  - /url: ./search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=VA2t516sWSLwkX4uM_dorw&alt_id=PhbFXZkM2w34DGyT2WuFvw
+  - generic: Index Google
+- button [disabled]:
+  - generic: Test en ligne
+- main:
+  - generic: "Testé le : 22 oct. 2026, 20:36"
+  - button:
+    - generic: 
+  - generic: check_circle
+  - generic: Google a accès à cette URL
+  - text: Si elle est indexée et sélectionnée comme URL canonique, elle pourra figurer dans les résultats de la recherche Google avec toutes les optimisations pertinentes.
+  - link:
+    - /url: https://support.google.com/webmasters/answer/9012289#url_can_be_on_google
+    - text: En savoir plus
+  - button:
+    - generic: Afficher la page testée
+  - generic: Page modifiée ?
+  - button:
+    - generic: Demander une indexation
+  - button:
+    - generic: check_circle
+    - generic: Disponibilité de la page
+    - generic: La page peut être indexée
+    - generic: 
+  - generic: Améliorations et expérience
+  - generic: Cette URL ne peut pas être optimisée
+- dialog "Indexation demandée":
+  - heading "Indexation demandée" [level=2]:
+    - generic: check_circle
+    - generic: Indexation demandée
+  - text: Cette URL a été ajoutée à une file d'attente d'exploration prioritaire. Le fait d'envoyer une page à plusieurs reprises ne modifiera pas sa priorité ni sa position dans la file d'attente.
+  - link "En savoir plus":
+    - /url: https://support.google.com/webmasters/answer/6065812
+  - button "Masquer" [active]:
+    - generic: Masquer
+- iframe [name="a-j7on8zgomluc"]:
+  - text: protection par
+  - strong: reCAPTCHA

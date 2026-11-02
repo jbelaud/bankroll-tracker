@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-22T06:29:08.527Z",
+  "checks": [
+    {
+      "path": "/api/admin/partner-referrals/count",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "path": "/api/admin/scan-quality/nonexistent/image",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "path": "/fr/admin",
+      "status": 307,
+      "passed": true
+    },
+    {
+      "path": "/fr/account/subscription",
+      "status": 307,
+      "passed": true
+    },
+    {
+      "path": "/api/cron/commercial",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "path": "/api/stripe/webhook",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "path": "/api/resend/webhook",
+      "status": 400,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "authenticatedOperationsExecuted": false,
+  "productionDataChanged": false
+}

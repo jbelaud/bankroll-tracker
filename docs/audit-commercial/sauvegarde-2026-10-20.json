@@ -1,0 +1,37 @@
+{
+  "lastSuccessfulBackup": "2026-10-19T21:09:28.617Z",
+  "lastSuccessfulArchives": [
+    {
+      "id": "120IRAoZLYyA4A2cQ9SlRJ6_eOQlaVp75",
+      "name": "kalivoa-20261019T210928Z-public.dump.aes256gcm",
+      "bytes": 765073,
+      "sha256": "5b3b231e54dfe26fa8247e4d3248eaf85b5c568bfa49a121d82b877ec85a006c"
+    },
+    {
+      "id": "163A0W0AfaqmPuXWDULu2yKgOImANWAgR",
+      "name": "kalivoa-20261019T210928Z-auth-storage.aes256gcm",
+      "bytes": 16950,
+      "sha256": "326a583facab0f190e46820f1136d9b31ee974714714d156deaa7e971e5ef4fe"
+    }
+  ],
+  "lastSuccessfulManifestId": "16gy3maEfCdIhrRqgW74phVMlML5YkWNK",
+  "startedFrom": "sauvegarde-quotidienne-kalivoa",
+  "checkedAt": "2026-10-20T19:12:46.284Z",
+  "status": "failed",
+  "backupDate": "2026-10-20",
+  "failureStage": "connect",
+  "reason": "Connection timeouts to both production PostgreSQL endpoints despite authorized network execution; no TLS or authentication error observed.",
+  "sourceProjectStatus": "ACTIVE_HEALTHY",
+  "sourceProject": "umyxyahkifdezohaotel",
+  "localFailureReport": ".vercel/production-backups/2026-10-20-ZFU0Cg/report.json",
+  "freshEncryptedArchiveCreated": false,
+  "uploadPrepared": false,
+  "uploaded": false,
+  "driveFolderPrivatePermissionsVerified": true,
+  "previousVerifiedLocalArchivesStillPresent": true,
+  "previousDriveSetListed": true,
+  "productionWrites": false,
+  "customerEmailsSent": false,
+  "cleanupPerformed": false,
+  "cleanupReason": "Only permitted after successful current backup; no previous files removed."
+}

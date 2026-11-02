@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-11",
+  "framework": "Next.js 16.2.11",
+  "bundler": "Turbopack",
+  "exitCode": 0,
+  "sourceSnapshot": ".vercel/commercial-preview/app",
+  "localRecipeDatabase": true,
+  "emailsDisabled": true,
+  "hostedPreviewDeployed": false,
+  "productionReleased": false
+}

@@ -1,0 +1,199 @@
+{
+  "runId": "c35b1c0b-41cd-4983-aff5-be52bea1f08e",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "startedAt": "2026-10-09T06:45:27.861Z",
+  "scenarios": [
+    {
+      "interval": "monthly",
+      "welcome": false,
+      "status": "passed",
+      "invoices": [
+        {
+          "phase": "initial",
+          "invoiceId": "in_1UOXYcDNFQcoJN1NKZ0WvNw4",
+          "total": 499,
+          "amountPaid": 499,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-1",
+          "invoiceId": "in_1UOXYnDNFQcoJN1N1C4itBbb",
+          "total": 499,
+          "amountPaid": 499,
+          "status": "paid"
+        }
+      ],
+      "clockId": "clock_1UOXYZDNFQcoJN1N89mpr4Sq",
+      "customerId": "cus_VPMHDU06S8338T",
+      "checkoutSessionId": "cs_test_a1La6a9DxbfO9rdA1fmOKeNG6isGlhBS9ayQXKLbJ3l7DzFnHZmqdA2ZnH",
+      "checkoutTotal": 499,
+      "subscriptionId": "sub_1UOXYcDNFQcoJN1NDTFaRwao",
+      "accessUntilPeriodEndVerified": true,
+      "cancellationVerified": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": false,
+      "status": "passed",
+      "invoices": [
+        {
+          "phase": "initial",
+          "invoiceId": "in_1UOXYcDNFQcoJN1NryWdix3d",
+          "total": 4999,
+          "amountPaid": 4999,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-1",
+          "invoiceId": "in_1UOXYjDNFQcoJN1N0e4I9kZe",
+          "total": 4999,
+          "amountPaid": 4999,
+          "status": "paid"
+        }
+      ],
+      "clockId": "clock_1UOXYZDNFQcoJN1NlUGcMXwk",
+      "customerId": "cus_VPMHVn18ap3jSd",
+      "checkoutSessionId": "cs_test_a1lQXQeB1x5BGwSVCwngDdxmiO3HKeZLHNQp1ocxSlWWUnmHgyQZWONmOW",
+      "checkoutTotal": 4999,
+      "subscriptionId": "sub_1UOXYcDNFQcoJN1NkyW2ZEmf",
+      "accessUntilPeriodEndVerified": true,
+      "cancellationVerified": true
+    },
+    {
+      "interval": "monthly",
+      "welcome": true,
+      "status": "passed",
+      "invoices": [
+        {
+          "phase": "initial",
+          "invoiceId": "in_1UOXYcDNFQcoJN1NNKomNPsd",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-1",
+          "invoiceId": "in_1UOXYsDNFQcoJN1NrMTKhSrY",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-2",
+          "invoiceId": "in_1UOXZ6DNFQcoJN1NU2wkPUoI",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-3",
+          "invoiceId": "in_1UOXZIDNFQcoJN1Nel7cEkOI",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-4",
+          "invoiceId": "in_1UOXZWDNFQcoJN1NETMe5hBS",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-5",
+          "invoiceId": "in_1UOXZmDNFQcoJN1NALeNziT2",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-6",
+          "invoiceId": "in_1UOXZwDNFQcoJN1N2XxbJ2oe",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-7",
+          "invoiceId": "in_1UOXa7DNFQcoJN1NSgTC8BDT",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-8",
+          "invoiceId": "in_1UOXaLDNFQcoJN1NazCP5eYh",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-9",
+          "invoiceId": "in_1UOXaXDNFQcoJN1NOemhJHIS",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-10",
+          "invoiceId": "in_1UOXahDNFQcoJN1Nqw7qtDso",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-11",
+          "invoiceId": "in_1UOXasDNFQcoJN1NzBJn2zi4",
+          "total": 299,
+          "amountPaid": 299,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-12",
+          "invoiceId": "in_1UOXb5DNFQcoJN1NxedwoYEX",
+          "total": 499,
+          "amountPaid": 499,
+          "status": "paid"
+        }
+      ],
+      "clockId": "clock_1UOXYZDNFQcoJN1NrPHKTBDF",
+      "customerId": "cus_VPMHkt4MB38R2n",
+      "checkoutSessionId": "cs_test_a11NyKJn23x9KGXTjYSgMJQhmwLRCRWTX1VCBNZcJfg6nL6qe0MejgShQX",
+      "checkoutTotal": 299,
+      "subscriptionId": "sub_1UOXYcDNFQcoJN1N45WVKT4K",
+      "accessUntilPeriodEndVerified": true,
+      "cancellationVerified": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": true,
+      "status": "passed",
+      "invoices": [
+        {
+          "phase": "initial",
+          "invoiceId": "in_1UOXYcDNFQcoJN1N5SFPVq66",
+          "total": 2499,
+          "amountPaid": 2499,
+          "status": "paid"
+        },
+        {
+          "phase": "renewal-1",
+          "invoiceId": "in_1UOXYmDNFQcoJN1NvyHGXCEX",
+          "total": 4999,
+          "amountPaid": 4999,
+          "status": "paid"
+        }
+      ],
+      "clockId": "clock_1UOXYZDNFQcoJN1NPk4TNg3b",
+      "customerId": "cus_VPMHWOub8Eqmfc",
+      "checkoutSessionId": "cs_test_a1z8Ck1qlDEn3FJqIS7lEevRAJ41e9lmLsqBdzAXrIOKUBgq9o1HmRhqZM",
+      "checkoutTotal": 2499,
+      "subscriptionId": "sub_1UOXYcDNFQcoJN1NAJZRggk2",
+      "accessUntilPeriodEndVerified": true,
+      "cancellationVerified": true
+    }
+  ],
+  "finishedAt": "2026-10-09T06:48:18.613Z",
+  "passed": true
+}

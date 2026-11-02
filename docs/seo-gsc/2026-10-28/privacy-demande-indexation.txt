@@ -1,0 +1,18 @@
+Browser tab: 2, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=bysYMLaomjMkopvKHUCz8A&alt_id=0Z4BvYXrrhcnrkMNXNl43w".
+0 AXWebArea Inspection de l'URL, URL: search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=bysYMLaomjMkopvKHUCz8A&alt_id=0Z4BvYXrrhcnrkMNXNl43w
+	1 container
+		76 container
+			77 container Indexation demandée
+				78 container
+					79 heading Indexation demandée, Value: 2
+						80 text Indexation demandée
+					81 text Cette URL a été ajoutée à une file d'attente d'exploration prioritaire. Le fait d'envoyer une page à plusieurs reprises ne modifiera pas sa priorité ni sa position dans la file d'attente. 
+					82 link Description: En savoir plus, Value: support.google.com/webmasters/answer/6065812
+				83 button Masquer
+					84 text Masquer
+		74 container reCAPTCHA
+			75 AXWebArea reCAPTCHA, URL: google.com/recaptcha/api2/anchor?ar=1&k=6LeKMsIjAAAAAGP5PskdMId0tLXc7dL3LiO07Avf&co=aHR0cHM6Ly9zZWFyY2guZ29vZ2xlLmNvbTo0NDM.&hl=fr&v=NhfdZHzre16wrc2m6BxEdu7J&size=invisible&anchor-ms=20000&execute-ms=30000&cb=c3tpb6knnyuh
+				85 text protection par 
+				86 text reCAPTCHA
+
+The focused UI element is 83 button Masquer

@@ -1,0 +1,2910 @@
+{
+  "date": "2026-10-22",
+  "count": 46,
+  "rows": [
+    {
+      "url": "https://kalivoa.com/fr/certification",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/certification",
+      "canonical": "https://kalivoa.com/fr/certification",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/certification"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/certification"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/certification"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/features",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/features",
+      "canonical": "https://kalivoa.com/fr/features",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/features"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/features"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/features"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr",
+      "canonical": "https://kalivoa.com/fr",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/offre-bienvenue",
+        "https://kalivoa.com/fr/account/subscription",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/certification",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/certification",
+      "canonical": "https://kalivoa.com/en/certification",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/certification"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/certification"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/certification"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/features",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/features",
+      "canonical": "https://kalivoa.com/en/features",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/features"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/features"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/features"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en",
+      "canonical": "https://kalivoa.com/en",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/offre-bienvenue",
+        "https://kalivoa.com/en/account/subscription",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/extension",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/extension",
+      "canonical": "https://kalivoa.com/en/extension",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/extension"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/extension"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/extension"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/scan",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/extension/privacy",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/extension",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/extension",
+      "canonical": "https://kalivoa.com/fr/extension",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/extension"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/extension"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/extension"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/scan",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/extension/privacy",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/bankroll-tracking",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bankroll-tracking",
+      "canonical": "https://kalivoa.com/en/bankroll-tracking",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bankroll-tracking"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bankroll-tracking"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bankroll-tracking"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/screenshot-import",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/screenshot-import",
+      "canonical": "https://kalivoa.com/en/screenshot-import",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/screenshot-import"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/screenshot-import"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/screenshot-import"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/bankroll-tracking",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bankroll-tracking",
+      "canonical": "https://kalivoa.com/fr/bankroll-tracking",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bankroll-tracking"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bankroll-tracking"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bankroll-tracking"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/screenshot-import",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/screenshot-import",
+      "canonical": "https://kalivoa.com/fr/screenshot-import",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/screenshot-import"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/screenshot-import"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/screenshot-import"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie",
+      "canonical": "https://kalivoa.com/en/academie",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "canonical": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "canonical": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/suivre-pari-combine"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "canonical": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/verifier-paris-tipster"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/verifier-paris-tipster"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/verifier-paris-tipster"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "canonical": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/verifier-paris-tipster"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/verifier-paris-tipster"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/verifier-paris-tipster"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie",
+      "canonical": "https://kalivoa.com/fr/academie",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "canonical": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/suivre-pari-combine"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/suivre-pari-combine"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/suivre-pari-combine"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "canonical": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "canonical": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/calculer-roi-paris"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/calculer-roi-paris"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/calculer-roi-paris"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "canonical": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/calculer-roi-paris"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/calculer-roi-paris"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/calculer-roi-paris"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "canonical": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/suivre-pari-combine"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/suivre-pari-combine"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/suivre-pari-combine"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/en/academie/suivre-pari-combine"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/comprendre-unites-bankroll"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers",
+      "canonical": "https://kalivoa.com/en/bookmakers",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/partenaires",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/partenaires",
+      "canonical": "https://kalivoa.com/en/partenaires",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/partenaires"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/partenaires"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/partenaires"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms",
+        "https://kalivoa.com/en/partners"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/partenaires",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/partenaires",
+      "canonical": "https://kalivoa.com/fr/partenaires",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/partenaires"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/partenaires"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/partenaires"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms",
+        "https://kalivoa.com/fr/partners"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "canonical": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/academie/comprendre-unites-bankroll"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/p/Gi4RdWxXhbHFOIJL",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers",
+      "canonical": "https://kalivoa.com/fr/bookmakers",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/winamax",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/winamax",
+      "canonical": "https://kalivoa.com/fr/bookmakers/winamax",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/winamax"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/winamax"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/winamax"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/en/bookmakers/winamax"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/unibet",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/unibet",
+      "canonical": "https://kalivoa.com/fr/bookmakers/unibet",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/unibet"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/unibet"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/unibet"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/en/bookmakers/unibet"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/winamax",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/winamax",
+      "canonical": "https://kalivoa.com/en/bookmakers/winamax",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/winamax"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/winamax"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/winamax"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/bookmakers/betclic",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/bookmakers/betclic",
+      "canonical": "https://kalivoa.com/fr/bookmakers/betclic",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/betclic"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/betclic"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/betclic"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/en/bookmakers/betclic"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/betclic",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/betclic",
+      "canonical": "https://kalivoa.com/en/bookmakers/betclic",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/betclic"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/betclic"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/betclic"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/betclic"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/bookmakers/unibet",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/bookmakers/unibet",
+      "canonical": "https://kalivoa.com/en/bookmakers/unibet",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/bookmakers/unibet"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/bookmakers/unibet"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/bookmakers/unibet"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/unibet"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/pricing",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/pricing",
+      "canonical": "https://kalivoa.com/en/pricing",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/pricing"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/pricing"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/pricing"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/offre-bienvenue",
+        "https://kalivoa.com/en/account/subscription",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/pricing",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/pricing",
+      "canonical": "https://kalivoa.com/fr/pricing",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/pricing"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/pricing"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/pricing"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/offre-bienvenue",
+        "https://kalivoa.com/fr/account/subscription",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/faq",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/faq",
+      "canonical": "https://kalivoa.com/en/faq",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/faq"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/faq"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/faq"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/privacy",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/privacy",
+      "canonical": "https://kalivoa.com/en/privacy",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/privacy"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/privacy"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/privacy"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/privacy",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/privacy",
+      "canonical": "https://kalivoa.com/fr/privacy",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/privacy"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/privacy"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/privacy"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/faq",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/faq",
+      "canonical": "https://kalivoa.com/fr/faq",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/faq"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/faq"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/faq"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/responsible-gambling",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/responsible-gambling",
+      "canonical": "https://kalivoa.com/fr/responsible-gambling",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/responsible-gambling"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/responsible-gambling"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/responsible-gambling"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice",
+        "https://kalivoa.com/fr/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/terms",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/terms",
+      "canonical": "https://kalivoa.com/en/terms",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/terms"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/terms"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/terms"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/sales-terms",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/en/responsible-gambling"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/fr/terms",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/fr/terms",
+      "canonical": "https://kalivoa.com/fr/terms",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/terms"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/terms"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/terms"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/fr/login",
+        "https://kalivoa.com/fr/signup",
+        "https://kalivoa.com/fr/sales-terms",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/fr/contact",
+        "https://kalivoa.com/fr/retractation",
+        "https://kalivoa.com/fr/terms",
+        "https://kalivoa.com/fr/legal-notice"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/fr/certification",
+        "https://kalivoa.com/fr/features",
+        "https://kalivoa.com/fr",
+        "https://kalivoa.com/fr/extension",
+        "https://kalivoa.com/fr/bankroll-tracking",
+        "https://kalivoa.com/fr/screenshot-import",
+        "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+        "https://kalivoa.com/fr/academie",
+        "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/fr/academie/calculer-roi-paris",
+        "https://kalivoa.com/fr/academie/suivre-pari-combine",
+        "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/fr/partenaires",
+        "https://kalivoa.com/fr/bookmakers",
+        "https://kalivoa.com/fr/bookmakers/winamax",
+        "https://kalivoa.com/fr/bookmakers/unibet",
+        "https://kalivoa.com/fr/bookmakers/betclic",
+        "https://kalivoa.com/fr/pricing",
+        "https://kalivoa.com/fr/privacy",
+        "https://kalivoa.com/fr/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/en/terms"
+      ]
+    },
+    {
+      "url": "https://kalivoa.com/en/responsible-gambling",
+      "status": 200,
+      "finalUrl": "https://kalivoa.com/en/responsible-gambling",
+      "canonical": "https://kalivoa.com/en/responsible-gambling",
+      "robots": [],
+      "xRobots": null,
+      "hreflang": [
+        {
+          "lang": "fr",
+          "href": "https://kalivoa.com/fr/responsible-gambling"
+        },
+        {
+          "lang": "en",
+          "href": "https://kalivoa.com/en/responsible-gambling"
+        },
+        {
+          "lang": "x-default",
+          "href": "https://kalivoa.com/fr/responsible-gambling"
+        }
+      ],
+      "links": [
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/en/login",
+        "https://kalivoa.com/en/signup",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/responsible-gambling",
+        "https://kalivoa.com/en/contact",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/en/retractation",
+        "https://kalivoa.com/en/terms",
+        "https://kalivoa.com/en/legal-notice",
+        "https://kalivoa.com/en/sales-terms"
+      ],
+      "inboundFrom": [
+        "https://kalivoa.com/en/certification",
+        "https://kalivoa.com/en/features",
+        "https://kalivoa.com/en",
+        "https://kalivoa.com/en/extension",
+        "https://kalivoa.com/en/bankroll-tracking",
+        "https://kalivoa.com/en/screenshot-import",
+        "https://kalivoa.com/en/academie",
+        "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+        "https://kalivoa.com/en/academie/verifier-paris-tipster",
+        "https://kalivoa.com/en/academie/suivre-pari-combine",
+        "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+        "https://kalivoa.com/en/academie/calculer-roi-paris",
+        "https://kalivoa.com/en/bookmakers",
+        "https://kalivoa.com/en/partenaires",
+        "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+        "https://kalivoa.com/en/bookmakers/winamax",
+        "https://kalivoa.com/en/bookmakers/betclic",
+        "https://kalivoa.com/en/bookmakers/unibet",
+        "https://kalivoa.com/en/pricing",
+        "https://kalivoa.com/en/faq",
+        "https://kalivoa.com/en/privacy",
+        "https://kalivoa.com/fr/responsible-gambling",
+        "https://kalivoa.com/en/terms"
+      ]
+    }
+  ]
+}

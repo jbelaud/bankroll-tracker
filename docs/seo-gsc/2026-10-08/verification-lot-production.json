@@ -1,0 +1,56 @@
+[
+  {
+    "path": "/fr/academie/suivre-pari-combine",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "path": "/en/academie/suivre-pari-combine",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "path": "/fr/academie/calculer-roi-paris",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "path": "/en/academie/calculer-roi-paris",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "path": "/fr/academie/comprendre-unites-bankroll",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "path": "/en/academie/comprendre-unites-bankroll",
+    "status": 200,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  }
+]

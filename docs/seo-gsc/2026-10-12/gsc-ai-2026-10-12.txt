@@ -1,0 +1,248 @@
+- banner:
+  - button "Menu principal":
+  - link "Google Search Console":
+    - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+  - search:
+    - textbox [disabled]: Inspecter n'importe quelle URL de "kalivoa.com"
+    - combobox "Inspecter n'importe quelle URL de kalivoa.com"
+    - button "Recherche":
+  - button "Aide":
+    - generic: help_outline
+  - tooltip: Aide
+  - button "Paramètres utilisateur":
+    - generic: manage_accounts
+  - tooltip: Paramètres utilisateur
+  - 'button "Messages non lus : 5"':
+    - generic: notifications
+  - tooltip: Messages
+  - generic: "5"
+  - button "Applications Google":
+  - button "Compte Google Jérémy (contact.kalivoa@gmail.com)":
+- dialog "navigational drawer":
+  - navigation "Principal":
+    - button "Propriété de recherche":
+      - img "favicon"
+      - combobox "kalivoa.com"
+      - generic: 
+    - link "Vue d'ensemble":
+      - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+      - generic: home
+      - generic: Vue d'ensemble
+    - link "Insights":
+      - /url: ./search-console/performance/insights?resource_id=sc-domain%3Akalivoa.com
+      - generic: lightbulb_2
+      - generic: Insights
+    - link "Performances":
+      - /url: ./search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+      - generic: trending_up
+      - generic: Performances
+    - button "Section du rapport \"Performances\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "IA générative dans les résultats de recherche":
+      - /url: ./search-console/performance/search-analytics/ai?resource_id=sc-domain%3Akalivoa.com
+      - generic: trending_up
+      - generic: IA générative
+    - button "Inspection de l'URL":
+      - generic: search
+      - generic: Inspection de l'URL
+    - generic: Indexation
+    - button "Section du rapport \"Indexation\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Pages":
+      - /url: ./search-console/index?resource_id=sc-domain%3Akalivoa.com
+      - generic: file_copy
+      - generic: Pages
+    - link "Sitemaps":
+      - /url: ./search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+      - generic: account_tree
+      - generic: Sitemaps
+    - link "Suppressions":
+      - /url: ./search-console/removals?resource_id=sc-domain%3Akalivoa.com
+      - generic: visibility_off
+      - generic: Suppressions
+    - generic: Expérience
+    - button "Section du rapport \"Expérience\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Core Web Vitals":
+      - /url: ./search-console/core-web-vitals?resource_id=sc-domain%3Akalivoa.com
+      - generic: speed
+      - generic: Core Web Vitals
+    - link "HTTPS":
+      - /url: ./search-console/https?resource_id=sc-domain%3Akalivoa.com
+      - generic: lock
+      - generic: HTTPS
+    - generic: Améliorations
+    - button "Section du rapport \"Améliorations\"" [expanded]:
+      - generic: keyboard_arrow_up
+    - link "Fils d'Ariane":
+      - /url: ./search-console/r/breadcrumbs?resource_id=sc-domain%3Akalivoa.com
+      - generic: layers
+      - generic: Fils d'Ariane
+    - generic: Sécurité et actions manuelles
+    - button "Section du rapport \"Sécurité et actions manuelles\"":
+      - generic: keyboard_arrow_down
+    - link "Rapport sur les liens":
+      - /url: ./search-console/links?resource_id=sc-domain%3Akalivoa.com
+      - generic: link_2
+      - generic: Liens
+    - link "Réussites":
+      - /url: ./search-console/achievements?resource_id=sc-domain%3Akalivoa.com
+      - generic: trophy
+      - generic: Réussites
+    - link "Paramètres":
+      - /url: ./search-console/settings?resource_id=sc-domain%3Akalivoa.com
+      - generic: settings
+      - generic: Paramètres
+    - button "Envoyer des commentaires":
+      - generic: feedback
+      - generic: Envoyer des commentaires
+    - button "À propos de la Search Console":
+      - generic: info
+      - generic: À propos de la Search Console
+    - link "Confidentialité":
+      - /url: https://myaccount.google.com/privacypolicy?hl=fr
+    - link "Conditions d'utilisation":
+      - /url: https://myaccount.google.com/termsofservice?hl=fr
+- navigation "Fils d'Ariane":
+  - link "Performances":
+    - /url: ./search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+  - generic: 
+  - heading "Fonctionnalités d'IA générative" [level=1]
+  - generic: Bêta
+- button "EXPORTER":
+  - generic: 
+  - generic: EXPORTER
+- radiogroup "Select time range":
+  - radio "24 heures":
+    - generic: 24 heures
+  - radio "7 jours":
+    - generic: 7 jours
+  - radio "28 jours":
+    - generic: 28 jours
+  - radio "3 mois":
+    - generic: 3 mois
+- button "More time ranges":
+  - generic: Comparer
+  - generic: arrow_drop_down
+- list:
+  - 'button "Type de recherche: Web"':
+    - generic: "Type de recherche: Web"
+    - generic: arrow_drop_down
+  - tooltip: "Type de recherche: Web"
+  - generic: Nouveau ! Vérifiez les performances de votre site dans les recherches sur le Web multimodales.
+  - button "Fermer":
+    - generic: close
+  - button "Ajouter un filtre":
+    - generic: add
+    - generic: Ajouter un filtre
+  - tooltip: Ajouter un filtre
+  - button "Réinitialiser les filtres":
+    - generic: Réinitialiser les filtres
+  - tooltip: Réinitialiser les filtres
+- generic: "Dernière mise à jour : il y a 3,5 heures"
+- main:
+  - button "Nombre total d'impressions 7 05/10/2026 - 11/10/2026 1 28/09/2026 - 04/10/2026":
+    - generic "Nombre total d'impressions":
+      - generic: 
+      - generic: Nombre total d'impressions
+    - generic "7"
+    - generic "05/10/2026 - 11/10/2026"
+    - generic "1"
+    - generic "28/09/2026 - 04/10/2026"
+  - button "null":
+    - generic: 
+  - 'button "Niveau de détail temporel sélectionné : Tous les jours"':
+    - generic: Tous les jours
+  - generic: Impressions
+  - application "chart":
+    - generic: Graphique qui contient le nombre de 05/10/2026 - 11/10/2026 Impressions et 28/09/2026 - 04/10/2026 Impressions entre le Invalid Date et le 1 janvier 1970
+  - tablist:
+    - tab "Pages" [selected]:
+      - generic: Pages
+    - tab "Pays":
+      - generic: Pays
+    - tab "Appareils":
+      - generic: Appareils
+    - tab "Jours":
+      - generic: Jours
+  - tabpanel:
+    - button "Filtrer des lignes de tableau":
+      - generic: 
+    - table:
+      - rowgroup:
+        - row "Pages les plus populaires Trier Pages les plus populaires Trier Impressions 05/10/2026 - 11/10/2026 Impressions 05/10/2026 - 11/10/2026 Trier Impressions 28/09/2026 - 04/10/2026 Impressions 28/09/2026 - 04/10/2026 Trier Impressions Différence Impressions Différence":
+          - columnheader "Pages les plus populaires Trier Pages les plus populaires":
+            - generic: Pages les plus populaires
+            - button "Trier Pages les plus populaires":
+          - columnheader "Trier Impressions 05/10/2026 - 11/10/2026 Impressions 05/10/2026 - 11/10/2026":
+            - button "Trier Impressions 05/10/2026 - 11/10/2026":
+            - text: Impressions
+            - text: 05/10/2026 - 11/10/2026
+          - columnheader "Trier Impressions 28/09/2026 - 04/10/2026 Impressions 28/09/2026 - 04/10/2026":
+            - button "Trier Impressions 28/09/2026 - 04/10/2026":
+            - text: Impressions
+            - text: 28/09/2026 - 04/10/2026
+          - columnheader "Trier Impressions Différence Impressions Différence":
+            - button "Trier Impressions Différence":
+            - text: Impressions
+            - text: Différence
+      - rowgroup:
+        - row "https://kalivoa.com/fr 7 0 7":
+          - cell "https://kalivoa.com/fr":
+            - generic: https://kalivoa.com/fr
+          - cell "7":
+            - generic: "7"
+          - cell "0":
+            - generic: "0"
+          - cell "7":
+            - generic: "7"
+        - row "https://kalivoa.com/fr/bankroll-tracking 1 0 1":
+          - cell "https://kalivoa.com/fr/bankroll-tracking":
+            - generic: https://kalivoa.com/fr/bankroll-tracking
+          - cell "1":
+            - generic: "1"
+          - cell "0":
+            - generic: "0"
+          - cell "1":
+            - generic: "1"
+        - row "https://kalivoa.com/fr/bookmakers/betclic 1 0 1":
+          - cell "https://kalivoa.com/fr/bookmakers/betclic":
+            - generic: https://kalivoa.com/fr/bookmakers/betclic
+          - cell "1":
+            - generic: "1"
+          - cell "0":
+            - generic: "0"
+          - cell "1":
+            - generic: "1"
+        - row "https://kalivoa.com/fr/faq 1 0 1":
+          - cell "https://kalivoa.com/fr/faq":
+            - generic: https://kalivoa.com/fr/faq
+          - cell "1":
+            - generic: "1"
+          - cell "0":
+            - generic: "0"
+          - cell "1":
+            - generic: "1"
+        - row "https://kalivoa.com/fr/bookmakers/unibet 0 1 -1":
+          - cell "https://kalivoa.com/fr/bookmakers/unibet":
+            - generic: https://kalivoa.com/fr/bookmakers/unibet
+          - cell "0":
+            - generic: "0"
+          - cell "1":
+            - generic: "1"
+          - cell "-1":
+            - generic: "-1"
+    - generic: "Lignes par page :"
+    - listbox "Nombre de lignes par page":
+      - option "5"
+      - option "10" [selected]
+      - option "25"
+      - option "50"
+      - option "100"
+      - option "250"
+      - option "500"
+    - generic: 1-5 sur 5
+    - button "Page précédente" [disabled]:
+    - tooltip: Page précédente
+    - button "Page suivante" [disabled]:
+    - tooltip: Page suivante

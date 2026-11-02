@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-11",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "sandbox": true,
+  "settingsStatus": "active",
+  "taxCode": "txcd_10103000",
+  "registrationId": "taxreg_1UPHYaDNFQcoJN1Nb6E9G86A",
+  "registrationCountry": "FR",
+  "checks": [
+    {
+      "grossAmount": 499,
+      "currency": "eur",
+      "taxInclusiveAmount": 83,
+      "taxability": [
+        {
+          "reason": "standard_rated",
+          "rate": "20.0"
+        }
+      ],
+      "totalUnchanged": true
+    },
+    {
+      "grossAmount": 4999,
+      "currency": "eur",
+      "taxInclusiveAmount": 833,
+      "taxability": [
+        {
+          "reason": "standard_rated",
+          "rate": "20.0"
+        }
+      ],
+      "totalUnchanged": true
+    },
+    {
+      "grossAmount": 299,
+      "currency": "eur",
+      "taxInclusiveAmount": 50,
+      "taxability": [
+        {
+          "reason": "standard_rated",
+          "rate": "20.0"
+        }
+      ],
+      "totalUnchanged": true
+    },
+    {
+      "grossAmount": 2499,
+      "currency": "eur",
+      "taxInclusiveAmount": 417,
+      "taxability": [
+        {
+          "reason": "standard_rated",
+          "rate": "20.0"
+        }
+      ],
+      "totalUnchanged": true
+    }
+  ],
+  "ownerApproved": true,
+  "liveChanged": false
+}

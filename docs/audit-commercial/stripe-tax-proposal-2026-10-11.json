@@ -1,0 +1,33 @@
+{
+  "sandboxAccountId": "acct_1T7igFDNFQcoJN1N",
+  "liveMode": false,
+  "headOffice": {
+    "line1": "61 rue de Lyon",
+    "city": "Paris",
+    "postal_code": "75012",
+    "country": "FR"
+  },
+  "productId": "prod_VPLWyVsno2M2CM",
+  "proposedProductTaxCode": "txcd_10103000",
+  "category": "Software as a service (SaaS) - personal use",
+  "otherCandidate": "txcd_10103100 (SaaS with electronic download)",
+  "registration": {
+    "country": "FR",
+    "scope": "domestic collection only",
+    "active_from": "now"
+  },
+  "taxBehaviour": "inclusive",
+  "grossPricesEUR": [
+    4.99,
+    49.99,
+    2.99,
+    24.99
+  ],
+  "ownerRegime": "Réel simplifié, CA12",
+  "status": "prepared; awaiting confirmation of category and Stripe registration",
+  "verifiedExisting": {
+    "taxSettingsStatus": "pending",
+    "headOfficePresent": false,
+    "activeRegistrations": 0
+  }
+}

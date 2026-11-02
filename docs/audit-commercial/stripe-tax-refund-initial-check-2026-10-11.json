@@ -1,0 +1,111 @@
+{
+  "runId": "c63c487c-844d-42ed-965b-192dd844dd2d",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "startedAt": "2026-10-11T09:45:20.118Z",
+  "scope": "Real Stripe sandbox API: branded Checkout, tax-inclusive initial payment and full refund with credit note. App record/notification behavior is covered separately by PostgreSQL integration tests.",
+  "scenarios": [
+    {
+      "interval": "monthly",
+      "welcome": false,
+      "expected": 499,
+      "expectedVat": 83,
+      "status": "failed",
+      "customerId": "cus_VQ9cgQLLq8amYP",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 499,
+      "subscriptionId": "sub_1UPJJlDNFQcoJN1N9f3r6hZa",
+      "invoice": {
+        "id": "in_1UPJJlDNFQcoJN1N6OJLIhXW",
+        "amountPaid": 499,
+        "total": 499,
+        "vatIncluded": 83,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "error": {
+        "type": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 83\n"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": false,
+      "expected": 4999,
+      "expectedVat": 833,
+      "status": "failed",
+      "customerId": "cus_VQ9dneTzNK8EbY",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 4999,
+      "subscriptionId": "sub_1UPJJtDNFQcoJN1NE2eJKtRb",
+      "invoice": {
+        "id": "in_1UPJJtDNFQcoJN1NrgaNWIoK",
+        "amountPaid": 4999,
+        "total": 4999,
+        "vatIncluded": 833,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "error": {
+        "type": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 833\n"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "monthly",
+      "welcome": true,
+      "expected": 299,
+      "expectedVat": 50,
+      "status": "failed",
+      "customerId": "cus_VQ9drNJvccMnAy",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 299,
+      "subscriptionId": "sub_1UPJK0DNFQcoJN1N1JfarUf1",
+      "invoice": {
+        "id": "in_1UPJK0DNFQcoJN1NGyTkusCD",
+        "amountPaid": 299,
+        "total": 299,
+        "vatIncluded": 50,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "error": {
+        "type": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 50\n"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": true,
+      "expected": 2499,
+      "expectedVat": 417,
+      "status": "failed",
+      "customerId": "cus_VQ9d78AHgYfDV9",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 2499,
+      "subscriptionId": "sub_1UPJK8DNFQcoJN1Ns3iE32Iq",
+      "invoice": {
+        "id": "in_1UPJK8DNFQcoJN1NdMGyCS60",
+        "amountPaid": 2499,
+        "total": 2499,
+        "vatIncluded": 417,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "error": {
+        "type": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "message": "Expected values to be strictly equal:\n\n0 !== 417\n"
+      },
+      "subscriptionClosed": true
+    }
+  ],
+  "passed": false,
+  "finishedAt": "2026-10-11T09:45:50.416Z"
+}

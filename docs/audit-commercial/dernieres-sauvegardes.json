@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-24T13:56:04.976Z",
+  "localDate": "2026-10-24",
+  "timeZone": "Europe/Paris",
+  "folderId": "1rS6DobPq5i_s5mJyohLkfWgXg8KcPb8G",
+  "folderUrl": "https://drive.google.com/drive/folders/1rS6DobPq5i_s5mJyohLkfWgXg8KcPb8G",
+  "privatePermissionsVerified": true,
+  "parentsVerified": true,
+  "archives": [
+    {
+      "id": "1OgqelgDHxfL0u46kIkzDO0U8K32TMFOY",
+      "name": "kalivoa-20261024T135604Z-public.dump.aes256gcm",
+      "bytes": 823529,
+      "sha256": "2eeb896a13d541d5d2b25b1b036a0991e71341da455c8ae53ba0fadeb8a3e763"
+    },
+    {
+      "id": "1sEqu9cL6D6pTLC-wFpmIM4XWPaK0wR7T",
+      "name": "kalivoa-20261024T135604Z-auth-storage.aes256gcm",
+      "bytes": 16964,
+      "sha256": "888555efff2ef09ee12189e4bf7a7ff9db13060120f8588cfd8171904095af0f"
+    }
+  ],
+  "manifestId": "1i-sfR022vMttDTHU66wvzK523L3d7qNl",
+  "manifestName": "kalivoa-20261024T135604Z-manifest.json",
+  "manifestBytes": 2034,
+  "manifestSha256": "890e0b30b8e0623c7c5c8d08d52f758a5aef252aaba64372470651b150811aa2",
+  "cloudReadbackHashesVerified": true,
+  "applicationRestoredLocally": true,
+  "tablesVerified": 40,
+  "rowsVerified": 13823,
+  "authDataRestoredLocally": true,
+  "authRowsVerified": 92,
+  "storageObjects": 0,
+  "storageContentVerified": true,
+  "keyUploaded": false,
+  "productionWrites": false,
+  "customerEmailsSent": false,
+  "automationId": "sauvegarde-quotidienne-kalivoa",
+  "computerRequired": true,
+  "retention": {
+    "folderFilesListed": 15,
+    "eligibleOlderThan30Days": 0,
+    "filesTrashed": 0,
+    "permanentDeletionUsed": false
+  },
+  "previousSuccessfulBackup": "2026-10-24T06:07:05.173Z",
+  "lastAttempt": {
+    "checkedAt": "2026-11-01T17:33:54.833Z",
+    "status": "failed",
+    "failureStage": "migration-rehearsal",
+    "failureType": "Error",
+    "reason": "Local restored-database check failed: beta welcome eligibility invariant",
+    "freshEncryptedArchiveCreated": true,
+    "applicationRestoredLocally": true,
+    "authDataRestoredLocally": true,
+    "storageContentVerified": true,
+    "tablesVerified": 42,
+    "rowsVerified": 14468,
+    "authRowsVerified": 94,
+    "localEncryptedArchivesRetained": true,
+    "uploaded": false,
+    "uploadPreparationSkipped": true,
+    "retentionCleanupSkipped": true,
+    "productionWrites": false,
+    "customerEmailsSent": false,
+    "localReport": ".vercel/production-backups/2026-11-01-BUGgBX/report.json"
+  }
+}

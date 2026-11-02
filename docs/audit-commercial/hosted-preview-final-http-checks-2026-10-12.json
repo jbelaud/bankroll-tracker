@@ -1,0 +1,31 @@
+{
+  "deploymentId": "dpl_Ck7g1chaMZprBQZXjBMxxJyxRMMX",
+  "passed": true,
+  "publicProtectionActive": true,
+  "checks": [
+    {
+      "route": "/api/stripe/webhook",
+      "status": 400
+    },
+    {
+      "route": "/api/resend/webhook",
+      "status": 400
+    },
+    {
+      "route": "/api/cron/commercial",
+      "status": 401
+    },
+    {
+      "route": "/fr/pricing",
+      "status": 200
+    },
+    {
+      "route": "/fr/offre-bienvenue",
+      "status": 200
+    },
+    {
+      "route": "/fr/account/subscription",
+      "status": 307
+    }
+  ]
+}

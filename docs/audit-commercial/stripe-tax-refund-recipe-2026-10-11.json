@@ -1,0 +1,135 @@
+{
+  "runId": "477beb88-4451-43ba-9c3c-d49ac8014d4c",
+  "accountId": "acct_1T7igFDNFQcoJN1N",
+  "livemode": false,
+  "startedAt": "2026-10-11T09:48:11.610Z",
+  "scope": "Real Stripe sandbox API: branded Checkout, tax-inclusive initial payment and full refund with credit note. App record/notification behavior is covered separately by PostgreSQL integration tests.",
+  "scenarios": [
+    {
+      "interval": "monthly",
+      "welcome": false,
+      "expected": 499,
+      "expectedVat": 83,
+      "status": "passed",
+      "customerId": "cus_VQ9fCB3KcXqomN",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 499,
+      "subscriptionId": "sub_1UPJMWDNFQcoJN1NJuc8z7AW",
+      "invoice": {
+        "id": "in_1UPJMXDNFQcoJN1NpvJNsidL",
+        "amountPaid": 499,
+        "total": 499,
+        "vatIncluded": 83,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "creditNote": {
+        "id": "cn_1UPJMaDNFQcoJN1NRP3IVksW",
+        "amount": 499,
+        "vatReversed": 83,
+        "pdfAvailable": true
+      },
+      "refund": {
+        "id": "re_3UPJMXDNFQcoJN1N1VrhWyLe",
+        "amount": 499,
+        "status": "succeeded"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": false,
+      "expected": 4999,
+      "expectedVat": 833,
+      "status": "passed",
+      "customerId": "cus_VQ9f7KoiC0kGU7",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 4999,
+      "subscriptionId": "sub_1UPJMeDNFQcoJN1NRCB7mL1i",
+      "invoice": {
+        "id": "in_1UPJMeDNFQcoJN1N6fxEhdlF",
+        "amountPaid": 4999,
+        "total": 4999,
+        "vatIncluded": 833,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "creditNote": {
+        "id": "cn_1UPJMiDNFQcoJN1NfjpMILU5",
+        "amount": 4999,
+        "vatReversed": 833,
+        "pdfAvailable": true
+      },
+      "refund": {
+        "id": "re_3UPJMfDNFQcoJN1N1sKEkd0v",
+        "amount": 4999,
+        "status": "succeeded"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "monthly",
+      "welcome": true,
+      "expected": 299,
+      "expectedVat": 50,
+      "status": "passed",
+      "customerId": "cus_VQ9gRkBKb27eJi",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 299,
+      "subscriptionId": "sub_1UPJMmDNFQcoJN1Nkw5JVVBT",
+      "invoice": {
+        "id": "in_1UPJMmDNFQcoJN1Nns7OoMUi",
+        "amountPaid": 299,
+        "total": 299,
+        "vatIncluded": 50,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "creditNote": {
+        "id": "cn_1UPJMqDNFQcoJN1NZL5OsWys",
+        "amount": 299,
+        "vatReversed": 50,
+        "pdfAvailable": true
+      },
+      "refund": {
+        "id": "re_3UPJMnDNFQcoJN1N10DlLwsu",
+        "amount": 299,
+        "status": "succeeded"
+      },
+      "subscriptionClosed": true
+    },
+    {
+      "interval": "yearly",
+      "welcome": true,
+      "expected": 2499,
+      "expectedVat": 417,
+      "status": "passed",
+      "customerId": "cus_VQ9ggeMJcNFFhO",
+      "checkoutBrand": "Kalivoa",
+      "checkoutTotal": 2499,
+      "subscriptionId": "sub_1UPJMuDNFQcoJN1NBWOPcGvh",
+      "invoice": {
+        "id": "in_1UPJMuDNFQcoJN1NEgJyFcsz",
+        "amountPaid": 2499,
+        "total": 2499,
+        "vatIncluded": 417,
+        "sellerVatPresent": true,
+        "pdfAvailable": true
+      },
+      "creditNote": {
+        "id": "cn_1UPJMxDNFQcoJN1NiYBXAaTq",
+        "amount": 2499,
+        "vatReversed": 417,
+        "pdfAvailable": true
+      },
+      "refund": {
+        "id": "re_3UPJMvDNFQcoJN1N0zviMxgy",
+        "amount": 2499,
+        "status": "succeeded"
+      },
+      "subscriptionClosed": true
+    }
+  ],
+  "passed": true,
+  "finishedAt": "2026-10-11T09:48:42.409Z"
+}

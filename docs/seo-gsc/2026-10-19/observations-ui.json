@@ -1,0 +1,57 @@
+{
+  "sitemap": {
+    "discovered": 30,
+    "lastRead": "2026-10-03",
+    "status": "Operation effectuee",
+    "submitted": "2026-10-12"
+  },
+  "detectedNotIndexed": [
+    "/en/extension",
+    "/en/partenaires",
+    "/fr/extension",
+    "/fr/partenaires"
+  ],
+  "inspection": {
+    "url": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+    "status": "Google ne reconnait pas cette URL",
+    "referringSitemap": "Aucun sitemap referent detecte",
+    "crawl": "Sans objet"
+  },
+  "property": "sc-domain:kalivoa.com",
+  "source": "GSC interface connectee, transcription",
+  "ai": {
+    "previousImpressions": 7,
+    "impressions": 2
+  },
+  "publicCheck": {
+    "xRobotsTag": "",
+    "canonical": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+    "http": 200,
+    "metaNoindexDetected": false
+  },
+  "comparison": {
+    "currentProvisional": true,
+    "current": "2026-10-12/2026-10-18",
+    "latestDefaultEnd": "2026-10-17",
+    "previous": "2026-10-05/2026-10-11"
+  },
+  "web": {
+    "impressions": 10,
+    "previousPosition": 2.7,
+    "previousCtr": 0,
+    "clicks": 0,
+    "previousClicks": 0,
+    "ctr": 0,
+    "position": 9.9,
+    "previousImpressions": 16
+  },
+  "observedDate": "2026-10-19",
+  "coverage": {
+    "currentSitemapCount": 44,
+    "allKnownIndexed": 30,
+    "sitemapReportedExcluded": 6,
+    "reportDate": "2026-10-12",
+    "allKnownExcluded": 15,
+    "sitemapReportedIndexed": 24
+  }
+}

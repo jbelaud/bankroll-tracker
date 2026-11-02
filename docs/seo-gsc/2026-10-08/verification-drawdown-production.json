@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+    "status": 200,
+    "canonical": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+    "article": true,
+    "breadcrumb": true,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  },
+  {
+    "url": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+    "status": 200,
+    "canonical": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+    "article": true,
+    "breadcrumb": true,
+    "hreflangFr": true,
+    "hreflangEn": true,
+    "hreflangDefault": true,
+    "noindexMeta": false,
+    "xRobotsTag": null
+  }
+]

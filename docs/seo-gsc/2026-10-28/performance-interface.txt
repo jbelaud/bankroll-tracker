@@ -1,0 +1,161 @@
+Browser tab: 1, Title: "Performances dans les résultats de recherche", URL: "https://search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com&start_date=20261019&end_date=20261025&compare_start_date=20261012&compare_end_date=20261018".
+1 AXWebArea Performances dans les résultats de recherche, URL: search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com&start_date=20261019&end_date=20261025&compare_start_date=20261012&compare_end_date=20261018
+	2 container
+		3 container yDmH0d
+			4 container gb
+				5 container
+					6 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						7 image
+					17 link Description: Google Search Console, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com, ID: sdgBod
+					8 button Recherche
+						9 image
+					10 button Aide
+					11 button Paramètres utilisateur
+					12 container
+						13 button Messages non lus : 7
+						18 text 7
+					15 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					16 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			19 container
+				20 container Fils d'Ariane
+					21 heading Performances, Value: 1
+						22 text Performances
+				23 pop up button (collapsed) Description: EXPORTER, Secondary Actions: Expand
+				24 container
+					25 Select time range
+						26 radio button 24 heures, Value: 0
+						27 radio button 7 jours, Value: 0
+						28 radio button 28 jours, Value: 0
+						29 radio button 3 mois, Value: 0
+					30 button More time ranges
+					31 content list
+						32 button Type de recherche: Web
+						33 pop up button (collapsed) Ajouter un filtre, Secondary Actions: Expand
+						34 button Personnaliser votre rapport sur les performances à l'aide de l'IA
+						35 button Réinitialiser les filtres
+							36 text Réinitialiser les filtres
+				37 text Dernière mise à jour : il y a 5 heures
+				38 container
+					39 container
+						40 button Nombre total de clics 0 19/10/2026 - 25/10/2026 0 12/10/2026 - 18/10/2026
+							41 text Nombre total de clics
+							42 text 0
+							43 image
+							44 text 19/10/2026 - 25/10/2026
+							45 text 0
+							46 image
+							47 text 12/10/2026 - 18/10/2026
+						48 container
+							49 button (collapsed) Description: null, Secondary Actions: Expand
+						50 button Nombre total d'impressions 10 19/10/2026 - 25/10/2026 10 12/10/2026 - 18/10/2026
+							51 text Nombre total d'impressions
+							52 text 10
+							53 image
+							54 text 19/10/2026 - 25/10/2026
+							55 text 10
+							56 image
+							57 text 12/10/2026 - 18/10/2026
+						58 container
+							59 button (collapsed) Description: null, Secondary Actions: Expand
+						60 button CTR moyen 0 % 19/10/2026 - 25/10/2026 0 % 12/10/2026 - 18/10/2026
+							61 text CTR moyen
+							62 text 0 %
+							63 image
+							64 text 19/10/2026 - 25/10/2026
+							65 text 0 %
+							66 image
+							67 text 12/10/2026 - 18/10/2026
+						68 container
+							69 button (collapsed) Description: null, Secondary Actions: Expand
+						70 button Position moyenne 13,3 19/10/2026 - 25/10/2026 9,9 12/10/2026 - 18/10/2026
+							71 text Position moyenne
+							72 text 13,3
+							73 image
+							74 text 19/10/2026 - 25/10/2026
+							75 text 9,9
+							76 image
+							77 text 12/10/2026 - 18/10/2026
+						78 container
+							79 button (collapsed) Description: null, Secondary Actions: Expand
+						80 pop up button (collapsed) Description: Niveau de détail temporel sélectionné : Tous les jours, Secondary Actions: Expand
+							81 image
+						82 container chart
+							83 text Graphique qui contient le nombre de 19/10/2026 - 25/10/2026 Clics, 12/10/2026 - 18/10/2026 Clics, 19/10/2026 - 25/10/2026 Impressions, 12/10/2026 - 18/10/2026 Impressions, 19/10/2026 - 25/10/2026 CTR, 12/10/2026 - 18/10/2026 CTR, 19/10/2026 - 25/10/2026 Position et 12/10/2026 - 18/10/2026 Position entre le Invalid Date et le 1 janvier 1970
+					84 text Obtenez plus d'informations sur les performances de votre site dans les fonctionnalités d'IA générative de la recherche Google
+					85 container
+						86 link Value: search.google.com/search-console/performance/search-analytics/ai?resource_id=sc-domain%3Akalivoa.com, Description: Ouvrir le rapport sur les performances dans les fonctionnalités d'IA générative sur la recherche Google.
+					87 container dimension-tables
+						88 tab group
+							89 tab (selected, settable, boolean) REQUÊTES, Value: 1
+REQUÊTES
+							90 tab (selectable, settable, boolean) PAGES, Value: 0
+PAGES
+							91 tab (selectable, settable, boolean) PAYS, Value: 0
+PAYS
+							92 tab (selectable, settable, boolean) APPAREILS, Value: 0
+APPAREILS
+							93 tab (selectable, settable, boolean) APPARENCE DANS LES RÉSULTATS DE RECHERCHE, Value: 0
+APPARENCE DANS LES RÉSULTATS DE RECHERCHE
+							94 tab (selectable, settable, boolean) JOURS, Value: 0
+JOURS
+						95 container
+							96 pop up button (collapsed) Description: Filtrer des lignes de tableau, Secondary Actions: Expand
+							97 table
+								98 row
+									99 cell
+										100 text Requêtes les plus fréquentes
+										101 button Trier Requêtes les plus fréquentes
+									102 cell
+										103 button Trier Clics 19/10/2026 - 25/10/2026 
+										104 text Clics
+										105 text 19/10/2026 - 25/10/2026
+									106 cell
+										107 button Trier Clics 12/10/2026 - 18/10/2026 
+										108 text Clics
+										109 text 12/10/2026 - 18/10/2026
+									110 cell
+										111 button Trier Clics Différence
+										112 text Clics
+										113 text Différence
+									114 cell
+										115 button Trier Impressions 19/10/2026 - 25/10/2026 
+										116 text Impressions
+										117 text 19/10/2026 - 25/10/2026
+									118 cell
+										119 button Trier Impressions 12/10/2026 - 18/10/2026 
+										120 text Impressions
+										121 text 12/10/2026 - 18/10/2026
+									122 cell
+										123 button Trier Impressions Différence
+										124 text Impressions
+										125 text Différence
+								126 row
+									127 cell
+										128 text kalioa
+									129 cell
+										130 text 0
+									131 cell
+										132 text 0
+									133 cell
+										134 text 0
+									135 cell
+										136 text 0
+									137 cell
+										138 text 1
+									139 cell
+										140 text -1
+							141 text Lignes par page :
+							142 list Nombre de lignes par page
+								143 5
+								144 (selected) 10
+								145 25
+								146 50
+								147 100
+								148 250
+								149 500
+							150 text 1-1 sur 1
+							151 button (disabled) Page précédente
+							152 button (disabled) Page suivante
+		153 text Performances dans les résultats de recherche
+
+The focused UI element is 1 AXWebArea Performances dans les résultats de recherche, URL: search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com&start_date=20261019&end_date=20261025&compare_start_date=20261012&compare_end_date=20261018

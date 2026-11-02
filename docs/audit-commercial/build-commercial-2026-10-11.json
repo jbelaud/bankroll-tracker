@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-11",
+  "framework": "Next.js 16.2.11",
+  "bundler": "Turbopack",
+  "scope": "Isolated workspace copy using temporary local recipe database",
+  "exitCode": 0,
+  "compiledSuccessfully": true,
+  "compileSeconds": 74,
+  "typescriptPassed": true,
+  "typescriptMinutes": 2.4,
+  "staticPagesGenerated": 17,
+  "pageOptimizationCompleted": true,
+  "productionDeployment": false,
+  "productionDatabaseMigration": false,
+  "emailSendingDisabledDuringBuild": true,
+  "initialFailure": "PostCSS processing timed out while scanning generated and recipe artifacts",
+  "correction": "Restrict Tailwind automatic source scanning to application src directory",
+  "directStylesheetTransformSeconds": 1.123,
+  "visualCheck": "Local privacy page reloaded and styled layout verified",
+  "warning": "Edge runtime disables static generation for affected pages, which remain dynamic"
+}

@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-10",
+  "status": "local-draft",
+  "ownerDecisions": {
+    "paidSalesTerritory": "France",
+    "withdrawalRefund": "full refund within 14 days, even after scan use",
+    "mediatorAppointed": false,
+    "vatRegimeConfirmed": false,
+    "publicTelephone": null
+  },
+  "completed": {
+    "salesTermsLanguages": [
+      "fr",
+      "en"
+    ],
+    "privacyLanguages": [
+      "fr",
+      "en"
+    ],
+    "downloadableWithdrawalForms": true,
+    "checkoutDeclarationsServerValidated": true,
+    "checkoutDeclarationsVersionedInStripe": true,
+    "checkoutFranceResidenceDeclaration": true
+  },
+  "limitations": {
+    "actualBillingCountryEnforcement": false,
+    "onlineWithdrawalSubmission": false,
+    "durableContractEmailDelivery": false,
+    "refundWorkflowImplemented": false,
+    "mediatorMembership": false,
+    "regulatoryGuaranteeBoxFinalised": false,
+    "analyticsConsentFinalised": false,
+    "productionProviderContractsVerified": false,
+    "retentionPolicyFinalised": false,
+    "websitePublished": false
+  },
+  "checks": {
+    "billingTestsPassed": 22,
+    "targetedLintPassed": true,
+    "typescriptPassed": true,
+    "formsHTTP": {
+      "fr": 200,
+      "en": 200
+    },
+    "browserAnnualButtonDisabledWithoutDeclarations": true,
+    "browserFormDownloadCompleted": false,
+    "localBetaRestored": true,
+    "productionChanged": false,
+    "realPaymentSubmitted": false
+  },
+  "report": "docs/PREPARATION-JURIDIQUE-KALIVOA-2026-10-10.md"
+}

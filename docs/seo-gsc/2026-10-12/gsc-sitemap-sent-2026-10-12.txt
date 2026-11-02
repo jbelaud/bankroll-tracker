@@ -1,0 +1,159 @@
+- banner:
+  - button:
+  - link:
+    - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+  - search:
+    - textbox [disabled]: Inspecter n'importe quelle URL de "kalivoa.com"
+    - combobox
+    - button:
+  - button:
+    - generic: help_outline
+  - tooltip: Aide
+  - button:
+    - generic: manage_accounts
+  - tooltip: Paramètres utilisateur
+  - button:
+    - generic: notifications
+  - tooltip: Messages
+  - generic: "5"
+  - button:
+  - button:
+- dialog:
+  - navigation:
+    - button:
+      - combobox: kalivoa.com
+      - generic: 
+    - link:
+      - /url: ./search-console?resource_id=sc-domain%3Akalivoa.com
+      - generic: home
+      - generic: Vue d'ensemble
+    - link:
+      - /url: ./search-console/performance/insights?resource_id=sc-domain%3Akalivoa.com
+      - generic: lightbulb_2
+      - generic: Insights
+    - link:
+      - /url: ./search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+      - generic: trending_up
+      - generic: Performances
+    - button:
+      - generic: keyboard_arrow_down
+    - button:
+      - generic: search
+      - generic: Inspection de l'URL
+    - generic: Indexation
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/index?resource_id=sc-domain%3Akalivoa.com
+      - generic: file_copy
+      - generic: Pages
+    - link:
+      - /url: ./search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+      - generic: account_tree
+      - generic: Sitemaps
+    - link:
+      - /url: ./search-console/removals?resource_id=sc-domain%3Akalivoa.com
+      - generic: visibility_off
+      - generic: Suppressions
+    - generic: Expérience
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/core-web-vitals?resource_id=sc-domain%3Akalivoa.com
+      - generic: speed
+      - generic: Core Web Vitals
+    - link:
+      - /url: ./search-console/https?resource_id=sc-domain%3Akalivoa.com
+      - generic: lock
+      - generic: HTTPS
+    - generic: Améliorations
+    - button [expanded]:
+      - generic: keyboard_arrow_up
+    - link:
+      - /url: ./search-console/r/breadcrumbs?resource_id=sc-domain%3Akalivoa.com
+      - generic: layers
+      - generic: Fils d'Ariane
+    - generic: Sécurité et actions manuelles
+    - button:
+      - generic: keyboard_arrow_down
+    - link:
+      - /url: ./search-console/links?resource_id=sc-domain%3Akalivoa.com
+      - generic: link_2
+      - generic: Liens
+    - link:
+      - /url: ./search-console/achievements?resource_id=sc-domain%3Akalivoa.com
+      - generic: trophy
+      - generic: Réussites
+    - link:
+      - /url: ./search-console/settings?resource_id=sc-domain%3Akalivoa.com
+      - generic: settings
+      - generic: Paramètres
+    - button:
+      - generic: feedback
+      - generic: Envoyer des commentaires
+    - button:
+      - generic: info
+      - generic: À propos de la Search Console
+    - link:
+      - /url: https://myaccount.google.com/privacypolicy?hl=fr
+      - text: Confidentialité
+    - link:
+      - /url: https://myaccount.google.com/termsofservice?hl=fr
+      - text: Conditions d'utilisation
+- navigation:
+  - heading [level=1]: Sitemaps
+- main:
+  - generic: Ajouter un sitemap
+  - textbox: https://kalivoa.com/sitemap.xml
+  - button:
+    - generic: Envoyer
+  - heading [level=1]:
+    - generic: Sitemaps envoyés
+  - button:
+    - generic: 
+  - table:
+    - rowgroup:
+      - row:
+        - columnheader:
+          - text: Sitemap
+        - columnheader:
+          - text: Type
+        - columnheader:
+          - text: URL envoyées
+        - columnheader:
+          - text: Dernière lecture
+        - columnheader:
+          - text: État
+        - columnheader:
+          - text: Pages découvertes
+        - columnheader:
+          - text: Vidéos découvertes
+        - columnheader
+    - rowgroup:
+      - row:
+        - cell: https://kalivoa.com/sitemap.xml
+        - cell: Sitemap
+        - cell: 12 oct. 2026
+        - cell: 3 oct. 2026
+        - cell:
+          - generic: Opération effectuée
+        - cell: "30"
+        - cell: "0"
+        - cell:
+          - button:
+            - generic: 
+  - generic: "Lignes par page :"
+  - listbox:
+    - text: "5"
+    - option [selected]: "10"
+    - text: 25 50 100 250 500
+  - generic: 1-1 sur 1
+  - generic: 
+  - generic: 
+- dialog "Sitemap envoyé":
+  - heading "Sitemap envoyé" [level=2]:
+    - generic: check_circle
+    - generic: Sitemap envoyé
+  - generic: Google le traitera régulièrement pour chercher des modifications. Si un problème se pose à l'avenir, vous en serez averti.
+  - button "Masquer" [active]:
+    - generic: Masquer

@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-20",
+  "origin": "https://kalivoa.com",
+  "deploymentId": "dpl_4fBeHKfb9XcM9Y3MBCWPCFH1QAuP",
+  "checks": {
+    "desktopNavigation": true,
+    "desktopHomeSection": true,
+    "desktopCertificationPage": true,
+    "mobileMenuCertificationLink": true,
+    "mobileCertificationPage": true,
+    "mobileViewportContentWidth": 375,
+    "mobileViewportClientWidth": 375,
+    "levelsAnchor": true,
+    "faqExpansion": true,
+    "viewportReset": true
+  },
+  "screenshots": [
+    "home-section-desktop-2026-10-20.png",
+    "page-desktop-2026-10-20.png",
+    "menu-mobile-2026-10-20.png",
+    "page-mobile-2026-10-20.png"
+  ]
+}

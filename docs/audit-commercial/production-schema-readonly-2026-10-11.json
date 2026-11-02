@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-11",
+  "project": "umyxyahkifdezohaotel",
+  "schemaOnly": true,
+  "inventoryType": "Prisma-supported application tables, columns, relations and enums; not a full database backup",
+  "customerRowsExported": false,
+  "productionWrites": false,
+  "success": true,
+  "attempts": [
+    {
+      "host": "db.umyxyahkifdezohaotel.supabase.co",
+      "code": 0,
+      "error": "┌─────────────────────────────────────────────────────────┐\n│  Update available 6.19.3 -> 8.0.0-rc.22                 │\n│                                                         │\n│  This is a major update - please follow the guide at    │\n│  https://pris.ly/d/major-version-upgrade                │\n│                                                         │\n│  Run the following to update                            │\n│    npm i --save-dev prisma@latest                       │\n│    npm i @prisma/client@latest                          │\n└─────────────────────────────────────────────────────────┘\n"
+    }
+  ],
+  "sha256": "1e918d696710c1dd223b4c25e19f863bab10d09183b0ba3aa1485762531ae4f8",
+  "bytes": 43847
+}

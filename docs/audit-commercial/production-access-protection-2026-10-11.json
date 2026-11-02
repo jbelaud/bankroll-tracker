@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-11",
+  "project": "umyxyahkifdezohaotel",
+  "tables": ["bet_corrections", "bankroll_follows", "tipster_follows"],
+  "before": { "rlsEnabled": false, "anonSelect": true, "authenticatedSelect": true, "anonymousRestStatus": 200 },
+  "after": { "rlsEnabled": true, "anonSelect": false, "authenticatedSelect": false, "anonymousRestStatus": 401 },
+  "probeRequestedRows": 0,
+  "customerRowsReadByProbe": false,
+  "customerRowsModified": false,
+  "localDeniedApiRoleChecks": 6,
+  "localServerPrismaChecks": 3,
+  "publicHomeStatusAfterChange": 200,
+  "remainingRlsDisabledSecurityFindings": 0,
+  "migrationAppliedThrough": "Supabase migration restrict_server_only_corrections_and_follows",
+  "prismaMigrationSource": "20261011200000_restrict_server_only_tables",
+  "note": "Equivalent idempotent source migration remains for normal Prisma deployment bookkeeping; other commercial migrations have not been applied to production."
+}

@@ -1,0 +1,31 @@
+Browser tab: 2, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=bysYMLaomjMkopvKHUCz8A&alt_id=0Z4BvYXrrhcnrkMNXNl43w".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 41-43
++					47 container
++						48 button (expanded) Disponibilité de la page La page peut être indexée, Secondary Actions: Collapse
++							49 text Disponibilité de la page
++							50 text La page peut être indexée
++						51 container
++							52 text L'URL ne sera indexée que si elle respecte 
++							53 link Description: certaines conditions, Value: support.google.com/webmasters/answer/9012289#will_i_be_indexed
++						54 text Découverte
++						55 text Non vérifié lors des tests en ligne
++						56 text Exploration
++						57 text Heure
++						58 text 28 oct. 2026, 21:05:31
++						59 text Explorée avec
++						60 text Outil d'inspection Google pour smartphone
++						61 text Exploration autorisée ?
++						62 text Oui
++						63 text Récupération de page
++						64 text Réussie
++						65 text Indexation autorisée ?
++						66 text Oui
++						67 text Indexation
++						68 text URL canonique déclarée par l'utilisateur
++						69 text https://kalivoa.com/fr/privacy
++						70 text URL canonique sélectionnée par Google
++						71 button (collapsed) Description: null, Secondary Actions: Expand
++						72 text Ne sera déterminé qu'après l'indexation
++						73 link Description: Consulter une documentation plus détaillée, Value: support.google.com/webmasters/answer/9012289#url_can_be_on_google
+The focused UI element is 48 button (expanded) Disponibilité de la page La page peut être indexée, Secondary Actions: Collapse

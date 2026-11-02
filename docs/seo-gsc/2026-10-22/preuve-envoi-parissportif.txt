@@ -1,0 +1,62 @@
+Browser tab: 16, Title: "Résultats de recherche - contact.kalivoa@gmail.com - Gmail", URL: "https://mail.google.com/mail/u/0/#search/in%3Asent+to%3Ainfo%40parissportif.fr+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 47-49, 69-114, 175, 177-179, 184
+~0 AXWebArea Résultats de recherche - contact.kalivoa@gmail.com - Gmail, URL: mail.google.com/mail/u/0/#search/in%3Asent+to%3Ainfo%40parissportif.fr+after%3A2026%2F10%2F21+before%3A2026%2F10%2F24
++		184 text Vous avez un nouveau message.
+~							16 container in:sent to:info@parissportif.fr after:2026/10/21 before:2026/10/24 
+~								17 text field (settable) Description: Rechercher dans les messages, Value: in:sent to:info@parissportif.fr after:2026/10/21 before:2026/10/24 
++				185 text Message envoyé
++				186 link Description: Afficher le message, ID: link_vsm
++					187 text Afficher le message
++				188 button Fermer
++							189 container
++								190 link Description: Boîte de réception 113 messages non lus, Value: mail.google.com/mail/u/0/#inbox
++								191 text 113
++							192 text Plus
++				193 container
++					194 toolbar affinement des recherches
++						195 container
++							196 checkbox (collapsed) De, Value: 0, Secondary Actions: Expand
++								197 container
++									198 text De
++									199 image
++							200 checkbox Contient une pièce jointe, Value: 0
++								201 text Contient une pièce jointe
++							202 pop up button Recherche avancée
++								203 text Recherche avancée
++					204 pop up button (collapsed) Description: Sélectionner, ID: :qb, Secondary Actions: Expand
++						205 checkbox 0
++					206 button Actualiser
++					207 button (collapsed) Description: Plus d'options, ID: :qc, Secondary Actions: Expand
++					208 container
++						209 button (collapsed) Description: Afficher plus de messages, ID: :q7, Secondary Actions: Expand
++							210 text 1
++							211 text –
++							212 text 1
++							213 text  sur 
++							214 text 1
++						215 button (disabled) Description: Préc., ID: :lo
++						216 button (disabled) Description: Suiv., ID: :so
++					217 heading Conversations, Value: 2
++						218 text Conversations
++					219 container
++						220 image
++						221 text info@parissportif.fr
++					222 text info@parissportif.fr
++					223 table :qd
++						224 row ID: :qe, moi , Un test de Kalivoa pour vos lecteurs ? , 21:54 , Bonjour à l'équipe ParisSportif.fr, Je développe Kalivoa, un outil de suivi de bankroll en français. Je souhaite vous proposer un test pratique pour vos lecteurs : passer d'une capture de.
++							225 cell :ss
++								226 checkbox Value: 0, ID: :sn, Description: moi , Un test de Kalivoa pour vos lecteurs ? , 21:54 , Bonjour à l'équipe ParisSportif.fr, Je développe Kalivoa, un outil de suivi de bankroll en français. Je souhaite vous proposer un test pratique pour vos lecteurs : passer d'une capture de.
++							227 cell
++								228 button Description: Non suivi, ID: :lj
++							229 cell
++								230 text moi
++							231 cell :ll
++								232 link Un test de Kalivoa pour vos lecteurs ?  -  Bonjour à l'équipe ParisSportif.fr, Je développe Kalivoa, un outil de suivi de bankroll en français. Je souhaite vous proposer un test pratique pour vos lecteurs : passer d'une capture de
++									233 text Un test de Kalivoa pour vos lecteurs ?
++									234 container :q1
++										235 text  -  Bonjour à l'équipe ParisSportif.fr, Je développe Kalivoa, un outil de suivi de bankroll en français. Je souhaite vous proposer un test pratique pour vos lecteurs : passer d'une capture de
++							236 cell
++								237 container Description: jeu. 22 oct. 2026 21:54, ID: :q3
++									238 text 21:54
+The focused UI element is 176 container

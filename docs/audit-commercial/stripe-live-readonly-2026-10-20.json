@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-20T06:13:55.397Z",
+  "accountId": "acct_1T7ifpRZcB561pgV",
+  "script": "scripts/stripe-live-readiness.mjs",
+  "passed": true,
+  "checks": [
+    "support",
+    "seller-vat-on-invoices",
+    "monthly-price",
+    "yearly-price",
+    "welcome-monthly-12-months",
+    "welcome-yearly-once",
+    "inclusive-tax",
+    "active-fr-tax-registration",
+    "portal-cancellation-at-period-end",
+    "active-webhook"
+  ],
+  "paymentCreated": false,
+  "settingsChanged": false
+}

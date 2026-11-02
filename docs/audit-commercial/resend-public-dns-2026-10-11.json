@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-11T09:44:20.746Z",
+  "records": {
+    "resend._domainkey.kalivoa.com": [
+      [
+        "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/lDOakZu82WfkTN0gMKx6CnyMuFLcYqvmH618SNgXBz+EGMAeuUyxnTmslNsyAIJiN0ylbxyb3lDV+DMR/VVUiDOfoIuxu24q2IRZN07CydyiJjKyDOyBp5/mD6lq0AogVWR7bJ68vPhWsiEeIpkUOekCFqYIOyLh7IxWIVjifQIDAQAB"
+      ]
+    ],
+    "rsend.kalivoa.com": [
+      "rsend-euw1.forge.rmta.net"
+    ],
+    "send.kalivoa.com": [
+      "send.forge.rmta.net"
+    ]
+  }
+}

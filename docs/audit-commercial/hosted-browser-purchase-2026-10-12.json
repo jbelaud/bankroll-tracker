@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-12",
+  "sandbox": true,
+  "origin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+  "connectedBrowserVerified": true,
+  "checks": [
+    "annual welcome browser payment, signed activation, contract, private PDF, initial bonus and simulated receipt",
+    "browser portal cancellation at period end retains annual access",
+    "browser withdrawal, single full refund including VAT, free plan and locked permanent bonus",
+    "monthly browser resubscription at standard price, signed activation, contract, PDF, receipt and no duplicate welcome offer or permanent bonus",
+    "monthly browser withdrawal, single full refund including VAT, free plan and locked permanent bonus",
+    "real browser checkout return waits for signed activation, refreshes automatically, bounds long waits and receives genuine signed Resend delivery confirmation"
+  ],
+  "annualWelcome": {
+    "checkoutId": "cs_test_a14Vuod6K0bjyiasRlbZ4PNWEOcyHQXpwW9W1iMGnXO18GYuSHobqj5mWC",
+    "subscriptionId": "sub_1UPn5hDNFQcoJN1Ni1Xxz9DJ",
+    "plan": "BETA_PREMIUM",
+    "amountPaid": 2499,
+    "vatIncluded": 417,
+    "invoicePdfBytes": 22074,
+    "acceptedTermsVersion": "2026-10-11.1-draft",
+    "withdrawalDeadline": "2026-10-26T23:00:00.000Z",
+    "initialBonus": 300,
+    "paidPlanRequired": true,
+    "bonusExpires": false,
+    "confirmationProviderId": "01a1312c-b627-75ec-8d96-393081a85f1f",
+    "confirmationState": "SENT",
+    "renewalPrice": 4999
+  },
+  "portal": {
+    "browserVerified": true,
+    "returnOrigin": "https://kalivoa-commercial-recette-ets-belaud.vercel.app",
+    "nextAnnualPrice": 4999,
+    "cancellationAtPeriodEnd": true,
+    "paidAccessRetained": true,
+    "confirmationQueued": true,
+    "periodEnd": 1823362367
+  },
+  "withdrawal": {
+    "reference": "f4294056-4a7d-4e11-9de7-19c4dd18d429",
+    "status": "COMPLETED",
+    "eligible": true,
+    "refundedAmount": 2499,
+    "refundStatus": "succeeded",
+    "vatReversed": 417,
+    "freePlanRestored": true,
+    "permanentBonusRetained": true,
+    "bonusPaidOnly": true
+  },
+  "monthlyResubscription": {
+    "checkoutId": "cs_test_a1x9DZOFvDPxl0kr4SPFL4WRV7bDGWEYuhV0ARxoSKSAlk5xMth1MYQnYk",
+    "subscriptionId": "sub_1UPnagDNFQcoJN1NUSJFFk1B",
+    "plan": "PREMIUM",
+    "amountPaid": 499,
+    "vatIncluded": 83,
+    "invoicePdfBytes": 21857,
+    "acceptedTermsVersion": "2026-10-11.1-draft",
+    "withdrawalDeadline": "2026-10-26T23:00:00.000Z",
+    "initialBonus": 300,
+    "paidPlanRequired": true,
+    "bonusExpires": false,
+    "confirmationProviderId": "01a1314a-0635-7f2a-b2dc-d319737f36b9",
+    "confirmationState": "SENT",
+    "renewalPrice": 499,
+    "welcomeOfferReused": false,
+    "initialBonusDuplicated": false
+  },
+  "monthlyWithdrawal": {
+    "reference": "bf897136-16eb-41b4-b6cb-24b9454bea39",
+    "status": "COMPLETED",
+    "eligible": true,
+    "refundedAmount": 499,
+    "refundStatus": "succeeded",
+    "vatReversed": 83,
+    "freePlanRestored": true,
+    "permanentBonusRetained": true,
+    "bonusPaidOnly": true
+  },
+  "checkoutReturn": {
+    "deploymentId": "dpl_Ck7g1chaMZprBQZXjBMxxJyxRMMX",
+    "simulatedDelayedSignedEvent": true,
+    "noEntitlementGrantedBySuccessUrl": true,
+    "noSecondPaymentOffered": true,
+    "automaticRefreshVerified": true,
+    "boundedWaitSeconds": 30,
+    "timeoutOffersManualRefresh": true,
+    "thirdConfirmationProviderId": "01a1315e-6e7c-7b4e-8f98-2257bd872470",
+    "thirdConfirmationStatus": "DELIVERED"
+  }
+}

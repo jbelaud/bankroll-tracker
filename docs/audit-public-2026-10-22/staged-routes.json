@@ -1,0 +1,869 @@
+{
+  "checkedAt": "2026-10-22T06:25:36.989Z",
+  "origin": "https://bankroll-tracker-117ad8f95-ets-belaud.vercel.app",
+  "mode": "staged",
+  "pages": 73,
+  "complete": true,
+  "results": [
+    {
+      "path": "/downloads/cgv-kalivoa-en-2026-10-22.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/downloads/cgv-kalivoa-fr-2026-10-22.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/downloads/formulaire-retractation-kalivoa-en.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/downloads/formulaire-retractation-kalivoa-fr.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/en",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa — OCR betting-slip scan and bankroll tracking | Kalivoa",
+      "h1": [
+        "Your bets. Your stats. Zero manual entry."
+      ],
+      "canonical": "https://kalivoa.com/en",
+      "missingTranslation": false,
+      "internalLinks": 58
+    },
+    {
+      "path": "/en/academie",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa Academy | Kalivoa",
+      "h1": [
+        "Kalivoa Academy"
+      ],
+      "canonical": "https://kalivoa.com/en/academie",
+      "missingTranslation": false,
+      "internalLinks": 66
+    },
+    {
+      "path": "/en/academie/calculer-roi-paris",
+      "status": 200,
+      "redirect": null,
+      "title": "How do you calculate betting ROI and distinguish it from win rate? | Kalivoa",
+      "h1": [
+        "How do you calculate betting ROI and distinguish it from win rate?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/calculer-roi-paris",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/en/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "redirect": null,
+      "title": "How do you read a bankroll’s drawdown in units? | Kalivoa",
+      "h1": [
+        "How do you read a bankroll’s drawdown in units?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/comprendre-drawdown-bankroll",
+      "missingTranslation": false,
+      "internalLinks": 55
+    },
+    {
+      "path": "/en/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "redirect": null,
+      "title": "Why does a public bankroll display stakes in units? | Kalivoa",
+      "h1": [
+        "Why does a public bankroll display stakes in units?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/comprendre-unites-bankroll",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/en/academie/suivre-pari-combine",
+      "status": 200,
+      "redirect": null,
+      "title": "How do you track an accumulator without counting its stake twice? | Kalivoa",
+      "h1": [
+        "How do you track an accumulator without counting its stake twice?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/suivre-pari-combine",
+      "missingTranslation": false,
+      "internalLinks": 52
+    },
+    {
+      "path": "/en/academie/verifier-paris-tipster",
+      "status": 200,
+      "redirect": null,
+      "title": "How can you verify a tipster's published bets? | Kalivoa",
+      "h1": [
+        "How can you verify a tipster's published bets?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/verifier-paris-tipster",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/en/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "redirect": null,
+      "title": "What should you check after scanning a betting slip? | Kalivoa",
+      "h1": [
+        "What should you check after scanning a betting slip?"
+      ],
+      "canonical": "https://kalivoa.com/en/academie/verifier-ticket-pari-scan",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/en/bankroll-tracking",
+      "status": 200,
+      "redirect": null,
+      "title": "Sports-betting bankroll tracking | Kalivoa",
+      "h1": [
+        "A readable bankroll, even as your history grows."
+      ],
+      "canonical": "https://kalivoa.com/en/bankroll-tracking",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/bookmakers",
+      "status": 200,
+      "redirect": null,
+      "title": "Bookmaker profiles validated for Kalivoa import | Kalivoa",
+      "h1": [
+        "Which bookmakers work with Kalivoa Scan?"
+      ],
+      "canonical": "https://kalivoa.com/en/bookmakers",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/bookmakers/betclic",
+      "status": 200,
+      "redirect": null,
+      "title": "Track Betclic bets from a screenshot | Kalivoa",
+      "h1": [
+        "Track your Betclic bets without entering them one by one"
+      ],
+      "canonical": "https://kalivoa.com/en/bookmakers/betclic",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/bookmakers/unibet",
+      "status": 200,
+      "redirect": null,
+      "title": "Track Unibet bets from a screenshot | Kalivoa",
+      "h1": [
+        "Track your Unibet bets without entering them one by one"
+      ],
+      "canonical": "https://kalivoa.com/en/bookmakers/unibet",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/bookmakers/winamax",
+      "status": 200,
+      "redirect": null,
+      "title": "Track Winamax bets from a screenshot | Kalivoa",
+      "h1": [
+        "Track your Winamax bets without entering them one by one"
+      ],
+      "canonical": "https://kalivoa.com/en/bookmakers/winamax",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/certification",
+      "status": 200,
+      "redirect": null,
+      "title": "Bankroll certification: evidence and transparency | Kalivoa",
+      "h1": [
+        "Your results, with evidence behind them."
+      ],
+      "canonical": "https://kalivoa.com/en/certification",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/contact",
+      "status": 200,
+      "redirect": null,
+      "title": "Contact Kalivoa | Kalivoa",
+      "h1": [
+        "How can we help?"
+      ],
+      "canonical": "https://kalivoa.com/en/contact",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/extension",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa Chrome extension — Batch captures | Kalivoa",
+      "h1": [
+        "Your bets, straight from your bookmaker to Kalivoa."
+      ],
+      "canonical": "https://kalivoa.com/en/extension",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/extension/privacy",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa extension privacy | Kalivoa",
+      "h1": [
+        "Kalivoa extension privacy"
+      ],
+      "canonical": "https://kalivoa.com/en/extension/privacy",
+      "missingTranslation": false,
+      "internalLinks": 49
+    },
+    {
+      "path": "/en/faq",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa FAQ | Kalivoa",
+      "h1": [
+        "Straight answers about Kalivoa."
+      ],
+      "canonical": "https://kalivoa.com/en/faq",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/en/features",
+      "status": 200,
+      "redirect": null,
+      "title": "Screenshot import and bankroll tracking features | Kalivoa",
+      "h1": [
+        "All your bet tracking, without spreadsheets or duplicate entry."
+      ],
+      "canonical": "https://kalivoa.com/en/features",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/forgot-password",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Recover your account"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 7
+    },
+    {
+      "path": "/en/legal-notice",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa legal notice | Kalivoa",
+      "h1": [
+        "Kalivoa legal notice"
+      ],
+      "canonical": "https://kalivoa.com/en/legal-notice",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/login",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Your bets. Your stats. Zero manual entry."
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 10
+    },
+    {
+      "path": "/en/offre-bienvenue",
+      "status": 200,
+      "redirect": null,
+      "title": "Welcome offer for beta testers | Kalivoa",
+      "h1": [
+        "Your first Premium year at a welcome price"
+      ],
+      "canonical": "https://kalivoa.com/en/offre-bienvenue",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/en/partenaires",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa partners | Kalivoa",
+      "h1": [
+        "Kalivoa partners"
+      ],
+      "canonical": "https://kalivoa.com/en/partenaires",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/en/partners",
+      "status": 307,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/en/pricing",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa pricing: free and Premium from €4.99/month | Kalivoa",
+      "h1": [
+        "Start for free, without a credit card."
+      ],
+      "canonical": "https://kalivoa.com/en/pricing",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/en/privacy",
+      "status": 200,
+      "redirect": null,
+      "title": "Privacy and personal data | Kalivoa",
+      "h1": [
+        "Privacy and personal data"
+      ],
+      "canonical": "https://kalivoa.com/en/privacy",
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/en/responsible-gambling",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Responsible gambling"
+      ],
+      "canonical": "https://kalivoa.com/en/responsible-gambling",
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/en/retractation",
+      "status": 200,
+      "redirect": null,
+      "title": "Withdraw from my contract | Kalivoa",
+      "h1": [
+        "Withdraw from my contract"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/en/sales-terms",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa terms of sale | Kalivoa",
+      "h1": [
+        "Terms and conditions of sale"
+      ],
+      "canonical": "https://kalivoa.com/en/sales-terms",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/en/screenshot-import",
+      "status": 200,
+      "redirect": null,
+      "title": "Turn betting-slip screenshots into history | Kalivoa",
+      "h1": [
+        "Your screenshots become bets ready to join your history."
+      ],
+      "canonical": "https://kalivoa.com/en/screenshot-import",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/en/signup",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Create an account"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 9
+    },
+    {
+      "path": "/en/terms",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Terms of use"
+      ],
+      "canonical": "https://kalivoa.com/en/terms",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa — Scan OCR de tickets et suivi de bankroll | Kalivoa",
+      "h1": [
+        "Tes paris. Tes stats. Zéro saisie."
+      ],
+      "canonical": "https://kalivoa.com/fr",
+      "missingTranslation": false,
+      "internalLinks": 58
+    },
+    {
+      "path": "/fr/academie",
+      "status": 200,
+      "redirect": null,
+      "title": "Académie Kalivoa | Kalivoa",
+      "h1": [
+        "Académie Kalivoa"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie",
+      "missingTranslation": false,
+      "internalLinks": 66
+    },
+    {
+      "path": "/fr/academie/calculer-roi-paris",
+      "status": 200,
+      "redirect": null,
+      "title": "Comment calculer le ROI de ses paris et le distinguer du taux de réussite ? | Kalivoa",
+      "h1": [
+        "Comment calculer le ROI de ses paris et le distinguer du taux de réussite ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/calculer-roi-paris",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/fr/academie/comprendre-drawdown-bankroll",
+      "status": 200,
+      "redirect": null,
+      "title": "Comment lire le drawdown de sa bankroll en unités ? | Kalivoa",
+      "h1": [
+        "Comment lire le drawdown de sa bankroll en unités ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-drawdown-bankroll",
+      "missingTranslation": false,
+      "internalLinks": 55
+    },
+    {
+      "path": "/fr/academie/comprendre-unites-bankroll",
+      "status": 200,
+      "redirect": null,
+      "title": "Pourquoi une bankroll publique affiche-t-elle les mises en unités ? | Kalivoa",
+      "h1": [
+        "Pourquoi une bankroll publique affiche-t-elle les mises en unités ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/comprendre-unites-bankroll",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/fr/academie/suivre-pari-combine",
+      "status": 200,
+      "redirect": null,
+      "title": "Comment suivre un pari combiné sans compter deux fois la mise ? | Kalivoa",
+      "h1": [
+        "Comment suivre un pari combiné sans compter deux fois la mise ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/suivre-pari-combine",
+      "missingTranslation": false,
+      "internalLinks": 52
+    },
+    {
+      "path": "/fr/academie/verifier-paris-tipster",
+      "status": 200,
+      "redirect": null,
+      "title": "Comment vérifier les paris publiés par un tipster ? | Kalivoa",
+      "h1": [
+        "Comment vérifier les paris publiés par un tipster ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/verifier-paris-tipster",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/fr/academie/verifier-ticket-pari-scan",
+      "status": 200,
+      "redirect": null,
+      "title": "Quels champs vérifier après le scan d'un ticket de pari ? | Kalivoa",
+      "h1": [
+        "Quels champs vérifier après le scan d'un ticket de pari ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/academie/verifier-ticket-pari-scan",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/fr/bankroll-tracking",
+      "status": 200,
+      "redirect": null,
+      "title": "Suivi de bankroll pour les paris sportifs | Kalivoa",
+      "h1": [
+        "Une bankroll lisible, même quand votre historique grandit."
+      ],
+      "canonical": "https://kalivoa.com/fr/bankroll-tracking",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/bookmakers",
+      "status": 200,
+      "redirect": null,
+      "title": "Profils bookmaker validés pour l’import Kalivoa | Kalivoa",
+      "h1": [
+        "Quels bookmakers sont compatibles avec Kalivoa Scan ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/bookmakers",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/bookmakers/betclic",
+      "status": 200,
+      "redirect": null,
+      "title": "Suivre ses paris Betclic depuis une capture | Kalivoa",
+      "h1": [
+        "Suivez vos paris Betclic sans les saisir un par un"
+      ],
+      "canonical": "https://kalivoa.com/fr/bookmakers/betclic",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/bookmakers/unibet",
+      "status": 200,
+      "redirect": null,
+      "title": "Suivre ses paris Unibet depuis une capture | Kalivoa",
+      "h1": [
+        "Suivez vos paris Unibet sans les saisir un par un"
+      ],
+      "canonical": "https://kalivoa.com/fr/bookmakers/unibet",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/bookmakers/winamax",
+      "status": 200,
+      "redirect": null,
+      "title": "Suivre ses paris Winamax depuis une capture | Kalivoa",
+      "h1": [
+        "Suivez vos paris Winamax sans les saisir un par un"
+      ],
+      "canonical": "https://kalivoa.com/fr/bookmakers/winamax",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/certification",
+      "status": 200,
+      "redirect": null,
+      "title": "Certification des bankrolls : preuves et transparence | Kalivoa",
+      "h1": [
+        "Tes résultats, avec des preuves à l’appui."
+      ],
+      "canonical": "https://kalivoa.com/fr/certification",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/contact",
+      "status": 200,
+      "redirect": null,
+      "title": "Contacter Kalivoa | Kalivoa",
+      "h1": [
+        "Comment peut-on vous aider ?"
+      ],
+      "canonical": "https://kalivoa.com/fr/contact",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/extension",
+      "status": 200,
+      "redirect": null,
+      "title": "Extension Chrome Kalivoa — Capture en série | Kalivoa",
+      "h1": [
+        "Tes paris, directement du bookmaker à Kalivoa."
+      ],
+      "canonical": "https://kalivoa.com/fr/extension",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/extension/privacy",
+      "status": 200,
+      "redirect": null,
+      "title": "Confidentialité de l’extension Kalivoa | Kalivoa",
+      "h1": [
+        "Confidentialité de l’extension Kalivoa"
+      ],
+      "canonical": "https://kalivoa.com/fr/extension/privacy",
+      "missingTranslation": false,
+      "internalLinks": 49
+    },
+    {
+      "path": "/fr/faq",
+      "status": 200,
+      "redirect": null,
+      "title": "FAQ Kalivoa | Kalivoa",
+      "h1": [
+        "Des réponses directes sur Kalivoa."
+      ],
+      "canonical": "https://kalivoa.com/fr/faq",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/fr/features",
+      "status": 200,
+      "redirect": null,
+      "title": "Fonctionnalités de suivi de bankroll | Kalivoa",
+      "h1": [
+        "Tout votre suivi de paris, sans tableur ni double saisie."
+      ],
+      "canonical": "https://kalivoa.com/fr/features",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/forgot-password",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Retrouver ton compte"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 7
+    },
+    {
+      "path": "/fr/legal-notice",
+      "status": 200,
+      "redirect": null,
+      "title": "Mentions légales Kalivoa | Kalivoa",
+      "h1": [
+        "Mentions légales de Kalivoa"
+      ],
+      "canonical": "https://kalivoa.com/fr/legal-notice",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/login",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Tes paris. Tes stats. Zéro saisie."
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 10
+    },
+    {
+      "path": "/fr/offre-bienvenue",
+      "status": 200,
+      "redirect": null,
+      "title": "Offre de bienvenue pour les bêta-testeurs | Kalivoa",
+      "h1": [
+        "Votre première année Premium à tarif préférentiel"
+      ],
+      "canonical": "https://kalivoa.com/fr/offre-bienvenue",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/fr/partenaires",
+      "status": 200,
+      "redirect": null,
+      "title": "Les partenaires Kalivoa | Kalivoa",
+      "h1": [
+        "Les partenaires Kalivoa"
+      ],
+      "canonical": "https://kalivoa.com/fr/partenaires",
+      "missingTranslation": false,
+      "internalLinks": 54
+    },
+    {
+      "path": "/fr/partners",
+      "status": 307,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/fr/pricing",
+      "status": 200,
+      "redirect": null,
+      "title": "Tarifs Kalivoa : gratuit et Premium dès 4,99 €/mois | Kalivoa",
+      "h1": [
+        "Commencez gratuitement, sans carte bancaire."
+      ],
+      "canonical": "https://kalivoa.com/fr/pricing",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/fr/privacy",
+      "status": 200,
+      "redirect": null,
+      "title": "Confidentialité et données personnelles | Kalivoa",
+      "h1": [
+        "Confidentialité et données personnelles"
+      ],
+      "canonical": "https://kalivoa.com/fr/privacy",
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/fr/responsible-gambling",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Jouer responsable"
+      ],
+      "canonical": "https://kalivoa.com/fr/responsible-gambling",
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/fr/retractation",
+      "status": 200,
+      "redirect": null,
+      "title": "Renoncer à mon contrat | Kalivoa",
+      "h1": [
+        "Renoncer à mon contrat"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 48
+    },
+    {
+      "path": "/fr/sales-terms",
+      "status": 200,
+      "redirect": null,
+      "title": "Conditions de vente Kalivoa | Kalivoa",
+      "h1": [
+        "Conditions générales de vente"
+      ],
+      "canonical": "https://kalivoa.com/fr/sales-terms",
+      "missingTranslation": false,
+      "internalLinks": 53
+    },
+    {
+      "path": "/fr/screenshot-import",
+      "status": 200,
+      "redirect": null,
+      "title": "Importer des tickets de pari par capture | Kalivoa",
+      "h1": [
+        "Vos captures deviennent des paris prêts à rejoindre votre historique."
+      ],
+      "canonical": "https://kalivoa.com/fr/screenshot-import",
+      "missingTranslation": false,
+      "internalLinks": 50
+    },
+    {
+      "path": "/fr/signup",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Créer un compte"
+      ],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 9
+    },
+    {
+      "path": "/fr/terms",
+      "status": 200,
+      "redirect": null,
+      "title": "Kalivoa",
+      "h1": [
+        "Conditions d’utilisation"
+      ],
+      "canonical": "https://kalivoa.com/fr/terms",
+      "missingTranslation": false,
+      "internalLinks": 51
+    },
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "redirect": null,
+      "title": "",
+      "h1": [],
+      "canonical": null,
+      "missingTranslation": false,
+      "internalLinks": 0
+    }
+  ],
+  "errors": [],
+  "missingTranslations": []
+}

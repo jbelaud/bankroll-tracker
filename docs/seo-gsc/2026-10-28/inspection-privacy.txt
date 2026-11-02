@@ -1,0 +1,95 @@
+Browser tab: 2, Title: "Inspection de l'URL", URL: "https://search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=0Z4BvYXrrhcnrkMNXNl43w".
+0 AXWebArea Inspection de l'URL, URL: search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=0Z4BvYXrrhcnrkMNXNl43w
+	1 container
+		2 container yDmH0d
+			3 container gb
+				4 container
+					5 button (collapsed) Description: Menu principal, Secondary Actions: Expand
+						6 image
+					7 link Description: Google Search Console, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com, ID: sdgBod
+					8 container
+						9 combo box (collapsed, settable) Description: Inspecter n'importe quelle URL de kalivoa.com, Secondary Actions: Expand
+					10 button Recherche
+						11 image
+					12 button Aide
+					13 button Paramètres utilisateur
+					14 container
+						15 button Messages non lus : 7
+						16 text 7
+					17 button (collapsed) Description: Applications Google, Secondary Actions: Expand
+					18 button (collapsed) Description: Compte Google Jérémy (contact.kalivoa@gmail.com), Secondary Actions: Expand
+			19 container navigational drawer
+				20 container
+					21 container Principal
+						22 pop up button (collapsed) Description: Propriété de recherche, Secondary Actions: Expand
+							23 image favicon
+							24 combo box (collapsed, settable) Description: kalivoa.com, Secondary Actions: Expand
+						25 container
+							26 link Description: Vue d'ensemble, Value: search.google.com/search-console?resource_id=sc-domain%3Akalivoa.com
+							27 link Description: Insights, Value: search.google.com/search-console/performance/insights?resource_id=sc-domain%3Akalivoa.com
+							28 container
+								29 link Description: Performances, Value: search.google.com/search-console/performance/search-analytics?resource_id=sc-domain%3Akalivoa.com
+								30 button (collapsed) Description: Section du rapport "Performances", Secondary Actions: Expand
+							31 button Inspection de l'URL
+								32 text Inspection de l'URL
+							33 container
+								34 text Indexation
+								35 button (expanded) Description: Section du rapport "Indexation", Secondary Actions: Collapse
+								36 link Description: Pages, Value: search.google.com/search-console/index?resource_id=sc-domain%3Akalivoa.com
+								37 link Description: Sitemaps, Value: search.google.com/search-console/sitemaps?resource_id=sc-domain%3Akalivoa.com
+								38 link Description: Suppressions, Value: search.google.com/search-console/removals?resource_id=sc-domain%3Akalivoa.com
+							39 container
+								40 text Expérience
+								41 button (expanded) Description: Section du rapport "Expérience", Secondary Actions: Collapse
+								42 link Description: Core Web Vitals, Value: search.google.com/search-console/core-web-vitals?resource_id=sc-domain%3Akalivoa.com
+								43 link Description: HTTPS, Value: search.google.com/search-console/https?resource_id=sc-domain%3Akalivoa.com
+							44 container
+								45 text Améliorations
+								46 button (expanded) Description: Section du rapport "Améliorations", Secondary Actions: Collapse
+								47 link Description: Fils d'Ariane, Value: search.google.com/search-console/r/breadcrumbs?resource_id=sc-domain%3Akalivoa.com
+							48 container
+								49 text Sécurité et actions manuelles
+								50 button (collapsed) Description: Section du rapport "Sécurité et actions manuelles", Secondary Actions: Expand
+							51 link Description: Rapport sur les liens, Value: search.google.com/search-console/links?resource_id=sc-domain%3Akalivoa.com
+							52 link Description: Réussites, Value: search.google.com/search-console/achievements?resource_id=sc-domain%3Akalivoa.com
+							53 link Description: Paramètres, Value: search.google.com/search-console/settings?resource_id=sc-domain%3Akalivoa.com
+							54 button Envoyer des commentaires
+								55 text Envoyer des commentaires
+							56 button À propos de la Search Console
+								57 text À propos de la Search Console
+							58 link Description: Confidentialité, Value: myaccount.google.com/privacypolicy?hl=fr
+							59 link Description: Conditions d'utilisation, Value: myaccount.google.com/termsofservice?hl=fr
+			60 container
+				61 text https://kalivoa.com/fr/privacy
+				62 container
+					63 container Fils d'Ariane
+						64 heading Inspection de l'URL, Value: 1
+							65 text Inspection de l'URL
+					66 button TESTER L'URL ACTIVE
+						67 text TESTER L'URL ACTIVE
+				68 container
+					69 container
+						70 text Cette URL n'a pas été indexée par Google Cette page n'est pas indexée. Les pages non indexées ne peuvent pas être diffusées sur Google. Pour savoir pourquoi elle n'a pas été indexée, consultez les informations ci-dessous. 
+						71 link Description: En savoir plus, Value: support.google.com/webmasters/answer/9012289#url_not_on_google
+					72 button (disabled) Afficher la page explorée
+						73 text AFFICHER LA PAGE EXPLORÉE
+					74 container
+						75 text Page modifiée ?
+						76 button Demander une indexationRedemander
+							77 text DEMANDER UNE INDEXATION
+					78 button (expanded) Secondary Actions: Collapse, Indexation des pages La page n'est pas indexée : Page en double sans URL canonique sélectionnée par l'utilisateur
+						79 text Indexation des pages
+						80 container
+							81 text La page n'est pas indexée :  Page en double sans URL canonique sélectionnée par l'utilisateur
+					82 container
+						83 text Découverte Sitemaps https://kalivoa.com/sitemap.xml Page d'origine https://kalivoa.com/privacy https://kalivoa.com/sitemap.xml Exploration Dernière exploration 11 sept. 2026, 20:30:40 Explorée avec Googlebot pour smartphone Exploration autorisée ? Oui Récupération de page Réussie Indexation autorisée ? Oui Indexation URL canonique déclarée par l'utilisateur Aucun URL canonique sélectionnée par Google
+						84 button (collapsed) Description: null, Secondary Actions: Expand
+						85 text https://kalivoa.com/privacy
+						86 button INSPECTER
+							87 text INSPECTER
+						88 link Description: Consulter une documentation plus détaillée, Value: support.google.com/webmasters/answer/7440203#duplicate_page_without_canonical_tag
+						89 link Description: OUVRIR LE RAPPORT, Value: search.google.com/search-console/index/drilldown?resource_id=sc-domain%3Akalivoa.com&item_key=CAMYDyAC
+					90 text Améliorations et expérience Seules les URL indexées peuvent être optimisées
+		91 text Inspection de l'URL
+
+The focused UI element is 0 AXWebArea Inspection de l'URL, URL: search.google.com/search-console/inspect?resource_id=sc-domain%3Akalivoa.com&id=0Z4BvYXrrhcnrkMNXNl43w

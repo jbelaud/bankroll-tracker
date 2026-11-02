@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-01",
+  "project": "umyxyahkifdezohaotel",
+  "scope": "public application schema, data, RLS and grants",
+  "authIncluded": true,
+  "storageObjectsIncluded": true,
+  "productionWrites": false,
+  "customerRowsPrinted": false,
+  "encrypted": true,
+  "restored": true,
+  "migrationsRehearsed": false,
+  "authTables": [
+    "auth.users",
+    "auth.identities"
+  ],
+  "authSessionsIncluded": false,
+  "storageObjectCount": 0,
+  "supplementSha256": "e1fc9424a32556ad023242657f62428c11fbd8eefee75b38759ebfe3da8c3bc5",
+  "backupBytes": 860371,
+  "archiveSha256": "92fa3f65d4c0e50aa369d4c724ac8c0988b7a86a544c2a89bac22218c56615e4",
+  "authDataRestoredLocally": true,
+  "authRowsVerified": 94,
+  "storageContentVerified": true,
+  "differentTables": [],
+  "tablesVerified": 42,
+  "rowsVerified": 14468,
+  "failureStage": "migration-rehearsal",
+  "failureType": "Error",
+  "finishedAt": "2026-11-01T17:33:34.156Z"
+}

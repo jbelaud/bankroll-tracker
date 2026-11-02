@@ -1,0 +1,29 @@
+{
+  "sandbox": true,
+  "signedProviderCallbacks": true,
+  "previewProtectionActive": true,
+  "simulatorOnly": true,
+  "checks": [
+    {
+      "outcome": "delivered",
+      "emailId": "f4e2a3f3-b217-4c7c-b347-2f2824f11be3",
+      "providerId": "01a13159-41bb-7737-aef7-dcd27a9024d0",
+      "status": "DELIVERED",
+      "deliveredAt": "2026-10-12T18:21:38.227Z",
+      "inactivityNoticeAt": "2026-10-12T18:21:38.227Z"
+    },
+    {
+      "outcome": "bounced",
+      "emailId": "7d4e71b4-7797-4b98-bde4-160bb4bbdd1e",
+      "providerId": "01a13159-7df2-7566-b1f1-ec55b7bbdabd",
+      "status": "NEEDS_REVIEW",
+      "deliveredAt": null,
+      "inactivityNoticeAt": null
+    }
+  ],
+  "duplicateDeliveryPreservesOriginalNotice": true,
+  "passed": true,
+  "providerWebhookDisabled": true,
+  "relayStopped": true,
+  "disabledScreenshot": "hosted-resend-webhook-disabled-2026-10-12.png"
+}

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-11",
+  "passed": true,
+  "productionProject": "umyxyahkifdezohaotel",
+  "sourceSchemaSha256": "1e918d696710c1dd223b4c25e19f863bab10d09183b0ba3aa1485762531ae4f8",
+  "migrations": [
+    "20261009190000_welcome_offer_enrollment",
+    "20261011100000_commercial_records",
+    "20261011200000_restrict_server_only_tables"
+  ],
+  "customerRowsCopied": false,
+  "fictitiousFixturesOnly": true,
+  "productionCommercialMigrationsApplied": false,
+  "betaEligibilityPreserved": true,
+  "inactivityGracePreserved": true,
+  "closedSupportGracePreserved": true,
+  "privateArchiveTables": 4,
+  "supabaseRolesRequiredOnNeon": false,
+  "corePrismaModelsCompatible": true
+}
