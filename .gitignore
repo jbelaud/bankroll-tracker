@@ -43,3 +43,8 @@ next-env.d.ts
 .neon
 .preview-backups/
 extension/dist/
+
+# local scratch / tooling
+/work/
+/.codex-remote-attachments/
+/recette-preview/
