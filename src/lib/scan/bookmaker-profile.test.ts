@@ -51,7 +51,7 @@ describe("bookmaker scan profile rules", () => {
 
   it("keeps a Betclic tennis accumulator's canceled legs and final boosted odds", () => {
     const prompt = buildExtractionPrompt();
-    expect(prompt).toContain("Sur un combiné Betclic, plusieurs oppositions entre joueuses ou joueurs individuels");
+    expect(prompt).toContain("Sur un combiné, plusieurs oppositions entre joueuses ou joueurs individuels");
     expect(prompt).toContain('Classe chaque jambe et le ticket en Tennis, avec "format": "COMBINE"');
     expect(prompt).toContain('Les jambes « (annulé) » restent dans "selections" avec "result": "Remboursé"');
     expect(prompt).toContain('"originalOdds": 1.71 et "odds": 1.79');
@@ -124,7 +124,7 @@ describe("bookmaker scan profile rules", () => {
 
     expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: validating })).not.toContain(unibetRule);
     expect(buildExtractionPrompt(undefined, { bookmaker: "Unibet", bookmakerRules: tested })).toContain(unibetRule);
-    expect(buildExtractionPrompt()).toContain("Hors cette règle Betclic visuellement vérifiée, une exception ne peut venir que de règles spécifiques déjà fournies par un profil bookmaker TESTED");
+    expect(buildExtractionPrompt()).toContain("Cette règle commune exige un libellé explicite et deux cotes visibles");
   });
 
   it("keeps the Bet365 credit rule opt-in until its profile is TESTED", () => {

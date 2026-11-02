@@ -14,6 +14,8 @@ export function ScanCreditSummary({ wallet, compact = false }: { wallet: ScanWal
   const active = wallet.batches.filter((b) => b.remaining > 0);
   const expiring = active.filter((b) => b.expiresAt || b.type === "MONTHLY");
   const permanent = active.filter((b) => !b.expiresAt && b.type !== "MONTHLY");
+  const lockedInitial = wallet.batches.filter((b) => b.type === "INITIAL" && b.status === "ACTIVE"
+    && b.remaining === 0 && !b.expiresAt).reduce((sum, b) => sum + Math.max(0, b.granted - b.used - b.reserved - b.revoked), 0);
   const label = (lot: ScanWalletBatch) => {
     if (lot.origin === "SUBSCRIPTION_HISTORY_IMPORT") return t("origins.historyImport");
     if (lot.origin === "LEGACY_REFERRAL_BALANCE") return t("origins.legacyReferral");
@@ -44,6 +46,7 @@ export function ScanCreditSummary({ wallet, compact = false }: { wallet: ScanWal
   return <div className="space-y-3">
     {!compact && <h2 className="text-lg font-semibold">{t("total", { count: wallet.totalAvailable })}</h2>}
     {wallet.totalAvailable === 0 && <p className="text-sm text-muted-foreground">{t("empty")}</p>}
+    {lockedInitial > 0 && <p className="rounded-lg border border-border p-3 text-sm text-muted-foreground">{t("lockedInitial", { count: lockedInitial })}</p>}
     {alert && wallet.nextExpiry && <p role="status" className="rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm">
       {t("alert", { count: wallet.nextExpiryCount, date: date(wallet.nextExpiry) })}
     </p>}
@@ -52,6 +55,7 @@ export function ScanCreditSummary({ wallet, compact = false }: { wallet: ScanWal
     </section>}
     {permanent.length > 0 && <section className="rounded-lg border border-profit/30 bg-profit/5 p-3">
       <h3 className="mb-2 text-xs font-semibold">{t("permanentTitle", { count: wallet.permanentRemaining })}</h3>{list(permanent)}
+      {permanent.some((b) => b.type === "INITIAL") && <p className="mt-2 text-xs text-muted-foreground">{t("paidBonusCondition")}</p>}
     </section>}
   </div>;
 }

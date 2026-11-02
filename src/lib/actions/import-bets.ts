@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { randomUUID } from "node:crypto";
-import { Prisma, type AccountingCurrency, type Currency } from "@prisma/client";
+import { Prisma, type Currency } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth";
 import { getServerLocale } from "@/lib/i18n/get-server-locale";
@@ -18,7 +18,8 @@ import {
   normalizeTaxonomyPair,
 } from "@/lib/taxonomy";
 import { resolveOwnedTipsterIdsForImport } from "@/lib/tipsters/service";
-import { createOwnedBet, type BetValidationMessages } from "@/lib/bets/create";
+import { createOwnedBet, type BetValidationMessages, type CreateOwnedBetInput } from "@/lib/bets/create";
+import { createOwnedBets } from "@/lib/bets/create-batch";
 import { normalizeBookmaker } from "@/lib/bookmakers";
 import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof, resultProofMatches } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
@@ -33,7 +34,7 @@ export type ScanImportMeasurement = {
 };
 
 export type ImportResult =
-  | { imported: number; firstImport: boolean; resultProofsUpdated?: number; resultProofsVerified?: number; error?: undefined }
+  | { imported: number; firstImport: boolean; resultProofsUpdated?: number; error?: undefined }
   | { error: string; imported?: undefined };
 
 export type FileImportResult =
@@ -67,8 +68,7 @@ export async function importExternalBets(
   bets: ParsedBet[],
   sourceFormat: string,
   fileName?: string,
-  requestedAllocationId?: string | null,
-  sourceCurrency?: AccountingCurrency
+  requestedAllocationId?: string | null
 ): Promise<FileImportResult> {
   const user = await requireUser();
   const isBetAnalytix = sourceFormat === "BET_ANALYTIX";
@@ -93,12 +93,7 @@ export async function importExternalBets(
     prisma.bet.count({ where: { bankroll: { userId: user.id } } }),
   ]);
   if (!bankroll) return { error: "Bankroll introuvable." };
-  if (isBetAnalytix && !["EUR", "USD", "GBP", "UNIT"].includes(sourceCurrency ?? "")) {
-    return { error: "Choisis la devise de la bankroll Bet-Analytix d’origine avant l’import." };
-  }
-  if (isBetAnalytix && bankroll.currency !== sourceCurrency) {
-    return { error: "La devise de l’export Bet-Analytix doit correspondre à celle de la bankroll de destination." };
-  }
+  if (isBetAnalytix && bankroll.currency !== "UNIT") return { error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." };
   if (!isBetAnalytix && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
@@ -117,7 +112,7 @@ export async function importExternalBets(
 
   const existingKeys = new Set(existingBets.map((bet) => duplicateKey(
     bet,
-    isBetAnalytix && sourceCurrency === "UNIT" && bet.importBatch?.source.startsWith("BET_ANALYTIX_UNITS_")
+    isBetAnalytix && bet.importBatch?.source.startsWith("BET_ANALYTIX_UNITS_")
   )));
   const acceptedKeys = new Set<string>();
   const taxonomyEntries = new Map<string, { userId: string; sport: string; betType: string }>();
@@ -208,11 +203,11 @@ export async function importExternalBets(
       betType: normalized.betType,
       description,
       eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
-      // Les montants BA sont repris dans la devise native déclarée par l'utilisateur.
-      // Aucun taux de conversion ni montant fictif n'est inventé pour ces lignes.
+      // Dans une bankroll UNIT, stake et cashOutAmount sont nativement en U.
+      // Aucun montant fictif en devise n'est inventé pour les lignes BA.
       stake: bet.stake as number,
       stakeCurrency: bankroll.currency,
-      ...(isBetAnalytix && sourceCurrency === "UNIT" ? {
+      ...(isBetAnalytix ? {
         stakeUnits: bet.stake as number,
         unitsRecordedAt: new Date(),
       } : {}),
@@ -233,7 +228,7 @@ export async function importExternalBets(
       tipsterName: bet.tipster?.normalize("NFKC").trim().replace(/\s+/g, " ").slice(0, 120) || null,
       selections: normalizedSelections,
     };
-    const key = duplicateKey(row, isBetAnalytix && sourceCurrency === "UNIT");
+    const key = duplicateKey(row, isBetAnalytix);
     if (existingKeys.has(key) || acceptedKeys.has(key)) {
       skippedDuplicates += 1;
       continue;
@@ -270,8 +265,7 @@ export async function importExternalBets(
       const batch = await tx.importBatch.create({
         data: {
           userId: user.id,
-          source: isBetAnalytix ? sourceCurrency === "UNIT" ? "BET_ANALYTIX_UNITS_NATIVE" : `BET_ANALYTIX_${sourceCurrency}_NATIVE`
-            : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
+          source: isBetAnalytix ? "BET_ANALYTIX_UNITS_NATIVE" : sourceFormat.toLocaleUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 40) || "UNKNOWN",
           fileName: fileName?.normalize("NFKC").trim().replace(/[\\/]/g, "_").slice(0, 255) || null,
           importedCount: rows.length,
           skippedDuplicates,
@@ -375,7 +369,6 @@ export async function importBets(
 
   let existingBets = 0;
   let resultProofsUpdated = 0;
-  let resultProofsVerified = 0;
   try {
     const bankroll = await prisma.bankroll.findFirst({
       where: {
@@ -511,48 +504,46 @@ export async function importBets(
       revalidatePath("/[locale]/bankrolls/[id]", "page");
       revalidatePath("/[locale]/history", "page");
       revalidatePath("/[locale]/p/[slug]", "page");
-      return {
-        imported: 1,
-        firstImport: false,
-        resultProofsUpdated: 1,
-        resultProofsVerified: verifiedResultProof ? 1 : 0,
-      };
+      return { imported: 1, firstImport: false, resultProofsUpdated: 1 };
     }
     const allocationByBookmaker = new Map(bankroll.allocations.map((allocation) => [
       normalizeBookmaker(allocation.bookmaker).toLocaleLowerCase("fr"),
       allocation,
     ]));
-    existingBets = await prisma.bet.count({
-      where: { bankroll: { userId: user.id } },
-    });
-    const existingScanImports = await prisma.bet.count({
-      where: { bankroll: { userId: user.id }, entryMethod: "SCAN" },
-    });
-    const pendingResultTargets = await prisma.bet.findMany({
-      where: {
-        bankrollId,
-        result: "EN_ATTENTE",
-        ...(resultBatchMode ? { certificationLockedAt: { not: null } } : {}),
-        bankroll: { userId: user.id },
-      },
-      select: {
-        id: true, ticketRef: true, date: true, stake: true, stakeCurrency: true,
-        sourceStakeAmount: true, sourceStakeCurrency: true, referenceCapitalAtBet: true, odds: true,
-        bookmaker: true, sport: true, betType: true, description: true, format: true,
-        selections: {
-          select: { sport: true, betType: true, label: true, odds: true },
-          orderBy: { position: "asc" },
+    const [existingBetCount, existingScanImports, pendingResultTargets, recordedReferences] = await Promise.all([
+      prisma.bet.count({
+        where: { bankroll: { userId: user.id } },
+      }),
+      prisma.bet.count({
+        where: { bankroll: { userId: user.id }, entryMethod: "SCAN" },
+      }),
+      prisma.bet.findMany({
+        where: {
+          bankrollId,
+          result: "EN_ATTENTE",
+          ...(resultBatchMode ? { certificationLockedAt: { not: null } } : {}),
+          bankroll: { userId: user.id },
         },
-      },
-    });
+        select: {
+          id: true, ticketRef: true, date: true, stake: true, stakeCurrency: true,
+          sourceStakeAmount: true, sourceStakeCurrency: true, referenceCapitalAtBet: true, odds: true,
+          bookmaker: true, sport: true, betType: true, description: true, format: true,
+          selections: {
+            select: { sport: true, betType: true, label: true, odds: true },
+            orderBy: { position: "asc" },
+          },
+        },
+      }),
+      prisma.bet.findMany({
+        where: { bankrollId, ticketRef: { not: null }, bankroll: { userId: user.id } },
+        select: { ticketRef: true },
+      }),
+    ]);
+    existingBets = existingBetCount;
     const matchingResultTargets = pendingResultTargets.map((target) => ({ ...target,
       stake: target.sourceStakeCurrency === ticketCurrency && target.sourceStakeAmount !== null
         ? target.sourceStakeAmount : target.stake,
     }));
-    const recordedReferences = await prisma.bet.findMany({
-      where: { bankrollId, ticketRef: { not: null }, bankroll: { userId: user.id } },
-      select: { ticketRef: true },
-    });
     if (bets.some((bet) => {
       if (bet.sourceScanIndex === undefined) return false;
       const scanUsageId = scanUsageIdForSourceIndex(scanUsageIds, bet.sourceScanIndex);
@@ -643,11 +634,12 @@ export async function importBets(
       }
       if (!bet.date && !plan.automaticResultTarget) {
         return {
-          error: "La date doit être renseignée pour créer un nouveau pari. Une capture de résultat Bet365 sans date peut uniquement mettre à jour un pari en attente correspondant.",
+          error: `La date doit être renseignée pour créer ce nouveau pari${bet.ticketRef ? ` (ticket ${bet.ticketRef.trim().slice(0, 120)})` : ""}. Complète la date de prise du pari dans la liste, puis confirme l’import.`,
         };
       }
     }
 
+    const newBetInputs: CreateOwnedBetInput[] = [];
     for (const [index, bet] of bets.entries()) {
       const {
         scanUsageId,
@@ -690,7 +682,6 @@ export async function importBets(
           };
         }
         resultProofsUpdated += 1;
-        if (verifiedResultProof) resultProofsVerified += 1;
         console.info("[scan-result] existing pending bet updated", {
           userId: user.id,
           bankrollId,
@@ -703,10 +694,7 @@ export async function importBets(
         ? allocationByBookmaker.get(normalizeBookmaker(detectedBookmaker).toLocaleLowerCase("fr"))
         : undefined;
       const allocation = detectedAllocation ?? (bankroll.mode === "DISTRIBUTED" && bankroll.allocations.length === 1 ? bankroll.allocations[0] : undefined);
-      const sourceEvidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
-      const sourceEvidenceResult = sourceEvidence?.headerResult ?? sourceEvidence?.observedResult ?? null;
-      const qualifiedPendingEvidence = bet.result === "EN_ATTENTE" && sourceEvidenceResult === "EN_ATTENTE";
-      await createOwnedBet(user.id, {
+      newBetInputs.push({
         bankrollId,
         allocationId: allocation?.id ?? null,
         bookmaker: detectedBookmaker ?? allocation?.bookmaker ?? null,
@@ -727,10 +715,11 @@ export async function importBets(
         source: {
           entryMethod: scanUsageId ? "SCAN" : "MANUAL",
           scanUsageId,
-          eventStartAt: qualifiedPendingEvidence && sourceEvidence?.eventStartAt
-            ? new Date(sourceEvidence.eventStartAt) : null,
-          ticketPlacedAt: qualifiedPendingEvidence && sourceEvidence?.ticketPlacedAt
-            ? new Date(sourceEvidence.ticketPlacedAt) : null,
+          eventStartAt: (() => {
+            const evidence = scanProof ? findScanProofEvidence(scanProof.proofEvidence, bet.ticketRef) : null;
+            return bet.result === "EN_ATTENTE" && evidence?.headerResult === "EN_ATTENTE" && evidence.eventStartAt
+              ? new Date(evidence.eventStartAt) : null;
+          })(),
           format: bet.format,
           resolvedTipsterId: resolvedTipsterIds[index],
           closingOdds: bet.closingOdds,
@@ -740,21 +729,27 @@ export async function importBets(
           ticketFxRate,
           expectedReferenceCapital,
         },
-      }, validationMessages, { bankrollValidated: true, taxonomy });
+      });
     }
+    if (newBetInputs.length === 1) {
+      await createOwnedBet(user.id, newBetInputs[0], validationMessages, { bankrollValidated: true, taxonomy });
+    } else if (newBetInputs.length > 1) {
+      await createOwnedBets(user.id, newBetInputs, validationMessages, { bankrollValidated: true, taxonomy });
+    }
+    const growthEvents: Parameters<typeof recordGrowthEventSafely>[0][] = [];
     const selectedTipsters = resolvedTipsterIds.filter(Boolean).length;
     const autoMatchedTipsters = bets.filter((bet, index) =>
       bet.tipsterId === undefined && Boolean(bet.tipster) && Boolean(resolvedTipsterIds[index])
     ).length;
     if (selectedTipsters > 0) {
-      await recordGrowthEventSafely({
+      growthEvents.push({
         name: "tipster_selected_on_import",
         userId: user.id,
         properties: { bets_count: selectedTipsters, import_method: "scan" },
       });
     }
     if (autoMatchedTipsters > 0) {
-      await recordGrowthEventSafely({
+      growthEvents.push({
         name: "import_tipster_auto_matched",
         userId: user.id,
         properties: { bets_count: autoMatchedTipsters, import_method: "scan" },
@@ -784,12 +779,12 @@ export async function importBets(
           },
         });
       }));
-      await recordGrowthEventSafely({
+      growthEvents.push({
         name: "verification_completed",
         userId: user.id,
         properties: { screenshots_count: uniqueScanUsageIds.length, bets_imported: bets.length },
       });
-      await recordGrowthEventSafely({
+      growthEvents.push({
         name: "bets_imported",
         userId: user.id,
         properties: { bets_imported: bets.length, import_method: "scan" },
@@ -797,26 +792,27 @@ export async function importBets(
       const fieldsCorrectedCount = scanMeasurements.reduce((total, item) => total + Math.max(0, item.fieldsCorrectedCount || 0), 0);
       const betsExcluded = scanMeasurements.reduce((total, item) => total + Math.max(0, item.betsExcluded || 0), 0);
       if (fieldsCorrectedCount > 0) {
-        await recordGrowthEventSafely({
+        growthEvents.push({
           name: "bet_field_corrected",
           userId: user.id,
           properties: { fields_corrected_count: fieldsCorrectedCount },
         });
       }
       if (betsExcluded > 0) {
-        await recordGrowthEventSafely({
+        growthEvents.push({
           name: "bet_excluded_from_import",
           userId: user.id,
           properties: { bets_excluded: betsExcluded },
         });
       }
       if (existingBets === 0) {
-        await recordGrowthEventSafely({ name: "first_bet_imported", userId: user.id, properties: { import_method: "scan" } });
+        growthEvents.push({ name: "first_bet_imported", userId: user.id, properties: { import_method: "scan" } });
       }
       if (existingScanImports === 0) {
-        await recordGrowthEventSafely({ name: "first_scan_imported", userId: user.id, properties: { bets_imported: bets.length } });
+        growthEvents.push({ name: "first_scan_imported", userId: user.id, properties: { bets_imported: bets.length } });
       }
     }
+    await Promise.all(growthEvents.map((event) => recordGrowthEventSafely(event)));
   } catch (e) {
     const t = await getTranslations({ locale, namespace: "common" });
     return { error: e instanceof Error ? e.message : t("unexpectedError") };
@@ -831,6 +827,5 @@ export async function importBets(
     imported: bets.length,
     firstImport: existingBets === 0,
     resultProofsUpdated,
-    resultProofsVerified,
   };
 }

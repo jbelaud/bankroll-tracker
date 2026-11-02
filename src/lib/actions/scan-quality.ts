@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { QUALITY_BUCKET } from "@/lib/scan/quality";
+import { COMMON_SCAN_PROFILE } from "@/lib/scan/learning";
 import type { ScanQualityReportStatus } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
@@ -32,7 +33,8 @@ async function snapshotProfile(tx: Prisma.TransactionClient, profile: ProfileSna
 }
 
 async function removeReport(report: { id: string; storagePath: string }) {
-  await createAdminSupabaseClient().storage.from(QUALITY_BUCKET).remove([report.storagePath]);
+  const result = await createAdminSupabaseClient().storage.from(QUALITY_BUCKET).remove([report.storagePath]);
+  if (result.error) throw new Error("La capture n’a pas pu être supprimée. Réessaie plus tard.");
   await prisma.scanQualityReport.delete({ where: { id: report.id } });
 }
 
@@ -56,6 +58,7 @@ export async function updateScanQualityReport(id: string, status: ScanQualityRep
 export async function setBookmakerSupport(bookmaker: string, supportStatus: "TESTED" | "UNTESTED" | "VALIDATING") {
   await requireAdmin();
   const normalizedBookmaker = bookmaker.trim().replace(/\s+/g, " ");
+  if (normalizedBookmaker === COMMON_SCAN_PROFILE) throw new Error("Utilise le parcours de validation des règles communes.");
   if (!normalizedBookmaker || normalizedBookmaker.length > 100) throw new Error("Profil bookmaker invalide.");
   await prisma.$transaction(async (tx) => {
     const existing = await tx.bookmakerScanProfile.findUnique({ where: { bookmaker: normalizedBookmaker } });
@@ -77,6 +80,7 @@ export async function setBookmakerSupport(bookmaker: string, supportStatus: "TES
 export async function saveBookmakerScanProfile(bookmaker: string, rules: string, examplesText: string) {
   await requireAdmin();
   const normalizedBookmaker = bookmaker.trim().replace(/\s+/g, " ");
+  if (normalizedBookmaker === COMMON_SCAN_PROFILE) throw new Error("Utilise le parcours de validation des règles communes.");
   const normalizedRules = rules.trim();
   if (!normalizedBookmaker || normalizedBookmaker.length > 100 || normalizedRules.length > 20_000) {
     throw new Error("Profil bookmaker invalide.");

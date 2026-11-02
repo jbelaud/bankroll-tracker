@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Plan } from "@prisma/client";
-import { Scan, Crown, CircleNotch } from "@phosphor-icons/react";
+import { Scan, Crown } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { createCheckoutSessionAction } from "@/lib/actions/billing";
 import { isPaidPlan } from "@/lib/billing/plans";
 import { Link } from "@/i18n/navigation";
 import { ScanCreditSummary } from "@/components/account/scan-credit-summary";
@@ -29,8 +26,6 @@ export function QuotaCard({
   wallet: ScanWalletSummary;
   betaPhaseActive: boolean;
 }) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const t = useTranslations("dashboard.quota");
   const paidPlan = isPaidPlan(plan);
 
@@ -38,15 +33,6 @@ export function QuotaCard({
   const pct = scansLimit > 0 ? Math.min(100, (scansUsed / scansLimit) * 100) : 0;
   const barColor = pct >= 90 ? "bg-loss" : pct >= 60 ? "bg-warning" : "bg-primary";
 
-  const handleUpgrade = async () => {
-    setLoading(true);
-    setError("");
-    const result = await createCheckoutSessionAction();
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
-  };
 
   return (
     <section
@@ -92,25 +78,12 @@ export function QuotaCard({
       </div>
 
       <ScanCreditSummary wallet={wallet} compact />
-      {error && (
-        <p role="alert" className="text-xs text-loss">
-          {error}
-        </p>
-      )}
 
       {!betaPhaseActive && plan === "FREE" && (
-        <Button
-          onClick={handleUpgrade}
-          disabled={loading}
-          className="min-h-touch w-full rounded-lg bg-gradient-to-r from-primary to-chart-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform active:scale-[0.98]"
-        >
-          {loading ? (
-            <CircleNotch size={15} className="animate-spin" aria-hidden />
-          ) : (
-            <Crown size={15} weight="fill" aria-hidden />
-          )}
+        <Link href="/account/subscription" className="flex min-h-touch w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-primary to-chart-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-transform active:scale-[0.98]">
+          <Crown size={15} weight="fill" aria-hidden />
           {t("upgradeCta")}
-        </Button>
+        </Link>
       )}
       <Link href="/referrals" className="text-center text-xs font-semibold text-primary underline-offset-4 hover:underline">
         {t("referralCta")}

@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -85,7 +86,6 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
   const [dateOrder, setDateOrder] = useState<ImportDateOrder>("AUTO");
   const [loadedFile, setLoadedFile] = useState<{ name: string; content: string } | null>(null);
-  const [baCurrency, setBaCurrency] = useState<AccountingCurrency | "">("");
 
   const validBets = useMemo(
     () => parsed?.rows.flatMap((row) => (row.bet ? [row.bet] : [])) ?? [],
@@ -132,7 +132,6 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
     setFileError("");
     setResult(null);
     setFallbackTipsterId(null);
-    setBaCurrency("");
     if (file.size > MAX_IMPORT_FILE_BYTES) {
       setParsed(null);
       setFileError(t("errors.tooLarge"));
@@ -165,12 +164,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
 
   function confirmImport() {
     if (!parsed || validBets.length === 0 || !bankrollId) return;
-    if (parsed.sourceProfile === "BET_ANALYTIX" && !baCurrency) {
-      setFileError(t("preview.baCurrencyRequired"));
-      return;
-    }
-    if (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== baCurrency) {
-      setFileError(t("preview.baCurrencyMismatch"));
+    if (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT") {
+      setFileError("Choisis une bankroll dont la devise native est U pour importer ces mises BA.");
       return;
     }
     setFileError("");
@@ -184,8 +179,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             : bet),
           source,
           fileName,
-          allocationId || null,
-          parsed.sourceProfile === "BET_ANALYTIX" ? baCurrency || undefined : undefined
+          allocationId || null
         );
         if (response.imported === undefined) {
           setFileError(response.error);
@@ -205,7 +199,6 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
     setResult(null);
     setFallbackTipsterId(null);
     setLoadedFile(null);
-    setBaCurrency("");
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -366,26 +359,8 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
                   </p>
                 </div>
               </div>
-              <div className="mt-4 grid max-w-sm gap-1.5">
-                <Label htmlFor="file-import-ba-currency" className="text-xs">{t("preview.baCurrencyLabel")}</Label>
-                <Select
-                  value={baCurrency}
-                  onValueChange={(value) => { setBaCurrency(value as AccountingCurrency); setFileError(""); }}
-                  items={{ UNIT: t("preview.baCurrencyUnit"), EUR: t("preview.baCurrencyEur"), USD: t("preview.baCurrencyUsd"), GBP: t("preview.baCurrencyGbp") }}
-                >
-                  <SelectTrigger id="file-import-ba-currency" className="min-h-touch rounded-lg px-3 text-sm">
-                    <SelectValue placeholder={t("preview.baCurrencyPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UNIT">{t("preview.baCurrencyUnit")}</SelectItem>
-                    <SelectItem value="EUR">{t("preview.baCurrencyEur")}</SelectItem>
-                    <SelectItem value="USD">{t("preview.baCurrencyUsd")}</SelectItem>
-                    <SelectItem value="GBP">{t("preview.baCurrencyGbp")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("preview.baCurrencyHelp")}</p>
-              {baCurrency && selectedBankroll?.currency !== baCurrency ? <p role="alert" className="mt-2 text-xs font-semibold text-warning">{t("preview.baCurrencyMismatch")}</p> : null}
+              <p className="mt-4 text-xs leading-5 text-muted-foreground">Les mises BA restent en U, sans conversion fictive en devise. Sélectionne une bankroll dont la devise native est U.</p>
+              {selectedBankroll?.currency !== "UNIT" ? <p role="alert" className="mt-2 text-xs font-semibold text-warning">La bankroll choisie est en devise. Crée une bankroll en U ou fais réviser son historique avant de changer sa devise.</p> : null}
             </div>
           ) : null}
 
@@ -437,7 +412,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           <div className="mt-5 overflow-x-auto rounded-xl border border-border">
             <table className="w-full min-w-[48rem] text-left text-xs">
               <thead className="bg-muted/60 text-muted-foreground">
-                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{parsed.sourceProfile === "BET_ANALYTIX" && baCurrency ? `${t("table.stake")} (${baCurrency === "UNIT" ? "U" : baCurrency})` : t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
+                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{parsed.sourceProfile === "BET_ANALYTIX" ? t("table.stakeUnits") : t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
               </thead>
               <tbody>
                 {parsed.rows.slice(0, 50).map((row) => (
@@ -457,7 +432,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           {parsed.rows.length > 50 ? <p className="mt-2 text-xs text-muted-foreground">{t("preview.firstRows", { count: 50, total: parsed.rows.length })}</p> : null}
           {invalidCount > 0 ? <p className="mt-4 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs leading-5 text-warning">{t("preview.invalidSkipped", { count: invalidCount })}</p> : null}
 
-          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || (parsed.sourceProfile === "BET_ANALYTIX" && (!baCurrency || selectedBankroll?.currency !== baCurrency))} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
+          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT")} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
             {isPending ? t("preview.importing") : t("preview.import", { count: validBets.length })}
           </Button>
         </section>

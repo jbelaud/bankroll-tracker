@@ -44,6 +44,7 @@ export function HistoryBetItem({
   onEnterSelection,
   onRequestDelete,
   onRequestEdit,
+  currency,
 }: {
   bet: HistoryBetItemData;
   selectionMode: boolean;

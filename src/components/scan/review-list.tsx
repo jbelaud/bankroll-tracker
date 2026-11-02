@@ -28,7 +28,6 @@ export function ReviewList({
   initialBets,
   importing,
   error,
-  resultProofMode,
   skippedDuplicateFiles,
   onConfirm,
   onRestart,
@@ -43,11 +42,11 @@ export function ReviewList({
   initialExcludedIndexes = [],
   onReviewChange,
   bankrollSelectionLocked = false,
+  initialTicketCurrency,
 }: {
   initialBets: ParsedBet[];
   importing: boolean;
   error: string;
-  resultProofMode?: "single" | "batch";
   skippedDuplicateFiles: string[];
   onConfirm: (bets: ParsedBet[], shareQuality: boolean, qualityIssueType: string, qualityIssueDetails: string, ticketCurrency: Currency, ticketFxRate: number | null, expectedReferenceCapital: number | null) => void;
   onRestart: () => void;
@@ -62,6 +61,7 @@ export function ReviewList({
   initialExcludedIndexes?: number[];
   onReviewChange?: (bets: ParsedBet[], excludedIndexes: number[], bankrollId: string) => void;
   bankrollSelectionLocked?: boolean;
+  initialTicketCurrency?: Currency;
 }) {
   const [bets, setBets] = useState(initialBets);
   const [excluded, setExcluded] = useState<Set<number>>(() => new Set(initialExcludedIndexes));
@@ -70,7 +70,7 @@ export function ReviewList({
   const [qualityIssueDetails, setQualityIssueDetails] = useState("");
   const [tipsters, setTipsters] = useState(initialTipsters);
   const [confirmedUnitScale, setConfirmedUnitScale] = useState<string | null>(null);
-  const [ticketCurrency, setTicketCurrency] = useState<Currency>(currency);
+  const [ticketCurrency, setTicketCurrency] = useState<Currency>(initialTicketCurrency ?? currency);
   const [ticketFxRate, setTicketFxRate] = useState("");
   const [freshUnitReference, setFreshUnitReference] = useState<{ bankrollId: string; value: number | null } | null>(null);
   const [refreshingUnitReference, setRefreshingUnitReference] = useState(false);
@@ -120,11 +120,7 @@ export function ReviewList({
     () => bets.filter((_, i) => !excluded.has(i)),
     [bets, excluded]
   );
-  // Dans un parcours de preuve de résultat, retrouver le pari existant est
-  // précisément le comportement attendu. La validation serveur cible ce pari
-  // et interdit toute création : l'avertissement de doublon générique serait
-  // donc trompeur ici.
-  const duplicateCount = resultProofMode ? 0 : kept.filter((b) => b.possibleDuplicate).length;
+  const duplicateCount = kept.filter((b) => b.possibleDuplicate).length;
   const existingUpdateCount = kept.filter((b) => b.updatesExistingBet).length;
   const pendingTicketCount = kept.filter((b) => b.pendingTicketAlreadyExists && b.result === "EN_ATTENTE").length;
   const suggestedCount = kept.filter(hasSuggestedType).length;
@@ -182,11 +178,7 @@ export function ReviewList({
     <div className="flex flex-col gap-4 pb-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-6 lg:pb-28">
       <div className="flex items-center justify-between lg:col-span-12">
         <h2 className="text-base font-semibold">
-          {resultProofMode === "single"
-            ? t("resultProofTitle")
-            : resultProofMode === "batch"
-              ? t("resultProofBatchTitle", { count: bets.length })
-              : t("title", { count: bets.length })}
+          {t("title", { count: bets.length })}
         </h2>
         <Button
           variant="ghost"
@@ -199,17 +191,7 @@ export function ReviewList({
         </Button>
       </div>
 
-      {resultProofMode && (
-        <section role="status" className="flex items-start gap-2 rounded-xl border border-profit/35 bg-profit/10 p-3 text-sm text-profit lg:col-span-12">
-          <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
-          <div>
-            <p className="font-semibold">{resultProofMode === "single" ? t("targetedResultTitle") : t("targetedResultBatchTitle")}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-foreground/80">{resultProofMode === "single" ? t("targetedResultDescription") : t("targetedResultBatchDescription")}</p>
-          </div>
-        </section>
-      )}
-
-      {!resultProofMode && existingUpdateCount > 0 && (
+      {existingUpdateCount > 0 && (
         <section role="status" className="flex items-start gap-2 rounded-xl border border-profit/35 bg-profit/10 p-3 text-sm text-profit lg:col-span-12">
           <CheckCircle size={19} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
           <div>
@@ -254,7 +236,7 @@ export function ReviewList({
       <aside className="flex flex-col gap-3 lg:col-span-3 lg:sticky lg:top-24">
       <section className="rounded-xl border border-border bg-muted/40 p-3">
         <label htmlFor="review-bankroll" className="text-xs font-medium">
-          {resultProofMode ? t("resultProofBankrollLabel") : t("bankrollLabel")}
+          {t("bankrollLabel")}
         </label>
         <Select
           value={bankrollId}
@@ -359,6 +341,7 @@ export function ReviewList({
                 disabled={importing}
                 className="min-h-touch rounded-lg border border-input bg-background px-3 text-sm"
               >
+                  <option value="CONFIRMED">{t("qualityOffer.issueTypes.confirmed")}</option>
                 <option value="INCORRECT">{t("qualityOffer.issueTypes.incorrect")}</option>
                 <option value="INCOMPLETE">{t("qualityOffer.issueTypes.incomplete")}</option>
                 <option value="OTHER">{t("qualityOffer.issueTypes.other")}</option>
@@ -394,7 +377,6 @@ export function ReviewList({
               ? toUnits(bet.stake * fxRate, referenceCapital) : null}
             taxonomy={reviewTaxonomy}
             tipsters={tipsters}
-            resultProofMode={Boolean(resultProofMode)}
             onTipsterCreated={(tipster) => setTipsters((items) => [
               ...items.filter((item) => item.id !== tipster.id),
               tipster,
@@ -417,14 +399,10 @@ export function ReviewList({
           className="min-h-touch w-full rounded-lg text-sm font-semibold shadow-lg lg:mx-auto lg:max-w-2xl"
         >
           {importing
-            ? resultProofMode ? t("updatingResult") : t("importing")
+            ? t("importing")
             : kept.length === 0
               ? t("noneToImport")
-              : resultProofMode === "single"
-                ? t("updateResult")
-                : resultProofMode === "batch"
-                  ? t("updateResults", { count: kept.length })
-                  : t("import", { count: kept.length })}
+              : t("import", { count: kept.length })}
         </Button>
       </div>
     </div>

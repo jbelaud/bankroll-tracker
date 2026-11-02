@@ -35,6 +35,7 @@ const BET_RESPONSE_SCHEMA = {
     date: { type: ["string", "null"] },
     ticketPlacedAtText: { type: ["string", "null"] },
     ticketHeaderText: { type: ["string", "null"] },
+    ticketLayout: { type: ["string", "null"], enum: ["HORIZONTAL", "CARD", null] },
     eventStartText: { type: ["string", "null"] },
     dateText: { type: ["string", "null"] },
     ticketRef: { type: ["string", "null"] },
@@ -57,7 +58,7 @@ const BET_RESPONSE_SCHEMA = {
     selections: { type: "array", items: BET_SELECTION_RESPONSE_SCHEMA },
   },
   required: [
-    "date", "dateText", "ticketPlacedAtText", "ticketHeaderText", "eventStartText",
+    "date", "dateText", "ticketPlacedAtText", "ticketHeaderText", "ticketLayout", "eventStartText",
     "ticketRef", "sport", "betType", "description", "eventResult",
     "stake", "odds", "boosted", "originalOdds", "freebet", "live", "result", "cashOutAmount",
     "format", "tipster", "tipsterEvidence", "closingOdds", "selections",
@@ -105,18 +106,25 @@ export function hasConfiguredScanProvider(): boolean {
   return getConfiguredScanProvider() !== null;
 }
 
+export function configuredScanModel(): string | null {
+  const provider = getConfiguredScanProvider();
+  return provider === "gemini" ? getGeminiModel("scan") : provider === "anthropic" ? ANTHROPIC_SCAN_MODEL : null;
+}
+
 export async function analyzeTicketImage({
   base64,
   mediaType,
   taxonomy,
   bookmaker,
   bookmakerRules,
+  commonRules,
 }: {
   base64: string;
   mediaType: ScanMediaType;
   taxonomy: Taxonomy;
   bookmaker?: string;
   bookmakerRules?: string | null;
+  commonRules?: string | null;
 }): Promise<ScanAiResponse> {
   const provider = getConfiguredScanProvider();
   const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
@@ -127,7 +135,7 @@ export async function analyzeTicketImage({
       model,
       contents: [
         { inlineData: { mimeType: mediaType, data: base64 } },
-        { text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+        { text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules, commonRules }) },
       ],
       config: {
         systemInstruction: STRICT_SCAN_SYSTEM_PROMPT,
@@ -161,7 +169,7 @@ export async function analyzeTicketImage({
           role: "user",
           content: [
             { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-            { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules }) },
+            { type: "text", text: buildExtractionPrompt(taxonomy, { bookmaker, bookmakerRules, commonRules }) },
           ],
         },
       ],

@@ -1,7 +1,7 @@
 import type { Plan } from "@prisma/client";
 import { getScanWallet, releaseScanCredit, reserveScanCredit } from "./credit-wallet";
 
-export { INITIAL_SCAN_CREDIT, INITIAL_SCAN_CREDIT_DURATION_DAYS, SCAN_QUOTA_CONFIG, MONTHLY_LIMITS } from "./quota-config";
+export { INITIAL_SCAN_CREDIT, SCAN_QUOTA_CONFIG, MONTHLY_LIMITS } from "./quota-config";
 export type ScanQuotaReservation = string;
 
 // Façade conservée pour les appelants existants ; le plan est relu sous verrou.

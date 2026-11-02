@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ScanCreditBatch } from "@prisma/client";
-import { availableBatchQuantity, batchRemaining, summarizeScanWallet } from "./credit-policy";
+import { availableBatchQuantity, batchRemaining, summarizeScanWallet, compareCreditBatches } from "./credit-policy";
 
 export const now = new Date("2026-10-01T12:00:00Z");
 export function batch(overrides: Partial<ScanCreditBatch> = {}): ScanCreditBatch {
@@ -12,6 +12,14 @@ export function batch(overrides: Partial<ScanCreditBatch> = {}): ScanCreditBatch
 }
 
 describe("solde des lots de scans", () => {
+  it("le bonus permanent reste utilisable après un an seulement avec un plan payant", () => {
+    const bonus = batch({ type: "INITIAL", quantityGranted: 300, quantityUsed: 25, requiresPaidPlan: true, expiresAt: null });
+    const nextYear = new Date("2027-10-01T12:00:00Z");
+    expect(availableBatchQuantity(bonus, "FREE", nextYear)).toBe(0);
+    expect(availableBatchQuantity(bonus, "PREMIUM", nextYear)).toBe(275);
+    expect(availableBatchQuantity(bonus, "BETA_PREMIUM", nextYear)).toBe(275);
+    expect(compareCreditBatches(batch({ expiresAt: null }), bonus, now)).toBeLessThan(0);
+  });
   it("soustrait les usages, réservations et révocations sans double comptage", () => {
     expect(batchRemaining(batch({ quantityUsed: 3, quantityReserved: 2, quantityRevoked: 1 }))).toBe(4);
   });

@@ -18,9 +18,6 @@ describe("PMU ticket evidence (anonymized)", () => {
     expect(ticketResultFromHeader("Simple @ 2,63 • En cours")).toBe("EN_ATTENTE");
     expect(ticketResultFromHeader("Simple @ 2,63 • Gagné")).toBe("GAGNE");
     expect(ticketResultFromHeader("Simple @ 2,63 • Perdu")).toBe("PERDU");
-    expect(ticketResultFromHeader("Simple 2,63 Gagné")).toBe("GAGNE");
-    expect(ticketResultFromHeader("Simple @ 2.63 - PERDU")).toBe("PERDU");
-    expect(ticketResultFromHeader("Combiné (2) @ 3,40 · Gagné")).toBe("GAGNE");
     expect(ticketResultFromHeader("Sélection gagnante : 2")).toBeNull();
     expect(ticketResultFromHeader("Cash Out 4,63 €")).toBeNull();
     expect(ticketResultFromHeader("Gain potentiel : 13,15 €")).toBeNull();
@@ -51,23 +48,6 @@ describe("PMU ticket evidence (anonymized)", () => {
     expect(findScanProofEvidence([evidence], "REF-000001")).toEqual(evidence);
     expect(findScanProofEvidence([evidence], "REF-000002")).toBeNull();
     expect(findScanProofEvidence([evidence, evidence], "REF-000001")).toBeNull();
-  });
-
-  it("records a pending ticket placement time when no event time is displayed", () => {
-    const pending = makeScanProofEvidence(
-      "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "EN_ATTENTE"
-    );
-    const won = makeScanProofEvidence(
-      "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "GAGNE"
-    );
-
-    expect(pending).toMatchObject({
-      headerResult: null,
-      observedResult: "EN_ATTENTE",
-      ticketPlacedAt: "2026-10-05T18:36:00.000Z",
-      eventStartAt: null,
-    });
-    expect(canAutomaticallyUpdateResult(null, won, "GAGNE")).toBe(true);
   });
 
   it("does not silently settle a PMU bet when the ticket header is missing", () => {

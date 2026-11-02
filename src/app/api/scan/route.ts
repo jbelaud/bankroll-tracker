@@ -19,6 +19,7 @@ import {
 } from "@/lib/scan/ai-provider";
 import type { ParsedBet } from "@/lib/scan/types";
 import { SCAN_PROMPT_VERSION } from "@/lib/scan/quality";
+import { COMMON_SCAN_PROFILE } from "@/lib/scan/learning";
 import { bookmakerKind, normalizeBookmaker } from "@/lib/bookmakers";
 import { parseScanAnalysis } from "@/lib/scan/response";
 import { tipsterFromVisibleEvidence } from "@/lib/scan/tipster-evidence";
@@ -29,12 +30,13 @@ import { hasValidReferralScan } from "@/lib/referral/valid-scan";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 import { findAutomaticResultProofTarget, findPendingTicketMatch, isStrictUnreferencedResultProof } from "@/lib/result-proof";
 import { canAutomaticallyUpdateResult, makeScanProofEvidence, parisCalendarDate, parseVisibleParisDateTime, resolveScannedTicketResult } from "@/lib/scan/ticket-evidence";
-import { normalizeExtractedTicketDate } from "@/lib/scan/ticket-date";
+import { normalizeScannedPlacementDate } from "@/lib/scan/placement-date";
 import { canRescanAfterPromptUpgrade } from "@/lib/scan/rescan-policy";
 import { normalizeExtractedFinancials, normalizeExtractedOdds } from "@/lib/scan/odds";
 import { resolveHomogeneousCombineSport } from "@/lib/scan/combine-sport";
 import { normalizeScannedMarketType } from "@/lib/scan/market-type";
 import { extensionScanReplay } from "@/lib/scan/extension-replay";
+import { bankrollScanSourceHash, scanSourcePolicy } from "@/lib/scan/source-identity";
 
 // Contrairement aux Server Actions (protégées nativement par Next contre le
 // CSRF via vérification d'Origin), les Route Handlers ne le sont pas —
@@ -153,16 +155,39 @@ export async function POST(request: NextRequest) {
   if (await isBankrollLockedForUser(user.id, bankrollId)) {
     return NextResponse.json({ error: t("bankrollLocked") }, { status: 403 });
   }
-  const profile = normalizedBookmaker ? await prisma.bookmakerScanProfile.findUnique({
+  const [profile, commonProfile] = await Promise.all([normalizedBookmaker ? prisma.bookmakerScanProfile.findUnique({
     where: { bookmaker: normalizedBookmaker },
     select: { supportStatus: true, rules: true },
-  }) : null;
+  }) : null, prisma.bookmakerScanProfile.findUnique({
+    where: { bookmaker: COMMON_SCAN_PROFILE }, select: { supportStatus: true, rules: true, version: true },
+  })]);
+  const promptVersion = commonProfile?.supportStatus === "TESTED" && commonProfile.rules
+    ? `${SCAN_PROMPT_VERSION}:common-${createHash("sha256").update(commonProfile.rules).digest("hex").slice(0, 12)}` : SCAN_PROMPT_VERSION;
   const supportStatus = profile?.supportStatus ?? (normalizedBookmaker && bookmakerKind(normalizedBookmaker) === "tested" ? "TESTED" : "UNTESTED");
 
-  const duplicateScan = await prisma.scanUsage.findUnique({
-    where: { userId_sourceHash: { userId: user.id, sourceHash } },
-    select: { id: true, betsImported: true, promptVersion: true, extensionReceipt: true, verificationCompletedAt: true },
-  });
+  const scopedSourceHash = bankrollScanSourceHash(sourceHash, bankrollId);
+  const [scopedScan, originalScan] = await Promise.all([
+    prisma.scanUsage.findUnique({
+      where: { userId_sourceHash: { userId: user.id, sourceHash: scopedSourceHash } },
+      select: { id: true, betsImported: true, promptVersion: true, extensionReceipt: true, verificationCompletedAt: true },
+    }),
+    prisma.scanUsage.findUnique({
+      where: { userId_sourceHash: { userId: user.id, sourceHash } },
+      select: {
+        id: true, betsImported: true, promptVersion: true, extensionReceipt: true,
+        verificationCompletedAt: true,
+        bets: { where: { bankrollId }, select: { id: true }, take: 1 },
+      },
+    }),
+  ]);
+  const sourcePolicy = scanSourcePolicy(sourceHash, bankrollId,
+    originalScan ? { betsImported: originalScan.betsImported, importedHere: originalScan.bets.length > 0 } : null,
+    Boolean(scopedScan));
+  // Un rescannage dans une autre bankroll consomme un Scan, mais ne remplace
+  // pas le hash original qui protège le parrainage et les premières imports.
+  let usageSourceHash = sourcePolicy.usageSourceHash;
+  const duplicateScan = sourcePolicy.duplicateSource === "scoped" ? scopedScan
+    : sourcePolicy.duplicateSource === "original" ? originalScan : null;
   // Une analyse de la version courante devient un doublon bloquant lorsque ses
   // paris ont été importés ou que son brouillon existe encore. Après une mise
   // à niveau du prompt, la même image peut être retraitée une fois afin de
@@ -171,22 +196,22 @@ export async function POST(request: NextRequest) {
   if (duplicateScan) {
     // Authentication and bankroll ownership were checked above. Replaying a
     // completed extraction never reserves quota or starts another paid call.
-    const replay = extensionScanReplay(extensionCapture, bankrollId, duplicateScan);
+    const replay = extensionScanReplay(extensionCapture, bankrollId, duplicateScan, promptVersion);
     if (replay) return NextResponse.json(replay);
     const promptWasUpgraded = canRescanAfterPromptUpgrade(
       duplicateScan.promptVersion,
-      SCAN_PROMPT_VERSION
+      promptVersion
     );
     if (duplicateScan.betsImported > 0 && !promptWasUpgraded) {
       return NextResponse.json(
-        { error: t("duplicateScanImported", { count: duplicateScan.betsImported }) },
+        { error: t("duplicateScanImported") },
         { status: 409 }
       );
     }
 
     if (!promptWasUpgraded) {
       const drafts = await prisma.scanDraft.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, bankrollId },
         select: { payload: true },
         take: 20,
       });
@@ -201,15 +226,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // On garde la ligne de coût historique, mais son hash est libéré. Une
-    // nouvelle version du prompt peut ainsi corriger une capture déjà importée
-    // sans rendre le même fichier rescannable plusieurs fois avec cette version.
-    await prisma.scanUsage.update({
-      where: { id: duplicateScan.id },
-      data: { sourceHash: null },
-    });
+    // Le premier hash reste la trace de la capture pour le parrainage. Une
+    // nouvelle analyse utilise la clé de cette bankroll. Seule une ancienne
+    // analyse déjà scoped doit libérer sa clé après un changement de prompt.
+    if (scopedScan) {
+      await prisma.scanUsage.update({
+        where: { id: duplicateScan.id },
+        data: { sourceHash: null },
+      });
+    }
     isRepeatAnalysis = true;
+    usageSourceHash = scopedSourceHash;
   }
+  if (!duplicateScan) isRepeatAnalysis = sourcePolicy.isRepeatAnalysis;
 
   const rateLimit = await checkScanRateLimit(user.id, dbUser.plan);
   if (!rateLimit.allowed) {
@@ -222,7 +251,7 @@ export async function POST(request: NextRequest) {
       { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
     );
   }
-  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan, sourceHash);
+  const monthlyQuota = await checkMonthlyQuota(user.id, dbUser.plan, usageSourceHash);
   if (!monthlyQuota.allowed) {
     if (monthlyQuota.reason === "DUPLICATE") {
       return NextResponse.json({ error: t("duplicateScan") }, { status: 409 });
@@ -255,6 +284,7 @@ export async function POST(request: NextRequest) {
       taxonomy,
       bookmaker: normalizedBookmaker,
       bookmakerRules: rulesForTestedProfile(profile),
+      commonRules: rulesForTestedProfile(commonProfile),
     });
     scanModel = response.model;
     scanInputTokens = response.inputTokens;
@@ -282,7 +312,7 @@ export async function POST(request: NextRequest) {
           : calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
         outcome: "TECHNICAL_FAILURE",
         selectedBookmaker: normalizedBookmaker,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         durationMs: Date.now() - scanStartedAt,
       },
     }).catch((telemetryError) => console.error("[scan] échec télémétrie technique", telemetryError));
@@ -296,7 +326,7 @@ export async function POST(request: NextRequest) {
 
   if (rawBets.length === 0) {
     const emptyUsageId = randomUUID();
-    const emptyReceipt = { bets: [], scan: { usageId: emptyUsageId, rawExtraction: [], model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "EMPTY" } };
+    const emptyReceipt = { bets: [], scan: { usageId: emptyUsageId, rawExtraction: [], model: scanModel, promptVersion: promptVersion, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "EMPTY" } };
     // Conserve la télémétrie de l'analyse (comme avant le parrainage), mais
     // marque explicitement ce scan vide comme non éligible à toute récompense.
     let emptyScanUsage: { id: string };
@@ -311,13 +341,13 @@ export async function POST(request: NextRequest) {
           inputTokens: scanInputTokens,
           outputTokens: scanOutputTokens,
           costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
-          sourceHash,
+          sourceHash: usageSourceHash,
           referralEligible: false,
           outcome: "EMPTY",
           selectedBookmaker: normalizedBookmaker,
           detectedBookmaker,
           detectionConfidence,
-          promptVersion: SCAN_PROMPT_VERSION,
+          promptVersion: promptVersion,
           durationMs: Date.now() - scanStartedAt,
           betsDetected: 0,
         },
@@ -344,7 +374,7 @@ export async function POST(request: NextRequest) {
         usageId: emptyScanUsage.id,
         rawExtraction,
         model: scanModel,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         supportStatus,
         detectedBookmaker,
         detectionConfidence,
@@ -354,10 +384,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // 5. Paris existants de l'utilisateur → base du repérage de doublons sans ticketRef.
+  // 5. Repérage des doublons dans la bankroll choisie uniquement.
   const [existing, pendingResultTargets] = await Promise.all([
     prisma.bet.findMany({
-      where: { bankroll: { userId: user.id } },
+      where: { bankrollId, bankroll: { userId: user.id } },
       select: { date: true, stake: true, odds: true, description: true, ticketRef: true },
     }),
     prisma.bet.findMany({
@@ -385,6 +415,8 @@ export async function POST(request: NextRequest) {
   const existingTicketRefs = existing.map((bet) => bet.ticketRef);
   const requiresVisibleDateText = [normalizedBookmaker, detectedBookmaker]
     .some((bookmaker) => ["Unibet", "MyStake"].includes(normalizeBookmaker(bookmaker ?? "")));
+  const isMyStake = [normalizedBookmaker, detectedBookmaker]
+    .some((bookmaker) => normalizeBookmaker(bookmaker ?? "") === "MyStake");
 
   // 6. Normalisation vers ParsedBet (result FR → enum ; flags de review).
   const bets: ParsedBet[] = rawBets.map((raw) => {
@@ -453,8 +485,10 @@ export async function POST(request: NextRequest) {
     const bet: ParsedBet = {
       ticketRef: r.ticketRef ? String(r.ticketRef).trim() || null : null,
       date: placedAt ? parisCalendarDate(placedAt)
-        : normalizeExtractedTicketDate(r.ticketPlacedAtText || r.dateText, r.date, {
-          requireVisibleText: requiresVisibleDateText || Boolean(r.ticketPlacedAtText),
+        : normalizeScannedPlacementDate(r, {
+          requireVisibleText: requiresVisibleDateText,
+          isMyStake,
+          now: new Date(scanStartedAt),
         }),
       eventStartAt: eventStartAt?.toISOString() ?? null,
       sport: resolvedPair.sport,
@@ -516,7 +550,7 @@ export async function POST(request: NextRequest) {
     const raw = rawBets[index] as Record<string, unknown>;
     const hasVerifiedResult = canAutomaticallyUpdateResult(
       normalizedBookmaker ?? detectedBookmaker,
-      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText, raw.ticketPlacedAtText, bet.result),
+      makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText),
       bet.result
     ) || isStrictUnreferencedResultProof(target, bet, { bookmaker: matchBookmaker });
     if (!hasVerifiedResult) continue;
@@ -528,18 +562,12 @@ export async function POST(request: NextRequest) {
   const referralEligible = !isRepeatAnalysis && hasValidReferralScan(bets);
   const proofEvidence = bets.flatMap((bet, index) => {
     const raw = rawBets[index] as Record<string, unknown>;
-    const evidence = makeScanProofEvidence(
-      bet.ticketRef,
-      raw.ticketHeaderText,
-      raw.eventStartText,
-      raw.ticketPlacedAtText,
-      bet.result,
-    );
+    const evidence = makeScanProofEvidence(bet.ticketRef, raw.ticketHeaderText, raw.eventStartText);
     return evidence ? [evidence] : [];
   });
   let scanUsage;
   const usageId = randomUUID();
-  const extensionResponse = { bets, scan: { usageId, rawExtraction: bets, model: scanModel, promptVersion: SCAN_PROMPT_VERSION, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "READY" } };
+  const extensionResponse = { bets, scan: { usageId, rawExtraction: bets, model: scanModel, promptVersion: promptVersion, supportStatus, detectedBookmaker, detectionConfidence, earnedReferralScans: 0, outcome: "READY" } };
   try {
     // Le journal de consommation est également l'événement idempotent utilisé
     // par le programme de parrainage. L'index userId/sourceHash bloque les
@@ -553,13 +581,13 @@ export async function POST(request: NextRequest) {
         inputTokens: scanInputTokens,
         outputTokens: scanOutputTokens,
         costUsd: calculateScanCostUsd(scanModel, scanInputTokens, scanOutputTokens),
-        sourceHash,
+        sourceHash: usageSourceHash,
         referralEligible,
         outcome: "READY",
         selectedBookmaker: normalizedBookmaker,
         detectedBookmaker,
         detectionConfidence,
-        promptVersion: SCAN_PROMPT_VERSION,
+        promptVersion: promptVersion,
         durationMs: Date.now() - scanStartedAt,
         betsDetected: bets.length,
         proofEvidence,
@@ -590,7 +618,7 @@ export async function POST(request: NextRequest) {
       screenshots_count: 1,
       bets_detected: bets.length,
       scan_duration_ms: Date.now() - scanStartedAt,
-      parser_version: SCAN_PROMPT_VERSION,
+      parser_version: promptVersion,
     },
   });
   return NextResponse.json({
@@ -599,7 +627,7 @@ export async function POST(request: NextRequest) {
       usageId: scanUsage.id,
       rawExtraction,
       model: scanModel,
-      promptVersion: SCAN_PROMPT_VERSION,
+      promptVersion: promptVersion,
       supportStatus,
       detectedBookmaker,
       detectionConfidence,

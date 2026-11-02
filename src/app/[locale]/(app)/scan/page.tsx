@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Link, redirect } from "@/i18n/navigation";
-import type { Locale } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import { listBankrolls } from "@/lib/actions/bankrolls";
 import { getServerCurrency } from "@/lib/get-server-currency";
@@ -12,13 +11,8 @@ import { listTipsters } from "@/lib/actions/tipsters";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-export default async function ScanPage({ searchParams, params }: {
-  searchParams: Promise<{ resultFor?: string | string[]; resultBankroll?: string | string[] }>;
-  params: Promise<{ locale: string }>;
-}) {
+export default async function ScanPage({ searchParams }: { searchParams: Promise<{ resultFor?: string | string[]; resultBankroll?: string | string[] }> }) {
   const user = await requireUser();
-  const { locale: localeInput } = await params;
-  const locale = localeInput as Locale;
   const query = await searchParams;
   const resultFor = Array.isArray(query.resultFor) ? query.resultFor[0] : query.resultFor;
   const resultBankroll = Array.isArray(query.resultBankroll) ? query.resultBankroll[0] : query.resultBankroll;
@@ -26,23 +20,19 @@ export default async function ScanPage({ searchParams, params }: {
   const resultProofTarget = resultFor ? await prisma.bet.findFirst({
     where: {
       id: resultFor,
+      result: "EN_ATTENTE",
       certificationLockedAt: { not: null },
       bankroll: { userId: user.id, certificationStartedAt: { not: null } },
     },
-    select: { id: true, bankrollId: true, description: true, sport: true, betType: true, result: true },
+    select: { id: true, bankrollId: true, description: true, sport: true, betType: true },
   }) : null;
   if (resultFor && !resultProofTarget) notFound();
-  // Une Server Action réévalue la route courante après la mutation. Une fois
-  // le résultat enregistré, l'URL ciblée ne doit pas devenir une 404 : elle
-  // ramène vers la bankroll qui affiche désormais le pari clôturé.
-  if (resultProofTarget && resultProofTarget.result !== "EN_ATTENTE") {
-    redirect({ href: `/bankrolls/${resultProofTarget.bankrollId}`, locale });
-  }
   const resultProofBatch = resultBankroll ? await prisma.bankroll.findFirst({
     where: {
       id: resultBankroll,
       userId: user.id,
       certificationStartedAt: { not: null },
+      bets: { some: { result: "EN_ATTENTE", certificationLockedAt: { not: null } } },
     },
     select: {
       id: true,
@@ -53,9 +43,6 @@ export default async function ScanPage({ searchParams, params }: {
     },
   }) : null;
   if (resultBankroll && !resultProofBatch) notFound();
-  if (resultProofBatch && resultProofBatch._count.bets === 0) {
-    redirect({ href: `/bankrolls/${resultProofBatch.id}`, locale });
-  }
   const [bankrolls, taxonomy, pendingDrafts, tipsters, t, tCommon, currency] = await Promise.all([
     listBankrolls(),
     getUserTaxonomy(user.id),

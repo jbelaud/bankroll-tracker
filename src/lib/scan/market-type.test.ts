@@ -27,3 +27,23 @@ describe("football player markets", () => {
     expect(normalizeScannedMarketType("Football", "Résultat du match")).toBe("Résultat du match");
   });
 });
+
+describe("tennis games handicaps", () => {
+  it.each(["Jeu Handicap", "Jeux Handicap", "Handicap de jeux", "Game Handicap", "Games handicap", "Handicap sur les jeux"])(
+    "normalizes %s as an Asian handicap", (market) => {
+      expect(normalizeScannedMarketType("Tennis", market)).toBe("Handicap asiatique");
+    }
+  );
+
+  it("uses the visible game handicap for the selection as well as the ticket", () => {
+    const visible = "Jeu Handicap — Choisir: 2 (4.5) — Prozorova, Tatiana";
+    expect(normalizeScannedMarketType("Tennis", "Vainqueur du match", [visible])).toBe("Handicap asiatique");
+    expect(normalizeScannedMarketType("Tennis", "Total de jeux", [visible])).toBe("Handicap asiatique");
+  });
+
+  it("keeps totals, sets handicaps and other sports distinct", () => {
+    expect(normalizeScannedMarketType("Tennis", "Total de jeux", ["Over (20.5)"])).toBe("Total de jeux");
+    expect(normalizeScannedMarketType("Tennis", "Handicap de sets")).toBe("Handicap de sets");
+    expect(normalizeScannedMarketType("Volleyball", "Jeu Handicap")).toBe("Jeu Handicap");
+  });
+});

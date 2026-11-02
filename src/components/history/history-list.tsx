@@ -440,6 +440,7 @@ export function HistoryList({
 
 function DesktopHistoryTable({
   bets,
+  currency,
   scopedToBankroll,
   selectionMode,
   selectedIds,

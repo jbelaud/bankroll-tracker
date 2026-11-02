@@ -60,4 +60,43 @@ describe("ticket date normalization", () => {
   it("requires literal evidence for Unibet instead of accepting an interpreted date", () => {
     expect(normalizeExtractedTicketDate(null, "2026-05-09", { requireVisibleText: true })).toBeNull();
   });
+
+  const myStakeOptions = {
+    requireVisibleText: true, assumeCurrentYear: true, now: new Date("2026-10-15T10:00:00Z"),
+  };
+
+  it.each([
+    ["25 Septembre\n06:49", "2026-09-25"],
+    ["25 september 06:49", "2026-09-25"],
+    ["3 October 12:04", "2026-10-03"],
+    ["25/09 06:49", "2026-09-25"],
+    ["25 Sept.", "2026-09-25"],
+    ["Le 25 septembre à 06h49", "2026-09-25"],
+    ["Today 09:42", "2026-10-15"],
+    ["Aujourd’hui 09:42", "2026-10-15"],
+    ["Yesterday 12:04", "2026-10-14"],
+    ["Hier", "2026-10-14"],
+    ["25 September 2025 06:49", "2025-09-25"],
+  ])("applies the requested MyStake policy to %s", (literal, expected) => {
+    expect(normalizeExtractedTicketDate(literal, "2000-01-01", myStakeOptions)).toBe(expected);
+  });
+
+  it.each([null, "", "06:49", "Septembre", "31 Septembre 06:49", "29 February 06:49", "25 Inconnu", "25 Septembre 20??"])(
+    "never substitutes today or a guessed date for %s", (literal) => {
+      expect(normalizeExtractedTicketDate(literal, "2026-10-15", myStakeOptions)).toBeNull();
+    }
+  );
+
+  it("uses the Paris year at midnight and resolves yesterday across New Year", () => {
+    const options = { assumeCurrentYear: true, now: new Date("2026-12-31T23:30:00Z") };
+    expect(normalizeExtractedTicketDate("25 September 06:49", null, options)).toBe("2027-09-25");
+    expect(normalizeExtractedTicketDate("Today", null, options)).toBe("2027-01-01");
+    expect(normalizeExtractedTicketDate("Yesterday", null, options)).toBe("2026-12-31");
+  });
+
+  it("validates February 29 against the assumed year", () => {
+    expect(normalizeExtractedTicketDate("29 February", null, {
+      assumeCurrentYear: true, now: new Date("2028-10-15T10:00:00Z"),
+    })).toBe("2028-02-29");
+  });
 });

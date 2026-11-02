@@ -44,8 +44,9 @@ async function importLegacyWallet(tx: Tx, user: Prisma.UserGetPayload<{ select: 
     await create({ type: "INITIAL", origin: "SUBSCRIPTION_HISTORY_IMPORT", grantKey: "subscription:initial",
       entitlementKey: "subscription:initial", quantityGranted: granted, quantityUsed: granted - remaining,
       grantedAt: user.initialScanCreditGrantedAt ?? user.createdAt,
-      expiresAt: user.initialScanCreditExpiresAt ?? now,
-      requiresPaidPlan: true, conditions: "PAID_PLAN_HISTORY_IMPORT_30_DAYS" });
+      expiresAt: user.initialScanCreditExpiresAt,
+      requiresPaidPlan: true, conditions: user.initialScanCreditExpiresAt
+        ? "PAID_PLAN_HISTORY_IMPORT_30_DAYS" : "PAID_PLAN_INITIAL_BONUS_NO_EXPIRY" });
   }
   if (user.referralScanCredits > 0) {
     await create({ type: "REFERRAL", origin: "LEGACY_REFERRAL_BALANCE", grantKey: "legacy:referral",

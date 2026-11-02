@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { PrismaClient } from "@prisma/client";
 import EmbeddedPostgres from "embedded-postgres";
 import { randomUUID } from "node:crypto";
@@ -8,6 +8,7 @@ import { join, resolve } from "node:path";
 import { createServer } from "node:net";
 import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
+import type Stripe from "stripe";
 
 const holder = vi.hoisted(() => ({ client: null as PrismaClient | null }));
 vi.mock("server-only", () => ({}));
@@ -31,6 +32,9 @@ process.env.BETA_REFERRAL_ENABLED = "true";
 const { processValidReferralScan } = await import("@/lib/referral/service");
 const { cancelReferralReward } = await import("@/lib/actions/referrals");
 const { grantValidatedPartnerScans } = await import("@/lib/partners/rewards");
+const { syncStripeSubscription } = await import("@/lib/billing/subscription-sync");
+const { createWelcomeProfile } = await import("@/lib/billing/welcome-enrollment");
+const { canUseWelcomeOffer } = await import("@/lib/billing/welcome-offer");
 
 let pg: EmbeddedPostgres;
 let directory: string;
@@ -102,6 +106,54 @@ beforeEach(async () => {
 });
 
 describe("lots de scans avec transactions PostgreSQL réelles", () => {
+  it("attribue le bonus permanent une fois et le conserve après résiliation et réabonnement", async () => {
+    vi.stubEnv("STRIPE_PRICE_ID_PREMIUM_MONTHLY", "price_month_test");
+    vi.stubEnv("STRIPE_PRICE_ID_PREMIUM_YEARLY", "price_year_test");
+    const customerId = `cus_${userId}`;
+    await client().user.update({ where: { id: userId }, data: { stripeCustomerId: customerId } });
+    const old = { id: `sub_old_${userId}`, customer: customerId, created: 100, status: "incomplete", latest_invoice: { status: "paid" },
+      metadata: { app: "kalivoa", betaOfferApplied: "true" },
+      items: { data: [{ price: { id: "price_month_test" }, current_period_end: Math.floor(future(30).getTime() / 1000) }] } };
+    const renewed = { ...old, id: `sub_new_${userId}`, created: 200, status: "active" };
+    const api = { subscriptions: { retrieve: vi.fn(async (id: string) => id === renewed.id ? renewed : old) } } as unknown as Stripe;
+    try {
+      await syncStripeSubscription(api, old.id);
+      expect(await client().scanCreditBatch.count({ where: { userId, type: "INITIAL" } })).toBe(0);
+      old.status = "active";
+      old.latest_invoice.status = "open";
+      await syncStripeSubscription(api, old.id);
+      expect((await client().user.findUniqueOrThrow({ where: { id: userId } })).plan).toBe("FREE");
+      expect(await client().scanCreditBatch.count({ where: { userId, type: "INITIAL" } })).toBe(0);
+      old.latest_invoice.status = "paid";
+      await Promise.all([syncStripeSubscription(api, old.id), syncStripeSubscription(api, old.id)]);
+      const paid = await client().user.findUniqueOrThrow({ where: { id: userId } });
+      expect(paid.plan).toBe("BETA_PREMIUM");
+      expect(paid.betaOfferUsedAt).not.toBeNull();
+      const wallet = await getScanWallet(userId);
+      expect(wallet.monthlyRemaining).toBe(200);
+      expect(wallet.permanentRemaining).toBe(300);
+      const bonus = await client().scanCreditBatch.findFirstOrThrow({ where: { userId, type: "INITIAL" } });
+      expect(bonus.expiresAt).toBeNull();
+      expect(bonus.requiresPaidPlan).toBe(true);
+      const reservation = await reserve();
+      const selected = await client().scanCreditReservation.findUniqueOrThrow({ where: { id: reservation } });
+      expect(selected.batchId).not.toBe(bonus.id); // Monthly before permanent.
+      await releaseScanCredit(userId, reservation);
+      old.status = "canceled";
+      await syncStripeSubscription(api, old.id);
+      expect((await getScanWallet(userId)).permanentRemaining).toBe(0);
+      expect((await client().scanCreditBatch.findUniqueOrThrow({ where: { id: bonus.id } })).quantityGranted).toBe(300);
+      renewed.metadata.betaOfferApplied = "false";
+      await syncStripeSubscription(api, renewed.id);
+      expect((await getScanWallet(userId)).permanentRemaining).toBe(300);
+      expect(await client().scanCreditBatch.count({ where: { userId, type: "INITIAL" } })).toBe(1);
+      // A late deletion of the old subscription must not remove the new access.
+      await syncStripeSubscription(api, old.id);
+      const current = await client().user.findUniqueOrThrow({ where: { id: userId } });
+      expect(current.plan).toBe("PREMIUM");
+      expect(current.stripeSubscriptionId).toBe(renewed.id);
+    } finally { vi.unstubAllEnvs(); }
+  });
   it("reprend exactement les soldes existants et ne les attribue qu'une seule fois", async () => {
     await client().user.update({ where: { id: userId }, data: { plan: "PREMIUM", monthlyScanCount: 180,
       initialScanCreditRemaining: 7, initialScanCreditGrantedAt: new Date(Date.now() - 20 * 86_400_000),
@@ -368,5 +420,75 @@ describe("lots de scans avec transactions PostgreSQL réelles", () => {
     const batch = await client().scanCreditBatch.findUniqueOrThrow({ where: { id: bonus.batch.id } });
     expect(balance).toBe(batch.quantityGranted - batch.quantityUsed - batch.quantityReserved - batch.quantityRevoked);
     expect(balance).toBe(2);
+  });
+});
+
+
+describe("welcome offer registrations with real PostgreSQL", () => {
+  const signup = () => { const id = randomUUID(); return { id, email: id + "@example.test", name: null }; };
+  afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); });
+  beforeEach(async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-09T12:00:00Z"));
+    vi.stubEnv("BETA_TESTER_EMAILS", ""); vi.stubEnv("ADMIN_EMAILS", "");
+    await client().user.updateMany({ data: { earlyWelcomePosition: null } });
+    await client().betaProgram.upsert({ where: { id: "global" },
+      create: { id: "global", phase: "ENDED", endedAt: new Date(), earlyWelcomeCount: 0 },
+      update: { phase: "ENDED", endedAt: new Date(), earlyWelcomeCount: 0 } });
+  });
+  it("limits 20 simultaneous registrations to 15 distinct places", async () => {
+    const profiles = await Promise.all(Array.from({ length: 20 }, () => createWelcomeProfile(signup())));
+    const positions = profiles.map((p) => p.earlyWelcomePosition).filter((p) => p !== null).sort((a, b) => a! - b!);
+    expect(positions).toEqual(Array.from({ length: 15 }, (_, i) => i + 1));
+    expect((await client().betaProgram.findUniqueOrThrow({ where: { id: "global" } })).earlyWelcomeCount).toBe(15);
+  }, 30_000);
+  it("does not consume a second place on simultaneous retries for one account", async () => {
+    const user = signup();
+    const profiles = await Promise.all([createWelcomeProfile(user), createWelcomeProfile(user)]);
+    expect(profiles.map((p) => p.earlyWelcomePosition)).toEqual([1, 1]);
+    expect((await client().betaProgram.findUniqueOrThrow({ where: { id: "global" } })).earlyWelcomeCount).toBe(1);
+  });
+  it("retains beta eligibility when the plan becomes free, outside the 15 places", async () => {
+    await client().betaProgram.update({ where: { id: "global" }, data: { phase: "ACTIVE" } });
+    const beta = await createWelcomeProfile(signup());
+    expect(beta).toMatchObject({ plan: "BETA_TESTER", betaWelcomeEligible: true, earlyWelcomePosition: null });
+    await client().user.update({ where: { id: beta.id }, data: { plan: "FREE" } });
+    const free = await client().user.findUniqueOrThrow({ where: { id: beta.id } });
+    expect(canUseWelcomeOffer({ ...free, now: new Date("2026-10-09T12:00:00Z") })).toBe(true);
+    expect((await client().betaProgram.findUniqueOrThrow({ where: { id: "global" } })).earlyWelcomeCount).toBe(0);
+  });
+  it("does not reopen a place when its member deletes their account", async () => {
+    await client().betaProgram.update({ where: { id: "global" }, data: { earlyWelcomeCount: 14 } });
+    const last = await createWelcomeProfile(signup());
+    expect(last.earlyWelcomePosition).toBe(15);
+    await client().user.delete({ where: { id: last.id } });
+    expect((await createWelcomeProfile(signup())).earlyWelcomePosition).toBeNull();
+  });
+  it("migrates existing beta members and only the first 15 post-beta signups", async () => {
+    await sql.query("BEGIN");
+    try {
+      await sql.query('DELETE FROM "users"');
+      await sql.query('ALTER TABLE "users" DROP COLUMN "betaWelcomeEligible", DROP COLUMN "earlyWelcomePosition"');
+      await sql.query('ALTER TABLE "beta_program" DROP COLUMN "earlyWelcomeCount"');
+      await sql.query(`UPDATE "beta_program" SET phase = 'ENDED', "endedAt" = '2026-10-01 00:00:00' WHERE id = 'global'`);
+      const beta = signup();
+      await sql.query(`INSERT INTO "users" (id, email, "referralCode", plan, "createdAt") VALUES ($1,$2,$1,'BETA_TESTER','2026-09-30')`, [beta.id, beta.email]);
+      for (let i = 0; i < 18; i++) { const user = signup(); await sql.query('INSERT INTO "users" (id,email,"referralCode","createdAt") VALUES ($1,$2,$1,$3)', [user.id,user.email,new Date(Date.UTC(2026,9,2,0,0,i))]); }
+      await sql.query(await readFile("prisma/migrations/20261009190000_welcome_offer_enrollment/migration.sql", "utf8"));
+      const result = await sql.query('SELECT count(*)::int AS count FROM "users" WHERE "earlyWelcomePosition" IS NOT NULL');
+      expect(result.rows[0].count).toBe(15);
+      const betaRow = await sql.query('SELECT "betaWelcomeEligible", "earlyWelcomePosition" FROM "users" WHERE id=$1', [beta.id]);
+      expect(betaRow.rows[0]).toEqual({ betaWelcomeEligible: true, earlyWelcomePosition: null });
+      const counter = await sql.query(`SELECT "earlyWelcomeCount" FROM "beta_program" WHERE id='global'`);
+      expect(counter.rows[0].earlyWelcomeCount).toBe(15);
+    } finally { await sql.query("ROLLBACK"); }
+  });
+  it("does not count beta-listed or administrative accounts", async () => {
+    const beta = signup(), admin = signup();
+    vi.stubEnv("BETA_TESTER_EMAILS", beta.email); vi.stubEnv("ADMIN_EMAILS", admin.email);
+    expect((await createWelcomeProfile(beta)).betaWelcomeEligible).toBe(true);
+    expect((await createWelcomeProfile(admin)).earlyWelcomePosition).toBeNull();
+    expect((await createWelcomeProfile(signup())).earlyWelcomePosition).toBe(1);
+    vi.unstubAllEnvs();
   });
 });

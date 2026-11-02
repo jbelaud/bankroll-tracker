@@ -39,7 +39,6 @@ export function ReviewBetCard({
   stakeUnitPreview,
   taxonomy,
   tipsters,
-  resultProofMode = false,
   onTipsterCreated,
 }: {
   bet: ParsedBet;
@@ -51,7 +50,6 @@ export function ReviewBetCard({
   stakeUnitPreview: number | null;
   taxonomy: Taxonomy;
   tipsters: TipsterOption[];
-  resultProofMode?: boolean;
   onTipsterCreated: (tipster: TipsterOption) => void;
 }) {
   const suggested = hasSuggestedType(bet);
@@ -97,7 +95,7 @@ export function ReviewBetCard({
         // !border : l'utilitaire .glass-card pose déjà un border (raccourci)
         // dans le même layer ; on force la couleur d'avertissement.
         bet.updatesExistingBet && "!border-profit/50",
-        ((!resultProofMode && bet.possibleDuplicate) || bet.taxonomyMismatch || (bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE")) && "!border-warning"
+        (bet.possibleDuplicate || bet.taxonomyMismatch || (bet.pendingTicketAlreadyExists && bet.result === "EN_ATTENTE")) && "!border-warning"
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -111,10 +109,11 @@ export function ReviewBetCard({
               {t("selectionsDetected", { count: bet.selections.length })}
             </span>
           ) : null}
-          {!resultProofMode && bet.possibleDuplicate && (
+          {bet.ticketRef ? <span className="break-all text-xs text-muted-foreground">{t("ticketReference", { reference: bet.ticketRef })}</span> : null}
+          {bet.possibleDuplicate && (
             <span className="flex items-center gap-1 text-xs font-medium text-warning">
               <Warning size={13} weight="fill" aria-hidden />
-              {t("duplicateBadge")}
+              {t(bet.ticketRef ? "duplicateReferenceBadge" : "duplicateBadge")}
             </span>
           )}
           {bet.updatesExistingBet && (

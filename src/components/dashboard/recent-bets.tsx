@@ -24,7 +24,7 @@ type RecentBet = {
   bankrollName: string;
 };
 
-export function RecentBets({ bets }: { bets: RecentBet[]; currency: Currency }) {
+export function RecentBets({ bets, currency }: { bets: RecentBet[]; currency: Currency }) {
   const locale = useLocale();
   const displayUnit = useDisplayUnit();
   const t = useTranslations("dashboard.recentBets");
