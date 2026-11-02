@@ -1,6 +1,11 @@
+import { resolve } from "node:path";
+
 const config = {
   plugins: {
-    "@tailwindcss/postcss": {},
+    // Scan application sources, excluding generated builds and test artifacts.
+    "@tailwindcss/postcss": {
+      base: resolve(process.cwd(), "src"),
+    },
   },
 };
 

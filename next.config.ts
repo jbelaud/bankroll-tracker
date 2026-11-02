@@ -22,6 +22,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   experimental: {
+    optimizePackageImports: ["@phosphor-icons/react", "@phosphor-icons/react/dist/ssr"],
     globalNotFound: true,
     serverActions: {
       bodySizeLimit: "12mb",
