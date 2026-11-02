@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { academyArticlePath, academyContent } from "@/lib/academy-content";
 import { academyTipsterContent, academyTipsterPath } from "@/lib/academy-tipster-content";
 import { academyCombinedContent, academyCombinedPath } from "@/lib/academy-combined-content";
+import sportContent from "@/lib/academy-sport-content.json";
 import roiContent from "@/lib/academy-roi-content.json";
 import drawdownContent from "@/lib/academy-drawdown-content.json";
 import unitsContent from "@/lib/academy-units-content.json";
@@ -26,6 +27,7 @@ export default async function AcademyPage({ params }: Props) {
     { path: academyArticlePath, title: copy.article.title, summary: copy.hub.articleSummary, date: "2026-10-07", group: "history" },
     { path: academyCombinedPath, title: academyCombinedContent[locale].title, summary: fr ? "Une seule mise, plusieurs sélections : enregistrez un combiné sans créer de doublon." : "One stake, several selections: record an accumulator without duplicating the bet.", date: "2026-10-08", group: "history" },
     { path: academyTipsterPath, title: academyTipsterContent[locale].title, summary: copy.hub.tipsterSummary, date: "2026-10-08", group: "evidence" },
+    { path: "/academie/analyser-resultats-par-sport", title: sportContent[locale].title, summary: sportContent[locale].description, date: "2026-11-02", group: "stats" },
     { path: "/academie/comprendre-drawdown-bankroll", title: drawdownContent[locale].title, summary: drawdownContent[locale].description, date: "2026-10-08", group: "stats" },
     { path: "/academie/calculer-roi-paris", title: roiContent[locale].title, summary: roiContent[locale].description, date: "2026-10-08", group: "stats" },
     { path: "/academie/comprendre-unites-bankroll", title: unitsContent[locale].title, summary: unitsContent[locale].description, date: "2026-10-08", group: "evidence" },

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { getSiteUrlForPath } from "@/lib/site";
@@ -6,15 +7,17 @@ export type LearningArticle = {
   title: string; description: string; category: string; lead: string;
   sections: { title: string; paragraphs: string[]; table?: string[][] }[];
   source: string; citation?: string;
+  proof?: { src: string; alt: string; caption: string };
+  related?: { path: string; title: string }[];
 };
 
-export function AcademyLearningArticle({ locale, path, copy }: { locale: Locale; path: string; copy: LearningArticle }) {
+export function AcademyLearningArticle({ locale, path, copy, publishedAt = "2026-10-08" }: { locale: Locale; path: string; copy: LearningArticle; publishedAt?: string }) {
   const fr = locale === "fr";
   const url = getSiteUrlForPath(`/${locale}${path}`);
   const organization = { "@type": "Organization", name: "Kalivoa", url: getSiteUrlForPath(`/${locale}`) };
   const schemas = [
     { "@context": "https://schema.org", "@type": "Article", headline: copy.title, description: copy.description,
-      datePublished: "2026-10-08", dateModified: "2026-10-08", mainEntityOfPage: url, inLanguage: locale,
+      datePublished: publishedAt, dateModified: publishedAt, mainEntityOfPage: url, inLanguage: locale,
       author: organization, publisher: organization, ...(copy.citation ? { citation: copy.citation } : {}) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Kalivoa", item: getSiteUrlForPath(`/${locale}`) },
@@ -33,7 +36,7 @@ export function AcademyLearningArticle({ locale, path, copy }: { locale: Locale;
       <header className="mt-10 max-w-3xl">
         <p className="marketing-eyebrow">{copy.category}</p>
         <h1 className="mt-4 text-balance text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">{copy.title}</h1>
-        <p className="mt-4 text-sm text-muted-foreground">{fr ? "Rédaction Kalivoa · " : "Kalivoa editorial team · "}<time dateTime="2026-10-08">{fr ? "8 octobre 2026" : "October 8, 2026"}</time></p>
+        <p className="mt-4 text-sm text-muted-foreground">{fr ? "Rédaction Kalivoa · " : "Kalivoa editorial team · "}<time dateTime={publishedAt}>{publishedAt === "2026-10-08" ? (fr ? "8 octobre 2026" : "October 8, 2026") : new Intl.DateTimeFormat(fr ? "fr-FR" : "en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(publishedAt))}</time></p>
         <p className="mt-6 text-lg leading-8 text-muted-foreground">{copy.lead}</p>
       </header>
       <div className="mt-14 max-w-3xl space-y-12">
@@ -46,6 +49,10 @@ export function AcademyLearningArticle({ locale, path, copy }: { locale: Locale;
             <tbody>{section.table.slice(1).map((row) => <tr key={row[0]}>{row.map((cell, index) => index === 0 ? <th key={index} scope="row" className="border-b border-border p-4 font-medium">{cell}</th> : <td key={index} className="border-b border-border p-4 text-muted-foreground">{cell}</td>)}</tr>)}</tbody>
           </table></div> : null}
         </section>)}
+        {copy.proof ? <figure>
+          <Image src={copy.proof.src} alt={copy.proof.alt} width={1151} height={738} sizes="(max-width: 768px) 100vw, 768px" className="h-auto w-full rounded-2xl border border-border" />
+          <figcaption className="mt-4 text-sm leading-7 text-muted-foreground">{copy.proof.caption}</figcaption>
+        </figure> : null}
         <aside className="marketing-solution p-6 sm:p-8" aria-label={fr ? "Source de l’exemple" : "Example source"}>
           <p className="text-sm leading-7 text-muted-foreground">{copy.source}</p>
           {copy.citation ? <a href={copy.citation} className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">{fr ? "Consulter la bankroll publique source" : "View the source public bankroll"} ↗</a> : null}
@@ -56,6 +63,7 @@ export function AcademyLearningArticle({ locale, path, copy }: { locale: Locale;
             <li><Link href="/academie" locale={locale} className="hover:underline">{fr ? "Tous les articles de l’Académie" : "All Academy articles"}</Link></li>
             <li><Link href="/bankroll-tracking" locale={locale} className="hover:underline">{fr ? "Comprendre le suivi de bankroll" : "Understand bankroll tracking"}</Link></li>
             <li><Link href="/academie/verifier-paris-tipster" locale={locale} className="hover:underline">{fr ? "Lire les preuves d’un tipster" : "Read a tipster’s evidence"}</Link></li>
+            {copy.related?.map((link) => <li key={link.path}><Link href={link.path} locale={locale} className="hover:underline">{link.title}</Link></li>)}
             <li><Link href="/responsible-gambling" locale={locale} className="hover:underline">{fr ? "Jeu responsable" : "Responsible gambling"}</Link></li>
           </ul>
         </section>
