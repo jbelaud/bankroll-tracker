@@ -1,0 +1,351 @@
+{
+  "updatedAt": "2026-11-02",
+  "baselineCommit": "50cfe7cd867b3f0a51ced35bdd50dd98e5856823",
+  "locales": [
+    "fr",
+    "en"
+  ],
+  "scope": "25 chemins du sitemap, 50 URL localisées. Ce registre ne donne pas le total des pages indexées ni toutes les routes publiques hors sitemap.",
+  "pages": [
+    {
+      "path": "",
+      "route": "src/app/[locale]/(marketing)/page.tsx",
+      "intent": "Découvrir Kalivoa",
+      "kind": "brand",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/features",
+      "route": "src/app/[locale]/(marketing)/features/page.tsx",
+      "intent": "Évaluer les fonctionnalités Kalivoa",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/certification",
+      "route": "src/app/[locale]/(marketing)/certification/page.tsx",
+      "intent": "Comprendre le mécanisme de certification Kalivoa et ses limites",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment",
+      "lastTechnicalChange": "2026-11-02",
+      "observeUntil": "2027-01-31",
+      "note": "Pages restaurées ; date de publication initiale inconnue ; indexation actuelle non contrôlée."
+    },
+    {
+      "path": "/extension",
+      "route": "src/app/[locale]/(marketing)/extension/page.tsx",
+      "intent": "Utiliser l’extension Kalivoa",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/screenshot-import",
+      "route": "src/app/[locale]/(marketing)/screenshot-import/page.tsx",
+      "intent": "Comprendre l’import par capture",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/bankroll-tracking",
+      "route": "src/app/[locale]/(marketing)/bankroll-tracking/page.tsx",
+      "intent": "Organiser son suivi de bankroll",
+      "kind": "pillar",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/academie",
+      "route": "src/app/[locale]/(marketing)/academie/page.tsx",
+      "intent": "Trouver les parcours de l’Académie",
+      "kind": "hub",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment",
+      "lastNavigationChange": "2026-11-02",
+      "observeUntil": "2027-01-31",
+      "note": "Ajout de cartes de nouveaux articles ; ne pas réécrire le hub en boucle."
+    },
+    {
+      "path": "/academie/verifier-ticket-pari-scan",
+      "route": "src/app/[locale]/(marketing)/academie/verifier-ticket-pari-scan/page.tsx",
+      "intent": "Relire les champs proposés après un scan",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-07",
+      "observeUntil": "2027-01-05",
+      "proof": "src/lib/academy-content.ts — tickets et relecture fournis le 25/09, deux simples et un combiné ; capture publique autorisée."
+    },
+    {
+      "path": "/academie/verifier-paris-tipster",
+      "route": "src/app/[locale]/(marketing)/academie/verifier-paris-tipster/page.tsx",
+      "intent": "Examiner les preuves des paris publiés par un tipster",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-08",
+      "observeUntil": "2027-01-06",
+      "proof": "src/lib/academy-tipster-content.ts — bankroll EGS Betting autorisée, état historique daté ; ne pas déduire un statut actuel."
+    },
+    {
+      "path": "/academie/suivre-pari-combine",
+      "route": "src/app/[locale]/(marketing)/academie/suivre-pari-combine/page.tsx",
+      "intent": "Enregistrer un combiné avec une seule mise",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-08",
+      "observeUntil": "2027-01-06",
+      "proof": "src/lib/academy-combined-content.ts — combiné du 17/09, une mise et deux sélections ; profit exclu (écart non résolu)."
+    },
+    {
+      "path": "/academie/verifier-cote-totale-combine",
+      "route": "src/app/[locale]/(marketing)/academie/verifier-cote-totale-combine/page.tsx",
+      "intent": "Vérifier le calcul de la cote totale d’un combiné",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-11-02",
+      "observeUntil": "2027-01-31",
+      "proof": "src/lib/academy-odds-content.json — même combiné, cotes observées 1,47 / 1,31 / 1,93 ; calcul 1,9257, aucun profit utilisé."
+    },
+    {
+      "path": "/academie/analyser-resultats-par-sport",
+      "route": "src/app/[locale]/(marketing)/academie/analyser-resultats-par-sport/page.tsx",
+      "intent": "Comparer des résultats par sport sur des périmètres cohérents",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-11-02",
+      "observeUntil": "2027-01-31",
+      "proof": "src/lib/academy-sport-content.json — deux simples perdus du 18/09, 10 € et 7,50 €, retour nul ; aucun résultat de filtre produit prétendu."
+    },
+    {
+      "path": "/academie/comprendre-drawdown-bankroll",
+      "route": "src/app/[locale]/(marketing)/academie/comprendre-drawdown-bankroll/page.tsx",
+      "intent": "Lire les baisses intermédiaires en unités",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-08",
+      "observeUntil": "2027-01-06",
+      "proof": "src/lib/academy-drawdown-content.json — extrait daté de la bankroll publique EGS Betting, autorisation conservée."
+    },
+    {
+      "path": "/academie/calculer-roi-paris",
+      "route": "src/app/[locale]/(marketing)/academie/calculer-roi-paris/page.tsx",
+      "intent": "Calculer le ROI et le distinguer du taux de réussite",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-08",
+      "observeUntil": "2027-01-06",
+      "proof": "src/lib/academy-roi-content.json — deux simples perdus, total misé 17,50 €, perte nette 17,50 €."
+    },
+    {
+      "path": "/academie/comprendre-unites-bankroll",
+      "route": "src/app/[locale]/(marketing)/academie/comprendre-unites-bankroll/page.tsx",
+      "intent": "Comprendre la conversion des mises en unités",
+      "kind": "article",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 22/10/2026, à recontrôler si motif",
+      "indexingEn": "non contrôlée récemment",
+      "publishedAt": "2026-10-08",
+      "observeUntil": "2027-01-06",
+      "proof": "src/lib/academy-units-content.json — exemple public EGS Betting daté et autorisé."
+    },
+    {
+      "path": "/bookmakers",
+      "route": "src/app/[locale]/(marketing)/bookmakers/page.tsx",
+      "intent": "Trouver les profils bookmaker pris en charge",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/partenaires",
+      "route": "src/app/[locale]/(marketing)/partenaires/page.tsx",
+      "intent": "Comprendre le programme partenaire Kalivoa",
+      "kind": "program",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 28/10/2026, crawl du 25/10",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/bookmakers/unibet",
+      "route": "src/app/[locale]/(marketing)/bookmakers/[bookmaker]/page.tsx",
+      "intent": "Importer un ticket Unibet compatible",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/bookmakers/betclic",
+      "route": "src/app/[locale]/(marketing)/bookmakers/[bookmaker]/page.tsx",
+      "intent": "Importer un ticket Betclic compatible",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/bookmakers/winamax",
+      "route": "src/app/[locale]/(marketing)/bookmakers/[bookmaker]/page.tsx",
+      "intent": "Importer un ticket Winamax compatible",
+      "kind": "product",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/pricing",
+      "route": "src/app/[locale]/(marketing)/pricing/page.tsx",
+      "intent": "Connaître les tarifs et conditions Kalivoa",
+      "kind": "commercial",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/faq",
+      "route": "src/app/[locale]/(marketing)/faq/page.tsx",
+      "intent": "Trouver les réponses d’utilisation Kalivoa",
+      "kind": "support",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/privacy",
+      "route": "src/app/[locale]/privacy/page.tsx",
+      "intent": "Lire la politique de confidentialité",
+      "kind": "legal",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "indexée au contrôle du 02/11/2026, crawl du 28/10",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/terms",
+      "route": "src/app/[locale]/terms/page.tsx",
+      "intent": "Lire les conditions d’utilisation",
+      "kind": "legal",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
+      "path": "/responsible-gambling",
+      "route": "src/app/[locale]/responsible-gambling/page.tsx",
+      "intent": "Trouver les ressources de jeu responsable",
+      "kind": "support",
+      "targetStatus": "intention éditoriale attribuée, pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "path": "src/app/robots.ts",
+      "sha256": "30690626ff347d4d21ad8e3f1594de56bcc3c27a9097b3b3af3380129dd26633",
+      "review": "état publié 50cfe7c, maintien du comportement production/preview et des canoniques/hreflang"
+    },
+    {
+      "path": "src/lib/marketing-seo.ts",
+      "sha256": "b7e5048c5d6beb14fdf38297005e790d32eabf6408c0f27cf5a324e6680306e9",
+      "review": "état publié 50cfe7c, maintien du comportement production/preview et des canoniques/hreflang"
+    },
+    {
+      "path": "src/lib/site.ts",
+      "sha256": "ea6d5653c15fd32eea9c4aa2caf39a9d40c7cb152c165786f32f5f2284574455",
+      "review": "état publié 50cfe7c, maintien du comportement production/preview et des canoniques/hreflang"
+    }
+  ],
+  "deferred": [
+    {
+      "intent": "cash out",
+      "reason": "aucun ticket réel, Jeremy ne pratique pas cet usage ; ne plus demander cette preuve"
+    },
+    {
+      "intent": "freebet ou remboursement",
+      "reason": "preuve réelle et convention de calcul manquantes"
+    },
+    {
+      "intent": "solde bookmaker et bénéfice",
+      "reason": "rapprochement réel absent, éviter répétition du ROI"
+    },
+    {
+      "intent": "comparatifs et alternatives",
+      "reason": "tests, données concurrentes et difficulté non validés"
+    }
+  ]
+}
