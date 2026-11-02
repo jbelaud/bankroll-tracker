@@ -37,7 +37,6 @@ export async function savePublicBankrollSettings(
   });
 
   revalidatePath("/[locale]/bankrolls/[id]", "page");
-  revalidatePath("/[locale]/tipster-space", "page");
   revalidatePath("/[locale]/p/[slug]", "page");
   revalidatePath("/[locale]/t/[handle]", "page");
   revalidatePath("/[locale]/discover", "page");
@@ -69,7 +68,6 @@ export async function movePublicBankroll(form: FormData) {
   });
 
   revalidatePath("/[locale]/account", "layout");
-  revalidatePath("/[locale]/tipster-space", "page");
   revalidatePath("/[locale]/p/[slug]", "page");
   revalidatePath("/[locale]/t/[handle]", "page");
   revalidatePath("/[locale]/discover", "page");

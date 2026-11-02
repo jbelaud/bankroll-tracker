@@ -30,7 +30,6 @@ export async function toggleTipsterFollow(previous: TipsterFollowState, form: Fo
     const tipster = await tx.user.findFirst({
       where: {
         publicHandle: handle,
-        publicProfileSuspended: false,
         bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } },
       },
       select: { id: true },
