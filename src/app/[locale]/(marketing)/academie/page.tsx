@@ -5,6 +5,7 @@ import { academyArticlePath, academyContent } from "@/lib/academy-content";
 import { academyTipsterContent, academyTipsterPath } from "@/lib/academy-tipster-content";
 import { academyCombinedContent, academyCombinedPath } from "@/lib/academy-combined-content";
 import sportContent from "@/lib/academy-sport-content.json";
+import oddsContent from "@/lib/academy-odds-content.json";
 import roiContent from "@/lib/academy-roi-content.json";
 import drawdownContent from "@/lib/academy-drawdown-content.json";
 import unitsContent from "@/lib/academy-units-content.json";
@@ -31,6 +32,7 @@ export default async function AcademyPage({ params }: Props) {
     { path: "/academie/comprendre-drawdown-bankroll", title: drawdownContent[locale].title, summary: drawdownContent[locale].description, date: "2026-10-08", group: "stats" },
     { path: "/academie/calculer-roi-paris", title: roiContent[locale].title, summary: roiContent[locale].description, date: "2026-10-08", group: "stats" },
     { path: "/academie/comprendre-unites-bankroll", title: unitsContent[locale].title, summary: unitsContent[locale].description, date: "2026-10-08", group: "evidence" },
+    { path: "/academie/verifier-cote-totale-combine", title: oddsContent[locale].title, summary: oddsContent[locale].description, date: "2026-11-02", group: "history" },
   ];
   const groups = [
     { id: "history", title: fr ? "Tenir son historique" : "Keep your betting history", intro: fr ? "Contrôlez vos tickets et gardez une trace lisible de chaque pari." : "Check your slips and keep a clear record of each bet." },
