@@ -32,4 +32,23 @@ describe("navigation partenaires protégée", () => {
     expect(response.headers.get("location")).toBeNull();
   });
 });
+describe("négociation Markdown pour les agents", () => {
+  const md = { accept: "text/markdown" };
+  it("réécrit l'accueil vers la variante Markdown avec Vary: Accept", async () => {
+    const response = await proxy(new NextRequest("https://kalivoa.com/fr", { headers: md }));
+    expect(response.headers.get("x-middleware-rewrite")).toContain("/agent-md?p=%2Ffr");
+    expect(response.headers.get("vary")).toContain("Accept");
+  });
+  it("réécrit un chemin inconnu pour produire un 404 Markdown", async () => {
+    const response = await proxy(new NextRequest("https://kalivoa.com/fr/__probe", { headers: md }));
+    expect(response.headers.get("x-middleware-rewrite")).toContain("/agent-md");
+  });
+  it("garde le HTML pour un navigateur et pour les pages applicatives", async () => {
+    const html = await proxy(new NextRequest("https://kalivoa.com/fr", { headers: { accept: "text/html" } }));
+    expect(html.headers.get("x-middleware-rewrite")).toBeNull();
+    expect(html.headers.get("vary")).toContain("Accept");
+    const app = await proxy(new NextRequest("https://kalivoa.com/fr/partners", { headers: md }));
+    expect(app.headers.get("location")).toBe("https://kalivoa.com/fr/login");
+  });
+});
 

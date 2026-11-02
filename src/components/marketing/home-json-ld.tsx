@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
+import { COMPANY } from "@/lib/company";
 import { getSiteUrlForPath } from "@/lib/site";
 
 const faqKeys = [
@@ -26,7 +27,25 @@ export async function HomeJsonLd({ locale }: { locale: Locale }) {
       "@type": "Organization",
       name: "Kalivoa",
       url: homeUrl,
+      legalName: COMPANY.name,
       description: t("structured.organizationDescription"),
+      email: COMPANY.publicEmail,
+      telephone: COMPANY.publicPhoneInternational,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "61 rue de Lyon",
+        postalCode: "75012",
+        addressLocality: "Paris",
+        addressCountry: "FR",
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: COMPANY.publicEmail,
+        telephone: COMPANY.publicPhoneInternational,
+        availableLanguage: ["fr", "en"],
+        url: getSiteUrlForPath("/" + locale + "/contact"),
+      },
     },
     {
       "@context": "https://schema.org",

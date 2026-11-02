@@ -24,6 +24,7 @@ const publicPaths = [
   { path: "/bookmakers/winamax", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/pricing", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/offre-bienvenue", priority: 0.5, changeFrequency: "monthly" as const },
+  { path: "/about", priority: 0.4, changeFrequency: "yearly" as const },
   { path: "/faq", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },

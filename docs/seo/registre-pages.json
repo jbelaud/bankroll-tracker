@@ -269,6 +269,17 @@
       "indexingEn": "non contrôlée récemment"
     },
     {
+      "path": "/about",
+      "route": "src/app/[locale]/(marketing)/about/page.tsx",
+      "intent": "Savoir qui édite Kalivoa et ce que l’outil fait ou ne fait pas",
+      "kind": "support",
+      "targetStatus": "page de confiance (audit agents 02/11/2026), pas requête GSC confirmée",
+      "volume": "à vérifier",
+      "difficulty": "à vérifier",
+      "indexingFr": "non contrôlée récemment",
+      "indexingEn": "non contrôlée récemment"
+    },
+    {
       "path": "/faq",
       "route": "src/app/[locale]/(marketing)/faq/page.tsx",
       "intent": "Trouver les réponses d’utilisation Kalivoa",

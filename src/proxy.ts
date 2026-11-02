@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import { classifyMarkdownRoute, splitLocalePath, wantsMarkdown } from "@/lib/agent/markdown";
 
 const PROTECTED_ROUTES = [
   "/dashboard",
@@ -95,6 +96,29 @@ export async function proxy(request: NextRequest) {
     return response;
   }
 
+  // Négociation de contenu pour les agents : `Accept: text/markdown` reçoit une
+  // représentation Markdown de la même URL (Vary: Accept), et un 404 Markdown
+  // pour une page inexistante. Les pages HTML privées/applicatives suivent
+  // le flux habituel (auth incluse).
+  const localized = splitLocalePath(request.nextUrl.pathname);
+  const markdownCapable = request.method === "GET" || request.method === "HEAD";
+  if (localized && markdownCapable && wantsMarkdown(request.headers.get("accept"))) {
+    if (classifyMarkdownRoute(localized.path) !== "html-only") {
+      const target = request.nextUrl.clone();
+      target.pathname = "/agent-md";
+      target.search = "";
+      target.searchParams.set("p", request.nextUrl.pathname);
+      // Le chemin d'origine voyage aussi en en-tête : la query d'une réécriture
+      // n'est pas garantie jusqu'au Route Handler.
+      const markdownHeaders = new Headers(requestHeaders);
+      markdownHeaders.set("x-agent-md-path", request.nextUrl.pathname);
+      const markdownResponse = NextResponse.rewrite(target, { request: { headers: markdownHeaders } });
+      markdownResponse.headers.set("Content-Security-Policy", csp);
+      markdownResponse.headers.append("Vary", "Accept");
+      return markdownResponse;
+    }
+  }
+
   // On mute la MÊME réponse (pas de NextResponse.next({request}) concurrente)
   // pour ne pas perdre les en-têtes déjà posés par next-intl (cookie de
   // locale, Link d'alternates) — on y ajoute juste les cookies de session.
@@ -143,6 +167,8 @@ export async function proxy(request: NextRequest) {
   }
 
   response.headers.set("Content-Security-Policy", csp);
+  // La même URL publique peut répondre en Markdown : les caches doivent varier.
+  response.headers.append("Vary", "Accept");
   return response;
 }
 
