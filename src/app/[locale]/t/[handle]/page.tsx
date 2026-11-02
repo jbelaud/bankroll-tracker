@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale, handle: rawHandle } = await params;
   const handle = normalizePublicHandle(rawHandle);
   const tipster = validPublicHandle(handle) ? await prisma.user.findFirst({
-    where: { publicHandle: handle, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
+    where: { publicHandle: handle, publicProfileSuspended: false, bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } } },
     select: { name: true, publicDisplayName: true, publicBio: true },
   }) : null;
   if (!tipster) return { title: "Tipster Kalivoa", robots: { index: false, follow: false } };
@@ -65,6 +65,7 @@ export default async function PublicTipsterPage({ params, searchParams }: {
     prisma.user.findFirst({
       where: {
         publicHandle: handle,
+        publicProfileSuspended: false,
         bankrolls: { some: { isPublic: true, certificationStartedAt: { not: null } } },
       },
       select: {

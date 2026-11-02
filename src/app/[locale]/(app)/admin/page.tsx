@@ -382,8 +382,8 @@ export default async function AdminPage({
 
     return {
       id: report.id,
-        adminNotes: report.adminNotes,
-        issueDetails: report.issueDetails,
+      adminNotes: report.adminNotes,
+      issueDetails: report.issueDetails,
       bookmaker: report.bookmaker,
       status: report.status,
       correctionCount: summary.count,

@@ -3,7 +3,7 @@ import type { CertificationStatus } from "@/lib/certification";
 
 const CORRECTION_FIELD_LABELS: Record<string, string> = {
   bookmaker: "bookmaker", ticketReferenceCorrected: "référence du ticket",
-  initialProofAt: "scan initial", initialProofBeforeEvent: "avant l’événement", resultProofReviewed: "résultat scanné",
+  initialProofAt: "scan initial", initialProofBeforeEvent: "preuve initiale qualifiée", resultProofReviewed: "résultat scanné",
   sport: "sport", betType: "type de pari", description: "sélection", eventResult: "résultat de l’événement",
   date: "date", stakeUnits: "mise en unités", odds: "cote", result: "résultat", cashOutUnits: "cash out en unités",
   boosted: "boost", originalOdds: "cote initiale", freebet: "freebet", live: "pari en direct",
@@ -48,10 +48,10 @@ export function PublicBetProofJournal({
     <div className="space-y-2 border-t border-border px-2 py-2 text-[0.7rem] leading-relaxed text-muted-foreground">
       {initialProofAt ? <p>
         <strong className="text-foreground">Scan initial enregistré</strong> le {timestamp.format(initialProofAt)} (heure de Paris)
-        {initialProofBeforeEvent === true ? " · avant l’événement confirmé" : " · chronologie avant l’événement non établie"}.
+        {initialProofBeforeEvent === true ? " · ticket en cours horodaté vérifié" : " · chronologie du ticket non établie"}.
       </p> : null}
       {resultProofAt ? <p><strong className="text-foreground">Capture du résultat enregistrée</strong> le {timestamp.format(resultProofAt)} (heure de Paris).</p> : null}
-      {proofStatus === "LIMITED" ? <p>Preuve limitée : le résultat a été scanné, mais aucun scan initial avant l’événement n’est confirmé.</p> : null}
+      {proofStatus === "LIMITED" ? <p>Preuve limitée : le résultat a été scanné, mais aucun ticket initial en cours horodaté n’est confirmé.</p> : null}
       {proofCount === 0 && corrections.length === 0 ? <p>Aucun scan de preuve ni correction enregistré pour ce pari.</p> : null}
       {corrections.length > 0 ? <ul className="space-y-1.5 border-t border-border pt-2">
         {corrections.map((correction, index) => {

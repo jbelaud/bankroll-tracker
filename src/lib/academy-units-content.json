@@ -1,0 +1,138 @@
+{
+  "fr": {
+    "title": "Pourquoi une bankroll publique affiche-t-elle les mises en unités ?",
+    "description": "Comprenez les mises en unités, leur conversion et les limites des comparaisons entre bankrolls publiques. Exemple daté avec EGS Betting.",
+    "category": "Lire les preuves d’un tipster",
+    "lead": "Une unité, notée « u », exprime une mise par rapport à une référence définie par le parieur. Elle permet de lire la taille des mises sans publier directement leur montant en euros. Une mise de 1 u n’est pas un montant universel : sa conversion dépend de la référence utilisée. Elle ne prouve ni le capital disponible sur un compte bookmaker ni la fiabilité d’un pronostic.",
+    "sections": [
+      {
+        "title": "Pourquoi afficher 1 u au lieu d’un montant en euros ?",
+        "paragraphs": [
+          "Deux personnes peuvent engager des montants différents tout en décrivant leur mise comme une unité. Le chiffre public donne alors une échelle relative pour lire l’historique. Sans connaître la règle de conversion, il ne permet pas de retrouver les montants réellement engagés par l’auteur.",
+          "Pour le lecteur, les unités aident à comparer les mises d’un même historique. Une mise de 2 u représente deux fois une mise de 1 u lorsque les deux lignes utilisent la même référence. Cela ne signifie pas que le deuxième pari a deux fois plus de chances de gagner."
+        ]
+      },
+      {
+        "title": "Comment expliquer une conversion ?",
+        "paragraphs": [
+          "La conversion s’écrit : mise en unités = mise en devise ÷ valeur d’une unité dans cette devise. Il faut connaître les deux montants et appliquer la même convention.",
+          "Illustration pédagogique, sans ticket réel associé : si la valeur d’une unité est fixée à 20 €, une mise de 30 € correspond à 1,5 u. Ce calcul explique le fonctionnement d’une échelle ; il n’est ni une recommandation de mise ni une observation de la bankroll d’EGS Betting.",
+          "Un outil peut utiliser une référence pour figer les unités à l’enregistrement, puis une autre pour afficher un équivalent privé au lecteur. Ces deux opérations doivent être distinguées : l’équivalent personnel affiché à un visiteur ne révèle pas le montant réel du ticket de l’auteur. Dans Kalivoa, vérifiez les réglages et les unités proposés avant de valider un import.",
+          "Dans Kalivoa, la valeur d’une unité correspond à 1 % du montant de référence défini pour la bankroll. Ce montant de référence est un réglage de conversion ; il ne prouve pas le solde disponible chez le bookmaker."
+        ]
+      },
+      {
+        "title": "Un cas réel sur une bankroll publique",
+        "paragraphs": [
+          "Le 8 octobre 2026, la bankroll publique d’EGS Betting présentait 26 paris visibles, dont 25 réglés et un en attente. Son panneau de certification indiquait un volume suivi de 2,5 u et un statut « En observation », avec un score de 10/100. Ces valeurs ont été relevées sur la page publique avec l’accord du tipster.",
+          "Le nombre total de paris et le volume suivi pour la certification portent sur des périmètres différents. Un historique importé et la partie suivie depuis l’activation de la certification ne doivent pas être confondus. Il serait incorrect de diviser 2,5 u par 26 pour prétendre calculer la mise moyenne de la bankroll complète."
+        ],
+        "table": [
+          [
+            "Donnée publique relevée",
+            "Ce qu’elle permet de lire"
+          ],
+          [
+            "26 paris visibles",
+            "Le nombre de lignes de cet historique au moment du relevé"
+          ],
+          [
+            "25 réglés, 1 en attente",
+            "La répartition des statuts à cette date"
+          ],
+          [
+            "Volume suivi pour la certification : 2,5 u",
+            "Le volume du périmètre suivi affiché dans le panneau, pas la somme supposée de tous les tickets historiques"
+          ],
+          [
+            "Statut « En observation »",
+            "Le niveau de suivi indiqué à cette date, sans le présenter comme une certification acquise"
+          ]
+        ]
+      },
+      {
+        "title": "Que faut-il vérifier avant de comparer deux historiques en unités ?",
+        "paragraphs": [
+          "Commencez par la période et les paris inclus. Vérifiez que l’auteur explique sa convention, que les mises et résultats sont visibles et que les variations de référence n’ont pas rendu la série difficile à interpréter. Ne comparez pas un volume de certification avec l’ensemble des mises d’une autre bankroll.",
+          "Regardez ensuite les preuves associées aux tickets. Un historique en unités peut être lisible sans disposer de toutes les preuves nécessaires. Le format d’une mise et le statut de preuve répondent à deux questions différentes : comment le montant est exprimé, et ce qui permet de contrôler le pari."
+        ]
+      },
+      {
+        "title": "Les unités ne suppriment pas le risque",
+        "paragraphs": [
+          "Exprimer une perte en « u » ne la rend pas virtuelle. Une mise représente toujours une somme exposée selon la conversion applicable. Le suivi en unités ne garantit pas les gains futurs et ne justifie pas de reproduire la mise d’un tipster. Fixez vos limites personnelles et utilisez les ressources de jeu responsable en cas de difficulté."
+        ]
+      }
+    ],
+    "source": "Source : bankroll publique d’EGS Betting, relevée le 8 octobre 2026 avec son accord. Les valeurs peuvent évoluer ; ce texte conserve la date du relevé.",
+    "citation": "https://kalivoa.com/fr/p/Gi4RdWxXhbHFOIJL?view=all"
+  },
+  "en": {
+    "title": "Why does a public bankroll display stakes in units?",
+    "description": "Understand betting units, conversions and the limits of public bankroll comparisons. A dated real example from EGS Betting.",
+    "category": "Read a tipster’s bet evidence",
+    "lead": "A unit, written “u”, expresses a stake relative to a reference chosen by the bettor. It lets readers see stake sizes without directly publishing their euro amounts. One unit is not a universal cash amount: its conversion depends on the reference used. It proves neither the bookmaker account balance nor the reliability of a pick.",
+    "sections": [
+      {
+        "title": "Why display 1 u instead of a cash amount?",
+        "paragraphs": [
+          "Two people can stake different cash amounts while calling each stake one unit. The public figure provides a relative scale for reading the history. Without the conversion rule, you cannot reconstruct the author’s actual cash stakes.",
+          "Units help compare stakes within one history. A 2 u stake is twice a 1 u stake when both entries use the same reference. This does not mean the second bet is twice as likely to win."
+        ]
+      },
+      {
+        "title": "How does conversion work?",
+        "paragraphs": [
+          "The conversion is: stake in units = cash stake ÷ cash value of one unit. You need both amounts and a consistent convention.",
+          "Educational illustration, not a real slip: if one unit is €20, a €30 stake is 1.5 u. This explains a scale, not a recommended stake or an observation of EGS Betting’s bankroll.",
+          "A tool can freeze units when a bet is recorded, then use a separate setting to show a reader’s private cash equivalent. The reader’s personal equivalent does not reveal the author’s actual stake. In Kalivoa, check the settings and proposed units before confirming an import.",
+          "In Kalivoa, one unit corresponds to 1% of the bankroll’s reference amount. That amount is a conversion setting; it does not prove the balance available at the bookmaker."
+        ]
+      },
+      {
+        "title": "A real public bankroll example",
+        "paragraphs": [
+          "On October 8, 2026, EGS Betting’s public bankroll displayed 26 bets: 25 settled and one pending. Its certification panel showed 2.5 u of tracked volume and an “Under observation” status with a score of 10/100. These figures were recorded from the public page with the tipster’s consent.",
+          "Total history count and certification volume cover different scopes. Imported history must be distinguished from the portion tracked since certification activation. Dividing 2.5 u by 26 would not establish the complete bankroll’s average stake."
+        ],
+        "table": [
+          [
+            "Observed public figure",
+            "What it tells you"
+          ],
+          [
+            "26 visible bets",
+            "History entries at the time of observation"
+          ],
+          [
+            "25 settled, 1 pending",
+            "The status breakdown on that date"
+          ],
+          [
+            "2.5 u certification tracked volume",
+            "The tracked scope displayed by the panel, not all historical stakes"
+          ],
+          [
+            "Under observation",
+            "The displayed status, not completed certification"
+          ]
+        ]
+      },
+      {
+        "title": "What should you check before comparing histories in units?",
+        "paragraphs": [
+          "Start with the period and included bets. Check whether the author explains the convention, stakes and results are visible, and reference changes affect interpretation. Do not compare certification volume with all stakes in another bankroll.",
+          "Then review the evidence attached to slips. A history can be readable in units without complete evidence. Stake format explains how amounts are expressed; evidence status explains what lets you check a bet."
+        ]
+      },
+      {
+        "title": "Units do not remove financial risk",
+        "paragraphs": [
+          "Calling a loss “u” does not make it virtual. A stake still represents money exposed under the applicable conversion. Unit tracking guarantees no future profit and does not justify copying a tipster’s stakes. Set personal limits and use responsible gambling resources if needed."
+        ]
+      }
+    ],
+    "source": "Source: EGS Betting’s public bankroll, observed on October 8, 2026 with consent. Values can change; this article retains the observation date.",
+    "citation": "https://kalivoa.com/en/p/Gi4RdWxXhbHFOIJL?view=all"
+  }
+}

@@ -11,7 +11,7 @@ export const revalidate = 300;
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const bankroll = await prisma.bankroll.findFirst({
-    where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null } },
+    where: { publicSlug: slug, isPublic: true, certificationStartedAt: { not: null }, user: { publicProfileSuspended: false } },
     select: {
       name: true, certificationStartedAt: true, publicSports: true,
       user: { select: { name: true, publicDisplayName: true, publicHandle: true } },

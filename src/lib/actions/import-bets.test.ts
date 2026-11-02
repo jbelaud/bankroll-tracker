@@ -144,7 +144,7 @@ describe("importExternalBets", () => {
   it("conserve les mises Bet-Analytix en unités indépendamment de la conversion privée", async () => {
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     const sourceBet = bet({ ticketRef: null, stake: 1.25, odds: 3.75, result: "PERDU" });
-    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv");
+    const response = await importExternalBets("bankroll-1", [sourceBet], "BET_ANALYTIX", "ba.csv", null, "UNIT");
 
     expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
     expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_UNITS_NATIVE" }) });
@@ -156,17 +156,30 @@ describe("importExternalBets", () => {
     })] });
   });
 
-  it("refuse un export BA dans une bankroll en devise", async () => {
+  it("exige la devise BA et refuse une bankroll de destination différente", async () => {
     await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX"))
-      .resolves.toEqual({ error: "Un export Bet-Analytix en U doit être importé dans une bankroll suivie en U." });
+      .resolves.toEqual({ error: "Choisis la devise de la bankroll Bet-Analytix d’origine avant l’import." });
+    await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX", "ba.csv", null, "UNIT"))
+      .resolves.toEqual({ error: "La devise de l’export Bet-Analytix doit correspondre à celle de la bankroll de destination." });
     expect(mocks.betCreateMany).not.toHaveBeenCalled();
+  });
+
+  it("conserve un export BA en euros comme des mises en euros sans inventer des unités", async () => {
+    const response = await importExternalBets("bankroll-1", [bet({ stake: 12.5 })], "BET_ANALYTIX", "ba-eur.csv", null, "EUR");
+
+    expect(response).toEqual({ imported: 1, skippedDuplicates: 0, firstImport: true });
+    expect(mocks.importBatchCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ source: "BET_ANALYTIX_EUR_NATIVE" }) });
+    const row = mocks.betCreateMany.mock.calls[0][0].data[0];
+    expect(row).toEqual(expect.objectContaining({ stake: 12.5, stakeCurrency: "EUR" }));
+    expect(row).not.toHaveProperty("stakeUnits");
+    expect(row).not.toHaveProperty("referenceCapitalAtBet");
   });
 
   it("conserve l'heure BA pour ordonner les paris d'un même jour", async () => {
     mocks.bankrollFindFirst.mockResolvedValue({ id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", allocations: [{ id: "allocation-1", bookmaker: "Winamax" }] });
     await importExternalBets("bankroll-1", [bet({
       date: "2026-09-03", placedAt: "2026-09-03T19:20:00.000Z",
-    })], "BET_ANALYTIX");
+    })], "BET_ANALYTIX", undefined, null, "UNIT");
     expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
       date: new Date("2026-09-03T19:20:00.000Z"),
     })] });
@@ -184,7 +197,7 @@ describe("importExternalBets", () => {
       importBatch: { source: "BET_ANALYTIX" },
     }]);
 
-    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv");
+    const response = await importExternalBets("bankroll-1", [bet({ ticketRef: null, stake: 1.25, odds: 3.75 })], "BET_ANALYTIX", "ba.csv", null, "UNIT");
     expect(response).toEqual({ imported: 0, skippedDuplicates: 1, firstImport: false });
     expect(mocks.betCreateMany).not.toHaveBeenCalled();
   });
@@ -406,23 +419,25 @@ describe("importBets", () => {
   it("réutilise un même Scan dans deux bankrolls et refuse la référence déjà importée dans la première", async () => {
     const importedBankrolls = new Set<string>();
     mocks.bankrollFindFirst.mockImplementation(async ({ where }: { where: { id: string } }) => ({
-      id: where.id, mode: "SINGLE", currency: "EUR", referenceCurrency: "EUR",
-      referenceCapital: 100, allocations: [],
+      id: where.id,
+      mode: "SINGLE",
+      currency: "EUR",
+      referenceCurrency: "EUR",
+      referenceCapital: 100,
+      allocations: [],
     }));
     mocks.betFindMany.mockImplementation(async ({ where }: { where: { bankrollId: string; ticketRef?: unknown } }) =>
-      where.ticketRef && importedBankrolls.has(where.bankrollId) ? [{ ticketRef: "REF-SHARED" }] : []);
+      where.ticketRef && importedBankrolls.has(where.bankrollId) ? [{ ticketRef: "REF-SHARED" }] : []
+    );
     mocks.createOwnedBet.mockImplementation(async (_userId: string, input: { bankrollId: string }) => {
       importedBankrolls.add(input.bankrollId);
       return { id: `bet-${input.bankrollId}` };
     });
-    const scannedBet = bet({ ticketRef: "REF-SHARED", result: "GAGNE", sourceScanIndex: 0 });
 
-    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"]))
-      .toMatchObject({ imported: 1 });
-    expect(await importBets("bankroll-2", [scannedBet], ["scan-result"]))
-      .toMatchObject({ imported: 1 });
-    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"]))
-      .toEqual({ error: expect.stringContaining("déjà enregistré") });
+    const scannedBet = bet({ ticketRef: "REF-SHARED", result: "GAGNE", sourceScanIndex: 0 });
+    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"])).toMatchObject({ imported: 1 });
+    expect(await importBets("bankroll-2", [scannedBet], ["scan-result"])).toMatchObject({ imported: 1 });
+    expect(await importBets("bankroll-1", [scannedBet], ["scan-result"])).toEqual({ error: expect.stringContaining("déjà enregistré") });
     expect(mocks.createOwnedBet).toHaveBeenCalledTimes(2);
   });
 
@@ -449,6 +464,7 @@ describe("importBets", () => {
       imported: 1,
       firstImport: false,
       resultProofsUpdated: 1,
+      resultProofsVerified: 1,
     });
     expect(mocks.betUpdateMany).toHaveBeenCalledWith({
       where: {
@@ -751,6 +767,31 @@ describe("importBets", () => {
     }), expect.anything(), expect.anything());
   });
 
+  it("qualifies a pending ticket from its visible placement time when no event time is shown", async () => {
+    mocks.betFindMany.mockResolvedValue([]);
+    mocks.scanUsageFindMany.mockResolvedValue([{
+      id: "scan-winamax", detectedBookmaker: "Winamax", selectedBookmaker: "Winamax",
+      createdAt: new Date("2026-10-05T19:18:55Z"),
+      proofEvidence: [makeScanProofEvidence(
+        "6JRT3KC2", null, null, "20h36 - 5 octobre 2026", "EN_ATTENTE"
+      )],
+    }]);
+
+    const response = await importBets("bankroll-1", [bet({
+      ticketRef: "6JRT3KC2", date: "2026-10-05", stake: 10, odds: 2,
+      result: "EN_ATTENTE", sourceScanIndex: 0,
+    })], ["scan-winamax"]);
+
+    expect(response).toMatchObject({ imported: 1, resultProofsUpdated: 0 });
+    expect(mocks.createOwnedBet).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      source: expect.objectContaining({
+        scanUsageId: "scan-winamax",
+        eventStartAt: null,
+        ticketPlacedAt: new Date("2026-10-05T18:36:00Z"),
+      }),
+    }), expect.anything(), expect.anything());
+  });
+
   it("rejects an ambiguous existing reference before creating a duplicate", async () => {
     mocks.betFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([{
       id: "settled-pmu", ticketRef: "REF-000001",
@@ -790,7 +831,7 @@ describe("importBets", () => {
       bet({ ticketRef: "REF-000002", date: "2026-10-05", stake: 10, odds: 1.8, result: "PERDU", sourceScanIndex: 1 }),
     ], ["scan-result-1", "scan-result-2"], [], undefined, true);
 
-    expect(response).toEqual({ imported: 2, firstImport: false, resultProofsUpdated: 2 });
+    expect(response).toEqual({ imported: 2, firstImport: false, resultProofsUpdated: 2, resultProofsVerified: 2 });
     expect(mocks.betUpdateMany).toHaveBeenCalledTimes(2);
     expect(mocks.createOwnedBet).not.toHaveBeenCalled();
   });

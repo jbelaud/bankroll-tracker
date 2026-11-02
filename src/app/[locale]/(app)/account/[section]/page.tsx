@@ -27,6 +27,9 @@ import { stripe } from "@/lib/stripe";
 import { getEmailMarketingPreference } from "@/lib/email-marketing/preferences";
 import { EmailMarketingPreference } from "@/components/account/email-marketing-preference";
 
+
+
+
 const sectionKeys = ["profile", "subscription", "tracking", "public-profile", "data", "help"] as const;
 type Section = (typeof sectionKeys)[number];
 

@@ -30,6 +30,21 @@ describe("certification on publication day", () => {
     });
   });
 
+  it("tracks a scanned ticket created after activation on the same day without inventing its timing", () => {
+    const scanned = manualBet({
+      entryMethod: "SCAN",
+      initialProofAt: new Date("2026-09-18T11:44:00Z"),
+      initialProofBeforeEvent: null,
+    });
+    expect(certificationStatus(scanned, startedAt)).toBe("TIMING_UNCONFIRMED");
+    expect(certificationStatus({
+      ...scanned,
+      result: "GAGNE",
+      resultProofAt: new Date("2026-09-18T14:00:00Z"),
+      resultEntryMethod: "SCAN",
+    }, startedAt)).toBe("LIMITED");
+  });
+
   it("keeps bets recorded before activation and earlier-day tickets outside certification", () => {
     expect(certificationStatus(manualBet({ createdAt: new Date("2026-09-18T11:00:00Z") }), startedAt)).toBe("EXCLUDED");
     expect(certificationStatus(manualBet({ date: new Date("2026-09-17T00:00:00Z") }), startedAt)).toBe("EXCLUDED");

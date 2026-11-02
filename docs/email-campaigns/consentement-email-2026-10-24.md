@@ -36,4 +36,8 @@ Le checkout comporte de nombreuses autres modifications et fichiers non suivis a
 
 Aucun e-mail promotionnel envoyé et aucune offre commerciale modifiée.
 
-**Commit/push demandé le 24/10 effectué :** f827a548434d047073997c4c8de7022620e37596, poussé sur origin/master depuis une copie propre du master distant df3ea174. Douze fichiers, uniquement consentement e-mail. 15 tests, TypeScript après génération des types Next et ESLint ciblé réussis dans cette copie. Migration appliquée à Supabase umyxyahkifdezohaotel, empreinte Prisma vérifiée ; tables privées avec RLS, zéro préférence/choix initial. Aucun compte inscrit automatiquement et aucun e-mail envoyé. Le dossier principal et ses autres travaux sont conservés ; son master local divergent n'a pas été réinitialisé.
+## Actualisation — publication sur master du 24/10
+
+Le changement a été isolé depuis origin/master df3ea174 afin de conserver les autres travaux locaux. La migration additive a été appliquée à Supabase umyxyahkifdezohaotel avant le push et enregistrée dans le journal Prisma avec son empreinte SHA-256. Les deux tables ont RLS activée et aucun accès navigateur ; elles sont vides, aucun compte préinscrit. Aucun e-mail envoyé ni programmé.
+
+Sur cette copie propre : 15 tests réussis, dont 4 sur PostgreSQL temporaire ; ESLint ciblé réussi. Les types de routes sont générés avant la vérification TypeScript. L'indication de livraison locale ci-dessus décrit l'état antérieur à cette préparation de publication.

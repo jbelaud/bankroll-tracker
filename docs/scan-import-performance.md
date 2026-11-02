@@ -23,12 +23,12 @@ les écritures métier, avec le même contrôle de consentement.
 
 ## Validation locale
 
-- 101 tests ciblés réussis : import, création, montants, unités, preuves et
+- 221 tests ciblés réussis : import, création, montants, unités, preuves et
   certification, dont comparaison des données produites par les deux parcours.
 - 2 tests réussis sur un PostgreSQL temporaire limité à localhost : insertion
   réelle avec sélections et annulation de la transaction sur sélection invalide.
-- TypeScript réussi. Les règles ESLint TypeScript passent. Le preset React
-  global est bloqué par une dépendance Babel locale manquante.
+- TypeScript réussi. ESLint complet passe sur tous les fichiers modifiés,
+  y compris les composants React.
 
 Le test de comptage sur 100 nouveaux paris passe de 500 à 5 requêtes pour le
 cœur de la création, hors sélections et gestion de transaction. Le benchmark
@@ -73,3 +73,46 @@ l'absence de nouvelle soumission et les nettoyages bloqués.
 
 Le diagnostic repose sur les journaux du site, et la correction est vérifiée
 localement. Sa présence en production doit être confirmée après publication.
+
+Le sélecteur de bankroll de l’extension utilise le composant de sélection
+thématisé de l’application afin de conserver un fond sombre et un texte lisible.
+
+## Reprise d’une ancienne analyse de l’extension
+
+Le cache IndexedDB de l’extension et le rejeu serveur ne vérifiaient pas la
+version d’extraction. Un lot analysé avant la correction MyStake pouvait donc
+conserver son ancien type de pari ou sa date absente après une mise à jour.
+Les deux caches contrôlent désormais `SCAN_PROMPT_VERSION`. Le serveur vérifie
+également la version contenue dans la réponse sauvegardée.
+
+Une analyse à jour reste réutilisée sans appel OCR ni consommation de Scan.
+Une ancienne analyse passe par le parcours de scan existant : rejeu d’une réponse
+à jour si elle existe, sinon nouvelle lecture avec les règles et quotas actuels.
+Un échec de cette lecture conserve l’image et l’ancien cache pour une reprise.
+L’écran explique quand une mise à jour nécessite un nouveau Scan.
+
+Le test `extension-cache-upgrade.test.ts` parcourt le cache client, le rejeu
+serveur, le client HTTP et la préparation de la revue avec des réponses simulées.
+Il vérifie le passage au handicap asiatique, la date du 25 septembre de l’année
+en cours et l’absence d’un second appel lors de la reprise du résultat corrigé.
+Aucune capture utilisateur n’est envoyée à un fournisseur pendant ce test.
+
+## Dates partielles sans logo (v18)
+
+L’analyse des nouveaux résultats a confirmé des dates absentes malgré des
+références reconnues. Sans bookmaker sélectionné ni logo, l’année courante
+était conditionnée à une transcription très stricte de l’en-tête complet.
+Le fournisseur indique maintenant la structure horizontale indépendamment du
+bookmaker, et les consignes conservent les dates partielles françaises comme
+anglaises. Elles ne demandent plus contradictoirement de supprimer ces dates.
+
+Le serveur essaie successivement le texte de prise du pari, le texte de date
+et le bloc entre la référence et le format dans l’en-tête. Un horaire isolé ne
+masque donc plus une date présente dans un autre champ. Les séparateurs usuels
+entre date et heure sont acceptés. Une année visible est conservée ; sans date
+lisible, la date reste vide. La date de l’événement ne sert jamais de substitut.
+Le contrat v18 évite que les résultats v17 incomplets soient repris en cache.
+
+La revue affiche également la référence lue, et son bandeau de doublon ne
+prétend plus qu’elle est absente lorsqu’elle existe déjà dans l’historique.
+Les paris déjà importés ne sont pas réécrits par ce correctif.

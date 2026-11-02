@@ -277,7 +277,8 @@
       "analysis": "Performances",
       "community": "Communauté",
       "manage": "Mon espace"
-    }
+    },
+    "tipsterSpace": "Espace tipster"
   },
   "aiInsights": {
     "eyebrow": "Une page dédiée · Premium",
@@ -930,7 +931,17 @@
         "selectionsDetected": "{count, plural, one {# sélection détectée} other {# sélections détectées}}",
         "selectionsTitle": "Détail des sélections",
         "selectionLabel": "Sélection {number} · {sport}"
-      }
+      },
+      "resultProofTitle": "Résultat du pari détecté",
+      "resultProofBatchTitle": "Résultats détectés ({count})",
+      "targetedResultTitle": "Le pari existant sera mis à jour",
+      "targetedResultDescription": "Kalivoa compare cette capture au pari sélectionné puis ajoute le résultat et sa preuve Scan. Aucun nouveau pari ne sera créé.",
+      "targetedResultBatchTitle": "Les paris existants seront mis à jour",
+      "targetedResultBatchDescription": "Kalivoa compare chaque capture aux paris certifiés en attente. Le lot est refusé si une correspondance est ambiguë et aucun nouveau pari ne sera créé.",
+      "resultProofBankrollLabel": "Bankroll concernée",
+      "updatingResult": "Mise à jour du résultat…",
+      "updateResult": "Mettre à jour le résultat",
+      "updateResults": "{count, plural, one {Mettre à jour le résultat} other {Mettre à jour les # résultats}}"
     },
     "complete": {
       "title": "Paris importés !",
@@ -1024,7 +1035,16 @@
       "firstRows": "Aperçu des {count} premières lignes sur {total}.",
       "invalidSkipped": "{count, plural, one {# ligne incomplète sera ignorée.} other {# lignes incomplètes seront ignorées.}} Les autres paris peuvent être importés normalement.",
       "import": "{count, plural, one {Importer # pari} other {Importer # paris}}",
-      "importing": "Import en cours…"
+      "importing": "Import en cours…",
+      "baCurrencyLabel": "Devise de la bankroll d’origine dans Bet-Analytix",
+      "baCurrencyPlaceholder": "Choisir la devise utilisée dans BA",
+      "baCurrencyUnit": "U — Unité",
+      "baCurrencyEur": "€ — Euro",
+      "baCurrencyUsd": "$ — Dollar",
+      "baCurrencyGbp": "£ — Livre",
+      "baCurrencyHelp": "Le fichier BA ne précise pas la devise. Vérifie-la dans BA : la mise sera importée telle quelle, sans conversion.",
+      "baCurrencyRequired": "Choisis la devise utilisée dans la bankroll Bet-Analytix d’origine.",
+      "baCurrencyMismatch": "Choisis une bankroll Kalivoa dans la même devise que la bankroll BA d’origine."
     },
     "table": {
       "row": "Ligne",
@@ -2420,5 +2440,81 @@
     "creditConditions": "Les 200 scans sont consommés avant le bonus initial permanent. Les 300 scans restants sont conservés sans expiration après résiliation, mais utilisables uniquement avec un abonnement payant actif. Un réabonnement n’attribue pas de nouveau bonus. Parrainage et offres partenaires/bookmakers suivent leurs propres conditions.",
     "terms": "Conditions de vente",
     "contact": "Une question ? Contactez-nous"
+  },
+  "tipsterSpace": {
+    "eyebrow": "Certification Kalivoa",
+    "title": "Mon espace tipster",
+    "intro": "Configure ton identité publique, pilote tes bankrolls et suis tout ce qu’il te reste à accomplir pour obtenir un niveau de certification.",
+    "progress": "{done}/{total} étapes terminées",
+    "viewProfile": "Voir mon profil public",
+    "configureProfile": "Configurer mon profil",
+    "manageBankrolls": "Gérer mes bankrolls",
+    "status": {
+      "profileIncomplete": "Profil public à compléter",
+      "suspended": "Profil suspendu",
+      "inactive": "Certification à activer",
+      "certified": "{count, plural, one {# bankroll certifiée} other {# bankrolls certifiées}}",
+      "unverified": "Niveau de preuve insuffisant",
+      "observation": "En observation"
+    },
+    "pathTitle": "Le parcours vers la certification",
+    "pathIntro": "La certification s’applique séparément à chaque bankroll publique. Ton profil regroupe ensuite leurs niveaux sans mélanger leurs performances.",
+    "done": "Terminé",
+    "todo": "À faire",
+    "step": "Étape {number}",
+    "steps": {
+      "profile": {
+        "title": "Créer ton identité publique",
+        "description": "Choisis ton nom, ton @identifiant, ta bio et tes visuels. Ces informations sont communes à toutes tes bankrolls publiques."
+      },
+      "bankroll": {
+        "title": "Préparer une bankroll",
+        "description": "Définis son montant de référence privé et complète les unités historiques nécessaires à la publication."
+      },
+      "publish": {
+        "title": "Activer la certification",
+        "description": "Publie la bankroll. Le suivi démarre à cette date et ne certifie jamais rétroactivement les anciens paris."
+      },
+      "certify": {
+        "title": "Construire tes preuves",
+        "description": "Scanne les tickets avant l’événement puis leurs résultats. Atteins 10 paris clôturés et au moins 40/100."
+      }
+    },
+    "bankrollsTitle": "Mes bankrolls et leur certification",
+    "bankrollsIntro": "Chaque bankroll publique conserve son propre score, son volume, ses followers et son historique de preuves.",
+    "createBankroll": "Créer une bankroll",
+    "emptyTitle": "Aucune bankroll publique",
+    "emptyDescription": "Publie une bankroll pour afficher ici sa progression de certification.",
+    "trackingSince": "Suivi démarré le {date}",
+    "notStarted": "Certification inactive",
+    "public": "Publique",
+    "hidden": "Page masquée",
+    "private": "Privée",
+    "score": "Score",
+    "level": "Niveau",
+    "completeVolume": "Volume complet",
+    "settledProgress": "Paris clôturés",
+    "volumeProgress": "Volume suivi",
+    "observationHelp": "Le niveau reste en observation avant 10 paris clôturés. Le volume et les résultats financiers ne conditionnent pas la certification.",
+    "certificationResult": "Niveau actuel : {level}.",
+    "corrections": "{count, plural, one {# correction tracée} other {# corrections tracées}}",
+    "missingReference": "Définis le montant de référence privé de cette bankroll avant de la publier.",
+    "missingUnits": "{count, plural, one {Complète l’unité du pari historique restant avant la publication.} other {Complète les unités des # paris historiques restants avant la publication.}}",
+    "readyToPublish": "Cette bankroll est prête : ouvre-la pour renseigner sa présentation publique et activer la certification.",
+    "manage": "Gérer",
+    "viewPublicPage": "Voir la page publique",
+    "rulesTitle": "Quand une bankroll devient-elle certifiée ?",
+    "rulesIntro": "Elle quitte l’observation après 10 paris clôturés. La qualité des preuves détermine ensuite son niveau, indépendamment des gains ou des pertes.",
+    "rules": {
+      "bets": "paris clôturés minimum",
+      "bronze": "minimum pour obtenir Bronze"
+    },
+    "levels": {
+      "gold": "Gold",
+      "silver": "Silver",
+      "bronze": "Bronze",
+      "unverified": "Non certifiée",
+      "observation": "En observation"
+    }
   }
 }

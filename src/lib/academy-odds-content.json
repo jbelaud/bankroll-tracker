@@ -1,0 +1,200 @@
+{
+  "fr": {
+    "title": "Comment vérifier la cote totale d’un combiné à partir de ses sélections ?",
+    "description": "Vérifiez une cote combinée avec un ticket réel : 1,47 × 1,31 = 1,9257. Comprenez l’arrondi à 1,93 et les limites de ce contrôle avant l’enregistrement.",
+    "category": "Tenir son historique",
+    "lead": "Pour contrôler un combiné classique exprimé en cotes décimales, multipliez les cotes des sélections et comparez le résultat avec la cote totale du ticket. Sur notre exemple réel, 1,47 × 1,31 donne 1,9257, soit 1,93 après un arrondi à deux décimales. Ce rapprochement aide à relire les informations ; il ne suffit pas à vérifier tout le règlement du pari.",
+    "sections": [
+      {
+        "title": "Relevez les cotes du ticket déjà validé",
+        "paragraphs": [
+          "Prenez le ticket d’origine correspondant au pari enregistré. Relevez le nombre de sélections, chaque cote individuelle et la cote totale. Une cote consultée plus tard sur un événement n’est pas nécessairement celle de votre ticket : votre contrôle doit utiliser les valeurs inscrites sur la même source.",
+          "Commencez par distinguer les champs. La cote totale décrit le ticket, tandis que les cotes individuelles sont rattachées à ses sélections. Ni la mise ni un score sportif ne doit entrer dans cette multiplication. Vérifiez aussi la virgule ou le point décimal avant de saisir les nombres dans votre calculatrice."
+        ]
+      },
+      {
+        "title": "Un relevé réel : deux sélections à 1,47 et 1,31",
+        "paragraphs": [
+          "Le ticket fourni par Jeremy le 25 septembre 2026, daté du 17 septembre, comporte deux sélections de tennis : vainqueur M. Stoiana à 1,47 et vainqueur J. Jovic à 1,31. Sa cote totale affichée est 1,93. Ces trois valeurs ont déjà été relevées dans notre article consacré à l’enregistrement d’un combiné.",
+          "Voici le rapprochement effectué à partir de ces données. Le produit est un calcul éditorial reproductible ; il ne s’agit pas d’un résultat supplémentaire fourni par le bookmaker ni d’une nouvelle mesure de précision de l’OCR."
+        ],
+        "table": [
+          [
+            "Étape",
+            "Valeur ou calcul",
+            "Nature de l’information"
+          ],
+          [
+            "Première sélection",
+            "1,47",
+            "Cote affichée sur le ticket"
+          ],
+          [
+            "Deuxième sélection",
+            "1,31",
+            "Cote affichée sur le ticket"
+          ],
+          [
+            "Produit des cotes visibles",
+            "1,47 × 1,31 = 1,9257",
+            "Calcul effectué sur ces deux valeurs"
+          ],
+          [
+            "Produit arrondi à deux décimales",
+            "1,93",
+            "Arrondi du calcul précédent"
+          ],
+          [
+            "Cote totale du ticket",
+            "1,93",
+            "Valeur affichée sur la source"
+          ]
+        ]
+      },
+      {
+        "title": "Pourquoi le calcul donne-t-il plus de décimales ?",
+        "paragraphs": [
+          "Multiplier deux nombres comportant deux décimales peut produire davantage de chiffres après la virgule. Ici, 1,9257 comporte quatre décimales. Pour l’arrondir à deux décimales, regardez la troisième : c’est un 5, donc le centième augmente et le résultat arrondi est 1,93.",
+          "Couper simplement le nombre après le deuxième chiffre donnerait 1,92. Cette troncature n’est pas l’arrondi utilisé dans notre comparaison. Ne remplacez pas la cote totale du ticket par ce nombre tronqué.",
+          "L’égalité entre le produit arrondi et le total affiché est un constat sur cet exemple. Elle ne révèle pas les éventuelles décimales internes d’un opérateur et ne démontre pas que tous les tickets suivent le même traitement."
+        ]
+      },
+      {
+        "title": "Que vérifier lorsque les nombres ne concordent pas ?",
+        "paragraphs": [
+          "Revenez d’abord à la source : toutes les sélections sont-elles présentes ? Chaque cote correspond-elle au bon choix ? Avez-vous utilisé une cote du ticket plutôt qu’une cote actuelle ? Le nombre affiché comme total a-t-il été confondu avec celui d’une sélection ?",
+          "Si une valeur issue du scan ne correspond pas au ticket, corrigez le champ concerné avant l’enregistrement. Si la différence existe déjà entre les valeurs imprimées sur le ticket et votre calcul, ne la corrigez pas automatiquement dans votre historique. Consultez les détails et les règles applicables à ce pari, puis conservez la cote totale documentée.",
+          "Une différence n’identifie pas à elle seule sa cause. N’affirmez pas qu’il s’agit d’un arrondi, d’un bonus, d’une erreur de lecture ou d’une erreur du bookmaker sans élément permettant de le vérifier."
+        ]
+      },
+      {
+        "title": "Le périmètre de cette méthode est limité",
+        "paragraphs": [
+          "Le calcul présenté porte sur un combiné classique de deux sélections, avec les cotes décimales visibles de son ticket d’origine. Il ne constitue pas une formule universelle pour un pari sur mesure, un système, une offre particulière ou un ticket modifié après son règlement. Pour ces cas, vérifiez le fonctionnement et les documents propres au pari.",
+          "Une cohérence entre les cotes ne valide ni le statut final, ni le montant reçu, ni le bénéfice net. Cet article ne calcule aucun gain ou profit du ticket utilisé. Le calcul du ROI relève d’un autre contrôle, effectué à partir des mises et des résultats réglés."
+        ]
+      },
+      {
+        "title": "Terminez la relecture avant de conserver le pari",
+        "paragraphs": [
+          "Dans Kalivoa, l’import par capture propose des informations que vous devez relire avant d’enregistrer le pari. Vérifiez le détail des sélections et le total sur le ticket d’origine. Aucun accès au compte bookmaker n’est demandé pour cet import.",
+          "Une fois les valeurs vérifiées, conservez une seule entrée pour le combiné avec sa mise commune. L’article sur le suivi d’un combiné détaille cette structure. La cohérence du calcul facilite la tenue de l’historique ; elle ne mesure pas la qualité d’un pronostic et ne garantit aucun résultat futur."
+        ]
+      }
+    ],
+    "source": "Preuve de l’exemple : ticket original et historique Kalivoa transmis par Jeremy le 25 septembre 2026 pour un combiné du 17 septembre. Relevé déjà publié et autorisé : cotes individuelles 1,47 et 1,31, total affiché 1,93. Aucun identifiant de ticket reproduit. Le rapprochement se limite aux cotes ; les montants de retour et de profit sont exclus.",
+    "related": [
+      {
+        "path": "/academie/suivre-pari-combine",
+        "title": "Enregistrer un combiné avec une seule mise"
+      },
+      {
+        "path": "/academie/verifier-ticket-pari-scan",
+        "title": "Vérifier les autres champs après un scan"
+      },
+      {
+        "path": "/academie/calculer-roi-paris",
+        "title": "Distinguer les cotes et le calcul du ROI"
+      }
+    ]
+  },
+  "en": {
+    "title": "How do you check an accumulator’s total odds against its selections?",
+    "description": "Check total odds using a real slip: 1.47 × 1.31 = 1.9257. Understand rounding to 1.93 and what this comparison can and cannot establish.",
+    "category": "Keep your betting history",
+    "lead": "For a standard accumulator expressed in decimal odds, multiply the selection odds and compare the result with the total shown on the slip. In our real example, 1.47 × 1.31 equals 1.9257, which rounds to 1.93 at two decimal places. This helps you review the recorded information; it does not verify the whole settlement.",
+    "sections": [
+      {
+        "title": "Use the odds on the placed slip",
+        "paragraphs": [
+          "Start with the original slip for the bet you are recording. Note the selection count, each selection’s odds and the total odds. A price shown for an event later may differ from the price on your placed slip. Use values from the same source for this check.",
+          "Separate the fields before calculating. Total odds belong to the slip; individual odds belong to its selections. Neither the stake nor a match score belongs in this multiplication. Check decimal points and commas when entering the numbers."
+        ]
+      },
+      {
+        "title": "A real record: two selections at 1.47 and 1.31",
+        "paragraphs": [
+          "The slip supplied by Jeremy on September 25, 2026, dated September 17, contains two tennis selections: M. Stoiana to win at 1.47 and J. Jovic to win at 1.31. The displayed total odds are 1.93. These three observed values already appear in our article about recording an accumulator.",
+          "The following comparison uses those recorded values. The product is a reproducible editorial calculation, not an additional bookmaker figure or a new OCR accuracy measurement."
+        ],
+        "table": [
+          [
+            "Step",
+            "Value or calculation",
+            "Information type"
+          ],
+          [
+            "First selection",
+            "1.47",
+            "Odds displayed on the slip"
+          ],
+          [
+            "Second selection",
+            "1.31",
+            "Odds displayed on the slip"
+          ],
+          [
+            "Product of visible odds",
+            "1.47 × 1.31 = 1.9257",
+            "Calculation from those two values"
+          ],
+          [
+            "Product rounded to two decimal places",
+            "1.93",
+            "Rounded result of that calculation"
+          ],
+          [
+            "Slip total odds",
+            "1.93",
+            "Value displayed on the source"
+          ]
+        ]
+      },
+      {
+        "title": "Why does the calculation produce more decimal places?",
+        "paragraphs": [
+          "Multiplying two numbers with two decimal places can produce more digits after the decimal point. Here, 1.9257 has four decimal places. To round it to two, look at the third digit: it is 5, so the hundredths digit increases and the rounded result is 1.93.",
+          "Simply cutting the number after its second decimal place would give 1.92. That truncation is different from the rounding used in this comparison. Do not substitute that truncated figure for the slip’s total odds.",
+          "The match between the rounded product and the displayed total is an observation about this example. It does not reveal any internal bookmaker precision or establish how every slip is processed."
+        ]
+      },
+      {
+        "title": "What should you check when the numbers differ?",
+        "paragraphs": [
+          "First return to the source. Are all selections present? Does each price belong to the correct pick? Did you use the odds on the placed slip rather than a current price? Was a selection price mistaken for the total?",
+          "If scan-proposed information differs from the slip, correct the relevant field before saving. If the difference already exists between the printed slip values and your calculation, do not automatically overwrite your record. Check the details and rules applying to that bet and retain its documented total odds.",
+          "A difference does not identify its own cause. Do not label it rounding, a bonus, a reading error or a bookmaker error without evidence that establishes that explanation."
+        ]
+      },
+      {
+        "title": "Keep the limits of the method clear",
+        "paragraphs": [
+          "This calculation concerns a standard two-selection accumulator and the visible decimal odds on its original slip. It is not a universal formula for a bet builder, a system bet, a special offer or a slip changed after settlement. Check the documentation for those particular cases.",
+          "Consistency between odds does not validate the final status, the return received or net profit. This article calculates no return or profit for the example slip. ROI requires a separate check based on stakes and settled results."
+        ]
+      },
+      {
+        "title": "Finish reviewing the bet before saving it",
+        "paragraphs": [
+          "In Kalivoa, screenshot import proposes information that you must review before saving. Check the selection details and total against the original slip. This import does not request access to a bookmaker account.",
+          "Once checked, keep a single entry for the accumulator with its shared stake. Our accumulator-tracking article explains that structure. Arithmetic consistency helps maintain records; it does not measure the quality of a prediction or guarantee a future result."
+        ]
+      }
+    ],
+    "source": "Example evidence: original slip and Kalivoa history supplied by Jeremy on September 25, 2026 for an accumulator dated September 17. Previously published and authorised observations: selection odds of 1.47 and 1.31 and displayed total odds of 1.93. No ticket identifiers reproduced. This comparison uses odds only; return and profit figures are excluded.",
+    "related": [
+      {
+        "path": "/academie/suivre-pari-combine",
+        "title": "Record an accumulator with a single stake"
+      },
+      {
+        "path": "/academie/verifier-ticket-pari-scan",
+        "title": "Review the other fields after scanning"
+      },
+      {
+        "path": "/academie/calculer-roi-paris",
+        "title": "Distinguish odds from ROI calculations"
+      }
+    ]
+  }
+}

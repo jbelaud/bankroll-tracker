@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Buildings, Plus, Trash, Wallet } from "@phosphor-icons/react";
 import { useRouter } from "@/i18n/navigation";
 import type { AccountingCurrency, Currency } from "@prisma/client";
@@ -9,7 +9,7 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { currencySymbol } from "@/lib/format";
+import { currencySymbol, fmtMoney } from "@/lib/format";
 import { createBankrollForm, updateBankrollForm } from "@/lib/actions/bankroll-forms";
 import { KNOWN_BOOKMAKERS } from "@/lib/bookmakers";
 import { cn } from "@/lib/utils";
@@ -47,14 +47,17 @@ export function BankrollFormDrawer({ open, onOpenChange, bankroll, currency, ret
 }) {
   const isEdit = Boolean(bankroll);
   const t = useTranslations("bankrolls.drawer");
+  const locale = useLocale();
   const router = useRouter();
   const [state, action, pending] = useActionState(isEdit ? updateBankrollForm : createBankrollForm, undefined);
   const [mode, setMode] = useState<Mode>(bankroll?.mode ?? "SINGLE");
   const [bankrollCurrency, setBankrollCurrency] = useState<AccountingCurrency>(bankroll?.currency ?? currency);
   const [referenceCurrency, setReferenceCurrency] = useState<Currency>(bankroll?.referenceCurrency ?? currency);
+  const [referenceAmount, setReferenceAmount] = useState(String(bankroll?.referenceCapital ?? ""));
   const [initial, setInitial] = useState(String(bankroll?.initial ?? 0));
   const [allocations, setAllocations] = useState<AllocationDraft[]>(() => allocationDrafts(bankroll));
   const allocatedTotal = useMemo(() => allocations.reduce((sum, allocation) => sum + (Number(allocation.initial) || 0), 0), [allocations]);
+  const referenceValue = Number(referenceAmount.replace(",", "."));
   const allocationMismatch = mode === "DISTRIBUTED" && Math.abs(allocatedTotal - (Number(initial) || 0)) > 0.005;
 
   useEffect(() => {
@@ -93,7 +96,7 @@ export function BankrollFormDrawer({ open, onOpenChange, bankroll, currency, ret
             }} className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm">
               <option value="EUR">€ — Euro</option><option value="USD">$ — Dollar</option><option value="GBP">£ — Livre</option><option value="UNIT">U — Unité</option>
             </select>
-            {bankrollCurrency === "UNIT" ? <p className="text-xs text-muted-foreground">Capital, mises et résultats sont suivis en U. Le montant de référence ci-dessous sert uniquement à convertir les tickets scannés.</p> : null}
+            {bankrollCurrency === "UNIT" ? <p className="text-xs text-muted-foreground">Capital, mises et résultats sont suivis en U. Le capital en devise ci-dessous sert uniquement à convertir les tickets scannés.</p> : null}
           </div>
           <div className="flex flex-col gap-1.5 text-left">
             <Label htmlFor="br-initial" className="text-xs">{t("initialLabel", { currency: currencySymbol(bankrollCurrency) })}</Label>
@@ -134,12 +137,13 @@ export function BankrollFormDrawer({ open, onOpenChange, bankroll, currency, ret
           </section>}
 
           <div className="flex flex-col gap-1.5 text-left">
-            {bankrollCurrency === "UNIT" ? <><Label htmlFor="br-reference-currency" className="text-xs">Devise du montant de référence privé</Label>
+            {bankrollCurrency === "UNIT" ? <><Label htmlFor="br-reference-currency" className="text-xs">Devise utilisée pour convertir les tickets</Label>
               <select id="br-reference-currency" name="referenceCurrency" value={referenceCurrency} onChange={(event) => setReferenceCurrency(event.target.value as Currency)} className="min-h-touch rounded-lg border border-border bg-background px-3 text-sm">
                 <option value="EUR">€ — Euro</option><option value="USD">$ — Dollar</option><option value="GBP">£ — Livre</option>
               </select></> : <input type="hidden" name="referenceCurrency" value={bankrollCurrency} />}
             <Label htmlFor="br-reference" className="text-xs">{t("referenceLabel", { currency: currencySymbol(referenceCurrency) })}</Label>
-            <Input id="br-reference" name="referenceCapital" type="number" step="0.01" min="0.01" inputMode="decimal" placeholder={t("referencePlaceholder")} defaultValue={bankroll?.referenceCapital ?? ""} className="num min-h-touch rounded-lg px-3 text-sm" />
+            <Input id="br-reference" name="referenceCapital" type="number" step="0.01" min="0.01" inputMode="decimal" placeholder={t("referencePlaceholder")} value={referenceAmount} onChange={(event) => setReferenceAmount(event.target.value)} className="num min-h-touch rounded-lg px-3 text-sm" />
+            {Number.isFinite(referenceValue) && referenceValue > 0 ? <p className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2 text-xs font-semibold text-foreground">100 U = {fmtMoney(referenceValue, locale, referenceCurrency)} · 1 U = {fmtMoney(referenceValue / 100, locale, referenceCurrency)}</p> : null}
             <p className="text-xs leading-relaxed text-muted-foreground">{t("referenceHint")}</p>
           </div>
           {mode === "SINGLE" && isEdit && bankroll?.mode === "DISTRIBUTED" && <p className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning">{t("singleHistoryHint")}</p>}

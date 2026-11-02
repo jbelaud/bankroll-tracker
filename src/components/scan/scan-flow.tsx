@@ -54,7 +54,7 @@ type FlowState =
   | { step: "review"; draftId: string | null; bets: ParsedBet[]; excludedIndexes: number[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds?: string[]; initialTicketCurrency?: Currency }
   | { step: "empty"; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[] }
   | { step: "importing"; draftId: string | null; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds?: string[]; initialTicketCurrency?: Currency }
-  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds: string[]; ticketCurrency: Currency };
+  | { step: "completed"; imported: number; firstImport: boolean; earnedReferralScans: number; resultProofsUpdated: number; resultProofsVerified: number; bets: ParsedBet[]; files: File[]; scans: ScanTicketResult[]; skippedDuplicateFiles: string[]; importedBankrollIds: string[]; ticketCurrency: Currency };
 
 export function ScanFlow({
   userId,
@@ -231,6 +231,7 @@ export function ScanFlow({
             firstImport: result.firstImport ?? false,
             earnedReferralScans: importedBankrollIds.length === 0 ? scans.reduce((sum, scan) => sum + scan.earnedReferralScans, 0) : 0,
             resultProofsUpdated: result.resultProofsUpdated ?? 0,
+            resultProofsVerified: result.resultProofsVerified ?? 0,
             bets,
             files,
             scans,
@@ -312,6 +313,7 @@ export function ScanFlow({
         initialTicketCurrency={flow.initialTicketCurrency}
         importing={flow.step === "importing"}
         error={error}
+        resultProofMode={resultProofTarget ? "single" : resultBatchMode ? "batch" : undefined}
         skippedDuplicateFiles={flow.skippedDuplicateFiles}
         onConfirm={(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital) => confirmImport(bets, shareQuality, qualityIssueType, qualityIssueDetails, ticketCurrency, ticketFxRate, expectedReferenceCapital, flow.files, flow.scans, flow.skippedDuplicateFiles)}
         onRestart={restart}
@@ -347,16 +349,17 @@ export function ScanFlow({
 
   if (flow.step === "completed") {
     const availableBankrolls = resultProofMode ? [] : bankrolls.filter((bankroll) => !flow.importedBankrollIds.includes(bankroll.id));
-    const nextBankrollId = availableBankrolls.some((bankroll) => bankroll.id === reuseBankrollId)
-      ? reuseBankrollId : availableBankrolls[0]?.id;
+    const nextBankrollId = availableBankrolls.some((bankroll) => bankroll.id === reuseBankrollId) ? reuseBankrollId : availableBankrolls[0]?.id;
     const automaticResultUpdate = !resultProofMode && flow.resultProofsUpdated > 0;
     const title = resultProofMode || automaticResultUpdate
       ? flow.resultProofsUpdated > 1 ? "Résultats des paris mis à jour" : "Résultat du pari mis à jour"
       : flow.firstImport ? tComplete("firstTitle") : tComplete("title");
     const description = resultProofMode
-      ? flow.resultProofsUpdated > 1
+      ? flow.resultProofsVerified === 0
+        ? "Le résultat du pari a été mis à jour, mais la capture ne contenait pas un statut de ticket assez clair pour constituer une preuve certifiée. Il reste enregistré comme résultat manuel."
+        : flow.resultProofsUpdated > 1
         ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur chaque capture.`
-        : "Le résultat du pari existant a été mis à jour sans créer de doublon. Le niveau de preuve dépend des éléments lisibles sur la capture."
+        : "Le résultat du pari existant a été mis à jour sans créer de doublon et sa preuve de résultat a été enregistrée."
       : automaticResultUpdate
       ? flow.resultProofsUpdated > 1
         ? `${flow.resultProofsUpdated} paris existants ont été mis à jour sans créer de doublon.`
@@ -389,7 +392,12 @@ export function ScanFlow({
           <div className="w-full rounded-xl border border-primary/30 bg-primary/5 p-4 text-left">
             <label htmlFor="reuse-scan-bankroll" className="text-sm font-semibold">{tComplete("reuseBankrollTitle")}</label>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{tComplete("reuseBankrollDescription")}</p>
-            <select id="reuse-scan-bankroll" value={nextBankrollId} onChange={(event) => setReuseBankrollId(event.target.value)} className="mt-3 min-h-touch w-full rounded-lg border border-border bg-background px-3 text-sm">
+            <select
+              id="reuse-scan-bankroll"
+              value={nextBankrollId}
+              onChange={(event) => setReuseBankrollId(event.target.value)}
+              className="mt-3 min-h-touch w-full rounded-lg border border-border bg-background px-3 text-sm"
+            >
               {availableBankrolls.map((bankroll) => <option key={bankroll.id} value={bankroll.id}>{bankrollOptionLabel(bankroll)}</option>)}
             </select>
             <Button type="button" className="mt-3 min-h-touch w-full rounded-lg text-sm font-semibold" onClick={() => {
@@ -397,10 +405,14 @@ export function ScanFlow({
               setBankrollId(nextBankrollId);
               setError("");
               setFlow({
-                step: "review", draftId: null,
+                step: "review",
+                draftId: null,
                 bets: flow.bets.map((bet) => ({ ...bet, possibleDuplicate: undefined, updatesExistingBet: undefined, pendingTicketAlreadyExists: undefined })),
-                excludedIndexes: [], files: flow.files, scans: flow.scans,
-                skippedDuplicateFiles: [], importedBankrollIds: flow.importedBankrollIds,
+                excludedIndexes: [],
+                files: flow.files,
+                scans: flow.scans,
+                skippedDuplicateFiles: [],
+                importedBankrollIds: flow.importedBankrollIds,
                 initialTicketCurrency: flow.ticketCurrency,
               });
             }}>{tComplete("reuseBankrollCta")}</Button>
