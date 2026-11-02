@@ -7,11 +7,12 @@
   },
   "packageManager": "pnpm@10.12.1",
   "scripts": {
+    "seo:check": "node --test scripts/seo-guardrails.test.mjs && node scripts/seo-guardrails.mjs",
     "extension:release": "node extension/release.mjs",
     "extension:build": "node extension/build.mjs",
     "extension:dev": "node extension/build.mjs --dev",
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/seo-guardrails.mjs && next build",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",

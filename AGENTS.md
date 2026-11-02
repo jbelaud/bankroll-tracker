@@ -14,4 +14,3 @@ sitemap + dated GSC data before a new page; require real authorised evidence.
 Missing volume/difficulty stays "à vérifier". No ranking promises. FR first.
 Run `pnpm seo:check` after public-route/sitemap/crawler/metadata changes. Update
 the registry with proof, dates and the reason when an intentional change is made.
-
