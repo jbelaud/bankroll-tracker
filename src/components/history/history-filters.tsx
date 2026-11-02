@@ -58,6 +58,7 @@ export function HistoryFilters({
         <MagnifyingGlass size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
         <input
           type="search"
+          aria-label={t("search")}
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder={t("search")}

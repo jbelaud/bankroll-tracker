@@ -416,6 +416,15 @@
   transform: translateX(0.18rem);
 }
 
+/* Focus clavier garanti partout : règle hors @layer, donc prioritaire sur les
+   utilitaires `outline-none` posés sur des champs qui n'ont qu'un liseré. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
 .marketing-primary-cta:focus-visible,
 .marketing-secondary-cta:focus-visible,
 .marketing-text-link:focus-visible {
