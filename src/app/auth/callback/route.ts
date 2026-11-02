@@ -4,6 +4,21 @@ import { redeemBetaInvite } from "@/lib/beta/program";
 import { attachStoredReferralToNewUser } from "@/lib/referral/service";
 import { recordGrowthEventSafely } from "@/lib/growth/events";
 
+function safeRedirectUrl(next: string | null, origin: string): URL {
+  const fallback = new URL("/dashboard", origin);
+  // URL parsing normalizes backslashes and control characters. Validate before
+  // parsing, then check the resolved origin and keep the absolute URL intact.
+  if (!next?.startsWith("/") || next.startsWith("//") || /[\\\u0000-\u0020\u007f]/.test(next)) {
+    return fallback;
+  }
+  try {
+    const destination = new URL(next, origin);
+    return destination.origin === origin ? destination : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
@@ -14,10 +29,8 @@ export async function GET(request: NextRequest) {
   const utmSource = searchParams.get("utmSource");
   const utmMedium = searchParams.get("utmMedium");
   const utmCampaign = searchParams.get("utmCampaign");
-  // Seules les routes internes sont admises : ne jamais refléter une URL
-  // externe fournie en query string après un retour OAuth.
-  const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
-  const isPasswordRecovery = safeNext.endsWith("/reset-password");
+  const destination = safeRedirectUrl(next, origin);
+  const isPasswordRecovery = destination.pathname.endsWith("/reset-password");
 
   if (code) {
     const supabase = await createClient();
@@ -38,10 +51,10 @@ export async function GET(request: NextRequest) {
           },
         });
       }
-      return NextResponse.redirect(new URL(safeNext, origin));
+      return NextResponse.redirect(destination);
     }
   }
 
-  const locale = safeNext.match(/^\/(fr|en)(?:\/|$)/)?.[1] ?? "fr";
+  const locale = destination.pathname.match(/^\/(fr|en)(?:\/|$)/)?.[1] ?? "fr";
   return NextResponse.redirect(new URL(`/${locale}/login?error=callback_failed`, origin));
 }

@@ -38,7 +38,10 @@ export async function updateAdminUserPlan(userIdInput: string, planInput: Plan) 
   }
   if (target.plan === planInput) return { plan: target.plan };
 
-  await prisma.user.update({ where: { id: userId }, data: { plan: planInput } });
+  await prisma.user.update({ where: { id: userId }, data: {
+    plan: planInput,
+    ...(planInput === "BETA_TESTER" ? { betaWelcomeEligible: true } : {}),
+  } });
   console.info(JSON.stringify({
     level: "info",
     message: "admin_user_plan_changed",

@@ -3,6 +3,8 @@ import "server-only";
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { createWelcomeProfile } from "@/lib/billing/welcome-enrollment";
+import { commercialRecordsEnabled } from "@/lib/billing/commercial-config";
 
 export const requireUser = cache(async () => {
   const supabase = await createClient();
@@ -24,24 +26,10 @@ export const requireUser = cache(async () => {
   });
 
   if (!existingProfile) {
-    const betaProgram = await prisma.betaProgram.findUnique({
-      where: { id: "global" },
-      select: { phase: true },
-    });
-
-    await prisma.user.upsert({
-      where: { id: user.id },
-      update: { email: user.email },
-      create: {
-        id: user.id,
-        email: user.email,
-        name:
-          typeof user.user_metadata?.full_name === "string"
-            ? user.user_metadata.full_name
-            : null,
-        plan: betaProgram?.phase === "ACTIVE" ? "BETA_TESTER" : "FREE",
-        referralCode: user.id.replaceAll("-", "").toUpperCase(),
-      },
+    await createWelcomeProfile({
+      id: user.id,
+      email: user.email,
+      name: typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null,
     });
   } else if (existingProfile.email !== user.email) {
     await prisma.user.update({
@@ -50,5 +38,9 @@ export const requireUser = cache(async () => {
     });
   }
 
+  if (commercialRecordsEnabled()) {
+    const now = new Date();
+    await prisma.user.updateMany({ where: { id: user.id, lastActiveAt: { lt: new Date(now.getTime() - 86_400_000) } }, data: { lastActiveAt: now, inactivityNoticeAt: null } });
+  }
   return user;
 });

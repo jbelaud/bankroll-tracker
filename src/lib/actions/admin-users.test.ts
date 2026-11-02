@@ -57,7 +57,7 @@ describe("admin user actions", () => {
     });
 
     await expect(updateAdminUserPlan(USER_ID, "BETA_TESTER")).resolves.toEqual({ plan: "BETA_TESTER" });
-    expect(mocks.userUpdate).toHaveBeenCalledWith({ where: { id: USER_ID }, data: { plan: "BETA_TESTER" } });
+    expect(mocks.userUpdate).toHaveBeenCalledWith({ where: { id: USER_ID }, data: { plan: "BETA_TESTER", betaWelcomeEligible: true } });
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/[locale]/admin", "page");
   });
 
