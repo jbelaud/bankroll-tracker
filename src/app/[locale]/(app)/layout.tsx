@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { AppShell } from "@/components/app-shell";
+import { requireUser } from "@/lib/auth";
+import { getEmailMarketingPreference } from "@/lib/email-marketing/preferences";
+import { EmailMarketingPreference } from "@/components/account/email-marketing-preference";
 
 export const metadata: Metadata = {
   robots: {
@@ -29,6 +32,8 @@ export default async function AppLayout({
     return null;
   }
 
+  await requireUser();
+  const emailPreference = await getEmailMarketingPreference(user.id, user.email ?? "");
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     select: { plan: true, subscriptionCurrentPeriodEnd: true },
@@ -39,6 +44,7 @@ export default async function AppLayout({
     currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null}
     isAdmin={isAdminEmail(user.email)}
   >
+    {emailPreference === null && <EmailMarketingPreference locale={locale === "en" ? "en" : "fr"} prompt />}
     {children}
   </AppShell>;
 }

@@ -141,6 +141,7 @@ function SignupPreview() {
       <div className="grid grid-cols-3 gap-2 pt-4"><PreviewMetric label={t("freemium.preview.bets")} value="24" /><PreviewMetric label={t("freemium.preview.roi")} value="+12,4 %" positive /><PreviewMetric label={t("freemium.preview.profit")} value="+84,70 €" positive /></div>
       <div className="mt-3 rounded-xl border border-white/10 bg-background/30 p-3"><div className="flex h-16 items-end gap-1.5" aria-hidden>{[24, 31, 27, 41, 37, 52, 47, 63, 58, 71, 76, 88].map((height, index) => <span key={index} className="flex-1 rounded-t-sm bg-primary/70" style={{ height: `${height}%` }} />)}</div></div>
       <div className="mt-3 space-y-2"><PreviewBet name="Football · Résultat du match" value="+12,50 €" /><PreviewBet name="Tennis · Vainqueur" value="+8,20 €" /></div>
+      <p className="mt-3 text-[11px] leading-5 text-muted-foreground">{t("freemium.preview.caption")}</p>
     </div>
   );
 }

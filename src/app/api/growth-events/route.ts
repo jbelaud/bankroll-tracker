@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isPublicGrowthEventName, recordGrowthEventSafely } from "@/lib/growth/events";
+import { ANALYTICS_CHOICE_COOKIE, readAnalyticsChoice } from "@/lib/privacy/consent";
 
 function isSameOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
@@ -15,6 +16,7 @@ function isSameOrigin(request: NextRequest): boolean {
 
 export async function POST(request: NextRequest) {
   if (!isSameOrigin(request)) return NextResponse.json({ error: "Origine interdite." }, { status: 403 });
+  if (readAnalyticsChoice(request.cookies.get(ANALYTICS_CHOICE_COOKIE)?.value) !== "accepted") return new NextResponse(null, { status: 204 });
   const body = await request.json().catch(() => null);
   if (!body || !isPublicGrowthEventName(body.name) || typeof body.anonymousId !== "string") {
     return NextResponse.json({ error: "Événement invalide." }, { status: 400 });

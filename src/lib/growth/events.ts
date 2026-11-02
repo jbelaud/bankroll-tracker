@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { ANALYTICS_CHOICE_COOKIE, readAnalyticsChoice } from "@/lib/privacy/consent";
 
 export const PUBLIC_GROWTH_EVENT_NAMES = [
   "batch_upload_started",
@@ -59,6 +61,7 @@ export async function recordGrowthEvent({
   anonymousId?: string | null;
   properties?: GrowthProperties;
 }) {
+  if (readAnalyticsChoice((await cookies()).get(ANALYTICS_CHOICE_COOKIE)?.value) !== "accepted") return null;
   const event = await prisma.growthEvent.create({
     data: {
       name: name.slice(0, 80),

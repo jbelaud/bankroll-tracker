@@ -1,6 +1,7 @@
 "use client";
 
 import type { PublicGrowthEventName } from "./events";
+import { browserAnalyticsChoice, clearGrowthStorage } from "@/lib/privacy/consent";
 
 const ANONYMOUS_ID_KEY = "kalivoa_growth_anonymous_id";
 const FIRST_TOUCH_KEY = "kalivoa_growth_first_touch";
@@ -33,6 +34,11 @@ function sourceFromReferrer(referrer: string): string {
 }
 
 export function getAcquisitionContext(): AcquisitionContext {
+  if (browserAnalyticsChoice() !== "accepted") {
+    clearGrowthStorage();
+    return { anonymousId: "", acquisitionSource: "", utmSource: "", utmMedium: "", utmCampaign: "" };
+  }
+  try {
   const existingAnonymousId = window.localStorage.getItem(ANONYMOUS_ID_KEY);
   const anonymousId = existingAnonymousId || crypto.randomUUID();
   if (!existingAnonymousId) window.localStorage.setItem(ANONYMOUS_ID_KEY, anonymousId);
@@ -54,14 +60,17 @@ export function getAcquisitionContext(): AcquisitionContext {
   const context = { anonymousId, acquisitionSource, utmSource, utmMedium, utmCampaign };
   window.localStorage.setItem(FIRST_TOUCH_KEY, JSON.stringify({ acquisitionSource, utmSource, utmMedium, utmCampaign }));
   return context;
+  } catch { return { anonymousId: "", acquisitionSource: "", utmSource: "", utmMedium: "", utmCampaign: "" }; }
 }
 
 export async function trackPublicGrowthEvent(name: PublicGrowthEventName, properties?: ClientProperties) {
+  if (browserAnalyticsChoice() !== "accepted") return;
   const acquisition = getAcquisitionContext();
   const payload = {
     name,
     anonymousId: acquisition.anonymousId,
-    properties: { ...acquisition, ...properties },
+    properties: { acquisition_source: acquisition.acquisitionSource, utm_source: acquisition.utmSource,
+      utm_medium: acquisition.utmMedium, utm_campaign: acquisition.utmCampaign, ...properties },
   };
   try {
     await fetch("/api/growth-events", {

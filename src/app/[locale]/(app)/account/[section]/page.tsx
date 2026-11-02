@@ -16,17 +16,21 @@ import { getScanWallet } from "@/lib/scan/credit-wallet";
 import { AccountGoalsCard } from "@/components/account/account-goals-card";
 import { PersonalConversionForm } from "@/components/account/personal-conversion-form";
 import { PublicTipsterProfileForm } from "@/components/account/public-tipster-profile-form";
-import { PublicTipsterProfileControls } from "@/components/account/public-tipster-profile-controls";
 import { PublicBankrollOrder } from "@/components/account/public-bankroll-order";
 import { ExportDataButton } from "@/components/account/export-data-button";
 import { ScanQualityReports } from "@/components/account/scan-quality-reports";
 import { SignOutButton } from "@/components/account/sign-out-button";
 import { FeedbackButton } from "@/components/account/feedback-button";
+import { CheckoutConfirmationNotice } from "@/components/account/checkout-confirmation";
+import { checkoutConfirmation } from "@/lib/billing/checkout-confirmation";
+import { stripe } from "@/lib/stripe";
+import { getEmailMarketingPreference } from "@/lib/email-marketing/preferences";
+import { EmailMarketingPreference } from "@/components/account/email-marketing-preference";
 
 const sectionKeys = ["profile", "subscription", "tracking", "public-profile", "data", "help"] as const;
 type Section = (typeof sectionKeys)[number];
 
-export default async function AccountSectionPage({ params }: { params: Promise<{ locale: Locale; section: string }> }) {
+export default async function AccountSectionPage({ params, searchParams }: { params: Promise<{ locale: Locale; section: string }>; searchParams: Promise<{ checkout?: string; session_id?: string }> }) {
   const { locale, section } = await params;
   if (!sectionKeys.includes(section as Section)) notFound();
 
@@ -39,6 +43,7 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
 
   switch (section) {
     case "profile": {
+      const emailPreference = await getEmailMarketingPreference(user.id, user.email ?? "");
       const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { currency: true } });
       content = <div className="space-y-6">
         <section className="border-b border-border pb-5">
@@ -46,16 +51,24 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
           <p className="mt-2 break-all text-sm text-muted-foreground">{user.email}</p>
         </section>
         <div className="space-y-3"><LanguageSwitcher /><CurrencySwitcher currency={dbUser?.currency ?? "EUR"} /></div>
+        <EmailMarketingPreference locale={locale} enabled={emailPreference?.enabled ?? false} />
       </div>;
       break;
     }
     case "subscription": {
       const [dbUser, betaProgram, wallet] = await Promise.all([
-        prisma.user.findUnique({ where: { id: user.id }, select: { plan: true, subscriptionCurrentPeriodEnd: true, betaOfferUsedAt: true, initialScanCreditRemaining: true, initialScanCreditExpiresAt: true } }),
+        prisma.user.findUnique({ where: { id: user.id }, select: { plan: true, stripeCustomerId: true, stripeSubscriptionId: true, subscriptionCurrentPeriodEnd: true, betaOfferUsedAt: true, betaWelcomeEligible: true, earlyWelcomePosition: true, initialScanCreditRemaining: true, initialScanCreditExpiresAt: true } }),
         prisma.betaProgram.findUnique({ where: { id: "global" }, select: { phase: true } }),
         getScanWallet(user.id),
       ]);
-      content = <div className="space-y-5"><PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null })} initialCreditsRemaining={0} initialCreditsExpiresAt={null} betaPhaseActive={betaProgram?.phase !== "ENDED"} /><section className="glass-card rounded-xl p-4"><ScanCreditSummary wallet={wallet} /></section></div>;
+      const query = await searchParams;
+      const confirmation = query.checkout === "success" && typeof query.session_id === "string" && dbUser
+        ? await checkoutConfirmation(stripe, query.session_id, { ...dbUser, id: user.id }) : null;
+      const awaitingConfirmation = confirmation === "pending" || confirmation === "unavailable";
+      content = <div className="space-y-5">
+        {confirmation && <CheckoutConfirmationNotice status={confirmation} />}
+        {!awaitingConfirmation && <><PlanCard plan={dbUser?.plan ?? "FREE"} currentPeriodEnd={dbUser?.subscriptionCurrentPeriodEnd ?? null} betaOfferEligible={canUseBetaOffer({ email: user.email, betaOfferUsedAt: dbUser?.betaOfferUsedAt ?? null, betaWelcomeEligible: dbUser?.betaWelcomeEligible, earlyWelcomePosition: dbUser?.earlyWelcomePosition })} hasBillingCustomer={Boolean(dbUser?.stripeCustomerId)} initialCreditsRemaining={0} initialCreditsExpiresAt={null} betaPhaseActive={betaProgram?.phase !== "ENDED"} /><section className="glass-card rounded-xl p-4"><ScanCreditSummary wallet={wallet} /></section></>}
+      </div>;
       break;
     }
     case "tracking": {
@@ -75,12 +88,11 @@ export default async function AccountSectionPage({ params }: { params: Promise<{
     }
     case "public-profile": {
       const [dbUser, publicBankrolls] = await Promise.all([
-        prisma.user.findUnique({ where: { id: user.id }, select: { publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true, publicBannerUrl: true, publicXHandle: true, publicProfileSuspended: true } }),
+        prisma.user.findUnique({ where: { id: user.id }, select: { publicDisplayName: true, publicHandle: true, publicBio: true, publicAvatarUrl: true, publicBannerUrl: true, publicXHandle: true } }),
         prisma.bankroll.findMany({ where: { userId: user.id, certificationStartedAt: { not: null } }, orderBy: [{ publicOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }, { id: "asc" }], select: { id: true, name: true, isPublic: true } }),
       ]);
       content = <div className="space-y-5">
         <PublicTipsterProfileForm profile={{ publicDisplayName: dbUser?.publicDisplayName ?? null, publicHandle: dbUser?.publicHandle ?? null, publicBio: dbUser?.publicBio ?? null, publicAvatarUrl: dbUser?.publicAvatarUrl ?? null, publicBannerUrl: dbUser?.publicBannerUrl ?? null, publicXHandle: dbUser?.publicXHandle ?? null }} googleAvatarUrl={typeof user.user_metadata?.avatar_url === "string" ? user.user_metadata.avatar_url : null} />
-        <PublicTipsterProfileControls hasProfile={Boolean(dbUser?.publicDisplayName && dbUser.publicHandle)} suspended={dbUser?.publicProfileSuspended ?? false} />
         <PublicBankrollOrder bankrolls={publicBankrolls} />
       </div>;
       break;
