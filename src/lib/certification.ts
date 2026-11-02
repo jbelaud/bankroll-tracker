@@ -22,7 +22,7 @@ export type CertificationBet = {
   resultEntryMethod: BetEntryMethod;
 };
 
-export const CERTIFICATION_RULES_VERSION = "1.2";
+export const CERTIFICATION_RULES_VERSION = "1.0";
 
 export const CERTIFICATION_WEIGHTS: Record<Extract<CertificationStatus, "STRONG" | "PARTIAL" | "WEAK" | "LIMITED" | "UNVERIFIED">, number> = {
   STRONG: 100,
@@ -36,23 +36,18 @@ export function certificationStatus(bet: CertificationBet, startedAt: Date | nul
   if (!startedAt || bet.createdAt < startedAt) return "EXCLUDED";
   // bet.date est la date de PRISE du ticket, pas celle du match. Un ticket
   // ancien ne devient éligible que si sa preuve initiale a été enregistrée
-  // après l'activation et qualifiée. La qualification vient soit d'une heure
-  // d'événement vérifiable, soit du cycle d'un ticket en cours dont l'heure de
-  // prise est imprimée par le bookmaker. La simple importation d'un ancien
-  // résultat ne crée donc jamais de certification rétroactive.
+  // après l'activation et avant l'événement. La simple importation d'un
+  // ancien résultat ne crée donc jamais de certification rétroactive.
   const hasQualifiedInitialProof = bet.initialProofAt !== null
     && bet.initialProofAt >= startedAt
     && bet.initialProofBeforeEvent === true;
-  // La date du ticket est stockée à minuit, y compris pour un scan. Un pari
-  // réellement enregistré après l'activation le même jour ne doit donc pas
-  // paraître ancien simplement parce que l'heure du suivi est postérieure à
-  // minuit. Les imports de fichiers et les lignes historiques UNKNOWN restent
-  // exclus : ils ne constituent pas une preuve créée pendant le suivi.
+  // La saisie manuelle ne demande qu'un jour : sa date est stockée à minuit.
+  // Un pari ajouté après l'activation le même jour ne doit pas paraître ancien
+  // simplement parce que l'heure de début du suivi est postérieure à minuit.
   if (bet.date < startedAt && !hasQualifiedInitialProof) {
     const publicationDay = startedAt.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
     const ticketDay = bet.date.toLocaleDateString("sv-SE", { timeZone: "Europe/Paris" });
-    const recordedDuringTracking = bet.entryMethod === "MANUAL" || bet.entryMethod === "SCAN";
-    if (!recordedDuringTracking || ticketDay !== publicationDay) return "EXCLUDED";
+    if (bet.entryMethod !== "MANUAL" || ticketDay !== publicationDay) return "EXCLUDED";
   }
   if (bet.result === "EN_ATTENTE") {
     if (hasQualifiedInitialProof) return "AWAITING_RESULT";
@@ -83,7 +78,7 @@ export function certificationSummary(bets: CertificationBet[], startedAt: Date |
   const strong = scored.filter(({ status }) => status === "STRONG");
   const strongVolume = strong.reduce((sum, { bet }) => sum + Math.abs(bet.stakeUnits ?? 0), 0);
   const score = volume > 0 ? Math.round(weighted / volume) : null;
-  const observation = settled.length < 10;
+  const observation = settled.length < 10 || volume < 20;
   const level = score === null || observation ? "OBSERVATION" : score >= 85 ? "GOLD" : score >= 65 ? "SILVER" : score >= 40 ? "BRONZE" : "UNVERIFIED";
 
   return {

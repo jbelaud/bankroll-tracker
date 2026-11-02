@@ -236,14 +236,8 @@ export function findPendingTicketMatch<T extends ExistingPendingBet>(
   return matches.length === 1 ? matches[0] : null;
 }
 
-export function initialProofTiming(
-  proofAt: Date,
-  eventStartAt: Date | null,
-  live: boolean,
-  ticketPlacedAt: Date | null = null,
-): boolean | null {
+export function initialProofTiming(proofAt: Date, eventStartAt: Date | null, live: boolean): boolean | null {
   if (live) return false;
-  if (eventStartAt && !Number.isNaN(eventStartAt.getTime())) return proofAt < eventStartAt;
-  if (ticketPlacedAt && !Number.isNaN(ticketPlacedAt.getTime())) return ticketPlacedAt <= proofAt;
-  return null;
+  if (!eventStartAt || Number.isNaN(eventStartAt.getTime())) return null;
+  return proofAt < eventStartAt;
 }
