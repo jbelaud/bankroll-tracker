@@ -24,6 +24,10 @@ model User {
   email     String   @unique
   name      String?
   createdAt DateTime @default(now())
+  lastActiveAt DateTime @default(now())
+  inactivityNoticeAt DateTime?
+  emailMarketingPreference EmailMarketingPreference?
+  emailMarketingChoices EmailMarketingChoice[]
 
   // Identité publique commune à toutes les bankrolls partagées par ce membre.
   // Les champs restent facultatifs pour préserver les comptes existants.
@@ -33,7 +37,6 @@ model User {
   publicAvatarUrl  String?
   publicBannerUrl  String?
   publicXHandle    String?
-  publicProfileSuspended Boolean @default(false)
   followingLastViewedAt DateTime @default(now())
 
   // Parrainage bêta : le code est créé avec le profil, tandis que la relation
@@ -68,6 +71,9 @@ model User {
   // La remise bêta Stripe ne doit être utilisée qu'une seule fois par
   // utilisateur, même après une résiliation suivie d'une nouvelle souscription.
   betaOfferUsedAt              DateTime?
+  // Retained after beta ends; early-member places are assigned at signup.
+  betaWelcomeEligible          Boolean   @default(false)
+  earlyWelcomePosition         Int?      @unique
 
   // Crédits ponctuels accordés à l'abonnement pour l'import d'historique.
   // Leur consommation suit désormais l'échéance des lots ; ils expirent 30 jours après
@@ -114,6 +120,31 @@ enum Currency {
   EUR
   USD
   GBP
+}
+
+model EmailMarketingPreference {
+  userId String @id @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled Boolean @default(false)
+  consentedEmail String? @map("consented_email")
+  consentVersion String @map("consent_version")
+  chosenAt DateTime @default(now()) @map("chosen_at") @db.Timestamptz(6)
+  @@map("email_marketing_preferences")
+}
+
+model EmailMarketingChoice {
+  id BigInt @id @default(autoincrement())
+  userId String @map("user_id")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enabled Boolean
+  email String
+  consentVersion String @map("consent_version")
+  statement String
+  locale String
+  source String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  @@index([userId, createdAt], map: "email_marketing_choices_user_created_idx")
+  @@map("email_marketing_choices")
 }
 
 enum AccountingCurrency {
@@ -832,6 +863,8 @@ model BetaProgram {
   phase     BetaPhase @default(ACTIVE)
   endedAt   DateTime?
   endedBy   String?
+  // Deleting a user does not reopen an early-member place.
+  earlyWelcomeCount Int @default(0)
   updatedAt DateTime  @updatedAt
 
   @@map("beta_program")
@@ -955,6 +988,8 @@ model Feedback {
   message   String
   page      String?
   status    FeedbackStatus   @default(OPEN)
+  closedAt DateTime?
+  legalHold Boolean @default(false)
   createdAt DateTime         @default(now())
 
   @@index([userId, createdAt])
@@ -1071,4 +1106,88 @@ model PartnerRewardEmail {
 
   @@index([status, nextAttemptAt])
   @@map("partner_reward_emails")
+}
+
+// Commercial archives survive deletion of the private profile.
+model BillingContract {
+  id String @id
+  userId String
+  customerId String
+  email String
+  name String
+  locale String
+  billingInterval String
+  termsVersion String
+  termsText String
+  acceptedAt DateTime
+  paidAt DateTime
+  withdrawalDeadline DateTime
+  firstInvoiceId String
+  firstAmountPaid Int
+  currency String
+  periodEnd DateTime?
+  endedAt DateTime?
+  cancellationFingerprint String?
+  createdAt DateTime @default(now())
+  @@index([userId], map: "billing_contracts_user_idx")
+  @@map("billing_contracts")
+}
+model BillingInvoice {
+  id String @id
+  userId String
+  subscriptionId String
+  issuedAt DateTime
+  retainUntil DateTime
+  snapshot Json
+  pdfContent Bytes?
+  creditNotePdfContent Bytes?
+  @@index([retainUntil], map: "billing_invoices_retention_idx")
+  @@map("billing_invoices")
+}
+model WithdrawalRequest {
+  id String @id @default(uuid())
+  subscriptionId String @unique
+  userId String
+  name String
+  email String
+  declaration String
+  receivedAt DateTime @default(now())
+  eligible Boolean
+  status String @default("PENDING")
+  refundId String?
+  creditNoteId String?
+  refundAmount Int?
+  processedAt DateTime?
+  attemptCount Int @default(0)
+  lastError String?
+  nextAttemptAt DateTime @default(now())
+  lockedUntil DateTime?
+  lockToken String?
+  @@index([status, nextAttemptAt], map: "withdrawal_requests_retry_idx")
+  @@map("withdrawal_requests")
+}
+model TransactionalEmail {
+  id String @id @default(uuid())
+  dedupeKey String @unique
+  userId String
+  kind String
+  recipient String
+  subject String
+  text String
+  html String?
+  attachments Json?
+  status String @default("PENDING")
+  sender String?
+  providerId String?
+  firstAttemptAt DateTime?
+  sentAt DateTime?
+  deliveredAt DateTime?
+  attemptCount Int @default(0)
+  nextAttemptAt DateTime @default(now())
+  lastError String?
+  lockedUntil DateTime?
+  lockToken String?
+  createdAt DateTime @default(now())
+  @@index([status, nextAttemptAt], map: "transactional_emails_retry_idx")
+  @@map("transactional_emails")
 }
