@@ -10,7 +10,7 @@ describe("canUseBetaOffer", () => {
     vi.stubEnv("BETA_TESTER_EMAILS", "beta@example.com, second@example.com");
     const { canUseBetaOffer } = await import("./beta-offer");
 
-    expect(canUseBetaOffer({ email: "BETA@example.com", betaOfferUsedAt: null })).toBe(true);
+    expect(canUseBetaOffer({ email: "BETA@example.com", betaOfferUsedAt: null, now: new Date("2026-10-09T12:00:00Z") })).toBe(true);
     expect(canUseBetaOffer({ email: "other@example.com", betaOfferUsedAt: null })).toBe(false);
   });
 
@@ -18,6 +18,6 @@ describe("canUseBetaOffer", () => {
     vi.stubEnv("BETA_TESTER_EMAILS", "beta@example.com");
     const { canUseBetaOffer } = await import("./beta-offer");
 
-    expect(canUseBetaOffer({ email: "beta@example.com", betaOfferUsedAt: new Date() })).toBe(false);
+    expect(canUseBetaOffer({ email: "beta@example.com", betaOfferUsedAt: new Date(), now: new Date("2026-10-09T12:00:00Z") })).toBe(false);
   });
 });

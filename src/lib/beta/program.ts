@@ -55,7 +55,7 @@ export async function redeemBetaInvite(token: string | null, user: { id: string;
 
     const assigned = await tx.user.updateMany({
       where: { id: user.id, plan: "FREE" },
-      data: { plan: "BETA_TESTER" },
+      data: { plan: "BETA_TESTER", betaWelcomeEligible: true },
     });
     if (assigned.count === 1) {
       await tx.betaInviteRedemption.create({ data: { betaInviteId: invite.id, userId: user.id, redeemedAt: now } });

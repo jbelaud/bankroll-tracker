@@ -16,6 +16,8 @@ describe("beta tester plan", () => {
   });
 
   it("keeps paid benefits restricted to Stripe-backed plans", () => {
+    expect(SCAN_QUOTA_CONFIG.BETA_PREMIUM.limit).toBe(200);
+    expect(SCAN_QUOTA_CONFIG.PREMIUM.limit).toBe(200);
     expect(isPaidPlan("FREE")).toBe(false);
     expect(isPaidPlan("BETA_PREMIUM")).toBe(true);
     expect(isPaidPlan("PREMIUM")).toBe(true);

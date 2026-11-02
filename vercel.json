@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/commercial",
+      "schedule": "15 3 * * *"
+    },
+    {
       "path": "/api/cron/scan-quality-retention",
       "schedule": "0 3 * * *"
     }

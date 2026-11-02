@@ -113,7 +113,7 @@ export async function endBetaPhase() {
     // Le passage au Freemium est global et immédiat : les deux bankrolls les
     // plus récentes deviennent alors verrouillées si le compte en possède plus
     // de deux. Les abonnements payants bêta restent, eux, inchangés.
-    await tx.user.updateMany({ where: { plan: "BETA_TESTER" }, data: { plan: "FREE" } });
+    await tx.user.updateMany({ where: { plan: "BETA_TESTER" }, data: { plan: "FREE", betaWelcomeEligible: true } });
   });
   revalidateBetaViews();
 }
@@ -121,6 +121,6 @@ export async function endBetaPhase() {
 export async function switchBetaTesterToFreemium() {
   const user = await requireUser();
   if (await isBetaPhaseActive()) throw new Error("La phase bêta est toujours active.");
-  await prisma.user.updateMany({ where: { id: user.id, plan: "BETA_TESTER" }, data: { plan: "FREE" } });
+  await prisma.user.updateMany({ where: { id: user.id, plan: "BETA_TESTER" }, data: { plan: "FREE", betaWelcomeEligible: true } });
   revalidateBetaViews();
 }

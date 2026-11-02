@@ -1,0 +1,129 @@
+Terms and conditions of sale
+
+Version 2026-10-22.1 — October 22, 2026
+
+These terms describe the Kalivoa subscriptions planned for consumers residing in France. Beta is currently free and paid subscriptions are not yet open.
+
+Finalized version for future subscriptions. These terms apply only to a paid order expressly accepted after subscriptions open. Creating an account or joining beta does not trigger a subscription or payment.
+
+1. Purpose and scope
+
+Once paid subscriptions open, these terms govern online subscriptions by consumers to paid plans granting access to Kalivoa features. The service remains intended for adults. At launch, subscriptions are offered to consumers residing in France; the English translation does not expand that territory.
+
+The seller is ETS BELAUD, a French single-member simplified joint-stock company (SASU) with share capital of €500, registered office at 61 rue de Lyon, 75012 Paris, France, registered under 994 223 212 RCS Paris (SIREN 994 223 212, registered-office SIRET 994 223 212 00014), reachable at contact.kalivoa@gmail.com and +33 7 81 08 48 35. VAT: FR61994223212, French simplified actual VAT regime (CA12).
+
+2. Service
+
+Kalivoa organizes bankrolls, records or imports bets and displays indicators calculated from history. Users must review automated extractions. Publishing a bankroll is optional; certification describes recorded evidence (tickets, timestamps and corrections), without auditing bookmaker balances or guaranteeing screenshot authenticity or profitability.
+
+Kalivoa is neither a bookmaker nor a betting adviser and promises no gain.
+
+The service needs internet access and a recent browser supporting JavaScript and session cookies. Tracking and screenshot import do not require the optional extension. File formats and limits are shown before import; supported bookmakers and ticket types are indicated in the interface. The selected plan’s features are listed on the pricing page.
+
+3. Plan, price and order
+
+Premium: €4.99/month or €49.99/year, tax included, billed at the selected frequency. Creating a free account is not an order.
+
+Eligible accounts pay €2.99/month for the first twelve months, then €4.99/month, or €24.99/year for the first year, then €49.99/year, tax included. The offer is reserved for beta testers and the first 15 new non-beta accounts created after the beta ends. Subscribe before 31 December 2026 at 11:59 pm (Paris time), once per account; eligibility is checked before payment. This deadline does not shorten an existing twelve-month discount.
+
+Both plans include 200 scans per 30-day period starting with the first scan, with no rollover. A one-time bonus of 300 scans with no expiry is granted upon the first paid activation. Batches expiring soonest are used before permanent credits, and the permanent initial bonus is used last. Any unused bonus is retained after returning to the free plan but can only be used with an active paid subscription; subscribing again does not grant another bonus. Referral scans and partner/bookmaker rewards are separate from this initial bonus and follow their respective offer conditions. No overage is charged automatically.
+
+Before payment, customers select a billing period, review and correct the order, accept the terms and confirm residence in France. A separate immediate-start request does not waive withdrawal rights. Final Stripe confirmation states the payment obligation. Paid access is activated once payment is confirmed. Durable contract confirmation, including the accepted terms version, is available in the account and sent by email.
+
+4. Payment and invoicing
+
+Stripe processes payments using methods shown at checkout. Each period is charged in full: monthly or yearly. Prices are total amounts payable in euros, with no automatically charged scan overage. ETS BELAUD uses the French simplified actual VAT regime (CA12). Tax-inclusive prices include applicable VAT, calculated at checkout and detailed on the invoice. Kalivoa does not receive full card numbers. Invoices are available through the billing portal. Failed payment may prevent activation or suspend paid access; a new order must not duplicate an existing subscription.
+
+5. Term, renewal and cancellation
+
+Subscriptions renew automatically each month or year according to the selected plan. Cancellation is requested from My account > Subscription through the Stripe portal. It takes effect at the end of the current period; paid access remains available until that date.
+
+Cancellation prevents the next renewal; it does not delete the account or exercise withdrawal rights. At expiry, free-plan limits apply and remaining permanent credits are retained but locked until another paid subscription. Ordinary cancellation does not refund the current period, without affecting withdrawal rights or statutory guarantees.
+
+For annual contracts, a dedicated email explains how to prevent renewal, no earlier than three months and no later than one month before the non-renewal deadline. Delivery is scheduled 45 days before renewal and clearly states that deadline and the next price. If the required notice was not sent in accordance with Article L. 215-1 of the French Consumer Code, consumers may end the contract free of charge at any time after renewal; the relevant advance payments are refunded as provided by that article. Durable cancellation confirmation is available in the account and sent by email.
+
+6. Right of withdrawal
+
+Consumers have fourteen days from contract conclusion to withdraw without giving a reason. The conclusion day is not counted; if the last day is a Saturday, Sunday, public holiday or non-working day, the deadline extends to the next working day. Kalivoa grants a full refund of sums paid for the relevant subscription, even if scans were used; no proportionate deduction applies.
+
+An express, separate immediate-start request does not remove withdrawal rights. Send a clear withdrawal declaration to contact.kalivoa@gmail.com or ETS BELAUD, 61 rue de Lyon, 75012 Paris, identifying the subscription and account. The downloadable form below is optional.
+
+After receipt, a durable acknowledgement confirms the declaration and its date and time. Refunds are made within fourteen days of notification, using the original payment method unless another no-fee method is expressly agreed. Paid access to that subscription ends when withdrawal is processed; this does not itself delete account data.
+
+When paid plans open, the withdrawal page lets you identify the contract, review your declaration and confirm withdrawal. The timestamped acknowledgement remains available for download in your account and is also sent by email. The downloadable form is another option; cancelling renewal through Stripe does not exercise withdrawal rights.
+
+7. Availability and support
+
+Kalivoa aims for continuous availability without guaranteeing uninterrupted access, including during maintenance or provider incidents. Support requests can be sent to contact.kalivoa@gmail.com or from My account > Help and support.
+
+8. Statutory digital-service guarantee
+
+Consumers may invoke the statutory conformity guarantee for defects appearing throughout the contractual supply period of the Kalivoa subscription (monthly or annual, including renewals), starting with service supply. During this period, consumers need only establish the defect’s existence, not when it appeared.
+
+All updates necessary to maintain service conformity must be provided throughout that contractual supply period.
+
+Consumers are entitled to restoration of conformity without undue delay after their request, free of charge and without major inconvenience.
+
+Consumers may obtain a price reduction while keeping the service, or terminate for a full refund in exchange for giving up the service, if: 1) the professional refuses restoration; 2) restoration is unjustifiably delayed; 3) restoration requires charges to the consumer; 4) restoration causes major inconvenience; or 5) the defect persists despite an unsuccessful restoration attempt.
+
+A price reduction or termination is also available immediately where the defect is sufficiently serious, without a prior request for restoration.
+
+For a minor defect, consumers may terminate only where the contract does not require payment of a price.
+
+Any service unavailability for restoration suspends the remaining guarantee until the conforming service is supplied again.
+
+These rights arise under Articles L. 224-25-1 to L. 224-25-31 of the French Consumer Code.
+
+A professional obstructing the guarantee in bad faith faces a civil fine of up to €300,000, which may increase to 10% of average annual turnover (Article L. 242-18-1).
+
+Consumers also benefit from the hidden-defect guarantee under Articles 1641 to 1649 of the French Civil Code for two years from discovering the defect, entitling them to a price reduction while keeping the service, or a full refund in exchange for giving it up.
+
+Contact contact.kalivoa@gmail.com to exercise these rights with Kalivoa, operated by ETS BELAUD, and describe the defect.
+
+9. Liability
+
+Users remain responsible for validated data, account security and gambling decisions. Any limitation cannot exclude mandatory consumer guarantees or liabilities.
+
+10. Complaints, mediation and governing law
+
+Complaints can be sent to contact.kalivoa@gmail.com. Following a prior written complaint to Kalivoa, consumers who receive an unsatisfactory response or no response within two months may refer the dispute free of charge to Société de la Médiation Professionnelle (SMP). Apply online at https://www.mediateur-consommation-smp.fr/ or write to: Société de la Médiation Professionnelle, Alteritae, 5 rue Salvaing, 12000 Rodez, France. Applications must be written in French, made within one year of the initial written complaint and meet the other statutory admissibility requirements. Mediation is voluntary and does not prevent consumers from bringing the dispute before the competent courts.
+
+French law applies without depriving consumers of mandatory protections. If no amicable or mediated resolution is found, disputes fall under the competent courts.
+
+11. Data, archives and contract evidence
+
+The privacy policy describes processing and retention. Tracking data can be exported from Account > My data. Cancelling a subscription does not delete the account; account deletion is a separate request. Invoices and accounting evidence remain archived for ten years, including after account deletion where legally required.
+
+The accepted terms version, order date, plan and confirmations are retained in a restricted archive and supplied on a durable medium. Electronic records are evidence that consumers may challenge by any legally admissible means.
+
+12. Service and terms changes
+
+The version accepted at checkout governs the subscription. Changes cannot remove mandatory consumer rights or retrospectively change the price of a period already paid. Any price change applying to renewal is announced before taking effect, with an opportunity to cancel before renewal.
+
+Updates necessary for conformity, including security, are supplied during the contractual period. Other digital-service changes must comply with Articles L. 224-25-25 and L. 224-25-26 of the French Consumer Code, including durable notice and consumer rights where access or use is affected. Ending beta never automatically converts a free account into a paid subscription.
+
+13. French statutory renewal and cancellation provisions
+
+The applicable French statutory provisions are reproduced below in their original language. The preceding sections explain the contractual cancellation and renewal rules in English.
+
+Article L. 215-1 du Code de la consommation : Pour les contrats de prestations de services conclus pour une durée déterminée avec une clause de reconduction tacite, le professionnel prestataire de services informe le consommateur par écrit, par lettre nominative ou courrier électronique dédiés, au plus tôt trois mois et au plus tard un mois avant le terme de la période autorisant le rejet de la reconduction, de la possibilité de ne pas reconduire le contrat qu’il a conclu avec une clause de reconduction tacite. Cette information, délivrée dans des termes clairs et compréhensibles, mentionne, dans un encadré apparent, la date limite de non-reconduction.
+
+Lorsque cette information ne lui a pas été adressée conformément aux dispositions du premier alinéa, le consommateur peut mettre gratuitement un terme au contrat, à tout moment à compter de la date de reconduction.
+
+Les avances effectuées après la dernière date de reconduction ou, s’agissant des contrats à durée indéterminée, après la date de transformation du contrat initial à durée déterminée, sont dans ce cas remboursées dans un délai de trente jours à compter de la date de résiliation, déduction faite des sommes correspondant, jusqu’à celle-ci, à l’exécution du contrat.
+
+Les dispositions du présent article s’appliquent sans préjudice de celles qui soumettent légalement certains contrats à des règles particulières en ce qui concerne l’information du consommateur.
+
+Par exception au premier alinéa du présent article, pour les contrats de fourniture de service de télévision au sens de l’article 2 de la loi n° 86-1067 du 30 septembre 1986 relative à la liberté de communication et pour les contrats de fourniture de services de médias audiovisuels à la demande, le consommateur peut mettre gratuitement un terme au contrat, à tout moment à compter de la première reconduction, dès lors qu’il change de domicile ou que son foyer fiscal évolue.
+
+Article L. 215-1-1 : Lorsqu’un contrat a été conclu par voie électronique ou a été conclu par un autre moyen et que le professionnel, au jour de la résiliation par le consommateur, offre au consommateur la possibilité de conclure des contrats par voie électronique, la résiliation est rendue possible selon cette modalité.
+
+A cet effet, le professionnel met à la disposition du consommateur une fonctionnalité gratuite permettant d’accomplir, par voie électronique, la notification et les démarches nécessaires à la résiliation du contrat. Lorsque le consommateur notifie la résiliation du contrat, le professionnel lui confirme la réception de la notification et l’informe, sur un support durable et dans des délais raisonnables, de la date à laquelle le contrat prend fin et des effets de la résiliation.
+
+Un décret fixe notamment les modalités techniques de nature à garantir une identification du consommateur et un accès facile, direct et permanent à la fonctionnalité mentionnée au deuxième alinéa, telles que ses modalités de présentation et d’utilisation. Il détermine les informations devant être fournies par le consommateur.
+
+Article L. 215-2 : Les dispositions du présent chapitre, à l’exception de l’article L. 215-1-1, ne sont pas applicables aux exploitants des services d’eau potable et d’assainissement.
+
+Article L. 215-3 : Les dispositions du présent chapitre sont également applicables aux contrats conclus entre des professionnels et des non-professionnels.
+
+Article L. 241-3 : Lorsque le professionnel n’a pas procédé au remboursement dans les conditions prévues à l’article L. 215-1, les sommes dues sont productives d’intérêts au taux légal.

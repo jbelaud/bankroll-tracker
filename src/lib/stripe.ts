@@ -8,5 +8,5 @@ import Stripe from "stripe";
 // vérifier `if (!stripe)` avant usage (TypeScript l'impose via le type
 // `Stripe | null`), même garde-fou que ANTHROPIC_API_KEY dans /api/scan.
 export const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { timeout: 10_000, maxNetworkRetries: 1 })
   : null;
