@@ -6,7 +6,7 @@ import { listAllBankrollMovements } from "@/lib/actions/bankroll-movements";
 import { computeProfit, countsTowardPerformance, realStake } from "@/lib/profit";
 import { unitPerformance } from "@/lib/unit-performance";
 import { profitInUnits } from "@/lib/public-bankroll";
-import { movementDelta } from "@/lib/bankroll-balance";
+import { movementDelta, summarizeBankrollCapital } from "@/lib/bankroll-balance";
 import { getServerCurrency } from "@/lib/get-server-currency";
 import { summarizeBankrolls } from "@/lib/summaries";
 import { computeGlobalStats } from "@/lib/stats";
@@ -166,6 +166,37 @@ export default async function DashboardPage() {
     []
   );
 
+  // Même calcul que la courbe globale, par bankroll : alimente le sélecteur du bloc courbe.
+  const performanceBankrolls = bankrolls.length > 1 ? bankrolls.map((bankroll) => {
+    const bankrollBets = bets.filter((bet) => bet.bankrollId === bankroll.id);
+    const bankrollSettled = settled.filter((bet) => bet.bankrollId === bankroll.id);
+    const bankrollMovements = movements.filter((movement) => movement.bankrollId === bankroll.id);
+    const capital = summarizeBankrollCapital(bankroll, bankrollBets, bankrollMovements);
+    const bankrollUnits = unitPerformance(bankrollBets);
+    const events = [
+      ...bankrollSettled.map((bet) => ({ date: bet.date, delta: computeProfit(bet) })),
+      ...bankrollMovements.map((movement) => ({ date: movement.date, delta: movementDelta(movement) })),
+    ].sort((a, b) => a.date.getTime() - b.date.getTime());
+    const bankrollDetails = computeDetailedStats(bankrollBets);
+    return {
+      id: bankroll.id,
+      name: bankroll.name,
+      currency: bankroll.currency,
+      points: events.reduce<Array<{ date: string; balance: number }>>((points, event) => {
+        points.push({ date: event.date.toISOString().slice(0, 10), balance: (points.at(-1)?.balance ?? bankroll.initial) + event.delta });
+        return points;
+      }, []),
+      unitPoints: bankrollUnits.missing === 0 ? bankrollSettled.reduce<Array<{ date: string; profit: number }>>((points, bet) => {
+        points.push({ date: bet.date.toISOString().slice(0, 10), profit: (points.at(-1)?.profit ?? 0) + profitInUnits(bet) });
+        return points;
+      }, []) : [],
+      missingUnits: bankrollUnits.missing,
+      balance: capital.balance,
+      drawdown: bankrollDetails.drawdown,
+      drawdownUnits: bankrollDetails.drawdownUnits,
+    };
+  }) : [];
+
   const bankrollSummaries = summarizeBankrolls(bankrolls, bets, movements);
   const dashboardBankrolls = bankrollSummaries.map((summary) => {
     const bankrollBets = bets.filter((bet) => bet.bankrollId === summary.id);
@@ -226,6 +257,7 @@ export default async function DashboardPage() {
           drawdownUnits={details.drawdownUnits}
           currency={aggregateCurrency}
           mixedCurrencies={mixedCurrencies}
+          bankrollOptions={performanceBankrolls}
         />
       </Reveal>
 

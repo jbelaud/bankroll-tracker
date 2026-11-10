@@ -9,9 +9,21 @@ import { Link } from "@/i18n/navigation";
 import { fmtMoney, fmtUnits } from "@/lib/format";
 import { DrawdownBadge } from "@/components/stats/drawdown-badge";
 import { useDisplayUnit } from "@/components/shared/display-unit-toggle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Point = { date: string; balance: number };
 type UnitPoint = { date: string; profit: number };
+export type PerformanceBankroll = {
+  id: string;
+  name: string;
+  currency: AccountingCurrency;
+  points: Point[];
+  unitPoints: UnitPoint[];
+  missingUnits: number;
+  balance: number;
+  drawdown: number;
+  drawdownUnits: number | null;
+};
 type Period = "7d" | "30d" | "90d" | "1y" | "all";
 
 const PERIOD_DAYS: Record<Exclude<Period, "all">, number> = {
@@ -21,15 +33,18 @@ const PERIOD_DAYS: Record<Exclude<Period, "all">, number> = {
   "1y": 365,
 };
 
+const ALL_BANKROLLS = "all";
+
 export function PerformancePanel({
-  points,
-  unitPoints,
-  missingUnits,
-  balance,
-  drawdown,
-  drawdownUnits,
-  currency,
-  mixedCurrencies = false,
+  points: allPoints,
+  unitPoints: allUnitPoints,
+  missingUnits: allMissingUnits,
+  balance: allBalance,
+  drawdown: allDrawdown,
+  drawdownUnits: allDrawdownUnits,
+  currency: allCurrency,
+  mixedCurrencies: allMixedCurrencies = false,
+  bankrollOptions = [],
 }: {
   points: Point[];
   unitPoints: UnitPoint[];
@@ -39,11 +54,27 @@ export function PerformancePanel({
   drawdownUnits: number | null;
   currency: AccountingCurrency;
   mixedCurrencies?: boolean;
+  bankrollOptions?: PerformanceBankroll[];
 }) {
   const t = useTranslations("dashboard.performance");
   const locale = useLocale();
   const inUnits = useDisplayUnit() === "units";
   const [period, setPeriod] = useState<Period>("all");
+  const [bankrollId, setBankrollId] = useState(ALL_BANKROLLS);
+  // Une bankroll choisie remplace toute la vue (courbe, solde, drawdown) ; « Toutes » = global.
+  const selected = bankrollOptions.find((option) => option.id === bankrollId);
+  const points = selected?.points ?? allPoints;
+  const unitPoints = selected?.unitPoints ?? allUnitPoints;
+  const missingUnits = selected?.missingUnits ?? allMissingUnits;
+  const balance = selected?.balance ?? allBalance;
+  const drawdown = selected?.drawdown ?? allDrawdown;
+  const drawdownUnits = selected ? selected.drawdownUnits : allDrawdownUnits;
+  const currency = selected?.currency ?? allCurrency;
+  const mixedCurrencies = selected ? false : allMixedCurrencies;
+  const bankrollItems = {
+    [ALL_BANKROLLS]: "Toutes les bankrolls",
+    ...Object.fromEntries(bankrollOptions.map((option) => [option.id, option.name])),
+  };
   const visiblePoints = useMemo(() => {
     const series = inUnits
       ? unitPoints.map((point) => ({ date: point.date, value: point.profit }))
@@ -87,7 +118,22 @@ export function PerformancePanel({
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-tight">{mixedCurrencies ? "—" : fmtMoney(balance, locale, currency)}</h2>
         </div>
-        {mixedCurrencies && !inUnits ? null : <DrawdownBadge amount={drawdown} units={drawdownUnits} currency={currency} allTime />}
+        <div className="flex min-w-0 flex-col items-end gap-2">
+          {bankrollOptions.length > 0 ? (
+            <Select value={bankrollId} onValueChange={(value) => setBankrollId(value as string)} items={bankrollItems}>
+              <SelectTrigger aria-label="Bankroll affichée" className="min-h-11 w-full min-w-0 max-w-56 rounded-lg px-3 text-xs font-semibold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_BANKROLLS} className="min-h-touch text-sm">Toutes les bankrolls</SelectItem>
+                {bankrollOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.id} className="min-h-touch text-sm">{option.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : null}
+          {mixedCurrencies && !inUnits ? null : <DrawdownBadge amount={drawdown} units={drawdownUnits} currency={currency} allTime />}
+        </div>
       </div>
 
       <p className="mt-3 text-xs font-medium text-muted-foreground">{t(inUnits ? "unitCurveTitle" : "moneyCurveTitle")}</p>
