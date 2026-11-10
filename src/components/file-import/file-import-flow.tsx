@@ -101,11 +101,13 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const stakeMode: "CURRENCY" | "UNITS" | "BOTH" = parsed?.stakeKind === "BOTH" ? "BOTH"
     : parsed?.stakeKind === "UNITS" ? "UNITS"
       : parsed?.stakeKind === "CURRENCY" ? "CURRENCY"
-        : stakeChoice ?? (selectedBankroll?.currency === "UNIT" ? "UNITS" : "CURRENCY");
+        : stakeChoice ?? "CURRENCY";
   const stakeModeNeedsChoice = Boolean(parsed) && !isBetAnalytix && parsed?.stakeKind === "UNKNOWN";
-  const stakeModeMismatch = Boolean(parsed) && !isBetAnalytix && Boolean(selectedBankroll) && (stakeMode === "UNITS"
-    ? selectedBankroll?.currency !== "UNIT"
-    : selectedBankroll?.currency === "UNIT");
+  // Des mises en devise peuvent entrer dans une bankroll en U (converties avec sa référence) ;
+  // des unités ne peuvent pas entrer dans une bankroll en devise.
+  const stakeModeMismatch = Boolean(parsed) && !isBetAnalytix && Boolean(selectedBankroll)
+    && stakeMode === "UNITS" && selectedBankroll?.currency !== "UNIT";
+  const convertsToUnits = Boolean(parsed) && !isBetAnalytix && stakeMode !== "UNITS" && selectedBankroll?.currency === "UNIT";
   const stakeModeLabel = stakeMode === "UNITS" ? "unités" : stakeMode === "BOTH" ? "devise + unités" : "devise";
   const selectedAllocation = selectedBankroll?.allocations.find((allocation) => allocation.id === allocationId);
   const selectedBookmakerLabel = selectedAllocation?.bookmaker
@@ -190,9 +192,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
       return;
     }
     if (stakeModeMismatch) {
-      setFileError(stakeMode === "UNITS"
-        ? "Ces mises sont en unités : choisis une bankroll en unités (U)."
-        : "Ces mises sont en devise : choisis une bankroll en devise.");
+      setFileError("Ces mises sont en unités : choisis une bankroll en unités (U).");
       return;
     }
     setFileError("");
@@ -423,9 +423,12 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
               )}
               {stakeModeMismatch ? (
                 <p role="alert" className="mt-2 font-semibold text-warning">
-                  {stakeMode === "UNITS"
-                    ? "La bankroll choisie est en devise. Choisis une bankroll en unités (U) pour conserver ces unités."
-                    : "La bankroll choisie est en unités. Choisis une bankroll en devise pour ces mises."}
+                  La bankroll choisie est en devise. Choisis une bankroll en unités (U) pour conserver ces unités.
+                </p>
+              ) : null}
+              {convertsToUnits ? (
+                <p className="mt-2 text-muted-foreground">
+                  Ces mises en devise seront converties en U avec le capital de référence de la bankroll (1 U = 1 % de ce capital). Le montant d’origine est conservé.
                 </p>
               ) : null}
             </div>

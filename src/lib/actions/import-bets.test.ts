@@ -156,6 +156,26 @@ describe("importExternalBets", () => {
     })] });
   });
 
+  it("convertit des mises en devise en U avec la référence de la bankroll (jamais 1 € = 1 U)", async () => {
+    mocks.bankrollFindFirst.mockResolvedValue({
+      id: "bankroll-1", mode: "DISTRIBUTED", currency: "UNIT", referenceCurrency: "EUR", referenceCapital: 5000,
+      referencePeriods: [{ referenceCapital: 5000, effectiveFrom: new Date("2026-11-10") }],
+      allocations: [{ id: "allocation-1", bookmaker: "Winamax" }],
+    });
+    // Pari antérieur à la création : la plus ancienne référence s'applique (1 U = 50 €).
+    const response = await importExternalBets("bankroll-1", [bet({ stake: 100, ticketRef: null })], "CSV", "f.csv", null, undefined, "CURRENCY");
+
+    expect(response).toMatchObject({ imported: 1 });
+    expect(mocks.betCreateMany).toHaveBeenCalledWith({ data: [expect.objectContaining({
+      stake: 2, stakeUnits: 2, stakeCurrency: "UNIT", sourceStakeAmount: 100, sourceStakeCurrency: "EUR", referenceCapitalAtBet: 5000,
+    })] });
+  });
+
+  it("refuse des unités dans une bankroll en devise", async () => {
+    await expect(importExternalBets("bankroll-1", [bet()], "CSV", "f.csv", null, undefined, "UNITS"))
+      .resolves.toMatchObject({ error: expect.stringContaining("unités") });
+  });
+
   it("exige la devise BA et refuse une bankroll de destination différente", async () => {
     await expect(importExternalBets("bankroll-1", [bet({ stake: 1.25 })], "BET_ANALYTIX"))
       .resolves.toEqual({ error: "Choisis la devise de la bankroll Bet-Analytix d’origine avant l’import." });

@@ -25,7 +25,7 @@ import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, fin
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 import { convertTicketToBankroll } from "@/lib/native-stake";
-import { referenceDateForImport, unitSnapshot, type ReferencePeriod } from "@/lib/bankroll-units";
+import { referenceAt, toUnits, type ReferencePeriod } from "@/lib/bankroll-units";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -61,9 +61,18 @@ function duplicateKey(bet: {
   ].join(":");
 }
 
-// Mise en devise : on dérive les unités de la référence datée de la bankroll (comme une
-// saisie manuelle). Si le fichier fournit aussi ses propres unités, elles priment et la
-// référence implicite de chaque pari (mise / unités × 100) est conservée.
+// Un import historique porte sur des paris antérieurs à la création de la bankroll :
+// sans période de référence à cette date, on retient la plus ancienne (référence initiale).
+function historicalReference(periods: ReferencePeriod[], date: Date): number | null {
+  const exact = referenceAt(periods, date);
+  if (exact !== null) return exact;
+  const earliest = [...periods].sort((a, b) => a.effectiveFrom.getTime() - b.effectiveFrom.getTime())[0];
+  return earliest?.referenceCapital ?? null;
+}
+
+// Mise en devise : on dérive les unités de la référence de la bankroll (comme une saisie
+// manuelle). Si le fichier fournit aussi ses propres unités, elles priment et la référence
+// implicite de chaque pari (mise / unités × 100) est conservée.
 function currencyUnitFields(
   bet: { stake: number | null; stakeUnits?: number | null },
   periods: ReferencePeriod[],
@@ -75,12 +84,9 @@ function currencyUnitFields(
   if (fileUnits !== null && fileUnits !== undefined && Number.isFinite(fileUnits) && fileUnits > 0) {
     return { stakeUnits: fileUnits, referenceCapitalAtBet: (stake / fileUnits) * 100, unitsRecordedAt: new Date() };
   }
-  const snapshot = unitSnapshot(stake, periods, referenceDateForImport(date, true, new Date()));
-  return snapshot.stakeUnits === null ? {} : {
-    stakeUnits: snapshot.stakeUnits,
-    referenceCapitalAtBet: snapshot.referenceCapitalAtBet,
-    unitsRecordedAt: snapshot.unitsRecordedAt,
-  };
+  const reference = historicalReference(periods, date);
+  if (reference === null || !(reference > 0)) return {};
+  return { stakeUnits: toUnits(stake, reference)!, referenceCapitalAtBet: reference, unitsRecordedAt: new Date() };
 }
 
 // Import de migration depuis un fichier tiers. Le navigateur ne transmet que
@@ -111,6 +117,8 @@ export async function importExternalBets(
         id: true,
         mode: true,
         currency: true,
+        referenceCurrency: true,
+        referenceCapital: true,
         referencePeriods: { select: { referenceCapital: true, effectiveFrom: true } },
         allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
       },
@@ -132,7 +140,6 @@ export async function importExternalBets(
   if (genericUnits && bankroll.currency !== "UNIT") {
     return { error: "Ce fichier exprime les mises en unités. Utilise une bankroll en unités (U) pour les conserver telles quelles." };
   }
-  if (!isBetAnalytix && !genericUnits && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
   const requestedAllocation = requestedAllocationId
@@ -169,6 +176,10 @@ export async function importExternalBets(
     stakeCurrency: "EUR" | "USD" | "GBP" | "UNIT";
     stakeUnits?: number;
     referenceCapitalAtBet?: number | null;
+    sourceStakeAmount?: number;
+    sourceStakeCurrency?: Currency;
+    sourceFxRate?: number;
+    sourceCashOutAmount?: number | null;
     unitsRecordedAt?: Date;
     odds: number | null;
     boosted: boolean;
@@ -230,6 +241,31 @@ export async function importExternalBets(
         result: bet.result,
       });
     }
+    // Mises en devise dans une bankroll en U : conversion explicite avec la référence
+    // de la bankroll (1 U = 1 % du capital de référence), jamais un taux inventé.
+    let nativeStake = bet.stake as number;
+    let nativeCashOut = bet.result === "CASHE" ? bet.cashOutAmount : null;
+    let unitExtras: Record<string, unknown> | null = null;
+    if (!isBetAnalytix && !genericUnits && bankroll.currency === "UNIT") {
+      const fileUnits = stakeMode === "BOTH" && Number.isFinite(bet.stakeUnits) && (bet.stakeUnits as number) > 0
+        ? bet.stakeUnits as number : null;
+      const reference = fileUnits !== null ? ((bet.stake as number) / fileUnits) * 100
+        : historicalReference(bankroll.referencePeriods ?? [], date) ?? bankroll.referenceCapital ?? null;
+      if (reference === null || !(reference > 0)) {
+        return { error: "Cette bankroll en U n’a pas de capital de référence. Renseigne-le (1 U = 1 % de ce montant) avant d’importer des mises en devise." };
+      }
+      nativeStake = fileUnits ?? toUnits(bet.stake as number, reference)!;
+      nativeCashOut = nativeCashOut === null || nativeCashOut === undefined ? null : toUnits(nativeCashOut, reference);
+      unitExtras = {
+        stakeUnits: nativeStake,
+        referenceCapitalAtBet: reference,
+        unitsRecordedAt: new Date(),
+        sourceStakeAmount: bet.stake as number,
+        sourceStakeCurrency: bankroll.referenceCurrency,
+        sourceFxRate: 1,
+        sourceCashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+      };
+    }
     const row = {
       id: randomUUID(),
       bankrollId,
@@ -243,19 +279,19 @@ export async function importExternalBets(
       eventResult: bet.eventResult?.normalize("NFKC").trim().slice(0, 500) || null,
       // Les montants BA sont repris dans la devise native déclarée par l'utilisateur.
       // Aucun taux de conversion ni montant fictif n'est inventé pour ces lignes.
-      stake: bet.stake as number,
+      stake: nativeStake,
       stakeCurrency: bankroll.currency,
       ...((isBetAnalytix && sourceCurrency === "UNIT") || genericUnits ? {
         stakeUnits: bet.stake as number,
         unitsRecordedAt: new Date(),
-      } : isBetAnalytix || bankroll.currency === "UNIT" ? {} : currencyUnitFields(bet, bankroll.referencePeriods ?? [], date, stakeMode)),
+      } : unitExtras ?? (isBetAnalytix ? {} : currencyUnitFields(bet, bankroll.referencePeriods ?? [], date, stakeMode))),
       odds: bet.odds,
       boosted: Boolean(bet.boosted),
       originalOdds: bet.boosted && Number.isFinite(bet.originalOdds) ? bet.originalOdds : null,
       freebet: Boolean(bet.freebet),
       live: Boolean(bet.live),
       result: bet.result,
-      cashOutAmount: bet.result === "CASHE" ? bet.cashOutAmount : null,
+      cashOutAmount: bet.result === "CASHE" ? nativeCashOut : null,
       entryMethod: "FILE" as const,
       format: bet.format ?? "SIMPLE",
       closingOdds: Number.isFinite(bet.closingOdds) && (bet.closingOdds as number) > 1 ? (bet.closingOdds ?? null) : null,
