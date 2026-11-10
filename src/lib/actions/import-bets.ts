@@ -25,6 +25,7 @@ import { automaticResultProofCandidateCount, findAutomaticResultProofTarget, fin
 import { canAutomaticallyUpdateResult, findScanProofEvidence, sameTicketReference } from "@/lib/scan/ticket-evidence";
 import { scanUsageIdForSourceIndex } from "@/lib/scan/import-sources";
 import { convertTicketToBankroll } from "@/lib/native-stake";
+import { referenceDateForImport, unitSnapshot, type ReferencePeriod } from "@/lib/bankroll-units";
 
 export type ScanImportMeasurement = {
   scanUsageId: string;
@@ -60,6 +61,28 @@ function duplicateKey(bet: {
   ].join(":");
 }
 
+// Mise en devise : on dérive les unités de la référence datée de la bankroll (comme une
+// saisie manuelle). Si le fichier fournit aussi ses propres unités, elles priment et la
+// référence implicite de chaque pari (mise / unités × 100) est conservée.
+function currencyUnitFields(
+  bet: { stake: number | null; stakeUnits?: number | null },
+  periods: ReferencePeriod[],
+  date: Date,
+  stakeMode: "CURRENCY" | "UNITS" | "BOTH"
+) {
+  const stake = bet.stake as number;
+  const fileUnits = stakeMode === "BOTH" ? bet.stakeUnits : null;
+  if (fileUnits !== null && fileUnits !== undefined && Number.isFinite(fileUnits) && fileUnits > 0) {
+    return { stakeUnits: fileUnits, referenceCapitalAtBet: (stake / fileUnits) * 100, unitsRecordedAt: new Date() };
+  }
+  const snapshot = unitSnapshot(stake, periods, referenceDateForImport(date, true, new Date()));
+  return snapshot.stakeUnits === null ? {} : {
+    stakeUnits: snapshot.stakeUnits,
+    referenceCapitalAtBet: snapshot.referenceCapitalAtBet,
+    unitsRecordedAt: snapshot.unitsRecordedAt,
+  };
+}
+
 // Import de migration depuis un fichier tiers. Le navigateur ne transmet que
 // les lignes déjà prévisualisées, mais tout est revalidé ici car les données
 // d'une Server Action restent non fiables.
@@ -69,10 +92,15 @@ export async function importExternalBets(
   sourceFormat: string,
   fileName?: string,
   requestedAllocationId?: string | null,
-  sourceCurrency?: AccountingCurrency
+  sourceCurrency?: AccountingCurrency,
+  // Unité des mises d'un fichier générique : "UNITS" = mises en unités (bankroll U),
+  // "CURRENCY" = mises en devise (unités dérivées de la référence), "BOTH" = le fichier
+  // fournit les deux colonnes (devise conservée + unités du fichier).
+  stakeMode: "CURRENCY" | "UNITS" | "BOTH" = "CURRENCY"
 ): Promise<FileImportResult> {
   const user = await requireUser();
   const isBetAnalytix = sourceFormat === "BET_ANALYTIX";
+  const genericUnits = !isBetAnalytix && stakeMode === "UNITS";
   if (bets.length === 0) return { error: "Aucun pari valide à importer." };
   if (bets.length > MAX_IMPORT_ROWS) return { error: `Un import est limité à ${MAX_IMPORT_ROWS} paris.` };
 
@@ -83,6 +111,7 @@ export async function importExternalBets(
         id: true,
         mode: true,
         currency: true,
+        referencePeriods: { select: { referenceCapital: true, effectiveFrom: true } },
         allocations: { select: { id: true, bookmaker: true }, orderBy: { createdAt: "asc" } },
       },
     }),
@@ -100,7 +129,10 @@ export async function importExternalBets(
   if (isBetAnalytix && bankroll.currency !== sourceCurrency) {
     return { error: "La devise de l’export Bet-Analytix doit correspondre à celle de la bankroll de destination." };
   }
-  if (!isBetAnalytix && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
+  if (genericUnits && bankroll.currency !== "UNIT") {
+    return { error: "Ce fichier exprime les mises en unités. Utilise une bankroll en unités (U) pour les conserver telles quelles." };
+  }
+  if (!isBetAnalytix && !genericUnits && bankroll.currency === "UNIT") return { error: "Ce fichier exprime les mises en devise. Utilise une bankroll en devise ou un scan avec une référence de conversion explicite." };
   if (await isBankrollLockedForUser(user.id, bankrollId)) return { error: "Cette bankroll est verrouillée." };
 
   const requestedAllocation = requestedAllocationId
@@ -136,7 +168,7 @@ export async function importExternalBets(
     stake: number;
     stakeCurrency: "EUR" | "USD" | "GBP" | "UNIT";
     stakeUnits?: number;
-    referenceCapitalAtBet?: number;
+    referenceCapitalAtBet?: number | null;
     unitsRecordedAt?: Date;
     odds: number | null;
     boosted: boolean;
@@ -213,10 +245,10 @@ export async function importExternalBets(
       // Aucun taux de conversion ni montant fictif n'est inventé pour ces lignes.
       stake: bet.stake as number,
       stakeCurrency: bankroll.currency,
-      ...(isBetAnalytix && sourceCurrency === "UNIT" ? {
+      ...((isBetAnalytix && sourceCurrency === "UNIT") || genericUnits ? {
         stakeUnits: bet.stake as number,
         unitsRecordedAt: new Date(),
-      } : {}),
+      } : isBetAnalytix || bankroll.currency === "UNIT" ? {} : currencyUnitFields(bet, bankroll.referencePeriods ?? [], date, stakeMode)),
       odds: bet.odds,
       boosted: Boolean(bet.boosted),
       originalOdds: bet.boosted && Number.isFinite(bet.originalOdds) ? bet.originalOdds : null,

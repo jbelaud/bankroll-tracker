@@ -29,6 +29,8 @@ export type ParsedBet = {
   description: string;
   eventResult: string | null;
   stake: number | null;
+  /** Mise en unités fournie par le fichier en plus de la mise en devise (import "les deux"). */
+  stakeUnits?: number | null;
   odds: number | null;
   boosted: boolean;
   originalOdds: number | null;

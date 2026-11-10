@@ -22,6 +22,12 @@ export type ParsedBetsFile = {
   sourceLabel: string | null;
   detectedBookmakers: string[];
   groupedSelectionRows: number;
+  /**
+   * Unité(s) de mise portée(s) par le fichier : "BOTH" = colonnes devise ET unités,
+   * "UNITS" = unités seules, "CURRENCY" = devise seule, "UNKNOWN" = une unique colonne
+   * de mise dont l'unité n'est pas déclarée (l'utilisateur doit la choisir).
+   */
+  stakeKind: "BOTH" | "UNITS" | "CURRENCY" | "UNKNOWN";
 };
 
 type FlatRecord = Record<string, unknown>;
@@ -34,6 +40,7 @@ const FIELD_ALIASES = {
   description: ["description", "selection", "pick", "bet", "event", "eventname", "match", "fixture", "label", "name", "pronostic"],
   eventResult: ["eventresult", "score", "finalscore", "matchresult", "resultatevenement"],
   stake: ["stake", "amount", "betamount", "wager", "mise", "montant", "risk", "risked"],
+  stakeUnits: ["stakeunits", "stakeunit", "units", "unit", "unites", "unite", "miseenunites", "miseunites", "stakeu"],
   odds: ["odds", "odd", "price", "decimalodds", "cote", "cotes"],
   originalOdds: ["originalodds", "preboostodds", "baseodds", "coteinitiale", "coteavantboost"],
   boosted: ["boosted", "oddsboost", "boost", "coteboostee"],
@@ -241,16 +248,32 @@ function resolveDateOrder(records: FlatRecord[], requested: ImportDateOrder): Ex
   return mdyEvidence > dmyEvidence ? "MDY" : "DMY";
 }
 
+function detectStakeKind(records: FlatRecord[]): ParsedBetsFile["stakeKind"] {
+  let hasStake = false;
+  let hasUnits = false;
+  for (const record of records) {
+    const fields = mapRecord(record);
+    if (parseNumber(fields.stake) !== null) hasStake = true;
+    if (parseNumber(fields.stakeUnits) !== null) hasUnits = true;
+    if (hasStake && hasUnits) return "BOTH";
+  }
+  if (hasUnits) return "UNITS";
+  return hasStake ? "UNKNOWN" : "CURRENCY";
+}
+
 function rowFromRecord(
   record: FlatRecord,
   sourceRow: number,
-  dateOrder: Exclude<ImportDateOrder, "AUTO">
+  dateOrder: Exclude<ImportDateOrder, "AUTO">,
+  stakeKind: ParsedBetsFile["stakeKind"] = "UNKNOWN"
 ): ParsedFileRow {
   const fields = mapRecord(record);
   const errors: string[] = [];
   const warnings: string[] = [];
   const date = parseDate(fields.date, dateOrder);
-  const stake = parseNumber(fields.stake);
+  const unitsValue = parseNumber(fields.stakeUnits);
+  // Fichier en unités seules : la mise est l'unité, sans conversion fictive en devise.
+  const stake = stakeKind === "UNITS" ? unitsValue : parseNumber(fields.stake);
   const parsedOdds = parseOdds(fields.odds);
   const odds = parsedOdds.value;
   const cashOutAmount = parseNumber(fields.cashOutAmount);
@@ -296,6 +319,7 @@ function rowFromRecord(
       description,
       eventResult: stringValue(fields.eventResult) || null,
       stake,
+      stakeUnits: stakeKind === "BOTH" && unitsValue !== null && unitsValue > 0 ? unitsValue : null,
       odds: result === "REMBOURSE" && (odds === null || odds <= 0) ? null : odds,
       boosted,
       originalOdds: boosted ? parseNumber(fields.originalOdds) : null,
@@ -505,9 +529,11 @@ export function parseBetsFileContent(
     if (records.length > MAX_IMPORT_ROWS) throw new Error(`Le fichier dépasse la limite de ${MAX_IMPORT_ROWS} paris.`);
     const flatRecords = records.map((record) => flattenRecord(record));
     const dateOrder = resolveDateOrder(flatRecords, options.dateOrder ?? "AUTO");
+    const stakeKind = detectStakeKind(flatRecords);
     return {
       format: "JSON",
-      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1, dateOrder)),
+      stakeKind,
+      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1, dateOrder, stakeKind)),
       detectedColumns: [...new Set(flatRecords.flatMap((record) => Object.keys(record)))],
       sourceProfile: "GENERIC",
       sourceLabel: null,
@@ -528,9 +554,11 @@ export function parseBetsFileContent(
   const betAnalytix = isBetAnalytixExport(headers) ? betAnalytixRecords(records) : null;
   const parsedRecords = betAnalytix?.records ?? records;
   const dateOrder = resolveDateOrder(parsedRecords.map(({ record }) => record), options.dateOrder ?? "AUTO");
+  const stakeKind = betAnalytix ? "UNKNOWN" : detectStakeKind(parsedRecords.map(({ record }) => record));
   return {
     format: extension === "tsv" || delimiter === "\t" ? "TSV" : extension === "txt" ? "TXT" : "CSV",
-    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow, dateOrder)),
+    stakeKind,
+    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow, dateOrder, stakeKind)),
     detectedColumns: headers,
     sourceProfile: betAnalytix ? "BET_ANALYTIX" : "GENERIC",
     sourceLabel: betAnalytix ? "Bet-Analytix" : null,

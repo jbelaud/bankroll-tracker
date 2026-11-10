@@ -193,3 +193,22 @@ describe("parseBetsFileContent", () => {
     expect(parsed.rows[0].bet).toMatchObject({ betType: "2/3", sport: "Multi-sport", format: "SYSTEME" });
   });
 });
+
+describe("détection de l'unité des mises", () => {
+  const row = "01/11/2026;Football;Sevilla;2,34;10;W";
+  it("devise seule : l'unité reste à choisir à l'import", () => {
+    const parsed = parseBetsFileContent("a.csv", `Date;Sport;Label;Odds;Stake;State\n${row}`);
+    expect(parsed.stakeKind).toBe("UNKNOWN");
+    expect(parsed.rows[0].bet?.stakeUnits).toBeNull();
+  });
+  it("unités seules : la mise est lue en unités", () => {
+    const parsed = parseBetsFileContent("a.csv", "Date;Sport;Label;Odds;Units;State\n01/11/2026;Football;Sevilla;2,34;1,5;W");
+    expect(parsed.stakeKind).toBe("UNITS");
+    expect(parsed.rows[0].bet?.stake).toBe(1.5);
+  });
+  it("devise et unités : les deux sont conservées", () => {
+    const parsed = parseBetsFileContent("a.csv", "Date;Sport;Label;Odds;Stake;Units;State\n01/11/2026;Football;Sevilla;2,34;10;1,5;W");
+    expect(parsed.stakeKind).toBe("BOTH");
+    expect(parsed.rows[0].bet).toMatchObject({ stake: 10, stakeUnits: 1.5 });
+  });
+});

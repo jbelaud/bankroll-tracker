@@ -86,6 +86,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const [fallbackTipsterId, setFallbackTipsterId] = useState<string | null>(null);
   const [dateOrder, setDateOrder] = useState<ImportDateOrder>("AUTO");
   const [loadedFile, setLoadedFile] = useState<{ name: string; content: string } | null>(null);
+  const [stakeChoice, setStakeChoice] = useState<"CURRENCY" | "UNITS" | null>(null);
 
   const validBets = useMemo(
     () => parsed?.rows.flatMap((row) => (row.bet ? [row.bet] : [])) ?? [],
@@ -94,6 +95,18 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
   const invalidCount = parsed ? parsed.rows.length - validBets.length : 0;
   const warningCount = parsed?.rows.filter((row) => row.warnings.length > 0).length ?? 0;
   const selectedBankroll = bankrolls.find((bankroll) => bankroll.id === bankrollId);
+  const isBetAnalytix = parsed?.sourceProfile === "BET_ANALYTIX";
+  // Unité des mises : déduite des colonnes du fichier quand elle est explicite ;
+  // sinon choix de l'utilisateur, présélectionné d'après la devise de la bankroll.
+  const stakeMode: "CURRENCY" | "UNITS" | "BOTH" = parsed?.stakeKind === "BOTH" ? "BOTH"
+    : parsed?.stakeKind === "UNITS" ? "UNITS"
+      : parsed?.stakeKind === "CURRENCY" ? "CURRENCY"
+        : stakeChoice ?? (selectedBankroll?.currency === "UNIT" ? "UNITS" : "CURRENCY");
+  const stakeModeNeedsChoice = Boolean(parsed) && !isBetAnalytix && parsed?.stakeKind === "UNKNOWN";
+  const stakeModeMismatch = Boolean(parsed) && !isBetAnalytix && Boolean(selectedBankroll) && (stakeMode === "UNITS"
+    ? selectedBankroll?.currency !== "UNIT"
+    : selectedBankroll?.currency === "UNIT");
+  const stakeModeLabel = stakeMode === "UNITS" ? "unités" : stakeMode === "BOTH" ? "devise + unités" : "devise";
   const selectedAllocation = selectedBankroll?.allocations.find((allocation) => allocation.id === allocationId);
   const selectedBookmakerLabel = selectedAllocation?.bookmaker
     ?? (selectedBankroll?.mode === "DISTRIBUTED" && selectedBankroll.allocations.length === 1
@@ -168,6 +181,12 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
       setFileError("Choisis une bankroll dont la devise native est U pour importer ces mises BA.");
       return;
     }
+    if (stakeModeMismatch) {
+      setFileError(stakeMode === "UNITS"
+        ? "Ces mises sont en unités : choisis une bankroll en unités (U)."
+        : "Ces mises sont en devise : choisis une bankroll en devise.");
+      return;
+    }
     setFileError("");
     startTransition(async () => {
       try {
@@ -179,7 +198,9 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             : bet),
           source,
           fileName,
-          allocationId || null
+          allocationId || null,
+          isBetAnalytix ? selectedBankroll?.currency : undefined,
+          stakeMode
         );
         if (response.imported === undefined) {
           setFileError(response.error);
@@ -199,6 +220,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
     setResult(null);
     setFallbackTipsterId(null);
     setLoadedFile(null);
+    setStakeChoice(null);
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -364,6 +386,43 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             </div>
           ) : null}
 
+          {!isBetAnalytix ? (
+            <div className="mt-3 rounded-xl border border-border bg-muted/30 p-3 text-xs leading-5">
+              <p className="font-semibold">Mises du fichier : {stakeModeLabel}</p>
+              {stakeModeNeedsChoice ? (
+                <>
+                  <p className="mt-1 text-muted-foreground">Le fichier n’indique pas l’unité de la colonne de mise. Choisis comment la lire.</p>
+                  <div className="mt-2 grid grid-cols-2 gap-2" role="group" aria-label="Unité des mises du fichier">
+                    {([["CURRENCY", "En devise"], ["UNITS", "En unités (U)"]] as const).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={stakeMode === value}
+                        onClick={() => setStakeChoice(value)}
+                        className={`min-h-11 rounded-lg border text-xs font-semibold transition-colors ${stakeMode === value ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background/50 text-muted-foreground hover:text-foreground"}`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="mt-1 text-muted-foreground">
+                  {stakeMode === "BOTH" ? "Le fichier contient les mises en devise et en unités : les deux sont conservées."
+                    : stakeMode === "UNITS" ? "Le fichier contient des unités uniquement : elles sont conservées telles quelles."
+                      : "Le fichier contient des mises en devise : les unités sont calculées depuis la référence de la bankroll."}
+                </p>
+              )}
+              {stakeModeMismatch ? (
+                <p role="alert" className="mt-2 font-semibold text-warning">
+                  {stakeMode === "UNITS"
+                    ? "La bankroll choisie est en devise. Choisis une bankroll en unités (U) pour conserver ces unités."
+                    : "La bankroll choisie est en unités. Choisis une bankroll en devise pour ces mises."}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
           {parsed.detectedBookmakers.length > 0 ? (
             <div className={`mt-3 rounded-xl border p-3 text-xs leading-5 ${bookmakerMismatch ? "border-warning/30 bg-warning/10 text-warning" : "border-border bg-muted/30 text-muted-foreground"}`}>
               <span className="font-semibold">{t("preview.bookmakerDetected", { bookmakers: parsed.detectedBookmakers.join(", ") })}</span>
@@ -412,7 +471,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           <div className="mt-5 overflow-x-auto rounded-xl border border-border">
             <table className="w-full min-w-[48rem] text-left text-xs">
               <thead className="bg-muted/60 text-muted-foreground">
-                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{parsed.sourceProfile === "BET_ANALYTIX" ? t("table.stakeUnits") : t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
+                <tr><th className="p-3">{t("table.row")}</th><th className="p-3">{t("table.date")}</th><th className="p-3">{t("table.bet")}</th><th className="p-3">{parsed.sourceProfile === "BET_ANALYTIX" || stakeMode === "UNITS" ? t("table.stakeUnits") : t("table.stake")}</th><th className="p-3">{t("table.odds")}</th><th className="p-3">{t("table.result")}</th><th className="p-3">{t("table.status")}</th></tr>
               </thead>
               <tbody>
                 {parsed.rows.slice(0, 50).map((row) => (
@@ -432,7 +491,7 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
           {parsed.rows.length > 50 ? <p className="mt-2 text-xs text-muted-foreground">{t("preview.firstRows", { count: 50, total: parsed.rows.length })}</p> : null}
           {invalidCount > 0 ? <p className="mt-4 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs leading-5 text-warning">{t("preview.invalidSkipped", { count: invalidCount })}</p> : null}
 
-          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT")} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
+          <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || stakeModeMismatch || (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT")} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
             {isPending ? t("preview.importing") : t("preview.import", { count: validBets.length })}
           </Button>
         </section>
