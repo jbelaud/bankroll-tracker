@@ -151,7 +151,15 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
       return;
     }
     try {
-      const content = await file.text();
+      // Les exports Excel/Windows sont souvent en Windows-1252 : sans ce repli, les accents
+      // deviennent « � ». On tente d'abord l'UTF-8 strict.
+      const buffer = await file.arrayBuffer();
+      let content: string;
+      try {
+        content = new TextDecoder("utf-8", { fatal: true }).decode(buffer);
+      } catch {
+        content = new TextDecoder("windows-1252").decode(buffer);
+      }
       const nextParsed = parseBetsFileContent(file.name, content, { dateOrder });
       setParsed(nextParsed);
       setLoadedFile({ name: file.name, content });
@@ -489,7 +497,16 @@ export function FileImportFlow({ bankrolls, tipsters: initialTipsters }: { bankr
             </table>
           </div>
           {parsed.rows.length > 50 ? <p className="mt-2 text-xs text-muted-foreground">{t("preview.firstRows", { count: 50, total: parsed.rows.length })}</p> : null}
-          {invalidCount > 0 ? <p className="mt-4 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs leading-5 text-warning">{t("preview.invalidSkipped", { count: invalidCount })}</p> : null}
+          {invalidCount > 0 ? (
+            <div className="mt-4 rounded-xl border border-warning/30 bg-warning/10 p-3 text-xs leading-5 text-warning">
+              <p>{t("preview.invalidSkipped", { count: invalidCount })}</p>
+              <ul className="mt-2 list-disc pl-4">
+                {parsed.rows.filter((row) => !row.bet).slice(0, 10).map((row) => (
+                  <li key={row.sourceRow}>Ligne {row.sourceRow} : {row.errors.join(" · ")}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <Button type="button" onClick={confirmImport} disabled={validBets.length === 0 || isPending || stakeModeMismatch || (parsed.sourceProfile === "BET_ANALYTIX" && selectedBankroll?.currency !== "UNIT")} className="mt-5 min-h-touch w-full rounded-lg text-sm font-semibold">
             {isPending ? t("preview.importing") : t("preview.import", { count: validBets.length })}

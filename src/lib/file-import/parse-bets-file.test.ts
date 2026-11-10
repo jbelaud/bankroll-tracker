@@ -111,7 +111,8 @@ describe("parseBetsFileContent", () => {
 
     expect(parsed.rows[0].bet?.date).toBe("2026-04-24");
     expect(parsed.rows[1].bet?.date).toBe("2026-04-12");
-    expect(parsed.rows[1].warnings).toContain("Date ambiguë interprétée au format mois/jour/année");
+    // L'ordre est prouvé par la ligne non ambiguë : plus d'avertissement ligne par ligne.
+    expect(parsed.rows[1].warnings).not.toContain("Date ambiguë interprétée au format mois/jour/année");
   });
 
   it("permet de choisir explicitement le format anglais pour un fichier entièrement ambigu", () => {
@@ -210,5 +211,18 @@ describe("détection de l'unité des mises", () => {
     const parsed = parseBetsFileContent("a.csv", "Date;Sport;Label;Odds;Stake;Units;State\n01/11/2026;Football;Sevilla;2,34;10;1,5;W");
     expect(parsed.stakeKind).toBe("BOTH");
     expect(parsed.rows[0].bet).toMatchObject({ stake: 10, stakeUnits: 1.5 });
+  });
+});
+
+describe("dates jour/mois et heures", () => {
+  const csv = "Date;Sport;Label;Odds;Stake;State\n11/04/2026 19:29;Football;A;2,3;10;W\n25/10/2026 20:05;Football;B;2;0;L";
+  it("ne signale pas d'ambiguïté quand une date non ambiguë prouve l'ordre", () => {
+    const parsed = parseBetsFileContent("a.csv", csv);
+    expect(parsed.rows[0].bet?.date).toBe("2026-04-11");
+    expect(parsed.rows[0].warnings.join()).not.toContain("ambiguë");
+    expect(parsed.rows[0].bet?.placedAt).toBe("2026-04-11T19:29:00.000Z");
+  });
+  it("ignore explicitement les mises à 0", () => {
+    expect(parseBetsFileContent("a.csv", csv).rows[1].errors[0]).toContain("Mise à 0");
   });
 });

@@ -197,7 +197,9 @@ function parseDate(value: unknown, dateOrder: Exclude<ImportDateOrder, "AUTO">):
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString().slice(0, 10);
 }
 
-function parsePlacedAt(value: unknown): string | null {
+function parsePlacedAt(value: unknown, date: string | null = null): string | null {
+  const local = date ? stringValue(value).match(/^\d{1,2}[\/.\-]\d{1,2}[\/.\-](?:\d{2}|\d{4})[ T](\d{1,2}):(\d{2})(?::(\d{2}))?$/) : null;
+  if (local && date) return parsePlacedAt(`${date} ${local[1].padStart(2, "0")}:${local[2]}${local[3] ? `:${local[3]}` : ""}`);
   const match = stringValue(value).match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/);
   if (!match || validDate(Number(match[1].slice(0, 4)), Number(match[1].slice(5, 7)), Number(match[1].slice(8, 10))) !== match[1]) return null;
   const hour = Number(match[2]); const minute = Number(match[3]); const second = Number(match[4] ?? "00");
@@ -232,8 +234,8 @@ function parseFormat(value: unknown): BetFormat {
   return "SIMPLE";
 }
 
-function resolveDateOrder(records: FlatRecord[], requested: ImportDateOrder): Exclude<ImportDateOrder, "AUTO"> {
-  if (requested !== "AUTO") return requested;
+function resolveDateOrder(records: FlatRecord[], requested: ImportDateOrder): { order: Exclude<ImportDateOrder, "AUTO">; certain: boolean } {
+  if (requested !== "AUTO") return { order: requested, certain: true };
   let dmyEvidence = 0;
   let mdyEvidence = 0;
   for (const record of records) {
@@ -245,7 +247,8 @@ function resolveDateOrder(records: FlatRecord[], requested: ImportDateOrder): Ex
     if (first > 12 && second <= 12) dmyEvidence += 1;
     if (second > 12 && first <= 12) mdyEvidence += 1;
   }
-  return mdyEvidence > dmyEvidence ? "MDY" : "DMY";
+  // Une seule date non ambiguë (ex. 25/10) prouve l'ordre pour tout le fichier.
+  return { order: mdyEvidence > dmyEvidence ? "MDY" : "DMY", certain: dmyEvidence + mdyEvidence > 0 };
 }
 
 function detectStakeKind(records: FlatRecord[]): ParsedBetsFile["stakeKind"] {
@@ -265,7 +268,8 @@ function rowFromRecord(
   record: FlatRecord,
   sourceRow: number,
   dateOrder: Exclude<ImportDateOrder, "AUTO">,
-  stakeKind: ParsedBetsFile["stakeKind"] = "UNKNOWN"
+  stakeKind: ParsedBetsFile["stakeKind"] = "UNKNOWN",
+  dateCertain = false
 ): ParsedFileRow {
   const fields = mapRecord(record);
   const errors: string[] = [];
@@ -281,7 +285,8 @@ function rowFromRecord(
   const rawSelections = Array.isArray(record.__selections) ? record.__selections as FlatRecord[] : [];
 
   if (!date) errors.push("Date absente ou invalide");
-  if (stake === null || stake <= 0) errors.push("Mise absente ou invalide");
+  if (stake === null) errors.push("Mise absente ou invalide");
+  else if (stake <= 0) errors.push("Mise à 0 : pari ignoré (impossible de calculer un gain)");
   if ((odds === null || odds <= 0) && result !== "REMBOURSE") errors.push("Cote absente ou invalide");
   if (result === "CASHE" && (cashOutAmount === null || cashOutAmount < 0)) errors.push("Montant du cash out absent ou invalide");
 
@@ -293,7 +298,7 @@ function rowFromRecord(
   if (!fields.betType) warnings.push("Type non fourni : « Autre » sera utilisé");
   if (!description) warnings.push("Description non fournie");
   if (!stringValue(fields.result)) warnings.push("Résultat non fourni : « En attente » sera utilisé");
-  if (isAmbiguousDayMonth(fields.date)) {
+  if (!dateCertain && isAmbiguousDayMonth(fields.date)) {
     warnings.push(dateOrder === "DMY"
       ? "Date ambiguë interprétée au format jour/mois/année"
       : "Date ambiguë interprétée au format mois/jour/année");
@@ -313,7 +318,7 @@ function rowFromRecord(
     bet: {
       ticketRef: stringValue(fields.ticketRef) || null,
       date,
-      placedAt: parsePlacedAt(fields.date),
+      placedAt: parsePlacedAt(fields.date, date),
       sport,
       betType,
       description,
@@ -528,12 +533,12 @@ export function parseBetsFileContent(
     if (records.length === 0) throw new Error("Aucune liste de paris n’a été trouvée dans ce fichier JSON.");
     if (records.length > MAX_IMPORT_ROWS) throw new Error(`Le fichier dépasse la limite de ${MAX_IMPORT_ROWS} paris.`);
     const flatRecords = records.map((record) => flattenRecord(record));
-    const dateOrder = resolveDateOrder(flatRecords, options.dateOrder ?? "AUTO");
+    const { order: dateOrder, certain: dateCertain } = resolveDateOrder(flatRecords, options.dateOrder ?? "AUTO");
     const stakeKind = detectStakeKind(flatRecords);
     return {
       format: "JSON",
       stakeKind,
-      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1, dateOrder, stakeKind)),
+      rows: flatRecords.map((record, index) => rowFromRecord(record, index + 1, dateOrder, stakeKind, dateCertain)),
       detectedColumns: [...new Set(flatRecords.flatMap((record) => Object.keys(record)))],
       sourceProfile: "GENERIC",
       sourceLabel: null,
@@ -553,12 +558,12 @@ export function parseBetsFileContent(
   }));
   const betAnalytix = isBetAnalytixExport(headers) ? betAnalytixRecords(records) : null;
   const parsedRecords = betAnalytix?.records ?? records;
-  const dateOrder = resolveDateOrder(parsedRecords.map(({ record }) => record), options.dateOrder ?? "AUTO");
+  const { order: dateOrder, certain: dateCertain } = resolveDateOrder(parsedRecords.map(({ record }) => record), options.dateOrder ?? "AUTO");
   const stakeKind = betAnalytix ? "UNKNOWN" : detectStakeKind(parsedRecords.map(({ record }) => record));
   return {
     format: extension === "tsv" || delimiter === "\t" ? "TSV" : extension === "txt" ? "TXT" : "CSV",
     stakeKind,
-    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow, dateOrder, stakeKind)),
+    rows: parsedRecords.map(({ record, sourceRow }) => rowFromRecord(record, sourceRow, dateOrder, stakeKind, dateCertain)),
     detectedColumns: headers,
     sourceProfile: betAnalytix ? "BET_ANALYTIX" : "GENERIC",
     sourceLabel: betAnalytix ? "Bet-Analytix" : null,
