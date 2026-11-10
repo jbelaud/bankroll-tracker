@@ -62,6 +62,22 @@ export function PerformancePanel({
     ),
   }));
 
+  // L'axe Y ne doit pas démarrer à 0 : avec un capital de plusieurs milliers,
+  // la courbe serait écrasée en haut du graphique. On cadre sur min/max réels
+  // (avec une marge) pour que le volume reste lisible, comme une courbe en unités.
+  const yDomain = useMemo<[number, number]>(() => {
+    if (visiblePoints.length === 0) return [0, 1];
+    let min = Infinity;
+    let max = -Infinity;
+    for (const point of visiblePoints) {
+      if (point.value < min) min = point.value;
+      if (point.value > max) max = point.value;
+    }
+    const span = max - min;
+    const pad = span > 0 ? span * 0.08 : Math.max(Math.abs(max) * 0.05, 1);
+    return [min - pad, max + pad];
+  }, [visiblePoints]);
+
   return (
     <section aria-label={t(inUnits ? "unitAriaLabel" : "ariaLabel")} className="overflow-hidden rounded-2xl border border-border bg-linear-to-br from-primary/12 via-background to-profit/10 p-4 lg:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -84,7 +100,7 @@ export function PerformancePanel({
           </div>
         ) : chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 8, right: 4, left: -18, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="dashboard-performance-fill" x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor={color} stopOpacity={0.38} />
@@ -93,13 +109,13 @@ export function PerformancePanel({
               </defs>
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="label" tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={28} />
-              <YAxis tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} tickLine={false} axisLine={false} width={52} tickFormatter={(value) => inUnits ? `${Number(value).toFixed(0)} u` : `${Math.round(Number(value))}`} />
+              <YAxis tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} tickLine={false} axisLine={false} width={52} domain={yDomain} tickFormatter={(value) => inUnits ? `${Number(value).toFixed(0)} u` : `${Math.round(Number(value))}`} />
               <Tooltip
                 formatter={(value) => inUnits ? fmtUnits(Number(value), locale) : fmtMoney(Number(value), locale, currency)}
                 labelFormatter={(_, payload) => payload[0]?.payload.label ?? ""}
                 contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 10 }}
               />
-              <Area type="monotone" dataKey="value" stroke={color} strokeWidth={2.5} fill="url(#dashboard-performance-fill)" dot={chartData.length === 1} />
+              <Area type="monotone" dataKey="value" stroke={color} strokeWidth={2.5} fill="url(#dashboard-performance-fill)" baseValue="dataMin" isAnimationActive={chartData.length < 400} dot={chartData.length === 1} />
             </AreaChart>
           </ResponsiveContainer>
         ) : (
