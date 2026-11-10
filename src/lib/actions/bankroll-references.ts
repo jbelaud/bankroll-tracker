@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isBankrollLockedForUser } from "@/lib/billing/bankroll-access";
-import { unitSnapshot } from "@/lib/bankroll-units";
+import { Prisma } from "@prisma/client";
 
 export type ReferenceActionState = { error?: string; success?: string };
 
@@ -24,16 +24,21 @@ async function fillMissingUnits(bankrollId: string, capital: number, where: { da
     await tx.$queryRaw`SELECT id FROM bankrolls WHERE id = ${bankrollId} FOR UPDATE`;
     const bankroll = await tx.bankroll.findUniqueOrThrow({ where: { id: bankrollId }, select: { currency: true } });
     if (bankroll.currency === "UNIT") throw new Error("Les mises de cette bankroll sont déjà enregistrées en unités.");
-    const bets = await tx.bet.findMany({
-      where: { bankrollId, stakeCurrency: { not: "UNIT" }, referenceCapitalAtBet: null, stakeUnits: null, ...where },
-      select: { id: true, stake: true, date: true },
-    });
     const recordedAt = new Date();
-    const effectiveFrom = where.date?.gte ?? new Date(0);
-    for (const bet of bets) {
-      await tx.bet.update({ where: { id: bet.id }, data: unitSnapshot(bet.stake, [{ referenceCapital: capital, effectiveFrom }], bet.date, recordedAt) });
-    }
-    return bets.length;
+    const range = where.date ? Prisma.sql`AND "date" >= ${where.date.gte} AND "date" < ${where.date.lt}` : Prisma.empty;
+    // Une seule requête : mêmes unités que toUnits (arrondi à 1e-8), sans un UPDATE par pari
+    // (un historique de plus de 1 000 paris dépassait le délai de la transaction).
+    // Les unités déjà enregistrées ne sont jamais écrasées.
+    return tx.$executeRaw`
+      UPDATE "bets"
+      SET "stakeUnits" = ROUND(("stake" / ${capital}::float8 * 100)::numeric, 8)::float8,
+          "referenceCapitalAtBet" = ${capital}::float8,
+          "unitsRecordedAt" = ${recordedAt}
+      WHERE "bankrollId" = ${bankrollId}
+        AND "stakeCurrency"::text <> 'UNIT'
+        AND "referenceCapitalAtBet" IS NULL
+        AND "stakeUnits" IS NULL
+        ${range}`;
   }, { timeout: 30000 });
 }
 
